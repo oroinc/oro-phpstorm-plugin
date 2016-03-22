@@ -1,0 +1,23 @@
+<idea-plugin version="2">
+    <id>com.oroplatform.idea.oroplatform</id>
+    <name>ORO Platform</name>
+
+    <description></description>
+
+    <change-notes></change-notes>
+
+    <idea-version since-build="143.0"/>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.jetbrains.php</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+    </extensions>
+
+    <application-components>
+    </application-components>
+
+    <actions>
+    </actions>
+
+</idea-plugin>

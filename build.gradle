@@ -1,0 +1,60 @@
+plugins {
+    id "org.jetbrains.intellij" version "0.0.43"
+    id "de.undercouch.download" version "2.1.0"
+}
+
+import de.undercouch.gradle.tasks.download.Download
+
+group 'com.oroplatform'
+version '0.0.1-SNAPSHOT'
+
+apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'java'
+
+def phpPluginVersion = "php-143.382.38"
+
+sourceCompatibility = 1.6
+
+sourceSets.main.java.srcDir 'src/main/java'
+sourceSets.test.java.srcDir 'src/test/java'
+
+intellij {
+    version project.hasProperty('ideaVersion') ? ideaVersion : 'IU-15.0.4'
+    type 'IU'
+    pluginName 'idea-oroplatform-plugin'
+    plugins 'php'
+    updateSinceUntilBuild false
+    sameSinceUntilBuild false
+    downloadSources !Boolean.valueOf(System.getenv('CI'))
+    sandboxDirectory "${project.rootDir}/.idea-sandbox"
+}
+
+repositories {
+    mavenCentral()
+}
+
+task downloadPhpPlugin(type: Download) {
+    def output = new File("${intellij.sandboxDirectory}/plugins/${phpPluginVersion}.zip")
+
+    src "https://plugins.jetbrains.com/files/6610/22244/${phpPluginVersion}.zip"
+    dest output
+    overwrite false
+}
+
+task downloadAndUnzipPhpPlugin(dependsOn: downloadPhpPlugin, type: Copy) {
+    from zipTree(downloadPhpPlugin.dest)
+    into "${intellij.sandboxDirectory}/plugins/$phpPluginVersion"
+}
+
+def phpPluginFiles(String version) {
+    fileTree(dir: "${project.intellij.sandboxDirectory}/plugins/$version/php/lib/", include: '*.jar')
+}
+
+afterEvaluate {
+    it.tasks.findByName("compileJava").dependsOn(downloadAndUnzipPhpPlugin)
+    it.intellij.intellijFiles.addAll(phpPluginFiles(phpPluginVersion).getFiles())
+}
+
+dependencies {
+    compile phpPluginFiles(phpPluginVersion)
+}
