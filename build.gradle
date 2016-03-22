@@ -10,19 +10,17 @@ version '0.0.1-SNAPSHOT'
 
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
+apply plugin: 'groovy'
 
 def phpPluginVersion = "php-143.382.38"
 
 sourceCompatibility = 1.6
 
-sourceSets.main.java.srcDir 'src/main/java'
-sourceSets.test.java.srcDir 'src/test/java'
-
 intellij {
     version project.hasProperty('ideaVersion') ? ideaVersion : 'IU-15.0.4'
     type 'IU'
     pluginName 'idea-oroplatform-plugin'
-    plugins 'php'
+    plugins = ['php', 'yaml', 'java-i18n', 'properties', 'CSS']
     updateSinceUntilBuild false
     sameSinceUntilBuild false
     downloadSources !Boolean.valueOf(System.getenv('CI'))
@@ -33,28 +31,28 @@ repositories {
     mavenCentral()
 }
 
-task downloadPhpPlugin(type: Download) {
-    def output = new File("${intellij.sandboxDirectory}/plugins/${phpPluginVersion}.zip")
-
-    src "https://plugins.jetbrains.com/files/6610/22244/${phpPluginVersion}.zip"
-    dest output
-    overwrite false
-}
-
-task downloadAndUnzipPhpPlugin(dependsOn: downloadPhpPlugin, type: Copy) {
-    from zipTree(downloadPhpPlugin.dest)
-    into "${intellij.sandboxDirectory}/plugins/$phpPluginVersion"
-}
-
 def phpPluginFiles(String version) {
-    fileTree(dir: "${project.intellij.sandboxDirectory}/plugins/$version/php/lib/", include: '*.jar')
+    fileTree(dir: "${project.intellij.ideaDirectory}/plugins/$version/php/lib/", include: '*.jar')
 }
 
 afterEvaluate {
-    it.tasks.findByName("compileJava").dependsOn(downloadAndUnzipPhpPlugin)
+    it.tasks.findByName("compileJava").dependsOn("downloadAndUnzipPhpPlugin")
     it.intellij.intellijFiles.addAll(phpPluginFiles(phpPluginVersion).getFiles())
-}
 
-dependencies {
-    compile phpPluginFiles(phpPluginVersion)
+    project.tasks.create(name: "downloadPhpPlugin", type: Download) {
+        def output = new File("${project.intellij.ideaDirectory}/plugins/${phpPluginVersion}.zip")
+
+        src "https://plugins.jetbrains.com/files/6610/22244/${phpPluginVersion}.zip"
+        dest output
+        overwrite false
+    }
+
+    project.tasks.create(name: "downloadAndUnzipPhpPlugin", dependsOn: "downloadPhpPlugin", type: Copy) {
+        from zipTree(downloadPhpPlugin.dest)
+        into "${project.intellij.ideaDirectory}/plugins/$phpPluginVersion"
+    }
+
+    dependencies {
+        compile phpPluginFiles(phpPluginVersion)
+    }
 }
