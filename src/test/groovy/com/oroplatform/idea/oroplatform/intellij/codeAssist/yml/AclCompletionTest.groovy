@@ -13,7 +13,20 @@ public class AclCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
             """.stripMargin(),
             """
             |some_id:
-            |  type: <caret>
+            |  type<caret>
+            """.stripMargin()
+        )
+    }
+
+    def void testSuggestTypeProperty_withValue() {
+        completion(
+            """
+            |some_id:
+            |  t<caret>: entity
+            """.stripMargin(),
+            """
+            |some_id:
+            |  type: entity
             """.stripMargin()
         )
     }
