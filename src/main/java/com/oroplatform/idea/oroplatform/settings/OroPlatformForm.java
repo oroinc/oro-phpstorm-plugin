@@ -44,10 +44,11 @@ public class OroPlatformForm implements Configurable {
         return new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                final String text = textField.getTextField().getText();
                 VirtualFile chosenFile = FileChooser.chooseFile(
                     FileChooserDescriptorFactory.createSingleFolderDescriptor(),
                     project,
-                    VfsUtil.findRelativeFile(textField.getTextField().getText(), project.getBaseDir())
+                    VfsUtil.findRelativeFile(text == null ? "" : text, project.getBaseDir())
                 );
 
                 if (chosenFile == null) {
