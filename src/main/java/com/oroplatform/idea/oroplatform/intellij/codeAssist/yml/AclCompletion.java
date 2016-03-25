@@ -15,7 +15,7 @@ import org.jetbrains.yaml.psi.YAMLCompoundValue;
 import org.jetbrains.yaml.psi.YAMLHash;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
-import java.util.Arrays;
+import static java.util.Arrays.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -24,17 +24,17 @@ import static com.intellij.patterns.PlatformPatterns.*;
 
 public class AclCompletion extends CompletionContributor {
 
-    private final static Element SCHEMA = new Container(Arrays.asList(
-            new Property(Pattern.compile(".+"),
-                    new Container(Arrays.asList(
-                            new Property("type", new Literal()),
-                            new Property("class", new Literal()),
-                            new Property("permission", new Literal()),
-                            new Property("label", new Literal()),
-                            new Property("group_name", new Literal()),
-                            new Property("bindings", new Literal())
-                    ))
-            )
+    private final static Element SCHEMA = new Container(asList(
+        new Property(Pattern.compile(".+"),
+            new Container(asList(
+                new Property("type", new Literal(asList("entity", "action"))),
+                new Property("class", new Literal()),
+                new Property("permission", new Literal(asList("VIEW", "EDIT", "CREATE", "DELETE"))),
+                new Property("label", new Literal()),
+                new Property("group_name", new Literal()),
+                new Property("bindings", new Literal())
+            ))
+        )
     ));
 
     public AclCompletion() {
@@ -74,13 +74,18 @@ public class AclCompletion extends CompletionContributor {
             );
 
             for(final Property property : container.getProperties()) {
-                ElementPattern<? extends PsiElement> sss = psiElement().and(newCapture).withFirstChild(psiElement().withName(string().with(new PatternCondition<String>(null) {
+                PsiElementPattern.Capture<PsiElement> propertyCapture = psiElement().withName(string().with(new PatternCondition<String>(null) {
                     @Override
                     public boolean accepts(@NotNull String s, ProcessingContext context) {
                         return property.nameMatches(s);
                     }
-                })));
-                property.getValueElement().accept(new CompletionSchemaVisitor(sss));
+                }));
+                ElementPattern<? extends PsiElement> captureForNextVisitor = psiElement().andOr(
+                    psiElement().and(newCapture).withFirstChild(propertyCapture),
+                    propertyCapture.withParent(newCapture),
+                    propertyCapture.withParent(psiElement(YAMLHash.class).withSuperParent(2, newCapture))
+                );
+                property.getValueElement().accept(new CompletionSchemaVisitor(captureForNextVisitor));
             }
         }
 
@@ -96,7 +101,11 @@ public class AclCompletion extends CompletionContributor {
 
         @Override
         public void visitLiteral(Literal literal) {
-
+            extend(
+                CompletionType.BASIC,
+                psiElement(YAMLTokenTypes.TEXT).withParent(capture),
+                new ChoiceCompletionProvider(literal.getChoices())
+            );
         }
     }
 

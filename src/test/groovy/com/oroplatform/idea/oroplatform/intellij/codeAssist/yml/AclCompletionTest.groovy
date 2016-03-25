@@ -2,7 +2,6 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import org.junit.Ignore;
 
 public class AclCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
 
@@ -124,6 +123,30 @@ public class AclCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
         completion(
             """
             |some_id: { t<caret>: entity }
+            """.stripMargin(),
+            """
+            |some_id: { type: entity }
+            """.stripMargin()
+        )
+    }
+
+    def void testSuggestChoiceLiteralValues() {
+        completion(
+            """
+            |some_id:
+            |  permission: VI<caret>
+            """.stripMargin(),
+            """
+            |some_id:
+            |  permission: VIEW
+            """.stripMargin()
+        )
+    }
+
+    def void testSuggestChoiceLiteralValues_insideHash() {
+        completion(
+            """
+            |some_id: { type: e<caret> }
             """.stripMargin(),
             """
             |some_id: { type: entity }
