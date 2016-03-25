@@ -5,195 +5,175 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 
 public class AclCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
 
-    def void testSuggestCompoundValueKey() {
-        completion(
+    def void "test: suggest key in new line"() {
+        suggestions(
             """
             |some_id:
-            |  t<caret>
+            |  <caret>
             """.stripMargin(),
-            """
-            |some_id:
-            |  type<caret>
-            """.stripMargin()
+
+            ["type", "label"]
         )
     }
 
-    def void testSuggestCompoundValueKey_withValue() {
-        completion(
+    def void "test: suggest key in new line when the value is defined"() {
+        suggestions(
             """
             |some_id:
-            |  t<caret>: entity
+            |  <caret>: entity
             """.stripMargin(),
-            """
-            |some_id:
-            |  type: entity
-            """.stripMargin()
+
+            ["type", "label"]
         )
     }
 
-    def void testSuggestCompoundValueKey_afterOtherKey() {
-        completion(
+    def void "test: suggest key in new line without value after some property"() {
+        suggestions(
             """
             |some_id:
             |  label: abc
-            |  t<caret>
+            |  <caret>
             """.stripMargin(),
-            """
-            |some_id:
-            |  label: abc
-            |  type
-            """.stripMargin()
+
+            ["type", "permission"]
         )
     }
 
-    def void testSuggestCompoundValueKey_withValue_andAfterOtherKey() {
-        completion(
+    def void "test: suggest key in new line after some property when the value is defined"() {
+        suggestions(
             """
             |some_id:
             |  label: abc
-            |  t<caret>: entity
+            |  <caret>: entity
             """.stripMargin(),
-            """
-            |some_id:
-            |  label: abc
-            |  type: entity
-            """.stripMargin()
+
+            ["type", "permission"]
         )
     }
 
-    def void testSuggestCompoundValue_doesNotSuggestKeyAsValue() {
-        completion(
+    def void "test: does not suggest keys as property values"() {
+        suggestions(
             """
             |some_id:
-            |  label: t<caret>
+            |  label: <caret>
             """.stripMargin(),
-            """
-            |some_id:
-            |  label: t
-            """.stripMargin()
+
+            [],
+            ["type"]
         )
     }
 
     //TODO: for more sophisticated cases
-    def void ignoreTestSuggestKeyValueOnTopLevel_doesNotSuggestKeyAsValue() {
-        completion(
+    def void "ignored test: does not suggest keys as property values at top level"() {
+        suggestions(
             """
-            |some_id: t<caret>
+            |some_id: <caret>
             """.stripMargin(),
-            """
-            |some_id: t
-            """.stripMargin()
+
+            [],
+            ["type"]
         )
     }
 
-    def void testSuggestCompoundValueInHash() {
-        completion(
+    def void "test: suggest key in hash object"() {
+        suggestions(
             """
-            |some_id: { t<caret> }
+            |some_id: { <caret> }
             """.stripMargin(),
-            """
-            |some_id: { type }
-            """.stripMargin()
+
+            ["type", "label"]
         )
     }
 
-    def void testSuggestCompoundValueInHash_doesNotSuggestKeyAsValue() {
-        completion(
+    def void "test: does not suggest keys as values in hash object"() {
+        suggestions(
             """
-            |some_id: { label: t<caret> }
+            |some_id: { label: <caret> }
             """.stripMargin(),
-            """
-            |some_id: { label: t }
-            """.stripMargin()
+
+            [],
+            ["type"]
         )
     }
 
-    def void testSuggestCompoundValueInHash_suggestNextKey() {
-        completion(
+    def void "test: suggest key in hash object as the second key"() {
+        suggestions(
             """
-            |some_id: { label: value, t<caret> }
+            |some_id: { label: value, <caret> }
             """.stripMargin(),
-            """
-            |some_id: { label: value, type }
-            """.stripMargin()
+
+            ["type", "permission"]
         )
     }
 
-    def void testSuggestCompoundValueInHash_withValue() {
-        completion(
+    def void "test: suggest key in has object when the value is defined"() {
+        suggestions(
             """
-            |some_id: { t<caret>: entity }
+            |some_id: { <caret>: entity }
             """.stripMargin(),
-            """
-            |some_id: { type: entity }
-            """.stripMargin()
+
+            ["type", "label"]
         )
     }
 
-    def void testSuggestChoiceLiteralValues() {
-        completion(
+    def void "test: suggest choice literal values"() {
+        suggestions(
             """
             |some_id:
-            |  permission: VI<caret>
+            |  permission: <caret>
             """.stripMargin(),
-            """
-            |some_id:
-            |  permission: VIEW
-            """.stripMargin()
+
+            ["VIEW", "EDIT"],
+            ["type", "label"]
         )
     }
 
-    def void testSuggestChoiceLiteralValues_insideHash() {
-        completion(
+    def void "test: suggest choice literal values inside hash object"() {
+        suggestions(
             """
-            |some_id: { type: e<caret> }
+            |some_id: { type: <caret> }
             """.stripMargin(),
-            """
-            |some_id: { type: entity }
-            """.stripMargin()
+
+            ["entity", "action"],
+
         )
     }
 
-    def void testSuggestKeyInsideArray() {
-        completion(
+    def void "test: suggest key inside array"() {
+        suggestions(
             """
             |some_id:
             |  bindings:
-            |    - { cl<caret> }
+            |    - { <caret> }
             """.stripMargin(),
-            """
-            |some_id:
-            |  bindings:
-            |    - { class }
-            """.stripMargin()
+
+            ["class", "method"],
+            ["type", "label"]
         )
     }
 
-    def void testSuggestKeyInsideArray_withValue() {
-        completion(
+    def void "test: suggest key inside array when value is defined"() {
+        suggestions(
             """
             |some_id:
             |  bindings:
-            |    - { cl<caret>: someClass }
+            |    - { <caret>: someClass }
             """.stripMargin(),
-            """
-            |some_id:
-            |  bindings:
-            |    - { class: someClass }
-            """.stripMargin()
+
+            ["class", "method"],
+            ["type", "label"]
         )
     }
 
-    def void testSuggestCompoundKey_insideArray_shouldNotBeCompleted() {
-        completion(
+    def void "test: does not suggest keys of object one level up for array notation"() {
+        suggestions(
             """
             |some_id:
-            |  - { t<caret> }
+            |  - { <caret> }
             """.stripMargin(),
-            """
-            |some_id:
-            |  - { t }
-            """.stripMargin()
+
+            [],
+            ["type"]
         )
     }
 
@@ -206,6 +186,17 @@ public class AclCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
         }
 
         myFixture.checkResult(expected.replace("\r", ""))
+    }
+
+    private def suggestions(String contents, Collection<String> expectedSuggestions, Collection<String> unexpectedSuggestions = []) {
+        myFixture.configureByText("acl.yml", contents)
+        myFixture.completeBasic()
+
+        def lookupElements = myFixture.getLookupElementStrings()
+
+        assertNotNull(lookupElements)
+        assertContainsElements(lookupElements, expectedSuggestions)
+        assertDoesntContain(lookupElements, unexpectedSuggestions)
     }
 
 }
