@@ -6,14 +6,17 @@ import java.util.List;
 
 public class Literal implements Element {
 
-    private final List<String> choices = new LinkedList<String>();
-
+    private final Value value;
     public Literal() {
-        this(Collections.<String>emptyList());
+        this(new Any());
+    }
+
+    public Literal(Value value) {
+        this.value = value;
     }
 
     public Literal(List<String> choices) {
-        this.choices.addAll(choices);
+        this(new Choices(choices));
     }
 
     @Override
@@ -21,8 +24,25 @@ public class Literal implements Element {
         visitor.visitLiteral(this);
     }
 
-    public List<String> getChoices() {
-        return Collections.unmodifiableList(choices);
+    public Value getValue() {
+        return value;
     }
 
+    public interface Value {
+    }
+
+    public static class Any implements Value {
+    }
+
+    public static class Choices implements Value {
+        private final List<String> choices = new LinkedList<String>();
+
+        public Choices(List<String> choices) {
+            this.choices.addAll(choices);
+        }
+
+        public List<String> getChoices() {
+            return Collections.unmodifiableList(choices);
+        }
+    }
 }
