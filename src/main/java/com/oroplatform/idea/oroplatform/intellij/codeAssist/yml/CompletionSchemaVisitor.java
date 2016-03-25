@@ -25,64 +25,30 @@ import java.util.List;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.StandardPatterns.string;
 
-class CompletionSchemaVisitor implements Visitor {
+class CompletionSchemaVisitor extends YmlVisitor {
     private final CompletionContributor completion;
-    private final ElementPattern<? extends PsiElement> capture;
 
     CompletionSchemaVisitor(CompletionContributor completion, ElementPattern<? extends PsiElement> capture) {
+        super(capture);
         this.completion = completion;
-        this.capture = capture;
     }
 
     @Override
-    public void visitArray(Array array) {
-        array.getType().accept(new CompletionSchemaVisitor(
-            completion,
-            psiElement(YAMLSequence.class).withSuperParent(2, capture))
-        );
+    protected Visitor nextVisitor(ElementPattern<? extends PsiElement> capture) {
+        return new CompletionSchemaVisitor(completion, capture);
     }
 
     @Override
-    public void visitContainer(Container container) {
+    protected void handleContainer(Container container, ElementPattern<? extends PsiElement> captureElement) {
         List<String> properties = new LinkedList<String>();
 
         for(Property property : container.getProperties()) {
             properties.addAll(property.nameExamples());
         }
-
-        ElementPattern<? extends PsiElement> newCapture = psiElement().withParent(capture);
-
         completion.extend(
             CompletionType.BASIC,
-            psiElement().andOr(
-                getKeyPattern(newCapture),
-                getKeyPattern(psiElement(YAMLHash.class).withParent(psiElement(YAMLCompoundValue.class).withParent(newCapture)))
-            ),
+            captureElement,
             new ChoiceCompletionProvider(properties)
-        );
-
-        for(final Property property : container.getProperties()) {
-            PsiElementPattern.Capture<PsiElement> propertyCapture = psiElement().withName(string().with(new PatternCondition<String>(null) {
-                @Override
-                public boolean accepts(@NotNull String s, ProcessingContext context) {
-                    return property.nameMatches(s);
-                }
-            }));
-            ElementPattern<? extends PsiElement> captureForNextVisitor = psiElement().andOr(
-                psiElement().and(newCapture).withFirstChild(propertyCapture),
-                propertyCapture.withParent(newCapture),
-                propertyCapture.withParent(psiElement(YAMLHash.class).withSuperParent(2, newCapture))
-            );
-            property.getValueElement().accept(new CompletionSchemaVisitor(completion, captureForNextVisitor));
-        }
-    }
-
-    private PsiElementPattern.Capture<PsiElement> getKeyPattern(ElementPattern<? extends PsiElement> parent) {
-        return psiElement().andOr(
-            psiElement(YAMLTokenTypes.TEXT).withParent(parent),
-            psiElement(YAMLTokenTypes.TEXT).withParent(parent).afterSiblingSkipping(psiElement().andNot(psiElement(YAMLTokenTypes.EOL)), psiElement(YAMLTokenTypes.EOL)),
-            psiElement(YAMLTokenTypes.SCALAR_KEY).withParent(psiElement(YAMLKeyValue.class).withSuperParent(2, parent)),
-            psiElement(YAMLTokenTypes.SCALAR_KEY).withParent(psiElement(YAMLKeyValue.class).withParent(parent).withParent(psiElement(YAMLHash.class)))
         );
     }
 

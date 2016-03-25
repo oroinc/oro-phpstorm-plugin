@@ -7,6 +7,7 @@ import java.util.List;
 public class Literal implements Element {
 
     private final Value value;
+
     public Literal() {
         this(new Any());
     }
@@ -44,5 +45,9 @@ public class Literal implements Element {
         public List<String> getChoices() {
             return Collections.unmodifiableList(choices);
         }
+    }
+
+    public static class PhpClass implements Value {
+        //TODO: pattern or other requirements and suggestions
     }
 }

@@ -1,9 +1,8 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
-import com.intellij.codeInsight.lookup.Lookup;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
 
-public class AclCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
+public class AclCompletionTest extends CompletionTest {
 
     def void "test: suggest key in new line"() {
         suggestions(
@@ -175,28 +174,6 @@ public class AclCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
             [],
             ["type"]
         )
-    }
-
-    private def completion(String contents, String expected) {
-        myFixture.configureByText("acl.yml", contents)
-        def elements = myFixture.completeBasic()
-
-        if(elements != null && elements.length == 1) {
-            myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
-        }
-
-        myFixture.checkResult(expected.replace("\r", ""))
-    }
-
-    private def suggestions(String contents, Collection<String> expectedSuggestions, Collection<String> unexpectedSuggestions = []) {
-        myFixture.configureByText("acl.yml", contents)
-        myFixture.completeBasic()
-
-        def lookupElements = myFixture.getLookupElementStrings()
-
-        assertNotNull(lookupElements)
-        assertContainsElements(lookupElements, expectedSuggestions)
-        assertDoesntContain(lookupElements, unexpectedSuggestions)
     }
 
 }
