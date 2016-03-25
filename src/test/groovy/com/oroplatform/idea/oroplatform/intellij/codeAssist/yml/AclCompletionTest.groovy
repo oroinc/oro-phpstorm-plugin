@@ -5,7 +5,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 
 public class AclCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
 
-    def void testSuggestTypeProperty() {
+    def void testSuggestCompoundValueKey() {
         completion(
             """
             |some_id:
@@ -18,7 +18,7 @@ public class AclCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
         )
     }
 
-    def void testSuggestTypeProperty_withValue() {
+    def void testSuggestCompoundValueKey_withValue() {
         completion(
             """
             |some_id:
@@ -27,6 +27,49 @@ public class AclCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
             """
             |some_id:
             |  type: entity
+            """.stripMargin()
+        )
+    }
+
+    def void testSuggestCompoundValueKey_afterOtherKey() {
+        completion(
+            """
+            |some_id:
+            |  label: abc
+            |  t<caret>
+            """.stripMargin(),
+            """
+            |some_id:
+            |  label: abc
+            |  type
+            """.stripMargin()
+        )
+    }
+
+    def void testSuggestCompoundValueKey_withValue_andAfterOtherKey() {
+        completion(
+            """
+            |some_id:
+            |  label: abc
+            |  t<caret>: entity
+            """.stripMargin(),
+            """
+            |some_id:
+            |  label: abc
+            |  type: entity
+            """.stripMargin()
+        )
+    }
+
+    def void testSuggestCompoundValue_doesNotSuggestKeyAsValue() {
+        completion(
+            """
+            |some_id:
+            |  label: t<caret>
+            """.stripMargin(),
+            """
+            |some_id:
+            |  label: t
             """.stripMargin()
         )
     }

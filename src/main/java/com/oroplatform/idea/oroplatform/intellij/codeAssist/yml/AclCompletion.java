@@ -5,10 +5,13 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.util.ProcessingContext;
 import com.oroplatform.idea.oroplatform.schema.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.YAMLArray;
+import org.jetbrains.yaml.psi.YAMLCompoundValue;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
 import java.util.Arrays;
@@ -64,7 +67,8 @@ public class AclCompletion extends CompletionContributor {
                 CompletionType.BASIC,
                 psiElement().andOr(
                     psiElement().withParent(newCapture),
-                    psiElement().withParent(psiElement(YAMLKeyValue.class).withSuperParent(2, newCapture))
+                    psiElement().withParent(psiElement(YAMLCompoundValue.class).withParent(newCapture)),
+                    psiElement(YAMLTokenTypes.SCALAR_KEY).withParent(psiElement(YAMLKeyValue.class).withSuperParent(2, newCapture))
                 ),
                 new ChoiceCompletionProvider(properties)
             );
