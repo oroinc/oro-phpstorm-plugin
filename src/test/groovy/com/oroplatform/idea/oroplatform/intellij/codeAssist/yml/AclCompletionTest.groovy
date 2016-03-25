@@ -1,7 +1,8 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
 import com.intellij.codeInsight.lookup.Lookup;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import org.junit.Ignore;
 
 public class AclCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
 
@@ -70,6 +71,62 @@ public class AclCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
             """
             |some_id:
             |  label: t
+            """.stripMargin()
+        )
+    }
+
+    //TODO: for more sophisticated cases
+    def void ignoreTestSuggestKeyValueOnTopLevel_doesNotSuggestKeyAsValue() {
+        completion(
+            """
+            |some_id: t<caret>
+            """.stripMargin(),
+            """
+            |some_id: t
+            """.stripMargin()
+        )
+    }
+
+    def void testSuggestCompoundValueInHash() {
+        completion(
+            """
+            |some_id: { t<caret> }
+            """.stripMargin(),
+            """
+            |some_id: { type }
+            """.stripMargin()
+        )
+    }
+
+    def void testSuggestCompoundValueInHash_doesNotSuggestKeyAsValue() {
+        completion(
+            """
+            |some_id: { label: t<caret> }
+            """.stripMargin(),
+            """
+            |some_id: { label: t }
+            """.stripMargin()
+        )
+    }
+
+    def void testSuggestCompoundValueInHash_suggestNextKey() {
+        completion(
+            """
+            |some_id: { label: value, t<caret> }
+            """.stripMargin(),
+            """
+            |some_id: { label: value, type }
+            """.stripMargin()
+        )
+    }
+
+    def void testSuggestCompoundValueInHash_withValue() {
+        completion(
+            """
+            |some_id: { t<caret>: entity }
+            """.stripMargin(),
+            """
+            |some_id: { type: entity }
             """.stripMargin()
         )
     }
