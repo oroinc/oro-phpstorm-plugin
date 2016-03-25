@@ -10,10 +10,7 @@ import com.intellij.util.ProcessingContext;
 import com.oroplatform.idea.oroplatform.schema.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.YAMLTokenTypes;
-import org.jetbrains.yaml.psi.YAMLArray;
-import org.jetbrains.yaml.psi.YAMLCompoundValue;
-import org.jetbrains.yaml.psi.YAMLHash;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.*;
 
 import static java.util.Arrays.*;
 import java.util.LinkedList;
@@ -32,7 +29,10 @@ public class AclCompletion extends CompletionContributor {
                 new Property("permission", new Literal(asList("VIEW", "EDIT", "CREATE", "DELETE"))),
                 new Property("label", new Literal()),
                 new Property("group_name", new Literal()),
-                new Property("bindings", new Literal())
+                new Property("bindings", new Array(new Container(asList(
+                    new Property("class", new Literal()),
+                    new Property("method", new Literal())
+                ))))
             ))
         )
     ));
@@ -51,7 +51,9 @@ public class AclCompletion extends CompletionContributor {
 
         @Override
         public void visitArray(Array array) {
-            array.getType().accept(new CompletionSchemaVisitor(psiElement(YAMLArray.class).withParent(capture)));
+            array.getType().accept(new CompletionSchemaVisitor(
+                psiElement(YAMLSequence.class).withSuperParent(2, capture))
+            );
         }
 
         @Override
@@ -68,7 +70,7 @@ public class AclCompletion extends CompletionContributor {
                 CompletionType.BASIC,
                 psiElement().andOr(
                     getKeyPattern(newCapture),
-                    getKeyPattern(psiElement(YAMLHash.class).withSuperParent(2, newCapture))
+                    getKeyPattern(psiElement(YAMLHash.class).withParent(psiElement(YAMLCompoundValue.class).withParent(newCapture)))
                 ),
                 new ChoiceCompletionProvider(properties)
             );
@@ -93,7 +95,6 @@ public class AclCompletion extends CompletionContributor {
             return psiElement().andOr(
                 psiElement(YAMLTokenTypes.TEXT).withParent(parent),
                 psiElement(YAMLTokenTypes.TEXT).withParent(parent).afterSiblingSkipping(psiElement().andNot(psiElement(YAMLTokenTypes.EOL)), psiElement(YAMLTokenTypes.EOL)),
-                psiElement().withParent(psiElement(YAMLCompoundValue.class).withParent(parent)),
                 psiElement(YAMLTokenTypes.SCALAR_KEY).withParent(psiElement(YAMLKeyValue.class).withSuperParent(2, parent)),
                 psiElement(YAMLTokenTypes.SCALAR_KEY).withParent(psiElement(YAMLKeyValue.class).withParent(parent).withParent(psiElement(YAMLHash.class)))
             );

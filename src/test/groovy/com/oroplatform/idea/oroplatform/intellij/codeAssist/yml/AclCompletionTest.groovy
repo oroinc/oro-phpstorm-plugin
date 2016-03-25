@@ -154,6 +154,49 @@ public class AclCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
         )
     }
 
+    def void testSuggestKeyInsideArray() {
+        completion(
+            """
+            |some_id:
+            |  bindings:
+            |    - { cl<caret> }
+            """.stripMargin(),
+            """
+            |some_id:
+            |  bindings:
+            |    - { class }
+            """.stripMargin()
+        )
+    }
+
+    def void testSuggestKeyInsideArray_withValue() {
+        completion(
+            """
+            |some_id:
+            |  bindings:
+            |    - { cl<caret>: someClass }
+            """.stripMargin(),
+            """
+            |some_id:
+            |  bindings:
+            |    - { class: someClass }
+            """.stripMargin()
+        )
+    }
+
+    def void testSuggestCompoundKey_insideArray_shouldNotBeCompleted() {
+        completion(
+            """
+            |some_id:
+            |  - { t<caret> }
+            """.stripMargin(),
+            """
+            |some_id:
+            |  - { t }
+            """.stripMargin()
+        )
+    }
+
     private def completion(String contents, String expected) {
         myFixture.configureByText("acl.yml", contents)
         def elements = myFixture.completeBasic()
