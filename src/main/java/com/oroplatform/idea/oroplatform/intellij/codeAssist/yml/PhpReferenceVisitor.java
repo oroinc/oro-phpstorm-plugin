@@ -3,7 +3,6 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceRegistrar;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceProvider;
 import com.oroplatform.idea.oroplatform.schema.Container;
 import com.oroplatform.idea.oroplatform.schema.Literal;
 import com.oroplatform.idea.oroplatform.schema.Visitor;

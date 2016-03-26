@@ -1,16 +1,16 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist;
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
 import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlKeyValueManipulator;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLQuotedText;
 
-public class PhpReferenceProvider extends PsiReferenceProvider {
+class PhpReferenceProvider extends PsiReferenceProvider {
 
     static {
         ElementManipulators.INSTANCE.addExplicitExtension(YAMLKeyValue.class, new YamlKeyValueManipulator());

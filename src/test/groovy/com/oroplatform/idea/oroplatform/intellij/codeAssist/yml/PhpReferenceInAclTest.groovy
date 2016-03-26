@@ -16,6 +16,7 @@ public class PhpReferenceInAclTest extends CompletionTest {
             |
             |namespace Oro\\Bundle\\AddressBundle\\Controller {
             |  class AdminController {
+            |    public function editAction() {}
             |  }
             |}
             |
@@ -39,6 +40,17 @@ public class PhpReferenceInAclTest extends CompletionTest {
         )
     }
 
+    def void "test: detect php class with escaped namespace separator"() {
+        checkPhpReference(
+            """
+            |some:
+            |  class: "Oro\\\\Bundle\\\\AddressBundle\\\\Entity\\\\Address<caret>"
+            """.stripMargin(),
+
+            ["Address"]
+        )
+    }
+
     def void "test: should suggest class by name"() {
         suggestions(
             """
@@ -47,6 +59,44 @@ public class PhpReferenceInAclTest extends CompletionTest {
             """.stripMargin(),
 
             ["Address"]
+        )
+    }
+
+    def void "test: should complete fq class name"() {
+        completion(
+            """
+            |some:
+            |  class: Addr<caret>
+            """.stripMargin(),
+            """
+            |some:
+            |  class: "Oro\\\\Bundle\\\\AddressBundle\\\\Entity\\\\Address"
+            """.stripMargin()
+        )
+    }
+
+    def void "test: should complete fq class name in quotes"() {
+        completion(
+            """
+            |some:
+            |  class: "Addr<caret>"
+            """.stripMargin(),
+            """
+            |some:
+            |  class: "Oro\\\\Bundle\\\\AddressBundle\\\\Entity\\\\Address"
+            """.stripMargin()
+        )
+    }
+
+    def void "test: should suggest controller class in bindings"() {
+        suggestions(
+            """
+            |some:
+            |  bindings:
+            |    - { class: <caret> }
+            """.stripMargin(),
+
+            ["AdminController"]
         )
     }
 

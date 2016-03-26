@@ -14,12 +14,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
-class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
+public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final String text;
 
-    PhpClassReference(PsiElement psiElement, @NotNull String text) {
+    public PhpClassReference(PsiElement psiElement, @NotNull String text) {
         super(psiElement);
-        this.text = text.replace("IntellijIdeaRulezzz", "").trim();
+        this.text = text.replace("IntellijIdeaRulezzz", "").trim().replace("\\\\", "\\");
     }
 
     @NotNull
@@ -46,7 +46,7 @@ class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         for(String className : phpIndex.getAllClassNames(classMatcher)) {
             PhpClass phpClass = phpIndex.getClassByName(className);
             if(phpClass != null) {
-                results.add(new PhpClassLookupElement(phpClass, true, null));
+                results.add(new PhpClassLookupElement(phpClass, true, PhpClassInsertHandler.INSTANCE));
             }
         }
 
