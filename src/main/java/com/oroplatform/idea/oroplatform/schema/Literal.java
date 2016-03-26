@@ -50,4 +50,8 @@ public class Literal implements Element {
     public static class PhpClass implements Value {
         //TODO: pattern or other requirements and suggestions
     }
+
+    public static class PhpMethod implements Value {
+        //TODO: pattern or other requirements and suggestions
+    }
 }

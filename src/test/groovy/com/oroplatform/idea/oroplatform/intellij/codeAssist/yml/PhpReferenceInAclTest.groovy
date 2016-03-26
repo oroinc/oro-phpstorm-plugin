@@ -100,6 +100,30 @@ public class PhpReferenceInAclTest extends CompletionTest {
         )
     }
 
+    def void "test: should suggest controller action in bindings"() {
+        suggestions(
+            """
+            |some:
+            |  bindings:
+            |    - { class: "Oro\\\\Bundle\\\\AddressBundle\\\\Controller\\\\AdminController", method: <caret> }
+            """.stripMargin(),
+
+            ["editAction"]
+        )
+    }
+
+    def void "test: detect php method reference"() {
+        checkPhpReference(
+            """
+            |some:
+            |  bindings:
+            |    - { class: "Oro\\\\Bundle\\\\AddressBundle\\\\Controller\\\\AdminController", method: editActi<caret>on }
+            """.stripMargin(),
+
+            ["editAction"]
+        )
+    }
+
     private def checkPhpReference(String content, List<String> expectedReferences) {
         assertEquals(expectedReferences, getPhpReference(content))
     }
@@ -109,14 +133,17 @@ public class PhpReferenceInAclTest extends CompletionTest {
 
         myFixture.getProject().getBaseDir().refresh(false, true)
 
-        def element = myFixture.getFile().findElementAt(myFixture.getCaretOffset()).getParent()
+        def element = myFixture.getFile().findElementAt(myFixture.getCaretOffset())
+        def elements = [element, element.getParent(), element.getParent().getParent()]
 
-        element.getReferences()
+        elements.collect { it.getReferences() }
+                .flatten()
                 .findAll { it instanceof PsiPolyVariantReferenceBase }
                 .collect {  it as PsiPolyVariantReferenceBase }
                 .collect { it.multiResolve(false) }
                 .flatten()
                 .collect { (it.getElement() as PhpNamedElement).getName() }
+                .unique()
                 .toList()
     }
 }

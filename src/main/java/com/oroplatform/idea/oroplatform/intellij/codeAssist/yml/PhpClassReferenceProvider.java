@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLQuotedText;
 
-class PhpReferenceProvider extends PsiReferenceProvider {
+class PhpClassReferenceProvider extends PsiReferenceProvider {
 
     static {
         ElementManipulators.INSTANCE.addExplicitExtension(YAMLKeyValue.class, new YamlKeyValueManipulator());
