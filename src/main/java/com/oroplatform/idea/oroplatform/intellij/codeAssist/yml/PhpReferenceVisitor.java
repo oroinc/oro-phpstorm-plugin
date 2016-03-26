@@ -7,7 +7,7 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceProvider
 import com.oroplatform.idea.oroplatform.schema.Container;
 import com.oroplatform.idea.oroplatform.schema.Literal;
 import com.oroplatform.idea.oroplatform.schema.Visitor;
-import org.jetbrains.yaml.YAMLTokenTypes;
+import org.jetbrains.yaml.psi.YAMLQuotedText;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
@@ -33,7 +33,13 @@ class PhpReferenceVisitor extends YmlVisitor {
     public void visitLiteral(Literal literal) {
         //TODO: refactor
         if(literal.getValue() instanceof Literal.PhpClass) {
-            registrar.registerReferenceProvider(capture, new PhpReferenceProvider());
+            registrar.registerReferenceProvider(
+                psiElement().andOr(
+                    capture,
+                    psiElement(YAMLQuotedText.class).withParent(capture)
+                ),
+                new PhpReferenceProvider()
+            );
         }
 
     }

@@ -5,25 +5,19 @@ import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.patterns.ElementPattern;
-import com.intellij.patterns.PatternCondition;
-import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.ProcessingContext;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ChoiceCompletionProvider;
-import com.oroplatform.idea.oroplatform.schema.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.yaml.YAMLTokenTypes;
-import org.jetbrains.yaml.psi.YAMLCompoundValue;
-import org.jetbrains.yaml.psi.YAMLHash;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLSequence;
+import com.oroplatform.idea.oroplatform.schema.Container;
+import com.oroplatform.idea.oroplatform.schema.Literal;
+import com.oroplatform.idea.oroplatform.schema.Property;
+import com.oroplatform.idea.oroplatform.schema.Visitor;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
-import static com.intellij.patterns.StandardPatterns.string;
 
 class CompletionSchemaVisitor extends YmlVisitor {
     private final CompletionContributor completion;
@@ -56,7 +50,7 @@ class CompletionSchemaVisitor extends YmlVisitor {
     public void visitLiteral(Literal literal) {
         completion.extend(
             CompletionType.BASIC,
-            psiElement(YAMLTokenTypes.TEXT).withParent(capture),
+            psiElement(LeafPsiElement.class).withSuperParent(2, capture),
             getCompletionProviderFor(literal.getValue())
         );
     }

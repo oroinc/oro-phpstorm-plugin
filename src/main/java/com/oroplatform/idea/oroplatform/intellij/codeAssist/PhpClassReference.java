@@ -6,22 +6,20 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReferenceBase;
 import com.intellij.psi.ResolveResult;
-import com.intellij.util.text.Matcher;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.completion.PhpClassLookupElement;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
 
 import java.util.LinkedList;
 import java.util.List;
 
-class PhpClassReference extends PsiPolyVariantReferenceBase<YAMLKeyValue> {
+class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final String text;
 
-    PhpClassReference(YAMLKeyValue psiElement, @NotNull String text) {
+    PhpClassReference(PsiElement psiElement, @NotNull String text) {
         super(psiElement);
-        this.text = text.replace("IntellijIdeaRulezzz ", "");
+        this.text = text.replace("IntellijIdeaRulezzz", "").trim();
     }
 
     @NotNull

@@ -17,7 +17,7 @@ def phpPluginVersion = "php-143.382.38"
 sourceCompatibility = 1.6
 
 intellij {
-    version project.hasProperty('ideaVersion') ? ideaVersion : 'IU-15.0.4'
+    version project.hasProperty('ideaVersion') ? ideaVersion : 'IU-2016.1'
     type 'IU'
     pluginName 'idea-oroplatform-plugin'
     plugins = ['php', 'yaml', 'java-i18n', 'properties', 'CSS']

@@ -8,6 +8,7 @@ import com.intellij.util.ProcessingContext;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlKeyValueManipulator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.YAMLQuotedText;
 
 public class PhpReferenceProvider extends PsiReferenceProvider {
 
@@ -19,8 +20,11 @@ public class PhpReferenceProvider extends PsiReferenceProvider {
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         if(element instanceof YAMLKeyValue) {
-            return new PsiReference[] { new PhpClassReference((YAMLKeyValue) element, ((YAMLKeyValue) element).getValueText()) };
+            return new PsiReference[] { new PhpClassReference(element, ((YAMLKeyValue) element).getValueText()) };
+        } else if(element instanceof YAMLQuotedText) {
+            return new PsiReference[] { new PhpClassReference(element, ((YAMLQuotedText) element).getTextValue()) };
         }
+
         return new PsiReference[0];
     }
 }
