@@ -37,7 +37,7 @@ class PhpReferenceVisitor extends YmlVisitor {
                     capture,
                     psiElement(YAMLQuotedText.class).withParent(capture)
                 ),
-                new PhpClassReferenceProvider()
+                new PhpClassReferenceProvider((Literal.PhpClass) literal.getValue())
             );
         } else if(literal.getValue() instanceof Literal.PhpMethod) {
             registrar.registerReferenceProvider(capture, new PhpMethodReferenceProvider());

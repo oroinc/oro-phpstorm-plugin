@@ -6,25 +6,23 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 
-public class PhpClassInsertHandler implements InsertHandler<LookupElement> {
+class PhpClassInsertHandler implements InsertHandler<LookupElement> {
 
-    public static final InsertHandler<LookupElement> INSTANCE = new PhpClassInsertHandler();
+    static final InsertHandler<LookupElement> INSTANCE = new PhpClassInsertHandler();
 
     @Override
     public void handleInsert(InsertionContext context, LookupElement item) {
         if(item.getObject() instanceof PhpClass) {
-            PhpClass phpClass = (PhpClass) item.getObject();
+            final PhpClass phpClass = (PhpClass) item.getObject();
             final char lastChar = context.getDocument().getCharsSequence().charAt(context.getTailOffset());
             final boolean isAroundQuotes = lastChar == '\"' || lastChar == '\'';
-            if(!isAroundQuotes) {
-                context.getDocument().insertString(context.getTailOffset(), "\"");
-            }
-            context.getDocument().insertString(context.getStartOffset(), (isAroundQuotes ? "" : "\"")+getFixedFQNamespace(phpClass));
+            context.getDocument().insertString(context.getStartOffset(), getFixedFQNamespace(phpClass, isAroundQuotes));
         }
     }
 
-    private static String getFixedFQNamespace(PhpClass phpClass) {
-        return escapeSlashes(StringUtil.trimStart(phpClass.getNamespaceName(), "\\"));
+    private static String getFixedFQNamespace(PhpClass phpClass, boolean escapeSlashes) {
+        final String namespace = StringUtil.trimStart(phpClass.getNamespaceName(), "\\");
+        return escapeSlashes ? escapeSlashes(namespace) : namespace;
     }
 
     private static String escapeSlashes(String s) {

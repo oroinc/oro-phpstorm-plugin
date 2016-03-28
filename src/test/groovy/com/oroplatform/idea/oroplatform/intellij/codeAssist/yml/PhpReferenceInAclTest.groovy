@@ -14,16 +14,15 @@ public class PhpReferenceInAclTest extends CompletionTest {
             """
             |<?php
             |
-            |namespace Oro\\Bundle\\AddressBundle\\Controller {
+            |namespace Oro\\Bundle\\AcmeBundle\\Controller {
             |  class AdminController {
             |    public function editAction() {}
             |  }
             |}
             |
-            |namespace Oro\\Bundle\\AddressBundle\\Entity {
+            |namespace Oro\\Bundle\\AcmeBundle\\Entity {
             |  class Address {}
             |}
-            |
             |
           """.stripMargin()
         )
@@ -33,7 +32,7 @@ public class PhpReferenceInAclTest extends CompletionTest {
         checkPhpReference(
             """
             |some:
-            |  class: "Oro\\Bundle\\AddressBundle\\Entity\\Address<caret>"
+            |  class: "Oro\\Bundle\\AcmeBundle\\Entity\\Address<caret>"
             """.stripMargin(),
 
             ["Address"]
@@ -44,21 +43,44 @@ public class PhpReferenceInAclTest extends CompletionTest {
         checkPhpReference(
             """
             |some:
-            |  class: "Oro\\\\Bundle\\\\AddressBundle\\\\Entity\\\\Address<caret>"
+            |  class: "Oro\\\\Bundle\\\\AcmeBundle\\\\Entity\\\\Address<caret>"
             """.stripMargin(),
 
             ["Address"]
         )
     }
 
-    def void "test: should suggest class by name"() {
+    def void "test: detect php entity in shortcut notation"() {
+        checkPhpReference(
+            """
+            |some:
+            |  class: OroAcmeBundle:Addre<caret>ss
+            """.stripMargin(),
+
+            ["Address"]
+        )
+    }
+
+    def void "test: should suggest entity class by name"() {
         suggestions(
             """
             |some:
             |  class: <caret>
             """.stripMargin(),
 
-            ["Address"]
+            ["Address"],
+            ["AdminController"]
+        )
+    }
+
+    def void "test: should suggest entity shortcut class name"() {
+        suggestions(
+            """
+            |some:
+            |  class: <caret>
+            """.stripMargin(),
+
+            ["OroAcmeBundle:Address"]
         )
     }
 
@@ -70,7 +92,7 @@ public class PhpReferenceInAclTest extends CompletionTest {
             """.stripMargin(),
             """
             |some:
-            |  class: "Oro\\\\Bundle\\\\AddressBundle\\\\Entity\\\\Address"
+            |  class: Oro\\Bundle\\AcmeBundle\\Entity\\Address
             """.stripMargin()
         )
     }
@@ -83,7 +105,7 @@ public class PhpReferenceInAclTest extends CompletionTest {
             """.stripMargin(),
             """
             |some:
-            |  class: "Oro\\\\Bundle\\\\AddressBundle\\\\Entity\\\\Address"
+            |  class: "Oro\\\\Bundle\\\\AcmeBundle\\\\Entity\\\\Address"
             """.stripMargin()
         )
     }
@@ -96,7 +118,8 @@ public class PhpReferenceInAclTest extends CompletionTest {
             |    - { class: <caret> }
             """.stripMargin(),
 
-            ["AdminController"]
+            ["AdminController"],
+            ["Address"]
         )
     }
 
@@ -105,7 +128,7 @@ public class PhpReferenceInAclTest extends CompletionTest {
             """
             |some:
             |  bindings:
-            |    - { class: "Oro\\\\Bundle\\\\AddressBundle\\\\Controller\\\\AdminController", method: <caret> }
+            |    - { class: "Oro\\\\Bundle\\\\AcmeBundle\\\\Controller\\\\AdminController", method: <caret> }
             """.stripMargin(),
 
             ["editAction"]
@@ -117,7 +140,7 @@ public class PhpReferenceInAclTest extends CompletionTest {
             """
             |some:
             |  bindings:
-            |    - { class: "Oro\\\\Bundle\\\\AddressBundle\\\\Controller\\\\AdminController", method: editActi<caret>on }
+            |    - { class: "Oro\\\\Bundle\\\\AcmeBundle\\\\Controller\\\\AdminController", method: editActi<caret>on }
             """.stripMargin(),
 
             ["editAction"]

@@ -3,3 +3,4 @@
 *.iml
 build/
 .idea-sandbox/
+.DS_Store

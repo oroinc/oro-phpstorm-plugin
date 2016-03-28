@@ -9,7 +9,7 @@ public abstract class CompletionTest extends LightPlatformCodeInsightFixtureTest
         myFixture.configureByText("acl.yml", contents)
         def elements = myFixture.completeBasic()
 
-        if(elements != null && elements.length == 1) {
+        if(elements != null) {
             myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
         }
 

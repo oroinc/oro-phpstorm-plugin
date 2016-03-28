@@ -48,7 +48,19 @@ public class Literal implements Element {
     }
 
     public static class PhpClass implements Value {
-        //TODO: pattern or other requirements and suggestions
+        private final Type type;
+
+        public PhpClass(Type type) {
+            this.type = type;
+        }
+
+        public Type getType() {
+            return type;
+        }
+
+        public enum Type {
+            Entity, Controller
+        }
     }
 
     public static class PhpMethod implements Value {
