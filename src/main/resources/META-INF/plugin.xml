@@ -23,6 +23,15 @@
                              id="OroPlatform.settings"
                              groupId="language" />
         <projectService serviceImplementation="com.oroplatform.idea.oroplatform.settings.OroPlatformSettings"/>
+        <localInspection
+                bundle="com.oroplatform.idea.oroplatform.messages.OroPlatformBundle"
+                language="yaml"
+                implementationClass="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.AclInspection"
+                displayName="Oro acl.yml"
+                enabledByDefault="true"
+                level="ERROR"
+                groupKey="inspection.group"
+        />
     </extensions>
 
     <application-components>
