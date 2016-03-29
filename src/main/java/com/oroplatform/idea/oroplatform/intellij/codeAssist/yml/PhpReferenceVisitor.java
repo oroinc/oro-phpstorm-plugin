@@ -40,7 +40,7 @@ class PhpReferenceVisitor extends YmlVisitor {
                 new PhpClassReferenceProvider((Literal.PhpClass) literal.getValue())
             );
         } else if(literal.getValue() instanceof Literal.PhpMethod) {
-            registrar.registerReferenceProvider(capture, new PhpMethodReferenceProvider());
+            registrar.registerReferenceProvider(capture, new PhpMethodReferenceProvider((Literal.PhpMethod) literal.getValue()));
         }
 
     }

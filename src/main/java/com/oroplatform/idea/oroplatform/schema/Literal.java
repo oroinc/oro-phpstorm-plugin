@@ -3,6 +3,7 @@ package com.oroplatform.idea.oroplatform.schema;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Literal implements Element {
 
@@ -64,6 +65,21 @@ public class Literal implements Element {
     }
 
     public static class PhpMethod implements Value {
-        //TODO: pattern or other requirements and suggestions
+        private final Pattern pattern;
+
+        /**
+         * @param pattern Simple pattern, use * for any string
+         */
+        public PhpMethod(String pattern) {
+            this.pattern = Pattern.compile("^"+pattern.replace("*", ".*")+"$");
+        }
+
+        public PhpMethod() {
+            this("*");
+        }
+
+        public boolean matches(String name) {
+            return pattern.matcher(name).matches();
+        }
     }
 }

@@ -17,6 +17,7 @@ public class PhpReferenceInAclTest extends CompletionTest {
             |namespace Oro\\Bundle\\AcmeBundle\\Controller {
             |  class AdminController {
             |    public function editAction() {}
+            |    public function someFunc() {}
             |  }
             |}
             |
@@ -131,7 +132,8 @@ public class PhpReferenceInAclTest extends CompletionTest {
             |    - { class: "Oro\\\\Bundle\\\\AcmeBundle\\\\Controller\\\\AdminController", method: <caret> }
             """.stripMargin(),
 
-            ["editAction"]
+            ["editAction"],
+            ["someFunc"]
         )
     }
 

@@ -17,7 +17,7 @@ public class Schemas {
                 new Property("group_name", new Literal()),
                 new Property("bindings", new Array(new Container(asList(
                     new Property("class", new Literal(new Literal.PhpClass(Literal.PhpClass.Type.Controller))),
-                    new Property("method", new Literal(new Literal.PhpMethod()))
+                    new Property("method", new Literal(new Literal.PhpMethod("*Action")))
                 ))))
             ))
         )
