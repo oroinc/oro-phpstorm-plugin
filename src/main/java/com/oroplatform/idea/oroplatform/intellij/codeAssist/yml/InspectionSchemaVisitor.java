@@ -1,26 +1,24 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.patterns.ElementPattern;
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.oroplatform.idea.oroplatform.schema.Array;
-import com.oroplatform.idea.oroplatform.schema.Container;
-import com.oroplatform.idea.oroplatform.schema.Literal;
-import com.oroplatform.idea.oroplatform.schema.Visitor;
-import org.jetbrains.yaml.psi.YAMLPsiElement;
+import com.oroplatform.idea.oroplatform.OroPlatformBundle;
+import com.oroplatform.idea.oroplatform.schema.*;
+import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.YAMLMapping;
+import org.jetbrains.yaml.psi.YAMLScalar;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-//TODO: Implement schema inspection
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.PsiElements.*;
+
 class InspectionSchemaVisitor implements Visitor {
-    private final List<ProblemDescriptor> collectedProblems;
-    private final ElementPattern<? extends PsiElement> capture;
-    private final List<YAMLPsiElement> elements = new LinkedList<YAMLPsiElement>();
+    private final ProblemsHolder problems;
+    private final List<PsiElement> elements = new LinkedList<PsiElement>();
 
-    InspectionSchemaVisitor(List<ProblemDescriptor> collectedProblems, List<YAMLPsiElement> elements, ElementPattern<? extends PsiElement> parentPattern) {
-        this.collectedProblems = collectedProblems;
-        this.capture = parentPattern;
+    InspectionSchemaVisitor(ProblemsHolder problems, List<PsiElement> elements) {
+        this.problems = problems;
         this.elements.addAll(elements);
     }
 
@@ -31,11 +29,28 @@ class InspectionSchemaVisitor implements Visitor {
 
     @Override
     public void visitContainer(Container container) {
-
+        for(YAMLMapping element : getMappings(elements)) {
+            for(Property property : container.getProperties()) {
+                for(YAMLKeyValue keyValue : getKeyValuesFrom(element)) {
+                    if(property.nameMatches(keyValue.getName())) {
+                        Visitor visitor = new InspectionSchemaVisitor(problems, Collections.<PsiElement>singletonList(keyValue.getValue()));
+                        property.getValueElement().accept(visitor);
+                    }
+                }
+            }
+        }
     }
 
     @Override
     public void visitLiteral(Literal literal) {
-
+        for(YAMLScalar element : getScalars(elements)) {
+            //TODO: refactor
+            if(literal.getValue() instanceof Literal.Choices) {
+                List<String> choices = ((Literal.Choices) literal.getValue()).getChoices();
+                if(!choices.contains(element.getTextValue())) {
+                    problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.notAllowedPropertyValue", element.getTextValue(), StringUtil.join(choices, ", ")));
+                }
+            }
+        }
     }
 }
