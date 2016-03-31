@@ -16,8 +16,12 @@ import java.util.List;
 class PsiElements {
 
     static Collection<YAMLKeyValue> getKeyValuesFrom(YAMLMapping element) {
+        return getKeyValues(Arrays.asList(element.getChildren()));
+    }
+
+    static Collection<YAMLKeyValue> getKeyValues(Collection<PsiElement> elements) {
         List<YAMLKeyValue> children = new LinkedList<YAMLKeyValue>();
-        for(PsiElement child : element.getChildren()) {
+        for(PsiElement child : elements) {
             if(child instanceof YAMLKeyValue) {
                 children.add((YAMLKeyValue) child);
             }

@@ -31,10 +31,18 @@ class InspectionSchemaVisitor extends VisitorAdapter {
     public void visitContainer(Container container) {
         for(YAMLMapping element : getMappings(elements)) {
             for(Property property : container.getProperties()) {
+                boolean found = false;
                 for(YAMLKeyValue keyValue : getKeyValuesFrom(element)) {
                     if(property.nameMatches(keyValue.getName())) {
+                        found = true;
                         Visitor visitor = new InspectionSchemaVisitor(problems, Collections.<PsiElement>singletonList(keyValue.getValue()));
                         property.getValueElement().accept(visitor);
+                    }
+                }
+
+                if(!found && property.isRequired()) {
+                    for(YAMLKeyValue aaa : getKeyValues(Collections.singletonList(element.getParent()))) {
+                        problems.registerProblem(aaa.getKey() == null ? aaa : aaa.getKey(), OroPlatformBundle.message("inspection.schema.required", property.getName()));
                     }
                 }
             }

@@ -8,6 +8,10 @@ class AclInspectionsTest extends InspectionTest {
         return "acl.yml"
     }
 
+    def requiredProperties = """
+                             |  label: someLabel
+                             """.stripMargin()
+
     @Override
     def void setUp() {
         super.setUp()
@@ -18,6 +22,7 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
+            |  $requiredProperties
             |  type: <error>invalid</error>
             """.stripMargin()
         )
@@ -27,6 +32,7 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
+            |  $requiredProperties
             |  type: <error>"invalid"</error>
             """.stripMargin()
         )
@@ -36,7 +42,8 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
-            |  type: entity
+            |  $requiredProperties
+            |  type: action
             """.stripMargin()
         )
     }
@@ -45,7 +52,17 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
-            |  type: "entity"
+            |  $requiredProperties
+            |  type: "action"
+            """.stripMargin()
+        )
+    }
+
+    def void "test: should detect missing required properties on top level"() {
+        checkInspection(
+            """
+            |<error descr="The 'label' property is required.">some_id:</error>
+            |  type: "action"
             """.stripMargin()
         )
     }

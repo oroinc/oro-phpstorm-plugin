@@ -13,7 +13,7 @@ public class Schemas {
                 new Property("type", new Scalar(asList("entity", "action"))),
                 new Property("class", new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity))),
                 new Property("permission", new Scalar(asList("VIEW", "EDIT", "CREATE", "DELETE"))),
-                new Property("label", new Scalar()),
+                new Property("label", new Scalar(), true),
                 new Property("group_name", new Scalar()),
                 new Property("bindings", new Sequence(new Container(asList(
                     new Property("class", new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Controller))),

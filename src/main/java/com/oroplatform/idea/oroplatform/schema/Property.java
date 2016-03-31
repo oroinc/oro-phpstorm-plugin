@@ -7,18 +7,28 @@ public class Property {
 
     private final Pattern name;
     private final Element valueElement;
+    private final boolean required;
 
-    private Property(Pattern name, Element valueElement) {
+    private Property(Pattern name, Element valueElement, boolean required) {
         this.name = name;
         this.valueElement = valueElement;
+        this.required = required;
     }
 
     public Property(String name, Element valueElement) {
-        this(new ExactlyPattern(name), valueElement);
+        this(name, valueElement, false);
+    }
+
+    public Property(String name, Element valueElement, boolean required) {
+        this(new ExactlyPattern(name), valueElement, required);
     }
 
     public Property(java.util.regex.Pattern name, Element valueElement) {
-        this(new RegexpPattern(name), valueElement);
+        this(new RegexpPattern(name), valueElement, false);
+    }
+
+    public Property(java.util.regex.Pattern name, Element valueElement, boolean required) {
+        this(new RegexpPattern(name), valueElement, required);
     }
 
     public boolean nameMatches(String name) {
@@ -33,11 +43,19 @@ public class Property {
         return valueElement;
     }
 
+    public String getName() {
+        return this.name.getName();
+    }
+
     @Override
     public String toString() {
         return "Property{" +
                 "name=" + name +
                 '}';
+    }
+
+    public boolean isRequired() {
+        return required;
     }
 
     private static class RegexpPattern implements Pattern {
@@ -58,6 +76,11 @@ public class Property {
         @Override
         public List<String> examples() {
             return Collections.emptyList();
+        }
+
+        @Override
+        public String getName() {
+            return value.toString();
         }
 
         @Override
@@ -86,6 +109,11 @@ public class Property {
         }
 
         @Override
+        public String getName() {
+            return value;
+        }
+
+        @Override
         public String toString() {
             return "ExactlyPattern{" +
                     "value='" + value + '\'' +
@@ -96,5 +124,6 @@ public class Property {
     private interface Pattern {
         boolean matches(String value);
         List<String> examples();
+        String getName();
     }
 }
