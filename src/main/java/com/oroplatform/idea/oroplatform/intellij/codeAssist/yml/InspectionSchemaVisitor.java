@@ -13,7 +13,7 @@ import java.util.*;
 
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.PsiElements.*;
 
-class InspectionSchemaVisitor implements Visitor {
+class InspectionSchemaVisitor extends VisitorAdapter {
     private final ProblemsHolder problems;
     private final List<PsiElement> elements = new LinkedList<PsiElement>();
 
@@ -23,7 +23,7 @@ class InspectionSchemaVisitor implements Visitor {
     }
 
     @Override
-    public void visitArray(Array array) {
+    public void visitSequence(Sequence sequence) {
 
     }
 
@@ -42,14 +42,10 @@ class InspectionSchemaVisitor implements Visitor {
     }
 
     @Override
-    public void visitLiteral(Literal literal) {
+    public void visitLiteralChoicesValue(Scalar.Choices choices) {
         for(YAMLScalar element : getScalars(elements)) {
-            //TODO: refactor
-            if(literal.getValue() instanceof Literal.Choices) {
-                List<String> choices = ((Literal.Choices) literal.getValue()).getChoices();
-                if(!choices.contains(element.getTextValue())) {
-                    problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.notAllowedPropertyValue", element.getTextValue(), StringUtil.join(choices, ", ")));
-                }
+            if(!choices.getChoices().contains(element.getTextValue())) {
+                problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.notAllowedPropertyValue", element.getTextValue(), StringUtil.join(choices.getChoices(), ", ")));
             }
         }
     }

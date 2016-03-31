@@ -4,7 +4,7 @@ import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.oroplatform.idea.oroplatform.schema.Container;
-import com.oroplatform.idea.oroplatform.schema.Literal;
+import com.oroplatform.idea.oroplatform.schema.Scalar;
 import com.oroplatform.idea.oroplatform.schema.Visitor;
 import org.jetbrains.yaml.psi.YAMLQuotedText;
 
@@ -29,19 +29,18 @@ class PhpReferenceVisitor extends YmlVisitor {
     }
 
     @Override
-    public void visitLiteral(Literal literal) {
-        //TODO: refactor
-        if(literal.getValue() instanceof Literal.PhpClass) {
-            registrar.registerReferenceProvider(
-                psiElement().andOr(
-                    capture,
-                    psiElement(YAMLQuotedText.class).withParent(capture)
-                ),
-                new PhpClassReferenceProvider((Literal.PhpClass) literal.getValue())
-            );
-        } else if(literal.getValue() instanceof Literal.PhpMethod) {
-            registrar.registerReferenceProvider(capture, new PhpMethodReferenceProvider((Literal.PhpMethod) literal.getValue()));
-        }
+    public void visitLiteralPhpClassValue(Scalar.PhpClass phpClass) {
+        registrar.registerReferenceProvider(
+            psiElement().andOr(
+                capture,
+                psiElement(YAMLQuotedText.class).withParent(capture)
+            ),
+            new PhpClassReferenceProvider(phpClass)
+        );
+    }
 
+    @Override
+    public void visitLiteralPhpMethodValue(Scalar.PhpMethod phpMethod) {
+        registrar.registerReferenceProvider(capture, new PhpMethodReferenceProvider(phpMethod));
     }
 }

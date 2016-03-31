@@ -6,7 +6,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassReference;
-import com.oroplatform.idea.oroplatform.schema.Literal;
+import com.oroplatform.idea.oroplatform.schema.Scalar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLQuotedText;
@@ -17,9 +17,9 @@ class PhpClassReferenceProvider extends PsiReferenceProvider {
         ElementManipulators.INSTANCE.addExplicitExtension(YAMLKeyValue.class, new YamlKeyValueManipulator());
     }
 
-    private final Literal.PhpClass phpClass;
+    private final Scalar.PhpClass phpClass;
 
-    public PhpClassReferenceProvider(Literal.PhpClass phpClass) {
+    public PhpClassReferenceProvider(Scalar.PhpClass phpClass) {
         this.phpClass = phpClass;
     }
 

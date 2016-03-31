@@ -13,16 +13,16 @@ import com.jetbrains.php.completion.PhpClassLookupElement;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.oroplatform.idea.oroplatform.Icons;
 import com.oroplatform.idea.oroplatform.PhpClassUtil;
-import com.oroplatform.idea.oroplatform.schema.Literal;
+import com.oroplatform.idea.oroplatform.schema.Scalar;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final String text;
-    private final Literal.PhpClass.Type type;
+    private final Scalar.PhpClass.Type type;
 
-    public PhpClassReference(PsiElement psiElement, Literal.PhpClass.Type type, @NotNull String text) {
+    public PhpClassReference(PsiElement psiElement, Scalar.PhpClass.Type type, @NotNull String text) {
         super(psiElement);
         this.type = type;
         this.text = text.replace("IntellijIdeaRulezzz", "").trim().replace("\\\\", "\\");
@@ -74,7 +74,7 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
             final PhpClass phpClass = phpIndex.getClassByName(className);
             if(phpClass != null && phpClass.getNamespaceName().endsWith(namespaceSuffix)) {
                 results.add(new PhpClassLookupElement(phpClass, true, PhpClassInsertHandler.INSTANCE));
-                if(type == Literal.PhpClass.Type.Entity) {
+                if(type == Scalar.PhpClass.Type.Entity) {
                     addEntitiesShortcutsLookups(results, phpClass);
                 }
             }

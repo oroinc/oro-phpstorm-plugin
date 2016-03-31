@@ -10,14 +10,14 @@ public class Schemas {
     public static final Element ACL = new Container(Collections.singletonList(
         new Property(Pattern.compile(".+"),
             new Container(asList(
-                new Property("type", new Literal(asList("entity", "action"))),
-                new Property("class", new Literal(new Literal.PhpClass(Literal.PhpClass.Type.Entity))),
-                new Property("permission", new Literal(asList("VIEW", "EDIT", "CREATE", "DELETE"))),
-                new Property("label", new Literal()),
-                new Property("group_name", new Literal()),
-                new Property("bindings", new Array(new Container(asList(
-                    new Property("class", new Literal(new Literal.PhpClass(Literal.PhpClass.Type.Controller))),
-                    new Property("method", new Literal(new Literal.PhpMethod("*Action")))
+                new Property("type", new Scalar(asList("entity", "action"))),
+                new Property("class", new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity))),
+                new Property("permission", new Scalar(asList("VIEW", "EDIT", "CREATE", "DELETE"))),
+                new Property("label", new Scalar()),
+                new Property("group_name", new Scalar()),
+                new Property("bindings", new Sequence(new Container(asList(
+                    new Property("class", new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Controller))),
+                    new Property("method", new Scalar(new Scalar.PhpMethod("*Action")))
                 ))))
             ))
         )

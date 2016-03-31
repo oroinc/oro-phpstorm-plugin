@@ -6,7 +6,7 @@ public class Container implements Element {
 
     private final List<Property> properties = new LinkedList<Property>();
 
-    public Container(List<Property> properties) {
+    Container(List<Property> properties) {
         this.properties.addAll(properties);
     }
 

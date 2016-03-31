@@ -1,19 +1,16 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
 import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ChoiceCompletionProvider;
 import com.oroplatform.idea.oroplatform.schema.Container;
-import com.oroplatform.idea.oroplatform.schema.Literal;
+import com.oroplatform.idea.oroplatform.schema.Scalar;
 import com.oroplatform.idea.oroplatform.schema.Property;
 import com.oroplatform.idea.oroplatform.schema.Visitor;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,20 +44,11 @@ class CompletionSchemaVisitor extends YmlVisitor {
     }
 
     @Override
-    public void visitLiteral(Literal literal) {
+    public void visitLiteralChoicesValue(Scalar.Choices choices) {
         completion.extend(
             CompletionType.BASIC,
             psiElement(LeafPsiElement.class).withSuperParent(2, capture),
-            getCompletionProviderFor(literal.getValue())
+            new ChoiceCompletionProvider(choices.getChoices())
         );
-    }
-
-    //TODO: refactor when necessary
-    private CompletionProvider<CompletionParameters> getCompletionProviderFor(Literal.Value literalValue) {
-        if(literalValue instanceof Literal.Choices) {
-            return new ChoiceCompletionProvider(((Literal.Choices) literalValue).getChoices());
-        } else {
-            return new ChoiceCompletionProvider(Collections.<String>emptyList());
-        }
     }
 }

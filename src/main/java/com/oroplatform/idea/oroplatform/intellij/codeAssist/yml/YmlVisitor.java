@@ -5,16 +5,13 @@ import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
-import com.oroplatform.idea.oroplatform.schema.Array;
-import com.oroplatform.idea.oroplatform.schema.Container;
-import com.oroplatform.idea.oroplatform.schema.Property;
-import com.oroplatform.idea.oroplatform.schema.Visitor;
+import com.oroplatform.idea.oroplatform.schema.*;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.StandardPatterns.string;
 
-abstract class YmlVisitor implements Visitor {
+abstract class YmlVisitor extends VisitorAdapter {
     final ElementPattern<? extends PsiElement> capture;
 
     YmlVisitor(ElementPattern<? extends PsiElement> capture) {
@@ -22,8 +19,8 @@ abstract class YmlVisitor implements Visitor {
     }
 
     @Override
-    public void visitArray(Array array) {
-        array.getType().accept(nextVisitor(YmlPatterns.sequence(capture)));
+    public void visitSequence(Sequence sequence) {
+        sequence.getType().accept(nextVisitor(YmlPatterns.sequence(capture)));
     }
 
     protected abstract Visitor nextVisitor(ElementPattern<? extends PsiElement> capture);

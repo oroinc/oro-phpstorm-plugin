@@ -1,7 +1,10 @@
 package com.oroplatform.idea.oroplatform.schema;
 
 public interface Visitor {
-    void visitArray(Array array);
+    void visitSequence(Sequence sequence);
     void visitContainer(Container container);
-    void visitLiteral(Literal literal);
+    void visitLiteralAnyValue(Scalar.Any any);
+    void visitLiteralChoicesValue(Scalar.Choices choices);
+    void visitLiteralPhpClassValue(Scalar.PhpClass phpClass);
+    void visitLiteralPhpMethodValue(Scalar.PhpMethod phpMethod);
 }

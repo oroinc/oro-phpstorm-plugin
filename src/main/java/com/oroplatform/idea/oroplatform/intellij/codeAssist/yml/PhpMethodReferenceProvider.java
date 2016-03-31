@@ -5,15 +5,15 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpMethodReference;
-import com.oroplatform.idea.oroplatform.schema.Literal;
+import com.oroplatform.idea.oroplatform.schema.Scalar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
 class PhpMethodReferenceProvider extends PsiReferenceProvider {
-    private final Literal.PhpMethod phpMethod;
+    private final Scalar.PhpMethod phpMethod;
 
-    public PhpMethodReferenceProvider(Literal.PhpMethod method) {
+    public PhpMethodReferenceProvider(Scalar.PhpMethod method) {
         phpMethod = method;
     }
 

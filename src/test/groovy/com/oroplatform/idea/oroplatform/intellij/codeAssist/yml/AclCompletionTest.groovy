@@ -115,7 +115,7 @@ public class AclCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest choice literal values"() {
+    def void "test: suggest choice scalar values"() {
         suggestions(
             """
             |some_id:
@@ -127,7 +127,7 @@ public class AclCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest choice literal values inside hash object"() {
+    def void "test: suggest choice scalar values inside hash object"() {
         suggestions(
             """
             |some_id: { type: <caret> }
@@ -138,7 +138,7 @@ public class AclCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest key inside array"() {
+    def void "test: suggest key inside sequence"() {
         suggestions(
             """
             |some_id:
@@ -151,7 +151,7 @@ public class AclCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest key inside array when value is defined"() {
+    def void "test: suggest key inside sequence when value is defined"() {
         suggestions(
             """
             |some_id:
@@ -164,7 +164,7 @@ public class AclCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: does not suggest keys of object one level up for array notation"() {
+    def void "test: does not suggest keys of object one level up for sequence notation"() {
         suggestions(
             """
             |some_id:
