@@ -7,12 +7,9 @@ import com.intellij.psi.PsiElement;
 import com.oroplatform.idea.oroplatform.OroPlatformBundle;
 import com.oroplatform.idea.oroplatform.schema.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLMapping;
-import org.jetbrains.yaml.psi.YAMLScalar;
+import org.jetbrains.yaml.psi.*;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.PsiElements.*;
 
@@ -27,7 +24,8 @@ class InspectionSchemaVisitor extends VisitorAdapter {
 
     @Override
     public void visitSequence(Sequence sequence) {
-
+        Visitor visitor = new InspectionSchemaVisitor(problems, getSequenceItems(elements));
+        sequence.getType().accept(visitor);
     }
 
     @Override
@@ -46,8 +44,13 @@ class InspectionSchemaVisitor extends VisitorAdapter {
                 }
 
                 if(!found && property.isRequired()) {
-                    for(YAMLKeyValue keyValue : getKeyValues(Collections.singletonList(element.getParent()))) {
-                        problems.registerProblem(keyValue.getKey() == null ? keyValue : keyValue.getKey(), OroPlatformBundle.message("inspection.schema.required", property.getName()));
+                    Collection<YAMLKeyValue> parentKeyValues = getKeyValues(Collections.singletonList(element.getParent()));
+                    if(parentKeyValues.size() > 0) {
+                        for(YAMLKeyValue keyValue : parentKeyValues) {
+                            problems.registerProblem(keyValue.getKey() == null ? keyValue: keyValue.getKey(), OroPlatformBundle.message("inspection.schema.required", property.getName()));
+                        }
+                    } else {
+                        problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.required", property.getName()));
                     }
                 }
             }

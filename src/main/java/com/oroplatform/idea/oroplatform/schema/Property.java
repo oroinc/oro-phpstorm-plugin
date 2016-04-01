@@ -58,6 +58,10 @@ public class Property {
         return required;
     }
 
+    public Property required() {
+        return new Property(name, valueElement, true);
+    }
+
     private static class RegexpPattern implements Pattern {
         private final java.util.regex.Pattern value;
 

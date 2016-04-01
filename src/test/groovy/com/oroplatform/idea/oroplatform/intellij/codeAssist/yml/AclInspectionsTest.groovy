@@ -126,4 +126,28 @@ class AclInspectionsTest extends InspectionTest {
             """.stripMargin()
         )
     }
+
+    def void "test: should detect invalid property in sequence item"() {
+        checkInspection(
+            """
+            |some_id:
+            |  $requiredProperties
+            |  type: "action"
+            |  bindings:
+            |    - { class: stdClass, method: abc, <error>some: value</error> }
+            """.stripMargin()
+        )
+    }
+
+    def void "test: should detect missing property in sequence item"() {
+        checkInspection(
+            """
+            |some_id:
+            |  $requiredProperties
+            |  type: "action"
+            |  bindings:
+            |    - <error>{ class: stdClass }</error>
+            """.stripMargin()
+        )
+    }
 }

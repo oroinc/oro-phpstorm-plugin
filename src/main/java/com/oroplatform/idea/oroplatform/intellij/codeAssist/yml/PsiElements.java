@@ -3,10 +3,7 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.yaml.psi.YAMLDocument;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLMapping;
-import org.jetbrains.yaml.psi.YAMLScalar;
+import org.jetbrains.yaml.psi.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -60,5 +57,20 @@ class PsiElements {
             }
         }
         return elements;
+    }
+
+    static List<PsiElement> getSequenceItems(List<PsiElement> elements) {
+        List<PsiElement> items = new LinkedList<PsiElement>();
+        for(PsiElement element : elements) {
+            if(element instanceof YAMLSequence) {
+                for(YAMLSequenceItem item : ((YAMLSequence) element).getItems()) {
+                    if(item.getValue() != null) {
+                        items.add(item.getValue());
+                    }
+                }
+            }
+        }
+
+        return items;
     }
 }
