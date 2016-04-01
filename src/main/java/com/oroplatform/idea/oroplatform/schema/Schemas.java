@@ -17,7 +17,7 @@ public class Schemas {
                         new Property("class", new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Controller))).required(),
                         new Property("method", new Scalar(new Scalar.PhpMethod("*Action"))).required()
                     )))),
-                    new Property("class", new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity))),
+                    new Property("class", new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity))).required(),
                     new Property("permission", new Scalar(asList("VIEW", "EDIT", "CREATE", "DELETE"))).required(),
                     new Property("group_name", new Scalar())
                 )),

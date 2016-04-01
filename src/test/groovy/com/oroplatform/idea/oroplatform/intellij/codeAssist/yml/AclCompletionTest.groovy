@@ -15,6 +15,30 @@ public class AclCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: complete property keys"() {
+        completion(
+            """
+            |some_id:
+            |  typ<caret>
+            """.stripMargin(),
+            """
+            |some_id:
+            |  type: <caret>
+            """.stripMargin(),
+        )
+    }
+
+    def void "test: complete property keys - eof reach"() {
+        completion(
+            """
+            |some_id:
+            |  typ<caret>""".stripMargin(),
+            """
+            |some_id:
+            |  type: <caret>""".stripMargin(),
+        )
+    }
+
     def void "test: suggest key in new line when the value is defined"() {
         suggestions(
             """
@@ -23,6 +47,33 @@ public class AclCompletionTest extends CompletionTest {
             """.stripMargin(),
 
             ["type", "label"]
+        )
+    }
+
+    def void "test: complete property keys on update"() {
+        completion(
+            """
+            |some_id:
+            |  typ<caret>: entity
+            """.stripMargin(),
+            """
+            |some_id:
+            |  type: <caret>entity
+            """.stripMargin()
+        )
+    }
+
+
+    def void "test: complete property keys on update - fix carret position"() {
+        completion(
+            """
+            |some_id:
+            |  typ<caret>  :   entity
+            """.stripMargin(),
+            """
+            |some_id:
+            |  type  :   <caret>entity
+            """.stripMargin()
         )
     }
 
@@ -124,6 +175,19 @@ public class AclCompletionTest extends CompletionTest {
 
             ["VIEW", "EDIT"],
             ["type", "label"]
+        )
+    }
+
+    def void "test: complete choice scalar values"() {
+        completion(
+            """
+            |some_id:
+            |  permission: VIE<caret>
+            """.stripMargin(),
+            """
+            |some_id:
+            |  permission: VIEW<caret>
+            """.stripMargin(),
         )
     }
 

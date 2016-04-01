@@ -5,7 +5,6 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.ChoiceCompletionProvider;
 import com.oroplatform.idea.oroplatform.schema.*;
 
 import java.util.LinkedList;
@@ -36,7 +35,7 @@ class CompletionSchemaVisitor extends YmlVisitor {
         completion.extend(
             CompletionType.BASIC,
             captureElement,
-            new ChoiceCompletionProvider(properties)
+            new ChoiceCompletionProvider(properties, KeyInsertHandler.INSTANCE)
         );
     }
 
