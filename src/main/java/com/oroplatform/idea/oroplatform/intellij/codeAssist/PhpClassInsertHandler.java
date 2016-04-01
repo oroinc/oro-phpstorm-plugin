@@ -14,10 +14,20 @@ class PhpClassInsertHandler implements InsertHandler<LookupElement> {
     public void handleInsert(InsertionContext context, LookupElement item) {
         if(item.getObject() instanceof PhpClass) {
             final PhpClass phpClass = (PhpClass) item.getObject();
-            final char lastChar = context.getDocument().getCharsSequence().charAt(context.getTailOffset());
-            final boolean isAroundQuotes = lastChar == '\"' || lastChar == '\'';
+            final boolean isAroundQuotes = isAroundQuotes(context);
             context.getDocument().insertString(context.getStartOffset(), getFixedFQNamespace(phpClass, isAroundQuotes));
         }
+    }
+
+    private boolean isAroundQuotes(InsertionContext context) {
+        final CharSequence charsSequence = context.getDocument().getCharsSequence();
+
+        if(context.getTailOffset() >= charsSequence.length()) {
+            return false;
+        }
+
+        final char lastChar = charsSequence.charAt(context.getTailOffset());
+        return lastChar == '\"' || lastChar == '\'';
     }
 
     private static String getFixedFQNamespace(PhpClass phpClass, boolean escapeSlashes) {

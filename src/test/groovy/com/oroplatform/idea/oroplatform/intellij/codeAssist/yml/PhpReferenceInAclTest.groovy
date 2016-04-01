@@ -98,6 +98,17 @@ public class PhpReferenceInAclTest extends CompletionTest {
         )
     }
 
+    def void "test: should complete fq class name - eof"() {
+        completion(
+            """
+            |some:
+            |  class: Addr<caret>""".stripMargin(),
+            """
+            |some:
+            |  class: Oro\\Bundle\\AcmeBundle\\Entity\\Address""".stripMargin()
+        )
+    }
+
     def void "test: should complete fq class name in quotes"() {
         completion(
             """
