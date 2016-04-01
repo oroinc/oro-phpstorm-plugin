@@ -66,4 +66,15 @@ class AclInspectionsTest extends InspectionTest {
             """.stripMargin()
         )
     }
+
+    def void "test: should detect missing required properties for entity"() {
+        checkInspection(
+            """
+            |<error descr="The 'permission' property is required.">some_id:</error>
+            |  $requiredProperties
+            |  type: "entity"
+            |  class: stdClass
+            """.stripMargin()
+        )
+    }
 }

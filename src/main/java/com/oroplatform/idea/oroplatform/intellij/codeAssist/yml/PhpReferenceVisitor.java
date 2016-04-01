@@ -3,9 +3,7 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceRegistrar;
-import com.oroplatform.idea.oroplatform.schema.Container;
-import com.oroplatform.idea.oroplatform.schema.Scalar;
-import com.oroplatform.idea.oroplatform.schema.Visitor;
+import com.oroplatform.idea.oroplatform.schema.*;
 import org.jetbrains.yaml.psi.YAMLQuotedText;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
@@ -26,6 +24,13 @@ class PhpReferenceVisitor extends YmlVisitor {
 
     @Override
     protected void handleContainer(Container container, ElementPattern<? extends PsiElement> capture) {
+    }
+
+    @Override
+    public void visitOneOf(OneOf oneOf) {
+        for(Element element : oneOf.getElements()) {
+            element.accept(this);
+        }
     }
 
     @Override
