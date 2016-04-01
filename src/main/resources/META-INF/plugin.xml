@@ -14,7 +14,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <completion.contributor language="yaml"
-                                implementationClass="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.AclCompletion"/>
+                                implementationClass="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.SchemaCompletion"/>
         <psi.referenceContributor
                 language="yaml"
                 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.PhpReferenceContributor"
@@ -26,7 +26,7 @@
         <localInspection
                 bundle="com.oroplatform.idea.oroplatform.messages.OroPlatformBundle"
                 language="yaml"
-                implementationClass="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.AclInspection"
+                implementationClass="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.SchemaInspection"
                 displayName="Oro acl.yml"
                 enabledByDefault="true"
                 level="ERROR"

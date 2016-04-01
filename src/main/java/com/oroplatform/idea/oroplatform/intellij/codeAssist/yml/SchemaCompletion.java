@@ -1,19 +1,17 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
-import com.intellij.psi.PsiReferenceContributor;
-import com.intellij.psi.PsiReferenceRegistrar;
+import com.intellij.codeInsight.completion.CompletionContributor;
 import com.oroplatform.idea.oroplatform.schema.Schema;
 import com.oroplatform.idea.oroplatform.schema.Schemas;
 import com.oroplatform.idea.oroplatform.schema.Visitor;
-import org.jetbrains.annotations.NotNull;
 
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YmlPatterns.getDocumentPattern;
 
-public class PhpReferenceContributor extends PsiReferenceContributor {
-    @Override
-    public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
+public class SchemaCompletion extends CompletionContributor {
+
+    public SchemaCompletion() {
         for(Schema schema : Schemas.ALL) {
-            Visitor visitor = new PhpReferenceVisitor(registrar, getDocumentPattern(schema.fileName));
+            Visitor visitor = new CompletionSchemaVisitor(this, getDocumentPattern(schema.fileName));
             schema.rootElement.accept(visitor);
         }
     }

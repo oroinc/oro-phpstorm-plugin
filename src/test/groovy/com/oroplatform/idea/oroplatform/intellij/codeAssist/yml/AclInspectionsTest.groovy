@@ -13,7 +13,7 @@ class AclInspectionsTest extends InspectionTest {
     @Override
     def void setUp() {
         super.setUp()
-        myFixture.enableInspections(AclInspection.class)
+        myFixture.enableInspections(SchemaInspection.class)
     }
 
     def void "test: detect not allowed value in choice type"() {
