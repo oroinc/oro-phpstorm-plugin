@@ -77,4 +77,53 @@ class AclInspectionsTest extends InspectionTest {
             """.stripMargin()
         )
     }
+
+
+    def void "test: should detect unsupported property"() {
+        checkInspection(
+            """
+            |some_id:
+            |  $requiredProperties
+            |  type: "action"
+            |  <error>some: value</error>
+            """.stripMargin()
+        )
+    }
+
+    def void "test: should complain about entity property in action"() {
+        checkInspection(
+            """
+            |some_id:
+            |  $requiredProperties
+            |  type: "action"
+            |  <error>permission: VIEW</error>
+            """.stripMargin()
+        )
+    }
+
+    def void "test: should detect unsupported property in entity"() {
+        checkInspection(
+            """
+            |some_id:
+            |  $requiredProperties
+            |  type: "entity"
+            |  permission: VIEW
+            |  class: stdClass
+            |  <error>xxx: VIEW</error>
+            """.stripMargin()
+        )
+    }
+
+
+    def void "test: should detect few entity specific properties in action"() {
+        checkInspection(
+            """
+            |some_id:
+            |  $requiredProperties
+            |  type: "action"
+            |  <error>permission: VIEW</error>
+            |  <error>class: stdClass</error>
+            """.stripMargin()
+        )
+    }
 }
