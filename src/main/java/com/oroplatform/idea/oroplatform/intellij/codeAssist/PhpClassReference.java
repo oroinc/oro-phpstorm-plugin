@@ -1,13 +1,11 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
 import com.intellij.codeInsight.completion.PrefixMatcher;
+import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementResolveResult;
-import com.intellij.psi.PsiPolyVariantReferenceBase;
-import com.intellij.psi.ResolveResult;
+import com.intellij.psi.*;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.completion.PhpClassLookupElement;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
@@ -73,9 +71,10 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         for(String className : findClassNames(phpIndex)) {
             final PhpClass phpClass = phpIndex.getClassByName(className);
             if(phpClass != null && phpClass.getNamespaceName().endsWith(namespaceSuffix)) {
-                results.add(new PhpClassLookupElement(phpClass, true, PhpClassInsertHandler.INSTANCE));
+                final int priority = getPriorityFor(phpClass);
+                results.add(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, PhpClassInsertHandler.INSTANCE), priority));
                 if(type == Scalar.PhpClass.Type.Entity) {
-                    addEntitiesShortcutsLookups(results, phpClass);
+                    addEntitiesShortcutsLookups(results, phpClass, priority);
                 }
             }
         }
@@ -83,10 +82,37 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         return results.toArray();
     }
 
-    private void addEntitiesShortcutsLookups(List<LookupElement> results, PhpClass phpClass) {
+    private int getPriorityFor(PhpClass phpClass) {
+        //sad null checking to make sure if everything is ok
+        if (phpClass.getContainingFile() == null || phpClass.getContainingFile().getContainingDirectory() == null ||
+            myElement.getContainingFile() == null || myElement.getContainingFile().getOriginalFile().getContainingDirectory() == null ||
+            myElement.getContainingFile().getOriginalFile().getContainingDirectory().getParentDirectory() == null ||
+            myElement.getContainingFile().getOriginalFile().getContainingDirectory().getParentDirectory().getParentDirectory() == null
+            ) {
+            return 0;
+        }
+
+        PsiFile file = myElement.getContainingFile().getOriginalFile();
+
+        PsiDirectory rootDirectory = phpClass.getContainingFile().getContainingDirectory().getParentDirectory();
+        PsiDirectory elementRootDirectory = file.getContainingDirectory().getParentDirectory();
+        String phpClassRootPath = rootDirectory.getVirtualFile().getCanonicalPath();
+
+        if(phpClassRootPath.equals(elementRootDirectory.getVirtualFile().getCanonicalPath()) ||
+            phpClassRootPath.equals(elementRootDirectory.getParentDirectory().getVirtualFile().getCanonicalPath())) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    private void addEntitiesShortcutsLookups(List<LookupElement> results, PhpClass phpClass, int priority) {
         final String shortcutName = PhpClassUtil.getDoctrineShortcutClassName(phpClass.getPresentableFQN());
         if(shortcutName != null) {
-            results.add(LookupElementBuilder.create(shortcutName).withIcon(Icons.DOCTRINE).withTypeText(phpClass.getPresentableFQN()));
+            results.add(PrioritizedLookupElement.withPriority(
+                LookupElementBuilder.create(shortcutName).withIcon(Icons.DOCTRINE).withTypeText(phpClass.getPresentableFQN()),
+                priority
+            ));
         }
     }
 
