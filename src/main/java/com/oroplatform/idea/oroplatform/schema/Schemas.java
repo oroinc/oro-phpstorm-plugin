@@ -27,8 +27,9 @@ public class Schemas {
                         new Property("type", new Scalar(asList("action"))),
                         new Property("label", new Scalar(), true),
                         new Property("bindings", new Sequence(new Container(asList(
-                            new Property("class", new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Controller))).required(),
-                            new Property("method", new Scalar(new Scalar.PhpMethod("*Action"))).required()
+                            //define as regular scalars in order to avoid double suggestions
+                            new Property("class", new Scalar()).required(),
+                            new Property("method", new Scalar()).required()
                         ))))
                     ))
                 )

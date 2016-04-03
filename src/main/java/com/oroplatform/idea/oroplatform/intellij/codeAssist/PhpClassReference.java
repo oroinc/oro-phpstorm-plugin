@@ -65,12 +65,12 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     @Override
     public Object[] getVariants() {
         final PhpIndex phpIndex = PhpIndex.getInstance(myElement.getProject());
-        final String namespaceSuffix = type.toString()+"\\";
+        final String namespacePart = "\\"+ type.toString() +"\\";
 
         final List<LookupElement> results = new LinkedList<LookupElement>();
         for(String className : findClassNames(phpIndex)) {
             final PhpClass phpClass = phpIndex.getClassByName(className);
-            if(phpClass != null && phpClass.getNamespaceName().endsWith(namespaceSuffix)) {
+            if(phpClass != null && phpClass.getNamespaceName().contains(namespacePart)) {
                 final int priority = getPriorityFor(phpClass);
                 results.add(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, PhpClassInsertHandler.INSTANCE), priority));
                 if(type == Scalar.PhpClass.Type.Entity) {
@@ -83,27 +83,14 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     }
 
     private int getPriorityFor(PhpClass phpClass) {
-        //sad null checking to make sure if everything is ok
-        if (phpClass.getContainingFile() == null || phpClass.getContainingFile().getContainingDirectory() == null ||
-            myElement.getContainingFile() == null || myElement.getContainingFile().getOriginalFile().getContainingDirectory() == null ||
-            myElement.getContainingFile().getOriginalFile().getContainingDirectory().getParentDirectory() == null ||
-            myElement.getContainingFile().getOriginalFile().getContainingDirectory().getParentDirectory().getParentDirectory() == null
-            ) {
+        if (myElement.getContainingFile() == null) {
             return 0;
         }
 
-        PsiFile file = myElement.getContainingFile().getOriginalFile();
+        final String rootPath = myElement.getContainingFile().getOriginalFile().getVirtualFile().getCanonicalPath().replaceFirst("/Resources/.*", "");
+        final String classRootPath = phpClass.getNamespaceName().replace("\\", "/").replaceFirst("/"+type.toString()+"/.*", "");
 
-        PsiDirectory rootDirectory = phpClass.getContainingFile().getContainingDirectory().getParentDirectory();
-        PsiDirectory elementRootDirectory = file.getContainingDirectory().getParentDirectory();
-        String phpClassRootPath = rootDirectory.getVirtualFile().getCanonicalPath();
-
-        if(phpClassRootPath.equals(elementRootDirectory.getVirtualFile().getCanonicalPath()) ||
-            phpClassRootPath.equals(elementRootDirectory.getParentDirectory().getVirtualFile().getCanonicalPath())) {
-            return 1;
-        }
-
-        return 0;
+        return rootPath.endsWith(classRootPath) ? 1 : 0;
     }
 
     private void addEntitiesShortcutsLookups(List<LookupElement> results, PhpClass phpClass, int priority) {

@@ -21,6 +21,9 @@ public class PhpReferenceInAclTest extends CompletionTest {
             |  }
             |}
             |
+            |namespace Oro\\Bundle\\AcmeBundle\\Controller\\Api {
+            |  class AddressApiController {}
+            |}
             |namespace Oro\\Bundle\\AcmeBundle\\Entity {
             |  class Address {}
             |}
@@ -82,6 +85,17 @@ public class PhpReferenceInAclTest extends CompletionTest {
             """.stripMargin(),
 
             ["OroAcmeBundle:Address"]
+        )
+    }
+
+    def void "test: should suggest controllers also in subnamespaces of Controller"() {
+        suggestions(
+            """
+            |some:
+            |  bindings:
+            |    - { class: <caret> }
+            """.stripMargin(),
+            ["AddressApiController"]
         )
     }
 
