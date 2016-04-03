@@ -19,11 +19,15 @@ import java.util.*;
 public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final String text;
     private final Scalar.PhpClass.Type type;
+    private final String rootBundlePath;
+    private final String namespacePart;
 
     public PhpClassReference(PsiElement psiElement, Scalar.PhpClass.Type type, @NotNull String text) {
         super(psiElement);
         this.type = type;
         this.text = text.replace("IntellijIdeaRulezzz", "").trim().replace("\\\\", "\\");
+        this.rootBundlePath = myElement.getContainingFile() == null ? "" : myElement.getContainingFile().getOriginalFile().getVirtualFile().getCanonicalPath().replaceFirst("/Resources/.*", "");
+        this.namespacePart = "\\"+ type.toString() +"\\";
     }
 
     @NotNull
@@ -65,16 +69,16 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     @Override
     public Object[] getVariants() {
         final PhpIndex phpIndex = PhpIndex.getInstance(myElement.getProject());
-        final String namespacePart = "\\"+ type.toString() +"\\";
 
         final List<LookupElement> results = new LinkedList<LookupElement>();
         for(String className : findClassNames(phpIndex)) {
-            final PhpClass phpClass = phpIndex.getClassByName(className);
-            if(phpClass != null && phpClass.getNamespaceName().contains(namespacePart)) {
-                final int priority = getPriorityFor(phpClass);
-                results.add(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, PhpClassInsertHandler.INSTANCE), priority));
-                if(type == Scalar.PhpClass.Type.Entity) {
-                    addEntitiesShortcutsLookups(results, phpClass, priority);
+            for(PhpClass phpClass : phpIndex.getClassesByName(className)) {
+                if(phpClass.getNamespaceName().contains(namespacePart)) {
+                    final int priority = getPriorityFor(phpClass);
+                    results.add(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, PhpClassInsertHandler.INSTANCE), priority));
+                    if(type == Scalar.PhpClass.Type.Entity) {
+                        addEntitiesShortcutsLookups(results, phpClass, priority);
+                    }
                 }
             }
         }
@@ -83,14 +87,8 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     }
 
     private int getPriorityFor(PhpClass phpClass) {
-        if (myElement.getContainingFile() == null) {
-            return 0;
-        }
-
-        final String rootPath = myElement.getContainingFile().getOriginalFile().getVirtualFile().getCanonicalPath().replaceFirst("/Resources/.*", "");
         final String classRootPath = phpClass.getNamespaceName().replace("\\", "/").replaceFirst("/"+type.toString()+"/.*", "");
-
-        return rootPath.endsWith(classRootPath) ? 1 : 0;
+        return rootBundlePath.endsWith(classRootPath) ? 1 : 0;
     }
 
     private void addEntitiesShortcutsLookups(List<LookupElement> results, PhpClass phpClass, int priority) {

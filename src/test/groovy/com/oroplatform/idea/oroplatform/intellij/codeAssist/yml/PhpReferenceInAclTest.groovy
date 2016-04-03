@@ -19,10 +19,12 @@ public class PhpReferenceInAclTest extends CompletionTest {
             |    public function editAction() {}
             |    public function someFunc() {}
             |  }
+            |  class RegionController {}
             |}
             |
             |namespace Oro\\Bundle\\AcmeBundle\\Controller\\Api {
             |  class AddressApiController {}
+            |  class RegionController {}
             |}
             |namespace Oro\\Bundle\\AcmeBundle\\Entity {
             |  class Address {}
@@ -96,6 +98,17 @@ public class PhpReferenceInAclTest extends CompletionTest {
             |    - { class: <caret> }
             """.stripMargin(),
             ["AddressApiController"]
+        )
+    }
+
+    def void "test: should suggest classes with the same names"() {
+        suggestions(
+            """
+            |some:
+            |  bindings:
+            |    - { class: <caret> }
+            """.stripMargin(),
+            ["RegionController","RegionController"]
         )
     }
 
