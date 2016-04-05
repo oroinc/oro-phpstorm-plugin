@@ -4,18 +4,22 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class PhpClassUtil {
     @Nullable
     public static String getDoctrineShortcutClassName(@NotNull String fqn) {
         final String fixedFQN = StringUtil.trimStart(fqn, "\\");
-        final String[] parts = fixedFQN.split("\\\\");
+        final List<String> parts = Arrays.asList(fixedFQN.split("\\\\"));
+        final int entityIndex = parts.indexOf("Entity");
 
-        if(parts.length < 3 || !parts[parts.length - 2].equals("Entity")) return null;
+        if(parts.size() < 3 || entityIndex <= 0 || entityIndex == parts.size() - 1) return null;
 
-        final String vendor = parts.length == 3 ? "" : parts[0];
-        final String bundle = parts[parts.length - 3];
+        final String vendor = entityIndex == 1 ? "" : parts.get(0);
+        final String bundle = parts.get(entityIndex - 1);
 
-        return vendor+bundle+":"+parts[parts.length - 1];
+        return vendor+bundle+":"+StringUtil.join(parts.subList(entityIndex + 1, parts.size()), "\\");
     }
 
     @NotNull

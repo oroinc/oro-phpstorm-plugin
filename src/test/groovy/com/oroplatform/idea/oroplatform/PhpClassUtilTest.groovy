@@ -11,6 +11,7 @@ public class PhpClassUtilTest {
         assertEquals("OroAcmeBundle:Address", PhpClassUtil.getDoctrineShortcutClassName("Oro\\Bundle\\AcmeBundle\\Entity\\Address"));
         assertEquals("OroAcmeBundle:Address", PhpClassUtil.getDoctrineShortcutClassName("\\Oro\\Bundle\\AcmeBundle\\Entity\\Address"));
         assertEquals("OroAcmeBundle:Address", PhpClassUtil.getDoctrineShortcutClassName("Oro\\AcmeBundle\\Entity\\Address"));
+        assertEquals("OroAcmeBundle:Translations\\AddressTranslation", PhpClassUtil.getDoctrineShortcutClassName("Oro\\AcmeBundle\\Entity\\Translations\\AddressTranslation"));
         assertEquals("AcmeBundle:Address", PhpClassUtil.getDoctrineShortcutClassName("AcmeBundle\\Entity\\Address"));
         assertEquals(null, PhpClassUtil.getDoctrineShortcutClassName("Oro\\AcmeBundle\\Controller\\Address"));
     }
