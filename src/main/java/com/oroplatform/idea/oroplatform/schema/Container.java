@@ -5,13 +5,27 @@ import java.util.*;
 public class Container implements Element {
 
     private final List<Property> properties = new LinkedList<Property>();
+    private final boolean allowExtraProperties;
+
+    Container(List<Property> properties, boolean allowExtraProperties) {
+        this.properties.addAll(properties);
+        this.allowExtraProperties = allowExtraProperties;
+    }
 
     Container(List<Property> properties) {
-        this.properties.addAll(properties);
+        this(properties, false);
     }
 
     public List<Property> getProperties() {
         return Collections.unmodifiableList(properties);
+    }
+
+    public Container allowExtraProperties() {
+        return new Container(properties, true);
+    }
+
+    public boolean areExtraPropertiesAllowed() {
+        return allowExtraProperties;
     }
 
     @Override

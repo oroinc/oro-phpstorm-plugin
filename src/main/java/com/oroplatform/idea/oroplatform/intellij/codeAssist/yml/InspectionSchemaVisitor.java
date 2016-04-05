@@ -44,19 +44,12 @@ class InspectionSchemaVisitor extends VisitorAdapter {
                 }
 
                 if(!found && property.isRequired()) {
-//                    Collection<YAMLKeyValue> parentKeyValues = getKeyValues(Collections.singletonList(element.getParent()));
-//                    if(parentKeyValues.size() > 0) {
-//                        for(YAMLKeyValue keyValue : parentKeyValues) {
-//                            problems.registerProblem(keyValue.getKey() == null ? keyValue: keyValue.getKey(), OroPlatformBundle.message("inspection.schema.required", property.getName()));
-//                        }
-//                    } else {
-//                    }
-                        problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.required", property.getName()));
+                    problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.required", property.getName()));
                 }
             }
 
             for(YAMLKeyValue keyValue : keyValues) {
-                if(!existsPropertyMatchingTo(container.getProperties(), keyValue.getKeyText())) {
+                if(!container.areExtraPropertiesAllowed() && !existsPropertyMatchingTo(container.getProperties(), keyValue.getKeyText())) {
                     problems.registerProblem(keyValue, OroPlatformBundle.message("inspection.schema.notAllowedProperty", keyValue.getKeyText()));
                 }
             }

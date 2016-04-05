@@ -27,7 +27,7 @@
                 bundle="com.oroplatform.idea.oroplatform.messages.OroPlatformBundle"
                 language="yaml"
                 implementationClass="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.SchemaInspection"
-                displayName="Oro acl.yml"
+                displayName="Oro yaml configuration files"
                 enabledByDefault="true"
                 level="ERROR"
                 groupKey="inspection.group"
