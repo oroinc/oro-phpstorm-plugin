@@ -8,7 +8,7 @@ class AclInspectionsTest extends InspectionTest {
         return "acl.yml"
     }
 
-    def requiredProperties = "label: someLabel"
+    def actionRequiredProperties = "label: someLabel"
 
     @Override
     def void setUp() {
@@ -20,8 +20,8 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
-            |  $requiredProperties
-            |  type: <error>invalid</error>
+            |  $actionRequiredProperties
+            |  type: <weak_warning>invalid</weak_warning>
             """.stripMargin()
         )
     }
@@ -30,8 +30,8 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
-            |  $requiredProperties
-            |  type: <error>"invalid"</error>
+            |  $actionRequiredProperties
+            |  type: <weak_warning>"invalid"</weak_warning>
             """.stripMargin()
         )
     }
@@ -40,7 +40,7 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
-            |  $requiredProperties
+            |  $actionRequiredProperties
             |  type: action
             """.stripMargin()
         )
@@ -50,7 +50,7 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
-            |  $requiredProperties
+            |  $actionRequiredProperties
             |  type: "action"
             """.stripMargin()
         )
@@ -60,7 +60,7 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
-            |  <error descr="The 'label' property is required.">type: "action"</error>
+            |  <weak_warning descr="The 'label' property is required.">type: "action"</weak_warning>
             """.stripMargin()
         )
     }
@@ -69,9 +69,8 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
-            |  <error descr="The 'permission' property is required.">$requiredProperties
-            |  type: "entity"
-            |  class: stdClass</error>
+            |  <weak_warning descr="The 'permission' property is required.">type: "entity"
+            |  class: stdClass</weak_warning>
             """.stripMargin()
         )
     }
@@ -81,9 +80,9 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
-            |  $requiredProperties
+            |  $actionRequiredProperties
             |  type: "action"
-            |  <error>some: value</error>
+            |  <weak_warning>some: value</weak_warning>
             """.stripMargin()
         )
     }
@@ -92,9 +91,9 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
-            |  $requiredProperties
+            |  $actionRequiredProperties
             |  type: "action"
-            |  <error>permission: VIEW</error>
+            |  <weak_warning>permission: VIEW</weak_warning>
             """.stripMargin()
         )
     }
@@ -103,11 +102,10 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
-            |  $requiredProperties
             |  type: "entity"
             |  permission: VIEW
             |  class: stdClass
-            |  <error>xxx: VIEW</error>
+            |  <weak_warning>xxx: VIEW</weak_warning>
             """.stripMargin()
         )
     }
@@ -117,10 +115,10 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
-            |  $requiredProperties
+            |  $actionRequiredProperties
             |  type: "action"
-            |  <error>permission: VIEW</error>
-            |  <error>class: stdClass</error>
+            |  <weak_warning>permission: VIEW</weak_warning>
+            |  <weak_warning>class: stdClass</weak_warning>
             """.stripMargin()
         )
     }
@@ -129,10 +127,10 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
-            |  $requiredProperties
+            |  $actionRequiredProperties
             |  type: "action"
             |  bindings:
-            |    - { class: stdClass, method: abc, <error>some: value</error> }
+            |    - { class: stdClass, method: abc, <weak_warning>some: value</weak_warning> }
             """.stripMargin()
         )
     }
@@ -141,10 +139,10 @@ class AclInspectionsTest extends InspectionTest {
         checkInspection(
             """
             |some_id:
-            |  $requiredProperties
+            |  $actionRequiredProperties
             |  type: "action"
             |  bindings:
-            |    - <error>{ class: stdClass }</error>
+            |    - <weak_warning>{ class: stdClass }</weak_warning>
             """.stripMargin()
         )
     }

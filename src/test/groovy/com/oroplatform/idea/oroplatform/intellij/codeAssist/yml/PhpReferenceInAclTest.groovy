@@ -27,7 +27,8 @@ public class PhpReferenceInAclTest extends CompletionTest {
             |  class RegionController {}
             |}
             |namespace Oro\\Bundle\\AcmeBundle\\Entity {
-            |  class Address {}
+            |  class Address extends AbstractAddress {}
+            |  abstract class AbstractAddress {}
             |}
             |
           """.stripMargin()
@@ -76,6 +77,18 @@ public class PhpReferenceInAclTest extends CompletionTest {
 
             ["Address"],
             ["AdminController"]
+        )
+    }
+
+    def void "test: should not suggest abstract classes as entity"() {
+        suggestions(
+                """
+            |some:
+            |  class: <caret>
+            """.stripMargin(),
+
+                ["Address"],
+                ["AbstractAddress"]
         )
     }
 

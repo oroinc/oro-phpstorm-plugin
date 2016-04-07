@@ -29,7 +29,7 @@
                 implementationClass="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.SchemaInspection"
                 displayName="Oro yaml configuration files"
                 enabledByDefault="true"
-                level="ERROR"
+                level="WEAK WARNING"
                 groupKey="inspection.group"
         />
     </extensions>

@@ -73,7 +73,9 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         final List<LookupElement> results = new LinkedList<LookupElement>();
         for(String className : findClassNames(phpIndex)) {
             for(PhpClass phpClass : phpIndex.getClassesByName(className)) {
-                if(phpClass.getNamespaceName().contains(namespacePart)) {
+                final String namespaceName = phpClass.getNamespaceName();
+                final boolean isConcrete = !phpClass.isAbstract() && !phpClass.isInterface() && !phpClass.isTrait();
+                if(isConcrete && namespaceName.contains(namespacePart) && !isIgnoredNamespace(namespaceName)) {
                     final int priority = getPriorityFor(phpClass);
                     results.add(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, PhpClassInsertHandler.INSTANCE), priority));
                     if(type == Scalar.PhpClass.Type.Entity) {
@@ -84,6 +86,10 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         }
 
         return results.toArray();
+    }
+
+    private boolean isIgnoredNamespace(String namespaceName) {
+        return namespaceName.contains("\\__CG__\\") || namespaceName.contains("\\Tests\\") || namespaceName.contains("\\Repository\\");
     }
 
     private int getPriorityFor(PhpClass phpClass) {
