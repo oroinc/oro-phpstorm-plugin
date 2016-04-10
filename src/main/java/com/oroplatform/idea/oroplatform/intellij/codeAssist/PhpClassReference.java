@@ -77,9 +77,10 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
                 final boolean isConcrete = !phpClass.isAbstract() && !phpClass.isInterface() && !phpClass.isTrait();
                 if(isConcrete && namespaceName.contains(namespacePart) && !isIgnoredNamespace(namespaceName)) {
                     final int priority = getPriorityFor(phpClass);
-                    results.add(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, PhpClassInsertHandler.INSTANCE), priority));
                     if(type == Scalar.PhpClass.Type.Entity) {
                         addEntitiesShortcutsLookups(results, phpClass, priority);
+                    } else {
+                        results.add(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, PhpClassInsertHandler.INSTANCE), priority));
                     }
                 }
             }
@@ -93,8 +94,18 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     }
 
     private int getPriorityFor(PhpClass phpClass) {
+        if(isFromVendors(phpClass)) {
+            return -1;
+        }
         final String classRootPath = phpClass.getNamespaceName().replace("\\", "/").replaceFirst("/"+type.toString()+"/.*", "");
         return rootBundlePath.endsWith(classRootPath) ? 1 : 0;
+    }
+
+    private boolean isFromVendors(@NotNull PhpClass phpClass) {
+        //sad null pointer checks
+        return phpClass.getContainingFile() != null && phpClass.getContainingFile().getVirtualFile() != null &&
+                phpClass.getContainingFile().getVirtualFile().getCanonicalPath() != null &&
+                phpClass.getContainingFile().getVirtualFile().getCanonicalPath().contains("/vendor/");
     }
 
     private void addEntitiesShortcutsLookups(List<LookupElement> results, PhpClass phpClass, int priority) {

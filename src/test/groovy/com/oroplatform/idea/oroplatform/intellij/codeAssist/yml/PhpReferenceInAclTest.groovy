@@ -68,27 +68,27 @@ public class PhpReferenceInAclTest extends CompletionTest {
         )
     }
 
-    def void "test: should suggest entity class by name"() {
+    def void "test: should not suggest entity class by full name"() {
         suggestions(
             """
             |some:
             |  class: <caret>
             """.stripMargin(),
 
-            ["Address"],
-            ["AdminController"]
+            [],
+            ["Address", "AdminController"]
         )
     }
 
     def void "test: should not suggest abstract classes as entity"() {
         suggestions(
-                """
+            """
             |some:
             |  class: <caret>
             """.stripMargin(),
 
-                ["Address"],
-                ["AbstractAddress"]
+            [],
+            ["OroAcmeBundle:AbstractAddress"]
         )
     }
 
@@ -133,7 +133,7 @@ public class PhpReferenceInAclTest extends CompletionTest {
             """.stripMargin(),
             """
             |some:
-            |  class: Oro\\Bundle\\AcmeBundle\\Entity\\Address
+            |  class: OroAcmeBundle:Address
             """.stripMargin()
         )
     }
@@ -145,11 +145,11 @@ public class PhpReferenceInAclTest extends CompletionTest {
             |  class: Addr<caret>""".stripMargin(),
             """
             |some:
-            |  class: Oro\\Bundle\\AcmeBundle\\Entity\\Address""".stripMargin()
+            |  class: OroAcmeBundle:Address""".stripMargin()
         )
     }
 
-    def void "test: should complete fq class name in quotes"() {
+    def void "test: should complete entity shortcut class name in quotes"() {
         completion(
             """
             |some:
@@ -157,7 +157,7 @@ public class PhpReferenceInAclTest extends CompletionTest {
             """.stripMargin(),
             """
             |some:
-            |  class: "Oro\\\\Bundle\\\\AcmeBundle\\\\Entity\\\\Address"
+            |  class: "OroAcmeBundle:Address"
             """.stripMargin()
         )
     }
