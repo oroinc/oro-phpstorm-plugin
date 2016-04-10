@@ -5,6 +5,11 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
 
 class EntityCompletionTest extends CompletionTest {
 
+    @Override
+    String fileName() {
+        return "entity.yml"
+    }
+
     def void "test: suggest oro_entity as top property"() {
         suggestions(
             """
@@ -52,12 +57,4 @@ class EntityCompletionTest extends CompletionTest {
         )
     }
 
-
-    private def suggestions(String contents, Collection<String> expectedSuggestions, Collection<String> unexpectedSuggestions = []) {
-        return super.suggestions("entity.yml", contents, expectedSuggestions, unexpectedSuggestions)
-    }
-
-    private def completion(String contents, String expected) {
-        return super.completion("entity.yml", contents, expected)
-    }
 }

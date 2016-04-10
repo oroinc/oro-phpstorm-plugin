@@ -5,8 +5,10 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 
 public abstract class CompletionTest extends LightPlatformCodeInsightFixtureTestCase {
 
-    def completion(String filename, String contents, String expected) {
-        myFixture.configureByText(filename, contents)
+    abstract def String fileName()
+
+    def completion(String contents, String expected) {
+        myFixture.configureByText(fileName(), contents)
         def elements = myFixture.completeBasic()
 
         if(elements != null) {
@@ -16,8 +18,8 @@ public abstract class CompletionTest extends LightPlatformCodeInsightFixtureTest
         myFixture.checkResult(expected.replace("\r", ""))
     }
 
-    def suggestions(String filename, String contents, Collection<String> expectedSuggestions, Collection<String> unexpectedSuggestions= []) {
-        myFixture.configureByText(filename, contents)
+    def suggestions(String contents, Collection<String> expectedSuggestions, Collection<String> unexpectedSuggestions= []) {
+        myFixture.configureByText(fileName(), contents)
         myFixture.completeBasic()
 
         def lookupElements = myFixture.getLookupElementStrings()

@@ -1,10 +1,14 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
-import com.intellij.psi.PsiPolyVariantReferenceBase
-import com.jetbrains.php.lang.psi.elements.PhpNamedElement
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
 
-public class PhpReferenceInAclTest extends CompletionTest {
+public class AclPhpReferenceTest extends PhpReferenceTest {
+
+    @Override
+    String fileName() {
+        return "acl.yml"
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp()
@@ -200,34 +204,4 @@ public class PhpReferenceInAclTest extends CompletionTest {
         )
     }
 
-    private def checkPhpReference(String content, List<String> expectedReferences) {
-        assertEquals(expectedReferences, getPhpReference(content))
-    }
-
-    private def List<String> getPhpReference(String content) {
-        myFixture.configureByText("acl.yml", content)
-
-        myFixture.getProject().getBaseDir().refresh(false, true)
-
-        def element = myFixture.getFile().findElementAt(myFixture.getCaretOffset())
-        def elements = [element, element.getParent(), element.getParent().getParent()]
-
-        elements.collect { it.getReferences() }
-                .flatten()
-                .findAll { it instanceof PsiPolyVariantReferenceBase }
-                .collect {  it as PsiPolyVariantReferenceBase }
-                .collect { it.multiResolve(false) }
-                .flatten()
-                .collect { (it.getElement() as PhpNamedElement).getName() }
-                .unique()
-                .toList()
-    }
-
-    private def suggestions(String contents, Collection<String> expectedSuggestions, Collection<String> unexpectedSuggestions = []) {
-        return super.suggestions("acl.yml", contents, expectedSuggestions, unexpectedSuggestions)
-    }
-
-    private def completion(String contents, String expected) {
-        return super.completion("acl.yml", contents, expected)
-    }
 }
