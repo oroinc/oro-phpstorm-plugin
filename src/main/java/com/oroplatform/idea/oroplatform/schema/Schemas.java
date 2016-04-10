@@ -33,6 +33,25 @@ public class Schemas {
                     ))
                 )
             )
+        ))),
+        new Schema("entity.yml", new Container(Collections.singletonList(
+            new Property("oro_entity",
+                new Container(asList(
+                    new Property("exclusions", new Sequence(
+                        new Container(asList(
+                            new Property("class", new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity))).required(),
+                            new Property("field", new Scalar())
+                        ))
+                    )),
+                    new Property("entity_alias_exclusions", new Sequence(new Scalar())),
+                    new Property("entity_aliases", new Container(asList(
+                        new Property(Pattern.compile(".*"), new Container(asList(
+                            new Property("alias", new Scalar()),
+                            new Property("plural_alias", new Scalar())
+                        )))
+                    )))
+                )).allowExtraProperties()
+            ).required()
         )))
     );
 
