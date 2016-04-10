@@ -240,4 +240,11 @@ public class AclCompletionTest extends CompletionTest {
         )
     }
 
+    private def suggestions(String contents, Collection<String> expectedSuggestions, Collection<String> unexpectedSuggestions = []) {
+        return super.suggestions("acl.yml", contents, expectedSuggestions, unexpectedSuggestions)
+    }
+
+    private def completion(String contents, String expected) {
+        return super.completion("acl.yml", contents, expected)
+    }
 }
