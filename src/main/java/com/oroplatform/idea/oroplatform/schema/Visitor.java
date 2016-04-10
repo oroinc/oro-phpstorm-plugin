@@ -8,4 +8,6 @@ public interface Visitor {
     void visitLiteralChoicesValue(Scalar.Choices choices);
     void visitLiteralPhpClassValue(Scalar.PhpClass phpClass);
     void visitLiteralPhpMethodValue(Scalar.PhpMethod phpMethod);
+
+    void visitLiteralPhpFieldValue(Scalar.PhpField phpField);
 }

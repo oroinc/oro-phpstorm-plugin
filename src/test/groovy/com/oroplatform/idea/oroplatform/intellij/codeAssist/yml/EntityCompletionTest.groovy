@@ -40,7 +40,7 @@ class EntityCompletionTest extends CompletionTest {
             |    - { <caret> }
             """.stripMargin(),
 
-            ["class", "field"]
+            ["entity", "field"]
         )
     }
 

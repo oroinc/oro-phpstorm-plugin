@@ -3,6 +3,7 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.*;
 
 import java.util.Arrays;
@@ -72,5 +73,17 @@ class PsiElements {
         }
 
         return items;
+    }
+
+
+    @Nullable
+    static YAMLKeyValue getYamlKeyValueSiblingWithName(YAMLKeyValue keyValue, String name) {
+        for(PsiElement element : keyValue.getParent().getChildren()) {
+            if(element instanceof YAMLKeyValue && name.equals(((YAMLKeyValue) element).getKeyText())) {
+                return ((YAMLKeyValue) element);
+            }
+        }
+
+        return null;
     }
 }

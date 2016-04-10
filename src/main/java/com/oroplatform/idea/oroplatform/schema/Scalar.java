@@ -102,4 +102,12 @@ public class Scalar implements Element {
             visitor.visitLiteralPhpMethodValue(this);
         }
     }
+
+    public static class PhpField implements Value {
+
+        @Override
+        public void accept(Visitor visitor) {
+            visitor.visitLiteralPhpFieldValue(this);
+        }
+    }
 }

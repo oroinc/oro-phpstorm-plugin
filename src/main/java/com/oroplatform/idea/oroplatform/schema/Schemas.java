@@ -39,8 +39,8 @@ public class Schemas {
                 new Container(asList(
                     new Property("exclusions", new Sequence(
                         new Container(asList(
-                            new Property("class", new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity))).required(),
-                            new Property("field", new Scalar())
+                            new Property("entity", new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity))).required(),
+                            new Property("field", new Scalar(new Scalar.PhpField()))
                         ))
                     )),
                     new Property("entity_alias_exclusions", new Sequence(new Scalar())),

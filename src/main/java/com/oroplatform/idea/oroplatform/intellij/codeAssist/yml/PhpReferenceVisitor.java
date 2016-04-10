@@ -48,4 +48,9 @@ class PhpReferenceVisitor extends YmlVisitor {
     public void visitLiteralPhpMethodValue(Scalar.PhpMethod phpMethod) {
         registrar.registerReferenceProvider(capture, new PhpMethodReferenceProvider(phpMethod));
     }
+
+    @Override
+    public void visitLiteralPhpFieldValue(Scalar.PhpField phpField) {
+        registrar.registerReferenceProvider(capture, new PhpFieldReferenceProvider(phpField));
+    }
 }

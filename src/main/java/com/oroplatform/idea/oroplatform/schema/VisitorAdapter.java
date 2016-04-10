@@ -16,4 +16,8 @@ public abstract class VisitorAdapter implements Visitor {
     @Override
     public void visitLiteralPhpMethodValue(Scalar.PhpMethod phpMethod) {
     }
+
+    @Override
+    public void visitLiteralPhpFieldValue(Scalar.PhpField phpField) {
+    }
 }
