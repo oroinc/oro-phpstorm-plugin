@@ -74,8 +74,8 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         for(String className : findClassNames(phpIndex)) {
             for(PhpClass phpClass : phpIndex.getClassesByName(className)) {
                 final String namespaceName = phpClass.getNamespaceName();
-                final boolean isConcrete = !phpClass.isAbstract() && !phpClass.isInterface() && !phpClass.isTrait();
-                if(isConcrete && namespaceName.contains(namespacePart) && !isIgnoredNamespace(namespaceName)) {
+                final boolean isClass = !phpClass.isInterface() && !phpClass.isTrait();
+                if(isClass && namespaceName.contains(namespacePart) && !isIgnoredNamespace(namespaceName)) {
                     final int priority = getPriorityFor(phpClass);
                     if(type == Scalar.PhpClass.Type.Entity) {
                         addEntitiesShortcutsLookups(results, phpClass, priority);

@@ -31,8 +31,8 @@ public class AclPhpReferenceTest extends PhpReferenceTest {
             |  class RegionController {}
             |}
             |namespace Oro\\Bundle\\AcmeBundle\\Entity {
-            |  class Address extends AbstractAddress {}
-            |  abstract class AbstractAddress {}
+            |  class Address extends AbstractEntity {}
+            |  abstract class AbstractEntity {}
             |}
             |
           """.stripMargin()
@@ -84,15 +84,14 @@ public class AclPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
-    def void "test: should not suggest abstract classes as entity"() {
+    def void "test: should suggest abstract classes as entity"() {
         suggestions(
             """
             |some:
             |  class: <caret>
             """.stripMargin(),
 
-            [],
-            ["OroAcmeBundle:AbstractAddress"]
+            ["OroAcmeBundle:AbstractEntity"]
         )
     }
 
