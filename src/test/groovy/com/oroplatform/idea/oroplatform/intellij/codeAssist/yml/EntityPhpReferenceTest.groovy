@@ -130,6 +130,32 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
+    def void "test: should resolve full entity reference in entity_aliases"() {
+        checkPhpReference(
+            """
+            |oro_entity:
+            |  entity_aliases:
+            |    Oro\\Bundle\\AcmeBundle\\Ent<caret>ity\\Country: {}
+            """.stripMargin(),
+            ["Country"]
+        )
+    }
+
+    def void "test: should complete entity name in entity_aliases"() {
+        completion(
+            """
+            |oro_entity:
+            |  entity_aliases:
+            |    Cou<caret>
+            """.stripMargin(),
+            """
+            |oro_entity:
+            |  entity_aliases:
+            |    OroAcmeBundle:Country: <caret>
+            """.stripMargin(),
+        )
+    }
+
     @Override
     protected void tearDown() throws Exception {
         super.tearDown()

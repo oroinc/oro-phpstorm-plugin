@@ -1,5 +1,7 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
+import com.intellij.codeInsight.completion.InsertHandler;
+import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.completion.PrefixMatcher;
 import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
@@ -16,15 +18,19 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final String text;
     private final Scalar.PhpClass.Type type;
+    private final InsertHandler<LookupElement> insertHandler;
     private final String rootBundlePath;
     private final String namespacePart;
 
-    public PhpClassReference(PsiElement psiElement, Scalar.PhpClass.Type type, @NotNull String text) {
+    public PhpClassReference(PsiElement psiElement, Scalar.PhpClass.Type type, @NotNull String text, InsertHandler<LookupElement> insertHandler) {
         super(psiElement);
         this.type = type;
+        this.insertHandler = insertHandler;
         this.text = text.replace("IntellijIdeaRulezzz", "").trim().replace("\\\\", "\\");
         this.rootBundlePath = myElement.getContainingFile() == null ? "" : myElement.getContainingFile().getOriginalFile().getVirtualFile().getCanonicalPath().replaceFirst("/Resources/.*", "");
         this.namespacePart = "\\"+ type.toString() +"\\";
@@ -80,13 +86,30 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
                     if(type == Scalar.PhpClass.Type.Entity) {
                         addEntitiesShortcutsLookups(results, phpClass, priority);
                     } else {
-                        results.add(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, PhpClassInsertHandler.INSTANCE), priority));
+                        final InsertHandler<LookupElement> customInsertHandler = insertHandler != null ?
+                            new ComposedInsertHandler(asList(PhpClassInsertHandler.INSTANCE, insertHandler)) : PhpClassInsertHandler.INSTANCE;
+                        results.add(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, customInsertHandler), priority));
                     }
                 }
             }
         }
 
         return results.toArray();
+    }
+
+    private static class ComposedInsertHandler implements InsertHandler<LookupElement> {
+        private List<InsertHandler<LookupElement>> handlers = new LinkedList<InsertHandler<LookupElement>>();
+
+        ComposedInsertHandler(List<InsertHandler<LookupElement>> handlers) {
+            this.handlers.addAll(handlers);
+        }
+
+        @Override
+        public void handleInsert(InsertionContext context, LookupElement item) {
+            for (InsertHandler<LookupElement> handler : handlers) {
+                handler.handleInsert(context, item);
+            }
+        }
     }
 
     private boolean isIgnoredNamespace(String namespaceName) {
@@ -112,7 +135,7 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         final String shortcutName = PhpClassUtil.getDoctrineShortcutClassName(phpClass.getPresentableFQN());
         if(shortcutName != null) {
             results.add(PrioritizedLookupElement.withPriority(
-                LookupElementBuilder.create(shortcutName).withIcon(Icons.DOCTRINE).withTypeText(phpClass.getPresentableFQN()),
+                LookupElementBuilder.create(shortcutName).withIcon(Icons.DOCTRINE).withTypeText(phpClass.getPresentableFQN()).withInsertHandler(insertHandler),
                 priority
             ));
         }

@@ -11,14 +11,14 @@ class PhpReferenceVisitor extends YmlVisitor {
 
     private final PsiReferenceRegistrar registrar;
 
-    PhpReferenceVisitor(PsiReferenceRegistrar registrar, ElementPattern<? extends PsiElement> capture) {
-        super(capture);
+    PhpReferenceVisitor(PsiReferenceRegistrar registrar, ElementPattern<? extends PsiElement> capture, VisitingContext context) {
+        super(capture, context);
         this.registrar = registrar;
     }
 
     @Override
-    protected Visitor nextVisitor(ElementPattern<? extends PsiElement> capture) {
-        return new PhpReferenceVisitor(registrar, capture);
+    protected Visitor nextVisitor(ElementPattern<? extends PsiElement> capture, VisitingContext context) {
+        return new PhpReferenceVisitor(registrar, capture, context);
     }
 
     @Override
@@ -39,7 +39,7 @@ class PhpReferenceVisitor extends YmlVisitor {
                 capture,
                 psiElement().withParent(capture)
             ),
-            new PhpClassReferenceProvider(phpClass)
+            new PhpClassReferenceProvider(phpClass, insertHandler)
         );
     }
 

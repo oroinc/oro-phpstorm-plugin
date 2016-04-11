@@ -11,7 +11,7 @@ public class SchemaCompletion extends CompletionContributor {
 
     public SchemaCompletion() {
         for(Schema schema : Schemas.ALL) {
-            Visitor visitor = new CompletionSchemaVisitor(this, getDocumentPattern(schema.fileName));
+            Visitor visitor = new CompletionSchemaVisitor(this, getDocumentPattern(schema.fileName), YmlVisitor.VisitingContext.PROPERTY_VALUE);
             schema.rootElement.accept(visitor);
         }
     }

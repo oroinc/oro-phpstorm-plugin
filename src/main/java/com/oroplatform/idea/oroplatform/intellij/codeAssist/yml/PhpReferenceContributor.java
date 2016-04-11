@@ -13,7 +13,7 @@ public class PhpReferenceContributor extends PsiReferenceContributor {
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
         for(Schema schema : Schemas.ALL) {
-            Visitor visitor = new PhpReferenceVisitor(registrar, getDocumentPattern(schema.fileName));
+            Visitor visitor = new PhpReferenceVisitor(registrar, getDocumentPattern(schema.fileName), YmlVisitor.VisitingContext.PROPERTY_VALUE);
             schema.rootElement.accept(visitor);
         }
     }

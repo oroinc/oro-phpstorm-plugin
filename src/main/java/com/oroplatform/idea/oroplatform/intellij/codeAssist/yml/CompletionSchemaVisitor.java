@@ -15,14 +15,14 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 class CompletionSchemaVisitor extends YmlVisitor {
     private final CompletionContributor completion;
 
-    CompletionSchemaVisitor(CompletionContributor completion, ElementPattern<? extends PsiElement> capture) {
-        super(capture);
+    CompletionSchemaVisitor(CompletionContributor completion, ElementPattern<? extends PsiElement> capture, VisitingContext context) {
+        super(capture, context);
         this.completion = completion;
     }
 
     @Override
-    protected Visitor nextVisitor(ElementPattern<? extends PsiElement> capture) {
-        return new CompletionSchemaVisitor(completion, capture);
+    protected Visitor nextVisitor(ElementPattern<? extends PsiElement> capture, VisitingContext context) {
+        return new CompletionSchemaVisitor(completion, capture, context);
     }
 
     @Override
@@ -51,7 +51,7 @@ class CompletionSchemaVisitor extends YmlVisitor {
         completion.extend(
             CompletionType.BASIC,
             psiElement(LeafPsiElement.class).withSuperParent(2, capture),
-            new ChoiceCompletionProvider(choices.getChoices())
+            new ChoiceCompletionProvider(choices.getChoices(), insertHandler)
         );
     }
 }

@@ -88,7 +88,7 @@ public class Property {
         }
 
         public boolean matches(String value) {
-            return value.matches(value);
+            return this.value.matcher(value).matches();
         }
 
         @Override

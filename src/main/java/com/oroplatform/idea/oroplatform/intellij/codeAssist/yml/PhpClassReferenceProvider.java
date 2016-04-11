@@ -1,5 +1,7 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
+import com.intellij.codeInsight.completion.InsertHandler;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -20,9 +22,11 @@ class PhpClassReferenceProvider extends PsiReferenceProvider {
     }
 
     private final Scalar.PhpClass phpClass;
+    private final InsertHandler<LookupElement> insertHandler;
 
-    public PhpClassReferenceProvider(Scalar.PhpClass phpClass) {
+    public PhpClassReferenceProvider(Scalar.PhpClass phpClass, InsertHandler<LookupElement> insertHandler) {
         this.phpClass = phpClass;
+        this.insertHandler = insertHandler;
     }
 
     @NotNull
@@ -30,13 +34,13 @@ class PhpClassReferenceProvider extends PsiReferenceProvider {
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         if(element instanceof YAMLKeyValue) {
             return new PsiReference[] {
-                new PhpClassReference(((YAMLKeyValue) element).getKey(), phpClass.getType(), ((YAMLKeyValue) element).getKeyText()),
-                new PhpClassReference(element, phpClass.getType(), ((YAMLKeyValue) element).getValueText())
+                new PhpClassReference(((YAMLKeyValue) element).getKey(), phpClass.getType(), ((YAMLKeyValue) element).getKeyText(), insertHandler),
+                new PhpClassReference(element, phpClass.getType(), ((YAMLKeyValue) element).getValueText(), insertHandler)
             };
         } else if(element instanceof YAMLScalar) {
-            return new PsiReference[] { new PhpClassReference(element, phpClass.getType(), ((YAMLScalar) element).getTextValue()) };
+            return new PsiReference[] { new PhpClassReference(element, phpClass.getType(), ((YAMLScalar) element).getTextValue(), insertHandler) };
         } else {
-            return new PsiReference[] { new PhpClassReference(element, phpClass.getType(), element.getText()) };
+            return new PsiReference[] { new PhpClassReference(element, phpClass.getType(), element.getText(), insertHandler) };
         }
     }
 }
