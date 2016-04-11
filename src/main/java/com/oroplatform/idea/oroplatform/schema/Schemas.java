@@ -43,7 +43,7 @@ public class Schemas {
                             new Property("field", new Scalar(new Scalar.PhpField()))
                         ))
                     )),
-                    new Property("entity_alias_exclusions", new Sequence(new Scalar())),
+                    new Property("entity_alias_exclusions", new Sequence(new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity)))),
                     new Property("entity_aliases", new Container(asList(
                         new Property(Pattern.compile(".*"), new Container(asList(
                             new Property("alias", new Scalar()),

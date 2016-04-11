@@ -4,7 +4,6 @@ import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.oroplatform.idea.oroplatform.schema.*;
-import org.jetbrains.yaml.psi.YAMLQuotedText;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
@@ -38,7 +37,7 @@ class PhpReferenceVisitor extends YmlVisitor {
         registrar.registerReferenceProvider(
             psiElement().andOr(
                 capture,
-                psiElement(YAMLQuotedText.class).withParent(capture)
+                psiElement().withParent(capture)
             ),
             new PhpClassReferenceProvider(phpClass)
         );

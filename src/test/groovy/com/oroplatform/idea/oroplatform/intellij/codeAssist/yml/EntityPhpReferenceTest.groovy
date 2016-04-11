@@ -86,6 +86,17 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
+    def void "test: should entity as entity_alias_exclusions"() {
+        suggestions(
+            """
+            |oro_entity:
+            |  entity_alias_exclusions:
+            |    - <caret>
+            """.stripMargin(),
+            ["OroAcmeBundle:Country"]
+        )
+    }
+
     @Override
     protected void tearDown() throws Exception {
         super.tearDown()

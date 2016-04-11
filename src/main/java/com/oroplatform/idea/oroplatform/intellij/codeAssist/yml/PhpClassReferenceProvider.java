@@ -9,7 +9,7 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassReference;
 import com.oroplatform.idea.oroplatform.schema.Scalar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLQuotedText;
+import org.jetbrains.yaml.psi.YAMLScalar;
 
 class PhpClassReferenceProvider extends PsiReferenceProvider {
 
@@ -28,10 +28,10 @@ class PhpClassReferenceProvider extends PsiReferenceProvider {
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         if(element instanceof YAMLKeyValue) {
             return new PsiReference[] { new PhpClassReference(element, phpClass.getType(), ((YAMLKeyValue) element).getValueText()) };
-        } else if(element instanceof YAMLQuotedText) {
-            return new PsiReference[] { new PhpClassReference(element, phpClass.getType(), ((YAMLQuotedText) element).getTextValue()) };
+        } else if(element instanceof YAMLScalar) {
+            return new PsiReference[] { new PhpClassReference(element, phpClass.getType(), ((YAMLScalar) element).getTextValue()) };
+        } else {
+            return new PsiReference[] { new PhpClassReference(element, phpClass.getType(), element.getText()) };
         }
-
-        return new PsiReference[0];
     }
 }
