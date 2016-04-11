@@ -4,6 +4,7 @@ import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.ProcessingContext;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassReference;
 import com.oroplatform.idea.oroplatform.schema.Scalar;
@@ -15,6 +16,7 @@ class PhpClassReferenceProvider extends PsiReferenceProvider {
 
     static {
         ElementManipulators.INSTANCE.addExplicitExtension(YAMLKeyValue.class, new YamlKeyValueManipulator());
+        ElementManipulators.INSTANCE.addExplicitExtension(LeafPsiElement.class, new LeafPsiElementManipulator());
     }
 
     private final Scalar.PhpClass phpClass;
@@ -27,7 +29,10 @@ class PhpClassReferenceProvider extends PsiReferenceProvider {
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         if(element instanceof YAMLKeyValue) {
-            return new PsiReference[] { new PhpClassReference(element, phpClass.getType(), ((YAMLKeyValue) element).getValueText()) };
+            return new PsiReference[] {
+                new PhpClassReference(((YAMLKeyValue) element).getKey(), phpClass.getType(), ((YAMLKeyValue) element).getKeyText()),
+                new PhpClassReference(element, phpClass.getType(), ((YAMLKeyValue) element).getValueText())
+            };
         } else if(element instanceof YAMLScalar) {
             return new PsiReference[] { new PhpClassReference(element, phpClass.getType(), ((YAMLScalar) element).getTextValue()) };
         } else {

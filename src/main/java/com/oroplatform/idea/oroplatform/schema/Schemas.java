@@ -34,7 +34,7 @@ public class Schemas {
                 )
             )
         ))),
-        new Schema("entity.yml", new Container(Collections.singletonList(
+        new Schema("entity.yml", new Container(asList(
             new Property("oro_entity",
                 new Container(asList(
                     new Property("exclusions", new Sequence(
@@ -48,7 +48,7 @@ public class Schemas {
                         new Property(Pattern.compile(".*"), new Container(asList(
                             new Property("alias", new Scalar()),
                             new Property("plural_alias", new Scalar())
-                        )))
+                        ))).withKeyElement(new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity)))
                     )))
                 )).allowExtraProperties()
             ).required()

@@ -8,11 +8,17 @@ public class Property {
     private final Pattern name;
     private final Element valueElement;
     private final boolean required;
+    private final Scalar keyElement;
 
-    private Property(Pattern name, Element valueElement, boolean required) {
+    private Property(Pattern name, Element valueElement, boolean required, Scalar keyElement) {
         this.name = name;
         this.valueElement = valueElement;
         this.required = required;
+        this.keyElement = keyElement;
+    }
+
+    private Property(Pattern name, Element valueElement, boolean required) {
+        this(name, valueElement, required, new Scalar(new Scalar.Any()));
     }
 
     public Property(String name, Element valueElement) {
@@ -60,6 +66,14 @@ public class Property {
 
     public Property required() {
         return new Property(name, valueElement, true);
+    }
+
+    public Property withKeyElement(Scalar key) {
+        return new Property(name, valueElement, required, key);
+    }
+
+    public Scalar getKeyElement() {
+        return keyElement;
     }
 
     private static class RegexpPattern implements Pattern {

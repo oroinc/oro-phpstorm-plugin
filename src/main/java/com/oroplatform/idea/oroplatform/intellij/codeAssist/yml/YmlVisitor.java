@@ -27,19 +27,20 @@ abstract class YmlVisitor extends VisitorAdapter {
 
     @Override
     public void visitContainer(Container container) {
-        ElementPattern<? extends PsiElement> newCapture = YmlPatterns.mapping(capture);
+        final ElementPattern<? extends PsiElement> newCapture = YmlPatterns.mapping(capture);
 
         handleContainer(container, YmlPatterns.keyInProgress(capture, newCapture));
 
         for(final Property property : container.getProperties()) {
-            PsiElementPattern.Capture<PsiElement> propertyCapture = psiElement().withName(string().with(new PatternCondition<String>(null) {
+            final PsiElementPattern.Capture<PsiElement> propertyCapture = psiElement().withName(string().with(new PatternCondition<String>(null) {
                 @Override
                 public boolean accepts(@NotNull String s, ProcessingContext context) {
                     return property.nameMatches(s);
                 }
             }));
-            ElementPattern<? extends PsiElement> captureForNextVisitor = propertyCapture.withParent(newCapture);
+            final ElementPattern<? extends PsiElement> captureForNextVisitor = propertyCapture.withParent(newCapture);
             property.getValueElement().accept(nextVisitor(captureForNextVisitor));
+            property.getKeyElement().accept(nextVisitor(YmlPatterns.keyInProgress(capture, newCapture)));
         }
     }
 

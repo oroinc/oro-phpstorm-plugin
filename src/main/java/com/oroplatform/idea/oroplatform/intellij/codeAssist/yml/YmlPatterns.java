@@ -5,9 +5,7 @@ import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.yaml.YAMLLanguage;
-import org.jetbrains.yaml.psi.YAMLDocument;
-import org.jetbrains.yaml.psi.YAMLMapping;
-import org.jetbrains.yaml.psi.YAMLSequenceItem;
+import org.jetbrains.yaml.psi.*;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.PlatformPatterns.psiFile;
@@ -15,12 +13,16 @@ import static com.intellij.patterns.PlatformPatterns.psiFile;
 class YmlPatterns {
 
     static ElementPattern<? extends PsiElement> key(ElementPattern<? extends PsiElement> parent) {
-        return psiElement(LeafPsiElement.class).withSuperParent(2, parent);
+        return psiElement().andOr(
+            psiElement(LeafPsiElement.class).withSuperParent(2, parent),
+            psiElement(YAMLKeyValue.class).withParent(parent)
+        );
     }
 
     static ElementPattern<? extends PsiElement> keyInProgress(ElementPattern<? extends PsiElement> superParent, ElementPattern<? extends PsiElement> parent) {
         return psiElement().andOr(
             psiElement(LeafPsiElement.class).withSuperParent(2, superParent),
+            psiElement(YAMLScalar.class).withParent(superParent),
             key(parent)
         );
     }
