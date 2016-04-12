@@ -23,7 +23,8 @@ class KeyInsertHandler implements InsertHandler<LookupElement> {
             editor.getCaretModel().moveToOffset(lastCharPositionIgnoringSpace(document, lastCharPos + 1));
         }
 
-        AutoPopupController.getInstance(editor.getProject()).scheduleAutoPopup(editor);
+//        TODO: turn off because more sophisticated logic here is needed. AutoPopup should be shown only for choices and references
+//        AutoPopupController.getInstance(editor.getProject()).scheduleAutoPopup(editor);
     }
 
     private int lastCharPositionIgnoringSpace(Document document, int tailOffset) {
