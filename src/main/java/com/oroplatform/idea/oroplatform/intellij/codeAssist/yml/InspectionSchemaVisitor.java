@@ -102,6 +102,15 @@ class InspectionSchemaVisitor extends VisitorAdapter {
         }
     }
 
+    @Override
+    public void visitLiteralRegexpValue(Scalar.Regexp regexp) {
+        for (YAMLScalar element : getScalars(elements)) {
+            if(!regexp.getPattern().matcher(element.getTextValue()).matches()) {
+                problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.valueDoesNotMatchPattern", element.getTextValue(), regexp.getPattern().toString()));
+            }
+        }
+    }
+
     private static class ProblemsHolderComparator implements Comparator<ProblemsHolder> {
 
         private final String pattern = OroPlatformBundle.message("inspection.schema.notAllowedPropertyValue", "PLACEHOLDER", "PLACEHOLDER").replace(".", "\\.").replace("PLACEHOLDER", ".*");

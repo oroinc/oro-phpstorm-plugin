@@ -20,4 +20,8 @@ public abstract class VisitorAdapter implements Visitor {
     @Override
     public void visitLiteralPhpFieldValue(Scalar.PhpField phpField) {
     }
+
+    @Override
+    public void visitLiteralRegexpValue(Scalar.Regexp regexp) {
+    }
 }

@@ -41,6 +41,23 @@ public class Scalar implements Element {
         }
     }
 
+    public static class Regexp implements Value {
+        private final Pattern pattern;
+
+        public Regexp(Pattern pattern) {
+            this.pattern = pattern;
+        }
+
+        @Override
+        public void accept(Visitor visitor) {
+            visitor.visitLiteralRegexpValue(this);
+        }
+
+        public Pattern getPattern() {
+            return pattern;
+        }
+    }
+
     public static class Choices implements Value {
         private final List<String> choices = new LinkedList<String>();
 

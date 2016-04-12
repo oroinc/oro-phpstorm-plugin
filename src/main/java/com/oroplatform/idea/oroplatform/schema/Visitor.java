@@ -10,4 +10,6 @@ public interface Visitor {
     void visitLiteralPhpMethodValue(Scalar.PhpMethod phpMethod);
 
     void visitLiteralPhpFieldValue(Scalar.PhpField phpField);
+
+    void visitLiteralRegexpValue(Scalar.Regexp regexp);
 }

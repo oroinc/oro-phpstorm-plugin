@@ -46,8 +46,8 @@ public class Schemas {
                     new Property("entity_alias_exclusions", new Sequence(new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity)))),
                     new Property("entity_aliases", new Container(asList(
                         new Property(Pattern.compile(".*"), new Container(asList(
-                            new Property("alias", new Scalar()),
-                            new Property("plural_alias", new Scalar())
+                            new Property("alias", new Scalar(new Scalar.Regexp(Pattern.compile("^[a-z][a-z0-9_]*$")))),
+                            new Property("plural_alias", new Scalar(new Scalar.Regexp(Pattern.compile("^[a-z][a-z0-9_]*$"))))
                         ))).withKeyElement(new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity)))
                     )))
                 )).allowExtraProperties()
