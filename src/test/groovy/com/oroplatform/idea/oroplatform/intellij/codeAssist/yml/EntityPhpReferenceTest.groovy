@@ -159,6 +159,32 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
+    def void "test: should suggest entity full name for second item in entity_aliases"() {
+        suggestions(
+            """
+            |oro_entity:
+            |  entity_aliases:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Country: {}
+            |    <caret>
+            """.stripMargin(),
+            ["Country"],
+            []
+        )
+    }
+
+    def void "test: should suggest entity full name for existing key of second item in entity_aliases"() {
+        suggestions(
+            """
+            |oro_entity:
+            |  entity_aliases:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Country: {}
+            |    <caret>: {}
+            """.stripMargin(),
+            ["Country"],
+            []
+        )
+    }
+
     @Override
     protected void tearDown() throws Exception {
         super.tearDown()

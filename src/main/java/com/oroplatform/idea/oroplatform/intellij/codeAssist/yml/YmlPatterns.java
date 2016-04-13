@@ -14,14 +14,28 @@ class YmlPatterns {
 
     static ElementPattern<? extends PsiElement> key(ElementPattern<? extends PsiElement> parent) {
         return psiElement().andOr(
+            //some:
+            //  <caret>: ~
             psiElement(LeafPsiElement.class).withSuperParent(2, parent),
+            //for references
+            //some:
+            //  <caret>: ~
             psiElement(YAMLKeyValue.class).withParent(parent)
         );
     }
 
     static ElementPattern<? extends PsiElement> keyInProgress(ElementPattern<? extends PsiElement> superParent, ElementPattern<? extends PsiElement> parent) {
         return psiElement().andOr(
+            //some:
+            //  <caret>
             psiElement(LeafPsiElement.class).withSuperParent(2, superParent),
+            //for references
+            //some:
+            //  xxx: ~
+            //  <caret>
+            psiElement(YAMLScalar.class).withSuperParent(2, superParent),
+            //some:
+            //  <caret>
             psiElement(YAMLScalar.class).withParent(superParent),
             key(parent)
         );
