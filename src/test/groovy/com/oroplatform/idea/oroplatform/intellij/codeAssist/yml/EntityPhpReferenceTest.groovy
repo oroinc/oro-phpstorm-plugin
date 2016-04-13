@@ -122,6 +122,19 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
+    def void "test: should not suggest entity in entity_aliases item"() {
+        suggestions(
+            """
+            |oro_entity:
+            |  entity_aliases:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Country:
+            |      <caret>
+            """.stripMargin(),
+            [],
+            ["Country"]
+        )
+    }
+
     def void "test: should resolve entity reference in entity_aliases"() {
         checkPhpReference(
             """

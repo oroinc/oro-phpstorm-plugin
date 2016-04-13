@@ -1,6 +1,5 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
-import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
