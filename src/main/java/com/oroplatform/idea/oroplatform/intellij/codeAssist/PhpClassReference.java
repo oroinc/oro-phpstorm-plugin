@@ -22,18 +22,18 @@ import static java.util.Arrays.asList;
 
 public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final String text;
-    private final Scalar.PhpClass.Type type;
     private final InsertHandler<LookupElement> insertHandler;
     private final String rootBundlePath;
     private final String namespacePart;
+    private final Scalar.PhpClass phpClass;
 
-    public PhpClassReference(PsiElement psiElement, Scalar.PhpClass.Type type, @NotNull String text, InsertHandler<LookupElement> insertHandler) {
+    public PhpClassReference(PsiElement psiElement, Scalar.PhpClass phpClass, @NotNull String text, InsertHandler<LookupElement> insertHandler) {
         super(psiElement);
-        this.type = type;
+        this.phpClass = phpClass;
         this.insertHandler = insertHandler;
         this.text = text.replace("IntellijIdeaRulezzz", "").trim().replace("\\\\", "\\");
         this.rootBundlePath = myElement.getContainingFile() == null ? "" : myElement.getContainingFile().getOriginalFile().getVirtualFile().getCanonicalPath().replaceFirst("/Resources/.*", "");
-        this.namespacePart = "\\"+ type.toString() +"\\";
+        this.namespacePart = "\\"+ phpClass.getNamespacePart() +"\\";
     }
 
     @NotNull
@@ -83,7 +83,7 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
                 final boolean isClass = !phpClass.isInterface() && !phpClass.isTrait();
                 if(isClass && namespaceName.contains(namespacePart) && !isIgnoredNamespace(namespaceName)) {
                     final int priority = getPriorityFor(phpClass);
-                    if(type == Scalar.PhpClass.Type.Entity) {
+                    if(this.phpClass.allowDoctrineShortcutNotation()) {
                         addEntitiesShortcutsLookups(results, phpClass, priority);
                     } else {
                         final InsertHandler<LookupElement> customInsertHandler = insertHandler != null ?
@@ -120,7 +120,7 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         if(isFromVendors(phpClass)) {
             return -1;
         }
-        final String classRootPath = phpClass.getNamespaceName().replace("\\", "/").replaceFirst("/"+type.toString()+"/.*", "");
+        final String classRootPath = phpClass.getNamespaceName().replace("\\", "/").replaceFirst("/"+this.phpClass.getNamespacePart()+"/.*", "");
         return rootBundlePath.endsWith(classRootPath) ? 1 : 0;
     }
 

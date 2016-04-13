@@ -34,13 +34,13 @@ class PhpClassReferenceProvider extends PsiReferenceProvider {
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         if(element instanceof YAMLKeyValue) {
             return new PsiReference[] {
-                new PhpClassReference(((YAMLKeyValue) element).getKey(), phpClass.getType(), ((YAMLKeyValue) element).getKeyText(), insertHandler),
-                new PhpClassReference(element, phpClass.getType(), ((YAMLKeyValue) element).getValueText(), insertHandler)
+                new PhpClassReference(((YAMLKeyValue) element).getKey(), phpClass, ((YAMLKeyValue) element).getKeyText(), insertHandler),
+                new PhpClassReference(element, phpClass, ((YAMLKeyValue) element).getValueText(), insertHandler)
             };
         } else if(element instanceof YAMLScalar) {
-            return new PsiReference[] { new PhpClassReference(element, phpClass.getType(), ((YAMLScalar) element).getTextValue(), insertHandler) };
+            return new PsiReference[] { new PhpClassReference(element, phpClass, ((YAMLScalar) element).getTextValue(), insertHandler) };
         } else {
-            return new PsiReference[] { new PhpClassReference(element, phpClass.getType(), element.getText(), insertHandler) };
+            return new PsiReference[] { new PhpClassReference(element, phpClass, element.getText(), insertHandler) };
         }
     }
 }

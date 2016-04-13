@@ -15,10 +15,10 @@ public class Schemas {
                     new Container(asList(
                         new Property("type", new Scalar(asList("entity"))),
                         new Property("bindings", new Sequence(new Container(asList(
-                            new Property("class", new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Controller))).required(),
+                            new Property("class", new Scalar(Scalar.PhpClass.controller())).required(),
                             new Property("method", new Scalar(new Scalar.PhpMethod("*Action"))).required()
                         )))),
-                        new Property("class", new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity))).required(),
+                        new Property("class", new Scalar(Scalar.PhpClass.entity())).required(),
                         new Property("permission", new Scalar(asList("VIEW", "EDIT", "CREATE", "DELETE"))).required(),
                         new Property("group_name", new Scalar())
                     )),
@@ -39,16 +39,16 @@ public class Schemas {
                 new Container(asList(
                     new Property("exclusions", new Sequence(
                         new Container(asList(
-                            new Property("entity", new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity))).required(),
+                            new Property("entity", new Scalar(Scalar.PhpClass.entity(false))).required(),
                             new Property("field", new Scalar(new Scalar.PhpField()))
                         ))
                     )),
-                    new Property("entity_alias_exclusions", new Sequence(new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity)))),
+                    new Property("entity_alias_exclusions", new Sequence(new Scalar(Scalar.PhpClass.entity(false)))),
                     new Property("entity_aliases", new Container(asList(
                         new Property(Pattern.compile(".*"), new Container(asList(
                             new Property("alias", new Scalar(new Scalar.Regexp(Pattern.compile("^[a-z][a-z0-9_]*$")))),
                             new Property("plural_alias", new Scalar(new Scalar.Regexp(Pattern.compile("^[a-z][a-z0-9_]*$"))))
-                        ))).withKeyElement(new Scalar(new Scalar.PhpClass(Scalar.PhpClass.Type.Entity)))
+                        ))).withKeyElement(new Scalar(Scalar.PhpClass.entity(false)))
                     )))
                 )).allowExtraProperties()
             ).required()

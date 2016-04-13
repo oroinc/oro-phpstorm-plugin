@@ -76,14 +76,24 @@ public class Scalar implements Element {
     }
 
     public static class PhpClass implements Value {
-        private final Type type;
+        private final String namespacePart;
+        private final boolean allowDoctrineShortcutNotation;
 
-        PhpClass(Type type) {
-            this.type = type;
+        static PhpClass controller() {
+            return new PhpClass("Controller", false);
         }
 
-        public Type getType() {
-            return type;
+        static PhpClass entity() {
+            return entity(true);
+        }
+
+        static PhpClass entity(boolean allowDoctrineShortcutNotation) {
+            return new PhpClass("Entity", allowDoctrineShortcutNotation);
+        }
+
+        private PhpClass(String namespacePart, boolean allowDoctrineShortcutNotation) {
+            this.namespacePart = namespacePart;
+            this.allowDoctrineShortcutNotation = allowDoctrineShortcutNotation;
         }
 
         @Override
@@ -91,8 +101,12 @@ public class Scalar implements Element {
             visitor.visitLiteralPhpClassValue(this);
         }
 
-        public enum Type {
-            Entity, Controller
+        public boolean allowDoctrineShortcutNotation() {
+            return allowDoctrineShortcutNotation;
+        }
+
+        public String getNamespacePart() {
+            return namespacePart;
         }
     }
 

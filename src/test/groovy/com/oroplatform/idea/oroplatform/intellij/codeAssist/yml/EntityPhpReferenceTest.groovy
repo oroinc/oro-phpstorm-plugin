@@ -86,35 +86,38 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
-    def void "test: should suggest entity in entity_alias_exclusions"() {
+    def void "test: should suggest entity full name in entity_alias_exclusions"() {
         suggestions(
             """
             |oro_entity:
             |  entity_alias_exclusions:
             |    - <caret>
             """.stripMargin(),
+            ["Country"],
             ["OroAcmeBundle:Country"]
         )
     }
 
-    def void "test: should suggest entity as key in entity_aliases"() {
+    def void "test: should suggest entity full name as key in entity_aliases"() {
         suggestions(
             """
             |oro_entity:
             |  entity_aliases:
             |    <caret>
             """.stripMargin(),
+            ["Country"],
             ["OroAcmeBundle:Country"]
         )
     }
 
-    def void "test: should suggest entity as existing key in entity_aliases"() {
+    def void "test: should suggest entity full name as existing key in entity_aliases"() {
         suggestions(
             """
             |oro_entity:
             |  entity_aliases:
             |    <caret>: {}
             """.stripMargin(),
+            ["Country"],
             ["OroAcmeBundle:Country"]
         )
     }
@@ -151,7 +154,7 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
             """
             |oro_entity:
             |  entity_aliases:
-            |    OroAcmeBundle:Country: <caret>
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Country: <caret>
             """.stripMargin(),
         )
     }
