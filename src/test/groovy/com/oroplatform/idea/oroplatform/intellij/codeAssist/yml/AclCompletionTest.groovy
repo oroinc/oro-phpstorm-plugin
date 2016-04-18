@@ -245,4 +245,30 @@ public class AclCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: does not suggest already existing keys for key in progress"() {
+        suggestions(
+            """
+            |some_id:
+            |  type: action
+            |  <caret>
+            """.stripMargin(),
+
+            [ "label" ],
+            [ "type" ]
+        )
+    }
+
+    def void "test: does not suggest already existing keys"() {
+        suggestions(
+            """
+            |some_id:
+            |  type: action
+            |  <caret>:
+            """.stripMargin(),
+
+            [ "label" ],
+            [ "type" ]
+        )
+    }
+
 }

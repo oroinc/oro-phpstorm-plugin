@@ -6,11 +6,16 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.YAMLMapping;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> {
 
@@ -28,8 +33,27 @@ class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> 
 
     @Override
     protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
-        for(String choice : choices) {
-            result.addElement(LookupElementBuilder.create(choice).withInsertHandler(insertHandler));
+        final YAMLMapping mapping = getFirstMapping(parameters.getPosition());
+        final Set<String> existingProperties = new HashSet<String>();
+
+        if (mapping != null) {
+            for (YAMLKeyValue keyValue : mapping.getKeyValues()) {
+                existingProperties.add(keyValue.getKeyText());
+            }
         }
+
+        for(String choice : choices) {
+            if(!existingProperties.contains(choice)) {
+                result.addElement(LookupElementBuilder.create(choice).withInsertHandler(insertHandler));
+            }
+        }
+    }
+
+    private YAMLMapping getFirstMapping(PsiElement element) {
+        if(element instanceof YAMLMapping) {
+            return (YAMLMapping) element;
+        }
+
+        return element == null ? null : getFirstMapping(element.getParent());
     }
 }
