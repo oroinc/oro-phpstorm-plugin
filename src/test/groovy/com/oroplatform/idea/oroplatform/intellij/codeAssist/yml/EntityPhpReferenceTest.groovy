@@ -31,6 +31,8 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
             |  class Country {
             |    private \$name;
             |  }
+            |
+            |  class City {}
             |}
             |
           """.stripMargin()
@@ -180,7 +182,7 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
             |    Oro\\Bundle\\AcmeBundle\\Entity\\Country: {}
             |    <caret>
             """.stripMargin(),
-            ["Country"],
+            ["City"],
             []
         )
     }
@@ -193,8 +195,34 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
             |    Oro\\Bundle\\AcmeBundle\\Entity\\Country: {}
             |    <caret>: {}
             """.stripMargin(),
-            ["Country"],
+            ["City"],
             []
+        )
+    }
+
+    def void "test: should does not suggest already defined entity in entity_aliases"() {
+        suggestions(
+            """
+            |oro_entity:
+            |  entity_aliases:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Country: {}
+            |    <caret>: {}
+            """.stripMargin(),
+            [],
+            ["Country"]
+        )
+    }
+
+    def void "test: should does not suggest already defined entity in key in progress of entity_aliases"() {
+        suggestions(
+            """
+            |oro_entity:
+            |  entity_aliases:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Country: {}
+            |    <caret>
+            """.stripMargin(),
+            [],
+            ["Country"]
         )
     }
 

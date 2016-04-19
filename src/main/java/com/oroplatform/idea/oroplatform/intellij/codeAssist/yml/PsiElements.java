@@ -86,4 +86,13 @@ class PsiElements {
 
         return null;
     }
+
+    @Nullable
+    static YAMLMapping getFirstMapping(PsiElement element) {
+        if(element instanceof YAMLMapping) {
+            return (YAMLMapping) element;
+        }
+
+        return element == null ? null : getFirstMapping(element.getParent());
+    }
 }

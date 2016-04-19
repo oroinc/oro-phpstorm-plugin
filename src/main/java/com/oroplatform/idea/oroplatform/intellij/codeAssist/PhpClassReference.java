@@ -26,14 +26,20 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final String rootBundlePath;
     private final String namespacePart;
     private final Scalar.PhpClass phpClass;
+    private final Set<String> skippedClassNames = new HashSet<String>();
 
     public PhpClassReference(PsiElement psiElement, Scalar.PhpClass phpClass, @NotNull String text, InsertHandler<LookupElement> insertHandler) {
+        this(psiElement, phpClass, text, insertHandler, new HashSet<String>());
+    }
+
+    public PhpClassReference(PsiElement psiElement, Scalar.PhpClass phpClass, @NotNull String text, InsertHandler<LookupElement> insertHandler, Set<String> skippedClassNames) {
         super(psiElement);
         this.phpClass = phpClass;
         this.insertHandler = insertHandler;
         this.text = text.replace("IntellijIdeaRulezzz", "").trim().replace("\\\\", "\\");
         this.rootBundlePath = myElement.getContainingFile() == null ? "" : myElement.getContainingFile().getOriginalFile().getVirtualFile().getCanonicalPath().replaceFirst("/Resources/.*", "");
         this.namespacePart = "\\"+ phpClass.getNamespacePart() +"\\";
+        this.skippedClassNames.addAll(skippedClassNames);
     }
 
     @NotNull
@@ -81,7 +87,7 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
             for(PhpClass phpClass : phpIndex.getClassesByName(className)) {
                 final String namespaceName = phpClass.getNamespaceName();
                 final boolean isClass = !phpClass.isInterface() && !phpClass.isTrait();
-                if(isClass && namespaceName.contains(namespacePart) && !isIgnoredNamespace(namespaceName)) {
+                if(isClass && !skippedClassNames.contains(phpClass.getFQN()) && namespaceName.contains(namespacePart) && !isIgnoredNamespace(namespaceName)) {
                     final int priority = getPriorityFor(phpClass);
                     if(this.phpClass.allowDoctrineShortcutNotation()) {
                         addEntitiesShortcutsLookups(results, phpClass, priority);
