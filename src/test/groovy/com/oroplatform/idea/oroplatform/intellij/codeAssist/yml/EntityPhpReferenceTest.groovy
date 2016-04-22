@@ -200,7 +200,7 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
-    def void "test: should does not suggest already defined entity in entity_aliases"() {
+    def void "test: should not suggest already defined entity in entity_aliases"() {
         suggestions(
             """
             |oro_entity:
@@ -213,13 +213,25 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
-    def void "test: should does not suggest already defined entity in key in progress of entity_aliases"() {
+    def void "test: should not suggest already defined entity in key in progress of entity_aliases"() {
         suggestions(
             """
             |oro_entity:
             |  entity_aliases:
             |    Oro\\Bundle\\AcmeBundle\\Entity\\Country: {}
             |    <caret>
+            """.stripMargin(),
+            [],
+            ["Country"]
+        )
+    }
+
+
+    def void "test: should not suggest entity key in value place"() {
+        suggestions(
+            """
+            |oro_entity:
+            |  entity_aliases: <caret>
             """.stripMargin(),
             [],
             ["Country"]

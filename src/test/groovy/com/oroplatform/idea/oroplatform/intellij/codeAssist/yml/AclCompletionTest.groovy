@@ -118,8 +118,7 @@ public class AclCompletionTest extends CompletionTest {
         )
     }
 
-    //TODO: for more sophisticated cases
-    def void "ignored test: does not suggest keys as property values at top level"() {
+    def void "test: does not suggest keys as property values at top level"() {
         suggestions(
             """
             |some_id: <caret>
