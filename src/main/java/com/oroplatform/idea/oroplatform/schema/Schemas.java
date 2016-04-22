@@ -19,8 +19,9 @@ public class Schemas {
                             new Property("method", new Scalar(new Scalar.PhpMethod("*Action"))).required()
                         )))),
                         new Property("class", new Scalar(Scalar.PhpClass.entity())).required(),
-                        new Property("permission", new Scalar(asList("VIEW", "EDIT", "CREATE", "DELETE"))).required(),
-                        new Property("group_name", new Scalar())
+                        new Property("permission", new Scalar(asList("VIEW", "EDIT", "CREATE", "DELETE", "ASSIGN", "SHARE"))).required(),
+                        new Property("group_name", new Scalar()),
+                        new Property("description", new Scalar())
                     )),
                     new Container(asList(
                         new Property("type", new Scalar(asList("action"))),
@@ -29,7 +30,9 @@ public class Schemas {
                             //define as regular scalars in order to avoid double suggestions
                             new Property("class", new Scalar()).required(),
                             new Property("method", new Scalar()).required()
-                        ))))
+                        )))),
+                        new Property("group_name", new Scalar()),
+                        new Property("description", new Scalar())
                     ))
                 )
             )
