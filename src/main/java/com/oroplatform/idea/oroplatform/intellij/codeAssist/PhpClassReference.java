@@ -124,10 +124,10 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     private int getPriorityFor(PhpClass phpClass) {
         if(isFromVendors(phpClass)) {
-            return -1;
+            return 50;
         }
         final String classRootPath = phpClass.getNamespaceName().replace("\\", "/").replaceFirst("/"+this.phpClass.getNamespacePart()+"/.*", "");
-        return rootBundlePath.endsWith(classRootPath) ? 1 : 0;
+        return rootBundlePath.endsWith(classRootPath) ? 150 : 100;
     }
 
     private boolean isFromVendors(@NotNull PhpClass phpClass) {
