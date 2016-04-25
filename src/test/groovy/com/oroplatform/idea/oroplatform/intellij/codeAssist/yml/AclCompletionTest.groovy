@@ -182,6 +182,20 @@ public class AclCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: suggestions should be case insensitive"() {
+        completion(
+            """
+            |some_id:
+            |  permission: vi<caret>
+            """.stripMargin(),
+
+            """
+            |some_id:
+            |  permission: VIEW
+            """.stripMargin(),
+        )
+    }
+
     def void "test: complete choice scalar values"() {
         completion(
             """

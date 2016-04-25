@@ -1,9 +1,6 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionProvider;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.InsertHandler;
+import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.util.ProcessingContext;
@@ -36,6 +33,8 @@ class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> 
     protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
         final YAMLMapping mapping = getFirstMapping(parameters.getPosition());
         final Set<String> existingProperties = new HashSet<String>();
+
+        result = result.withPrefixMatcher(new PlainPrefixMatcher(result.getPrefixMatcher().getPrefix()));
 
         if (mapping != null) {
             for (YAMLKeyValue keyValue : mapping.getKeyValues()) {
