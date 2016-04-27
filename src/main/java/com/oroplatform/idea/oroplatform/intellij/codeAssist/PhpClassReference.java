@@ -8,9 +8,12 @@ import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.completion.PhpClassLookupElement;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpNamespace;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.oroplatform.idea.oroplatform.Icons;
 import com.oroplatform.idea.oroplatform.PhpClassUtil;
 import com.oroplatform.idea.oroplatform.schema.Scalar;
@@ -24,7 +27,6 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final String text;
     private final InsertHandler<LookupElement> insertHandler;
     private final String rootBundlePath;
-    private final String namespacePart;
     private final Scalar.PhpClass phpClass;
     private final Set<String> skippedClassNames = new HashSet<String>();
 
@@ -38,7 +40,6 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         this.insertHandler = insertHandler;
         this.text = text.replace("IntellijIdeaRulezzz", "").trim().replace("\\\\", "\\");
         this.rootBundlePath = myElement.getContainingFile() == null ? "" : myElement.getContainingFile().getOriginalFile().getVirtualFile().getCanonicalPath().replaceFirst("/Resources/.*", "");
-        this.namespacePart = "\\"+ phpClass.getNamespacePart() +"\\";
         this.skippedClassNames.addAll(skippedClassNames);
     }
 
@@ -83,24 +84,68 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         final PhpIndex phpIndex = PhpIndex.getInstance(myElement.getProject());
 
         final List<LookupElement> results = new LinkedList<LookupElement>();
-        for(String className : findClassNames(phpIndex)) {
-            for(PhpClass phpClass : phpIndex.getClassesByName(className)) {
-                final String namespaceName = phpClass.getNamespaceName();
-                final boolean isClass = !phpClass.isInterface() && !phpClass.isTrait();
-                if(isClass && !skippedClassNames.contains(phpClass.getFQN()) && namespaceName.contains(namespacePart) && !isIgnoredNamespace(namespaceName)) {
-                    final int priority = getPriorityFor(phpClass);
-                    if(this.phpClass.allowDoctrineShortcutNotation()) {
-                        addEntitiesShortcutsLookups(results, phpClass, priority);
-                    } else {
-                        final InsertHandler<LookupElement> customInsertHandler = insertHandler != null ?
-                            new ComposedInsertHandler(asList(PhpClassInsertHandler.INSTANCE, insertHandler)) : PhpClassInsertHandler.INSTANCE;
-                        results.add(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, customInsertHandler), priority));
+
+        for (PhpClass phpClass : getPhpClassesFrom(phpIndex, getBundlesNamespaceNames(phpIndex))) {
+            final int priority = getPriorityFor(phpClass);
+            if(this.phpClass.allowDoctrineShortcutNotation()) {
+                addEntitiesShortcutsLookups(results, phpClass, priority);
+            } else {
+                final InsertHandler<LookupElement> customInsertHandler = insertHandler != null ?
+                    new ComposedInsertHandler(asList(PhpClassInsertHandler.INSTANCE, insertHandler)) : PhpClassInsertHandler.INSTANCE;
+                results.add(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, customInsertHandler), priority));
+            }
+        }
+
+        return results.toArray();
+    }
+
+    private Collection<PhpClass> getPhpClassesFrom(PhpIndex phpIndex, Collection<String> namespaceNames) {
+        final Set<PhpClass> phpClasses = new HashSet<PhpClass>();
+        final Collection<PhpClass> reporitoryInterfaces = phpIndex.getInterfacesByName("\\Doctrine\\Common\\Persistence\\ObjectRepository");
+        final PhpClass repositoryInterface = reporitoryInterfaces.isEmpty() ? null : reporitoryInterfaces.iterator().next();
+
+        for (String namespaceName : namespaceNames) {
+
+            for (PhpNamespace phpNamespace : phpIndex.getNamespacesByName(namespaceName)) {
+                for (PhpClass phpClass : getPhpClassesFrom(phpIndex, phpNamespace)) {
+                    final boolean isClass = !phpClass.isInterface() && !phpClass.isTrait();
+                    if(isClass && !skippedClassNames.contains(phpClass.getFQN()) &&
+                        (!this.phpClass.getNamespacePart().equals("Entity") || repositoryInterface == null || isInstanceOf(phpIndex, phpClass, repositoryInterface))) {
+                        phpClasses.add(phpClass);
                     }
                 }
             }
         }
 
-        return results.toArray();
+        return phpClasses;
+    }
+
+    private static boolean isInstanceOf(PhpIndex phpIndex,  PhpClass subjectClass, PhpClass expectedClass) {
+        return new PhpType().add(expectedClass).isConvertibleFrom(new PhpType().add(subjectClass), phpIndex);
+    }
+
+    private Collection<PhpClass> getPhpClassesFrom(PhpIndex phpIndex, PhpNamespace phpNamespace) {
+        final List<PhpClass> phpClasses = PsiTreeUtil.getChildrenOfTypeAsList(phpNamespace.getStatements(), PhpClass.class);
+
+        final String namespaceName = phpNamespace.getFQN().toLowerCase() + "\\";
+        for (String parentNamespaceName : phpIndex.getChildNamespacesByParentName(namespaceName)) {
+            for (PhpNamespace parentNamespace : phpIndex.getNamespacesByName(namespaceName + parentNamespaceName)) {
+                phpClasses.addAll(getPhpClassesFrom(phpIndex, parentNamespace));
+            }
+        }
+
+        return phpClasses;
+    }
+
+    private Collection<String> getBundlesNamespaceNames(PhpIndex phpIndex) {
+        Collection<PhpClass> classes = phpIndex.getAllSubclasses("\\Symfony\\Component\\HttpKernel\\Bundle\\Bundle");
+        Collection<String> namespaces = new HashSet<String>();
+
+        for (PhpClass phpClass : classes) {
+            namespaces.add(phpClass.getNamespaceName()+this.phpClass.getNamespacePart());
+        }
+
+        return namespaces;
     }
 
     private static class ComposedInsertHandler implements InsertHandler<LookupElement> {
@@ -118,16 +163,19 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         }
     }
 
-    private boolean isIgnoredNamespace(String namespaceName) {
-        return namespaceName.contains("\\__CG__\\") || namespaceName.contains("\\Tests\\") || namespaceName.contains("\\Repository\\");
-    }
-
     private int getPriorityFor(PhpClass phpClass) {
+        int priority = 150;
+
         if(isFromVendors(phpClass)) {
-            return 50;
+            priority -= 50;
         }
+
         final String classRootPath = phpClass.getNamespaceName().replace("\\", "/").replaceFirst("/"+this.phpClass.getNamespacePart()+"/.*", "");
-        return rootBundlePath.endsWith(classRootPath) ? 150 : 100;
+        if(!rootBundlePath.endsWith(classRootPath)) {
+            priority -= 50;
+        }
+
+        return priority;
     }
 
     private boolean isFromVendors(@NotNull PhpClass phpClass) {
@@ -145,10 +193,5 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
                 priority
             ));
         }
-    }
-
-    private Collection<String> findClassNames(PhpIndex phpIndex) {
-        final PrefixMatcher classMatcher = new CamelHumpMatcher(text);
-        return phpIndex.getAllClassNames(classMatcher);
     }
 }

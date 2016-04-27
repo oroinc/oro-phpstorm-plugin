@@ -27,6 +27,10 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
         myFixture.configureByText("classes.php",
             """
             |<?php
+            |namespace Oro\\Bundle\\AcmeBundle {
+            |  class AcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+            |}
+            |
             |namespace Oro\\Bundle\\AcmeBundle\\Entity {
             |  class Country {
             |    private \$name;

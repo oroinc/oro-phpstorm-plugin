@@ -18,6 +18,10 @@ public class AclPhpReferenceTest extends PhpReferenceTest {
             """
             |<?php
             |
+            |namespace Oro\\Bundle\\AcmeBundle {
+            |  class AcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+            |}
+            |
             |namespace Oro\\Bundle\\AcmeBundle\\Controller {
             |  class AdminController {
             |    public function editAction() {}
@@ -124,7 +128,7 @@ public class AclPhpReferenceTest extends PhpReferenceTest {
             |  bindings:
             |    - { class: <caret> }
             """.stripMargin(),
-            ["RegionController","RegionController"]
+            ["RegionController", "RegionController"]
         )
     }
 
