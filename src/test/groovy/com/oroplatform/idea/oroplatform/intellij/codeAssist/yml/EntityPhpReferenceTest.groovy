@@ -37,6 +37,13 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
             |  }
             |
             |  class City {}
+            |
+            |  class CountryManager {}
+            |  class CountryRepository implements \\Doctrine\\Common\\Persistence\\ObjectRepository {}
+            |}
+            |
+            |namespace Doctrine\\Common\\Persistence {
+            |  interface ObjectRepository {}
             |}
             |
           """.stripMargin()
@@ -101,6 +108,18 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
             """.stripMargin(),
             ["Country"],
             ["OroAcmeBundle:Country"]
+        )
+    }
+
+    def void "test: should not suggest managers and repositories as entities"() {
+        suggestions(
+            """
+            |oro_entity:
+            |  entity_alias_exclusions:
+            |    - <caret>
+            """.stripMargin(),
+            [],
+            ["CountryManager", "CountryRepository"]
         )
     }
 

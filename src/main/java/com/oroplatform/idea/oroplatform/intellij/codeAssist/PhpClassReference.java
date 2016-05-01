@@ -18,6 +18,7 @@ import com.oroplatform.idea.oroplatform.Icons;
 import com.oroplatform.idea.oroplatform.PhpClassUtil;
 import com.oroplatform.idea.oroplatform.schema.Scalar;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -29,6 +30,8 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final String rootBundlePath;
     private final Scalar.PhpClass phpClass;
     private final Set<String> skippedClassNames = new HashSet<String>();
+    private final PhpIndex phpIndex;
+    private final PhpClass repositoryInterface;
 
     public PhpClassReference(PsiElement psiElement, Scalar.PhpClass phpClass, @NotNull String text, InsertHandler<LookupElement> insertHandler) {
         this(psiElement, phpClass, text, insertHandler, new HashSet<String>());
@@ -41,15 +44,16 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         this.text = text.replace("IntellijIdeaRulezzz", "").trim().replace("\\\\", "\\");
         this.rootBundlePath = myElement.getContainingFile() == null ? "" : myElement.getContainingFile().getOriginalFile().getVirtualFile().getCanonicalPath().replaceFirst("/Resources/.*", "");
         this.skippedClassNames.addAll(skippedClassNames);
+        this.phpIndex = PhpIndex.getInstance(psiElement.getProject());
+        this.repositoryInterface = getRepositoryInterface(phpIndex);
     }
 
     @NotNull
     @Override
     public ResolveResult[] multiResolve(boolean incompleteCode) {
-        final PhpIndex phpIndex = PhpIndex.getInstance(myElement.getProject());
         final List<ResolveResult> results = new LinkedList<ResolveResult>();
 
-        for(String className : resolveClassNames(phpIndex, text)) {
+        for(String className : resolveClassNames(text)) {
             for(PhpClass phpClass : phpIndex.getClassesByFQN(className)) {
                 results.add(new PsiElementResolveResult(phpClass));
             }
@@ -58,7 +62,7 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         return results.toArray(new ResolveResult[results.size()]);
     }
 
-    private Collection<String> resolveClassNames(PhpIndex phpIndex, String text) {
+    private Collection<String> resolveClassNames(String text) {
         final Set<String> names = new HashSet<String>();
         names.add(text);
 
@@ -81,11 +85,9 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     @NotNull
     @Override
     public Object[] getVariants() {
-        final PhpIndex phpIndex = PhpIndex.getInstance(myElement.getProject());
-
         final List<LookupElement> results = new LinkedList<LookupElement>();
 
-        for (PhpClass phpClass : getPhpClassesFrom(phpIndex, getBundlesNamespaceNames(phpIndex))) {
+        for (PhpClass phpClass : getPhpClassesFrom(getBundlesNamespaceNames())) {
             final int priority = getPriorityFor(phpClass);
             if(this.phpClass.allowDoctrineShortcutNotation()) {
                 addEntitiesShortcutsLookups(results, phpClass, priority);
@@ -99,18 +101,17 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         return results.toArray();
     }
 
-    private Collection<PhpClass> getPhpClassesFrom(PhpIndex phpIndex, Collection<String> namespaceNames) {
+    private Collection<PhpClass> getPhpClassesFrom(Collection<String> namespaceNames) {
         final Set<PhpClass> phpClasses = new HashSet<PhpClass>();
-        final Collection<PhpClass> reporitoryInterfaces = phpIndex.getInterfacesByName("\\Doctrine\\Common\\Persistence\\ObjectRepository");
-        final PhpClass repositoryInterface = reporitoryInterfaces.isEmpty() ? null : reporitoryInterfaces.iterator().next();
+
 
         for (String namespaceName : namespaceNames) {
 
             for (PhpNamespace phpNamespace : phpIndex.getNamespacesByName(namespaceName)) {
-                for (PhpClass phpClass : getPhpClassesFrom(phpIndex, phpNamespace)) {
+                for (PhpClass phpClass : getPhpClassesFrom(phpNamespace)) {
                     final boolean isClass = !phpClass.isInterface() && !phpClass.isTrait();
                     if(isClass && !skippedClassNames.contains(phpClass.getFQN()) &&
-                        (!this.phpClass.getNamespacePart().equals("Entity") || repositoryInterface == null || isInstanceOf(phpIndex, phpClass, repositoryInterface))) {
+                        (!this.phpClass.getNamespacePart().equals("Entity") || isEntity(phpClass))) {
                         phpClasses.add(phpClass);
                     }
                 }
@@ -120,24 +121,34 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         return phpClasses;
     }
 
-    private static boolean isInstanceOf(PhpIndex phpIndex,  PhpClass subjectClass, PhpClass expectedClass) {
+    @Nullable
+    private static PhpClass getRepositoryInterface(PhpIndex phpIndex) {
+        final Collection<PhpClass> repositoryInterfaces = phpIndex.getInterfacesByFQN("\\Doctrine\\Common\\Persistence\\ObjectRepository");
+        return repositoryInterfaces.isEmpty() ? null : repositoryInterfaces.iterator().next();
+    }
+
+    private boolean isEntity(PhpClass phpClass) {
+        return (repositoryInterface == null || !isInstanceOf(phpClass, repositoryInterface)) && !phpClass.getName().endsWith("Manager");
+    }
+
+    private boolean isInstanceOf(PhpClass subjectClass, PhpClass expectedClass) {
         return new PhpType().add(expectedClass).isConvertibleFrom(new PhpType().add(subjectClass), phpIndex);
     }
 
-    private Collection<PhpClass> getPhpClassesFrom(PhpIndex phpIndex, PhpNamespace phpNamespace) {
+    private Collection<PhpClass> getPhpClassesFrom(PhpNamespace phpNamespace) {
         final List<PhpClass> phpClasses = PsiTreeUtil.getChildrenOfTypeAsList(phpNamespace.getStatements(), PhpClass.class);
 
         final String namespaceName = phpNamespace.getFQN().toLowerCase() + "\\";
         for (String parentNamespaceName : phpIndex.getChildNamespacesByParentName(namespaceName)) {
             for (PhpNamespace parentNamespace : phpIndex.getNamespacesByName(namespaceName + parentNamespaceName)) {
-                phpClasses.addAll(getPhpClassesFrom(phpIndex, parentNamespace));
+                phpClasses.addAll(getPhpClassesFrom(parentNamespace));
             }
         }
 
         return phpClasses;
     }
 
-    private Collection<String> getBundlesNamespaceNames(PhpIndex phpIndex) {
+    private Collection<String> getBundlesNamespaceNames() {
         Collection<PhpClass> classes = phpIndex.getAllSubclasses("\\Symfony\\Component\\HttpKernel\\Bundle\\Bundle");
         Collection<String> namespaces = new HashSet<String>();
 
