@@ -55,6 +55,64 @@ public class Schemas {
                     )))
                 )).allowExtraProperties()
             ).required()
+        ))),
+        new Schema("datagrid.yml", new Container(asList(
+            new Property("datagrid",
+                new Container(asList(
+                    new Property(Pattern.compile(".*"), new Container(asList(
+                        new Property("source", new Container(asList(
+                            new Property("type", new Scalar()),
+                            new Property("acl_resource", new Scalar()),
+                            new Property("query", new Container(asList(
+                                new Property("select", new Scalar()),
+                                new Property("from", new Container(asList(
+                                    new Property("table", new Scalar()),
+                                    new Property("alias", new Scalar())
+                                ))),
+                                new Property("join", new Container(asList(
+                                    new Property("left", new Sequence(new Container(asList(
+                                        new Property("join", new Scalar()),
+                                        new Property("alias", new Scalar()),
+                                        new Property("conditionType", new Scalar()),
+                                        new Property("condition", new Scalar())
+                                    )))),
+                                    new Property("inner", new Sequence(new Container(asList(
+                                        new Property("join", new Scalar()),
+                                        new Property("alias", new Scalar()),
+                                        new Property("conditionType", new Scalar()),
+                                        new Property("condition", new Scalar())
+                                    ))))
+                                ))),
+                                new Property("where", new Scalar()),
+                                new Property("groupBy", new Scalar())
+                            )))
+                        ))),
+                        new Property("columns", new Container(asList(
+                            new Property(Pattern.compile(".*"),
+                                new Container(asList(
+                                    new Property("label", new Scalar()),
+                                    new Property("frontend_type", new Scalar()),
+                                    new Property("choices", new Scalar()),
+                                    new Property("template", new Scalar()),
+                                    new Property("type", new Scalar())
+                                ))
+                            )
+                        ))),
+                        new Property("sorters", new Container(asList(
+                            new Property("columns", new Scalar()),
+                            new Property("default", new Scalar())
+                        ))),
+                        new Property("filters", new Scalar()),
+                        new Property("properties", new Scalar()),
+                        new Property("actions", new Scalar()),
+                        new Property("action_configuration", new Scalar()),
+                        new Property("options", new Container(asList(
+                            new Property("entityHint", new Scalar()),
+                            new Property("entity_pagination", new Scalar())
+                        )))
+                    )))
+                ))
+            )
         )))
     );
 
