@@ -17,16 +17,25 @@ import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.PsiElemen
 
 class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> {
 
-    private final List<String> choices = new LinkedList<String>();
+    private final List<Choice> choices = new LinkedList<Choice>();
     private final InsertHandler<LookupElement> insertHandler;
 
-    ChoiceCompletionProvider(List<String> choices, InsertHandler<LookupElement> insertHandler) {
-        this.insertHandler = insertHandler;
-        this.choices.addAll(choices);
+    static ChoiceCompletionProvider fromChoiceNames(List<String> choices, InsertHandler<LookupElement> insertHandler) {
+        return new ChoiceCompletionProvider(toChoices(choices), insertHandler);
     }
 
-    ChoiceCompletionProvider(List<String> choices) {
-        this(choices, null);
+    private static List<Choice> toChoices(List<String> names) {
+        List<Choice> choices = new LinkedList<Choice>();
+        for (String name : names) {
+            choices.add(new Choice(name, null));
+        }
+
+        return choices;
+    }
+
+    ChoiceCompletionProvider(List<Choice> choices, InsertHandler<LookupElement> insertHandler) {
+        this.insertHandler = insertHandler;
+        this.choices.addAll(choices);
     }
 
     @Override
@@ -42,10 +51,28 @@ class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> 
             }
         }
 
-        for(String choice : choices) {
-            if(!existingProperties.contains(choice)) {
-                result.addElement(LookupElementBuilder.create(choice).withInsertHandler(insertHandler));
+        for(Choice choice : choices) {
+            if(!existingProperties.contains(choice.getName())) {
+                result.addElement(LookupElementBuilder.create(choice.getName()).withInsertHandler(insertHandler).withTypeText(choice.getDescription(), true));
             }
+        }
+    }
+
+    static class Choice {
+        private final String name;
+        private final String description;
+
+        Choice(String name, String description) {
+            this.name = name;
+            this.description = description;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        String getDescription() {
+            return description;
         }
     }
 }

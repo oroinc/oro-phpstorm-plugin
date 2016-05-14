@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.ChoiceCompletionProvider.Choice;
 import com.oroplatform.idea.oroplatform.schema.*;
 
 import java.util.LinkedList;
@@ -14,6 +15,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 class CompletionSchemaVisitor extends YmlVisitor {
     private final CompletionContributor completion;
+    private final PropertyDescriptionProvider propertyDescriptionProvider = new TypePropertyDescriptionProvider();
 
     CompletionSchemaVisitor(CompletionContributor completion, ElementPattern<? extends PsiElement> capture, VisitingContext context) {
         super(capture, context);
@@ -27,15 +29,18 @@ class CompletionSchemaVisitor extends YmlVisitor {
 
     @Override
     protected void handleContainer(Container container, ElementPattern<? extends PsiElement> captureElement) {
-        List<String> properties = new LinkedList<String>();
+        List<Choice> choices = new LinkedList<Choice>();
 
         for(Property property : container.getProperties()) {
-            properties.addAll(property.nameExamples());
+            for (String name : property.nameExamples()) {
+                choices.add(new Choice(name, propertyDescriptionProvider.getDescription(property)));
+            }
         }
+
         completion.extend(
             CompletionType.BASIC,
             captureElement,
-            new ChoiceCompletionProvider(properties, KeyInsertHandler.INSTANCE)
+            new ChoiceCompletionProvider(choices, KeyInsertHandler.INSTANCE)
         );
     }
 
@@ -51,7 +56,7 @@ class CompletionSchemaVisitor extends YmlVisitor {
         completion.extend(
             CompletionType.BASIC,
             psiElement(LeafPsiElement.class).withSuperParent(2, capture),
-            new ChoiceCompletionProvider(choices.getChoices(), insertHandler)
+            ChoiceCompletionProvider.fromChoiceNames(choices.getChoices(), insertHandler)
         );
     }
 }

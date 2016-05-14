@@ -17,7 +17,7 @@ class PsiElements {
         return getKeyValues(Arrays.asList(element.getChildren()));
     }
 
-    static Collection<YAMLKeyValue> getKeyValues(Collection<PsiElement> elements) {
+    private static Collection<YAMLKeyValue> getKeyValues(Collection<PsiElement> elements) {
         List<YAMLKeyValue> children = new LinkedList<YAMLKeyValue>();
         for(PsiElement child : elements) {
             if(child instanceof YAMLKeyValue) {
