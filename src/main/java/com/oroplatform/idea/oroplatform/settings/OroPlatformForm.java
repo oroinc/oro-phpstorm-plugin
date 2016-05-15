@@ -28,6 +28,7 @@ public class OroPlatformForm implements Configurable {
     private JButton appDirDefault;
     private TextFieldWithBrowseButton appDir;
     private JPanel component;
+    private JCheckBox pluginEnabled;
 
     public OroPlatformForm(@NotNull Project project) {
         this.project = project;
@@ -87,17 +88,19 @@ public class OroPlatformForm implements Configurable {
 
     @Override
     public boolean isModified() {
-        return !appDir.getText().equals(getSettings().getAppDir());
+        return !appDir.getText().equals(getSettings().getAppDir()) || pluginEnabled.isSelected() != getSettings().isPluginEnabled();
     }
 
     @Override
     public void apply() throws ConfigurationException {
         getSettings().setAppDir(appDir.getText());
+        getSettings().setPluginEnabled(pluginEnabled.isSelected());
     }
 
     @Override
     public void reset() {
         appDir.setText(getSettings().getAppDir());
+        pluginEnabled.setSelected(getSettings().isPluginEnabled());
     }
 
     @Override

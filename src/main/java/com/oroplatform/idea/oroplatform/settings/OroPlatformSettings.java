@@ -22,6 +22,7 @@ public class OroPlatformSettings implements PersistentStateComponent<Element> {
     }
 
     private String appDir = DEFAULT_APP_DIRECTORY;
+    private VerboseBoolean pluginEnabled = new VerboseBoolean(false, false);
 
     public String getAppDir() {
         return appDir;
@@ -31,6 +32,18 @@ public class OroPlatformSettings implements PersistentStateComponent<Element> {
         this.appDir = appDir;
     }
 
+    public void setPluginEnabled(boolean f) {
+        pluginEnabled = pluginEnabled.set(f);
+    }
+
+    public boolean isPluginEnabled() {
+        return pluginEnabled.isTrue();
+    }
+
+    public void setPluginEnableDismissed(boolean f) {
+        pluginEnabled = pluginEnabled.setDismissed(f);
+    }
+
     @Nullable
     @Override
     public Element getState() {
@@ -38,17 +51,74 @@ public class OroPlatformSettings implements PersistentStateComponent<Element> {
 
         Element appDirElement = new Element("appDir");
         appDirElement.setText(appDir);
+
+        Element pluginEnabledElement = new Element("pluginEnabled");
+        writeVerboseBoolean(pluginEnabledElement, pluginEnabled);
+
         element.addContent(appDirElement);
+        element.addContent(pluginEnabledElement);
 
         return element;
+    }
+
+    private void writeVerboseBoolean(Element parentElement, VerboseBoolean verboseBoolean) {
+        Element valueElement = new Element("value");
+        valueElement.setText(Boolean.toString(verboseBoolean.isTrue()));
+        Element dismissedValue = new Element("dismissed");
+        dismissedValue.setText(Boolean.toString(verboseBoolean.isDismissed()));
+
+        parentElement.addContent(valueElement);
+        parentElement.addContent(dismissedValue);
     }
 
     @Override
     public void loadState(Element state) {
         Element appDirElement = state.getChild("appDir");
+        Element pluginEnabledElement = state.getChild("pluginEnabled");
 
         if(appDirElement != null) {
             appDir = appDirElement.getText();
+        }
+
+        if(pluginEnabledElement != null) {
+            pluginEnabled = readVerboseBoolean(pluginEnabledElement);
+        }
+    }
+
+    private VerboseBoolean readVerboseBoolean(Element verboseBooleanElement) {
+        final Element value = verboseBooleanElement.getChild("value");
+        final Element dismissed = verboseBooleanElement.getChild("dismissed");
+
+        if(value != null && dismissed != null) {
+            return new VerboseBoolean("true".equals(value.getText()), "true".equals(dismissed.getText()));
+        }
+
+        return new VerboseBoolean(false, false);
+    }
+
+    private static class VerboseBoolean {
+        private final boolean value;
+        private final boolean dismissed;
+
+        private VerboseBoolean(boolean value, boolean dismissed) {
+            this.value = value;
+            this.dismissed = dismissed;
+        }
+
+        boolean isTrue() {
+            return value;
+        }
+
+        boolean isDismissed() {
+            return dismissed;
+        }
+
+        VerboseBoolean set(boolean f) {
+            return new VerboseBoolean(f, true);
+        }
+
+        VerboseBoolean setDismissed(boolean f) {
+            return new VerboseBoolean(value, f);
         }
     }
 }
