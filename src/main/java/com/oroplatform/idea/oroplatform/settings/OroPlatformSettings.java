@@ -36,8 +36,13 @@ public class OroPlatformSettings implements PersistentStateComponent<Element> {
         pluginEnabled = pluginEnabled.set(f);
     }
 
+    //TODO: use this value
     public boolean isPluginEnabled() {
         return pluginEnabled.isTrue();
+    }
+
+    public boolean couldPluginBeEnabled() {
+        return !pluginEnabled.isTrue() && !pluginEnabled.isDismissed();
     }
 
     public void setPluginEnableDismissed(boolean f) {

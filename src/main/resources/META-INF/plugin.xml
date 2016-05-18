@@ -34,6 +34,12 @@
         />
     </extensions>
 
+    <project-components>
+        <component>
+            <implementation-class>com.oroplatform.idea.oroplatform.intellij.ProjectConfigurator</implementation-class>
+        </component>
+    </project-components>
+
     <application-components>
     </application-components>
 
