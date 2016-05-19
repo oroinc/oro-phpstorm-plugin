@@ -37,7 +37,7 @@ class OroNotifications {
 
     private static void showPluginEnabledNotification(@NotNull final Project project) {
         Notifications.Bus.notify(GROUP.createNotification(
-            OroPlatformBundle.message("notifications.pluginEnabledTitle"),
+            OroPlatformBundle.message("notifications.group"),
             OroPlatformBundle.message("notifications.pluginEnabled"),
             NotificationType.INFORMATION, null
         ), project);

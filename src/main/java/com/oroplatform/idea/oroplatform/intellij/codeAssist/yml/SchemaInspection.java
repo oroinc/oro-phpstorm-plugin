@@ -8,6 +8,7 @@ import com.intellij.psi.PsiFile;
 import com.oroplatform.idea.oroplatform.schema.Schema;
 import com.oroplatform.idea.oroplatform.schema.Schemas;
 import com.oroplatform.idea.oroplatform.schema.Visitor;
+import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +18,10 @@ public class SchemaInspection extends LocalInspectionTool {
     @Nullable
     @Override
     public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
+        if(!OroPlatformSettings.getInstance(file.getProject()).isPluginEnabled()) {
+            return new ProblemDescriptor[0];
+        }
+
         ProblemsHolder problems = new ProblemsHolder(manager, file, isOnTheFly);
 
         for(Schema schema : Schemas.ALL) {

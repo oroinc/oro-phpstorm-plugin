@@ -1,5 +1,6 @@
 package com.oroplatform.idea.oroplatform.settings;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
@@ -36,9 +37,8 @@ public class OroPlatformSettings implements PersistentStateComponent<Element> {
         pluginEnabled = pluginEnabled.set(f);
     }
 
-    //TODO: use this value
     public boolean isPluginEnabled() {
-        return pluginEnabled.isTrue();
+        return ApplicationManager.getApplication().isUnitTestMode() || pluginEnabled.isTrue();
     }
 
     public boolean couldPluginBeEnabled() {
