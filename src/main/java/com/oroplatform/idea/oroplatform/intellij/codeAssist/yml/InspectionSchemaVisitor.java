@@ -96,7 +96,7 @@ class InspectionSchemaVisitor extends VisitorAdapter {
     @Override
     public void visitLiteralChoicesValue(Scalar.Choices choices) {
         for(YAMLScalar element : getScalars(elements)) {
-            if(!choices.getChoices().contains(element.getTextValue())) {
+            if(!choices.doesAllowExtraChoices() && !choices.getChoices().contains(element.getTextValue())) {
                 problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.notAllowedPropertyValue", element.getTextValue(), StringUtil.join(choices.getChoices(), ", ")));
             }
         }

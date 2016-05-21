@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static java.util.Arrays.asList;
+
 public class Scalar implements Element {
 
     private final Value value;
@@ -60,20 +62,56 @@ public class Scalar implements Element {
 
     public static class Choices implements Value {
         private final List<String> choices = new LinkedList<String>();
+        private final boolean allowExtraChoices;
 
         Choices(List<String> choices) {
+            this(choices, false);
+        }
+
+        private Choices(List<String> choices, boolean allowExtraChoices) {
             this.choices.addAll(choices);
+            this.allowExtraChoices = allowExtraChoices;
         }
 
         public List<String> getChoices() {
             return Collections.unmodifiableList(choices);
         }
 
+        public Choices allowExtraChoices() {
+            return new Choices(choices, true);
+        }
+
+        public boolean doesAllowExtraChoices() {
+            return allowExtraChoices;
+        }
+
         @Override
         public void accept(Visitor visitor) {
             visitor.visitLiteralChoicesValue(this);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Choices choices1 = (Choices) o;
+
+            if (allowExtraChoices != choices1.allowExtraChoices) return false;
+            return choices.equals(choices1.choices);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = choices.hashCode();
+            result = 31 * result + (allowExtraChoices ? 1 : 0);
+            return result;
+        }
     }
+
+    public static final Value Boolean = new Choices(asList("true", "false"));
+
+    public static final Value Integer = new Regexp(Pattern.compile("^\\d+$"));
 
     public static class PhpClass implements Value {
         private final String namespacePart;
