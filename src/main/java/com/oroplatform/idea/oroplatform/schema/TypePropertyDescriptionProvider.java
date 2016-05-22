@@ -20,9 +20,9 @@ public class TypePropertyDescriptionProvider implements PropertyDescriptionProvi
         } else if(element instanceof Sequence) {
             return getType(((Sequence) element).getType()) + "[]";
         } else if(element instanceof Scalar) {
-            if(((Scalar) element).getValue().equals(Scalar.Boolean)) {
+            if(((Scalar) element).getValue().equals(Scalar.bool.getValue())) {
                 return "boolean";
-            } else if(((Scalar) element).getValue().equals(Scalar.Integer)) {
+            } else if(((Scalar) element).getValue().equals(Scalar.integer.getValue())) {
                 return "integer";
             } else {
                 return "string";

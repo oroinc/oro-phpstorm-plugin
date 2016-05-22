@@ -2,26 +2,26 @@ package com.oroplatform.idea.oroplatform.schema;
 
 public abstract class VisitorAdapter implements Visitor {
     @Override
-    public void visitLiteralAnyValue(Scalar.Any any) {
+    public void visitScalarAnyValue(Scalar.Any any) {
     }
 
     @Override
-    public void visitLiteralChoicesValue(Scalar.Choices choices) {
+    public void visitScalarChoicesValue(Scalar.Choices choices) {
     }
 
     @Override
-    public void visitLiteralPhpClassValue(Scalar.PhpClass phpClass) {
+    public void visitScalarPhpClassValue(Scalar.PhpClass phpClass) {
     }
 
     @Override
-    public void visitLiteralPhpMethodValue(Scalar.PhpMethod phpMethod) {
+    public void visitScalarPhpMethodValue(Scalar.PhpMethod phpMethod) {
     }
 
     @Override
-    public void visitLiteralPhpFieldValue(Scalar.PhpField phpField) {
+    public void visitScalarPhpFieldValue(Scalar.PhpField phpField) {
     }
 
     @Override
-    public void visitLiteralRegexpValue(Scalar.Regexp regexp) {
+    public void visitScalarRegexpValue(Scalar.Regexp regexp) {
     }
 }

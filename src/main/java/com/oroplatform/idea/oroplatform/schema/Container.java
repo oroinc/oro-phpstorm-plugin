@@ -4,16 +4,18 @@ import java.util.*;
 
 public class Container implements Element {
 
+    final static Container any = new Container().allowExtraProperties();
+
     private final List<Property> properties = new LinkedList<Property>();
     private final boolean allowExtraProperties;
 
-    Container(List<Property> properties, boolean allowExtraProperties) {
+    private Container(List<Property> properties, boolean allowExtraProperties) {
         this.properties.addAll(properties);
         this.allowExtraProperties = allowExtraProperties;
     }
 
-    Container(List<Property> properties) {
-        this(properties, false);
+    Container(Property... properties) {
+        this(Arrays.asList(properties), false);
     }
 
     public List<Property> getProperties() {

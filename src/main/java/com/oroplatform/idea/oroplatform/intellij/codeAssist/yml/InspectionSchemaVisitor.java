@@ -94,7 +94,7 @@ class InspectionSchemaVisitor extends VisitorAdapter {
     }
 
     @Override
-    public void visitLiteralChoicesValue(Scalar.Choices choices) {
+    public void visitScalarChoicesValue(Scalar.Choices choices) {
         for(YAMLScalar element : getScalars(elements)) {
             if(!choices.doesAllowExtraChoices() && !choices.getChoices().contains(element.getTextValue())) {
                 problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.notAllowedPropertyValue", element.getTextValue(), StringUtil.join(choices.getChoices(), ", ")));
@@ -103,7 +103,7 @@ class InspectionSchemaVisitor extends VisitorAdapter {
     }
 
     @Override
-    public void visitLiteralRegexpValue(Scalar.Regexp regexp) {
+    public void visitScalarRegexpValue(Scalar.Regexp regexp) {
         for (YAMLScalar element : getScalars(elements)) {
             if(!regexp.getPattern().matcher(element.getTextValue()).matches()) {
                 problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.valueDoesNotMatchPattern", element.getTextValue(), regexp.getPattern().pattern()));

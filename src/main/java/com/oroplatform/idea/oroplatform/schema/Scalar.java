@@ -1,5 +1,6 @@
 package com.oroplatform.idea.oroplatform.schema;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,27 +33,59 @@ public class Scalar implements Element {
         return value;
     }
 
-    public interface Value {
-        public void accept(Visitor visitor);
+    static Scalar strictChoices(String... choices) {
+        return new Scalar(new Scalar.Choices(Arrays.asList(choices)));
     }
 
-    public static class Any implements Value {
+    static Scalar choices(String... choices) {
+        return new Scalar(new Scalar.Choices(Arrays.asList(choices)).allowExtraChoices());
+    }
+
+    static Scalar phpMethod(String pattern) {
+        return new Scalar(new Scalar.PhpMethod(pattern));
+    }
+
+    static Scalar regexp(String pattern) {
+        return new Scalar(new Scalar.Regexp(Pattern.compile(pattern)));
+    }
+
+    final static Scalar any = new Scalar();
+
+    final static Scalar fullEntity = new Scalar(Scalar.PhpClass.entity(false));
+
+    final static Scalar entity = new Scalar(Scalar.PhpClass.entity(true));
+
+    final static Scalar controller = new Scalar(Scalar.PhpClass.controller());
+
+    final static Scalar field = new Scalar(new Scalar.PhpField());
+
+    final static Scalar bool = new Scalar(new Choices(asList("true", "false")));
+
+    final static Scalar integer = new Scalar(new Regexp(Pattern.compile("^\\d+$")));
+
+    interface Value {
+        void accept(Visitor visitor);
+    }
+
+    static class Any implements Value {
+        private Any(){}
+
         @Override
         public void accept(Visitor visitor) {
-            visitor.visitLiteralAnyValue(this);
+            visitor.visitScalarAnyValue(this);
         }
     }
 
     public static class Regexp implements Value {
         private final Pattern pattern;
 
-        public Regexp(Pattern pattern) {
+        private Regexp(Pattern pattern) {
             this.pattern = pattern;
         }
 
         @Override
         public void accept(Visitor visitor) {
-            visitor.visitLiteralRegexpValue(this);
+            visitor.visitScalarRegexpValue(this);
         }
 
         public Pattern getPattern() {
@@ -64,7 +97,7 @@ public class Scalar implements Element {
         private final List<String> choices = new LinkedList<String>();
         private final boolean allowExtraChoices;
 
-        Choices(List<String> choices) {
+        private Choices(List<String> choices) {
             this(choices, false);
         }
 
@@ -87,7 +120,7 @@ public class Scalar implements Element {
 
         @Override
         public void accept(Visitor visitor) {
-            visitor.visitLiteralChoicesValue(this);
+            visitor.visitScalarChoicesValue(this);
         }
 
         @Override
@@ -109,23 +142,15 @@ public class Scalar implements Element {
         }
     }
 
-    public static final Value Boolean = new Choices(asList("true", "false"));
-
-    public static final Value Integer = new Regexp(Pattern.compile("^\\d+$"));
-
     public static class PhpClass implements Value {
         private final String namespacePart;
         private final boolean allowDoctrineShortcutNotation;
 
-        static PhpClass controller() {
+        private static PhpClass controller() {
             return new PhpClass("Controller", false);
         }
 
-        static PhpClass entity() {
-            return entity(true);
-        }
-
-        static PhpClass entity(boolean allowDoctrineShortcutNotation) {
+        private static PhpClass entity(boolean allowDoctrineShortcutNotation) {
             return new PhpClass("Entity", allowDoctrineShortcutNotation);
         }
 
@@ -136,7 +161,7 @@ public class Scalar implements Element {
 
         @Override
         public void accept(Visitor visitor) {
-            visitor.visitLiteralPhpClassValue(this);
+            visitor.visitScalarPhpClassValue(this);
         }
 
         public boolean allowDoctrineShortcutNotation() {
@@ -154,12 +179,8 @@ public class Scalar implements Element {
         /**
          * @param pattern Simple pattern, use * for any string
          */
-        PhpMethod(String pattern) {
+        private PhpMethod(String pattern) {
             this.pattern = Pattern.compile("^"+pattern.replace("*", ".*")+"$");
-        }
-
-        PhpMethod() {
-            this("*");
         }
 
         public boolean matches(String name) {
@@ -168,15 +189,17 @@ public class Scalar implements Element {
 
         @Override
         public void accept(Visitor visitor) {
-            visitor.visitLiteralPhpMethodValue(this);
+            visitor.visitScalarPhpMethodValue(this);
         }
     }
 
     public static class PhpField implements Value {
 
+        private PhpField(){}
+
         @Override
         public void accept(Visitor visitor) {
-            visitor.visitLiteralPhpFieldValue(this);
+            visitor.visitScalarPhpFieldValue(this);
         }
     }
 }

@@ -33,7 +33,7 @@ class PhpReferenceVisitor extends YmlVisitor {
     }
 
     @Override
-    public void visitLiteralPhpClassValue(Scalar.PhpClass phpClass) {
+    public void visitScalarPhpClassValue(Scalar.PhpClass phpClass) {
         registrar.registerReferenceProvider(
             psiElement().andOr(
                 capture,
@@ -44,12 +44,12 @@ class PhpReferenceVisitor extends YmlVisitor {
     }
 
     @Override
-    public void visitLiteralPhpMethodValue(Scalar.PhpMethod phpMethod) {
+    public void visitScalarPhpMethodValue(Scalar.PhpMethod phpMethod) {
         registrar.registerReferenceProvider(capture, new PhpMethodReferenceProvider(phpMethod));
     }
 
     @Override
-    public void visitLiteralPhpFieldValue(Scalar.PhpField phpField) {
+    public void visitScalarPhpFieldValue(Scalar.PhpField phpField) {
         registrar.registerReferenceProvider(capture, new PhpFieldReferenceProvider(phpField));
     }
 }

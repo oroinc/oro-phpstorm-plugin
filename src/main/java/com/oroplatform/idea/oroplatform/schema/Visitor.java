@@ -4,12 +4,10 @@ public interface Visitor {
     void visitSequence(Sequence sequence);
     void visitContainer(Container container);
     void visitOneOf(OneOf oneOf);
-    void visitLiteralAnyValue(Scalar.Any any);
-    void visitLiteralChoicesValue(Scalar.Choices choices);
-    void visitLiteralPhpClassValue(Scalar.PhpClass phpClass);
-    void visitLiteralPhpMethodValue(Scalar.PhpMethod phpMethod);
-
-    void visitLiteralPhpFieldValue(Scalar.PhpField phpField);
-
-    void visitLiteralRegexpValue(Scalar.Regexp regexp);
+    void visitScalarAnyValue(Scalar.Any any);
+    void visitScalarChoicesValue(Scalar.Choices choices);
+    void visitScalarPhpClassValue(Scalar.PhpClass phpClass);
+    void visitScalarPhpMethodValue(Scalar.PhpMethod phpMethod);
+    void visitScalarPhpFieldValue(Scalar.PhpField phpField);
+    void visitScalarRegexpValue(Scalar.Regexp regexp);
 }

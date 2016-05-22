@@ -9,7 +9,7 @@ public class OneOf implements Element {
 
     private final List<Element> elements = new LinkedList<Element>();
 
-    public OneOf(List<Element> elements) {
+    private OneOf(List<Element> elements) {
         this.elements.addAll(elements);
     }
 

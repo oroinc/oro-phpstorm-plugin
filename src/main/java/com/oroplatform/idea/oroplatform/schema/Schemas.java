@@ -1,267 +1,263 @@
 package com.oroplatform.idea.oroplatform.schema;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
 
 public class Schemas {
 
-    private static final Element QUERY_JOIN = new Container(asList(
-        new Property("join", new Scalar()).required(),
-        new Property("alias", new Scalar()).required(),
-        new Property("conditionType", new Scalar()),
-        new Property("condition", new Scalar(new Scalar.Choices(asList("ON", "WITH"))))
-    ));
+    private static final Element QUERY_JOIN = new Container(
+        new Property("join", Scalar.any).required(),
+        new Property("alias", Scalar.any).required(),
+        new Property("conditionType", Scalar.any),
+        new Property("condition", Scalar.strictChoices("ON", "WITH"))
+    );
 
     public static final Collection<Schema> ALL = asList(
-        new Schema("acl.yml", new Container(Collections.singletonList(
+        new Schema("acl.yml", new Container(
             new Property(Pattern.compile(".+"),
                 new OneOf(
-                    new Container(asList(
-                        new Property("type", new Scalar(asList("entity"))),
-                        new Property("bindings", new Sequence(new Container(asList(
-                            new Property("class", new Scalar(Scalar.PhpClass.controller())).required(),
-                            new Property("method", new Scalar(new Scalar.PhpMethod("*Action"))).required()
-                        )))),
-                        new Property("class", new Scalar(Scalar.PhpClass.entity())).required(),
-                        new Property("permission", new Scalar(asList("VIEW", "EDIT", "CREATE", "DELETE", "ASSIGN", "SHARE"))).required(),
-                        new Property("group_name", new Scalar()),
-                        new Property("description", new Scalar())
-                    )),
-                    new Container(asList(
-                        new Property("type", new Scalar(asList("action"))),
-                        new Property("label", new Scalar(), true).required(),
-                        new Property("bindings", new Sequence(new Container(asList(
+                    new Container(
+                        new Property("type", Scalar.strictChoices("entity")),
+                        new Property("bindings", new Sequence(new Container(
+                            new Property("class", Scalar.controller).required(),
+                            new Property("method", Scalar.phpMethod("*Action")).required()
+                        ))),
+                        new Property("class", Scalar.entity).required(),
+                        new Property("permission", Scalar.strictChoices("VIEW", "EDIT", "CREATE", "DELETE", "ASSIGN", "SHARE")).required(),
+                        new Property("group_name", Scalar.any),
+                        new Property("description", Scalar.any)
+                    ),
+                    new Container(
+                        new Property("type", Scalar.strictChoices("action")),
+                        new Property("label", Scalar.any, true).required(),
+                        new Property("bindings", new Sequence(new Container(
                             //define as regular scalars in order to avoid double suggestions
-                            new Property("class", new Scalar()).required(),
-                            new Property("method", new Scalar()).required()
-                        )))),
-                        new Property("group_name", new Scalar()),
-                        new Property("description", new Scalar())
-                    ))
+                            new Property("class", Scalar.any).required(),
+                            new Property("method", Scalar.any).required()
+                        ))),
+                        new Property("group_name", Scalar.any),
+                        new Property("description", Scalar.any)
+                    )
                 )
             )
-        ))),
-        new Schema("entity.yml", new Container(asList(
+        )),
+        new Schema("entity.yml", new Container(
             new Property("oro_entity",
-                new Container(asList(
+                new Container(
                     new Property("exclusions", new Sequence(
-                        new Container(asList(
-                            new Property("entity", new Scalar(Scalar.PhpClass.entity(false))).required(),
-                            new Property("field", new Scalar(new Scalar.PhpField()))
-                        ))
+                        new Container(
+                            new Property("entity", Scalar.fullEntity).required(),
+                            new Property("field", Scalar.field)
+                        )
                     )),
-                    new Property("entity_alias_exclusions", new Sequence(new Scalar(Scalar.PhpClass.entity(false)))),
-                    new Property("entity_aliases", new Container(asList(
-                        new Property(Pattern.compile(".*"), new Container(asList(
-                            new Property("alias", new Scalar(new Scalar.Regexp(Pattern.compile("^[a-z][a-z0-9_]*$")))),
-                            new Property("plural_alias", new Scalar(new Scalar.Regexp(Pattern.compile("^[a-z][a-z0-9_]*$"))))
-                        ))).withKeyElement(new Scalar(Scalar.PhpClass.entity(false)))
-                    )))
-                )).allowExtraProperties()
+                    new Property("entity_alias_exclusions", new Sequence(Scalar.fullEntity)),
+                    new Property("entity_aliases", new Container(
+                        new Property(Pattern.compile(".*"), new Container(
+                            new Property("alias", Scalar.regexp("^[a-z][a-z0-9_]*$")),
+                            new Property("plural_alias", Scalar.regexp("^[a-z][a-z0-9_]*$"))
+                        )).withKeyElement(Scalar.fullEntity)
+                    ))
+                ).allowExtraProperties()
             ).required()
-        ))),
-        new Schema("datagrid.yml", new Container(asList(
+        )),
+        new Schema("datagrid.yml", new Container(
             new Property("datagrid",
-                new Container(asList(
-                    new Property(Pattern.compile(".*"), new Container(asList(
-                        new Property("extended_entity_name", new OneOf(
-                            new Scalar(Scalar.PhpClass.entity()),
-                            new Scalar()
-                        )),
-                        new Property("acl_resource", new Scalar()),
-                        new Property("source", new Container(asList(
-                            new Property("type", new Scalar(new Scalar.Choices(asList("orm", "search")).allowExtraChoices())),
-                            new Property("acl_resource", new Scalar()),
-                            new Property("query", new Container(asList(
-                                new Property("select", new Sequence(new Scalar())),
-                                new Property("from", new Sequence(new Container(asList(
-                                    new Property("table", new Scalar()),
-                                    new Property("alias", new Scalar())
-                                )))),
-                                new Property("join", new Container(asList(
+                new Container(
+                    new Property(Pattern.compile(".*"), new Container(
+                        new Property("extended_entity_name", new OneOf(Scalar.entity, Scalar.any)),
+                        new Property("acl_resource", Scalar.any),
+                        new Property("source", new Container(
+                            new Property("type", Scalar.choices("orm", "search")),
+                            new Property("acl_resource", Scalar.any),
+                            new Property("query", new Container(
+                                new Property("select", new Sequence(Scalar.any)),
+                                new Property("from", new Sequence(new Container(
+                                    new Property("table", Scalar.any),
+                                    new Property("alias", Scalar.any)
+                                ))),
+                                new Property("join", new Container(
                                     new Property("left", new Sequence(QUERY_JOIN)),
                                     new Property("inner", new Sequence(QUERY_JOIN))
-                                ))),
-                                new Property("where", new Container(asList(
-                                    new Property("and", new Sequence(new Scalar())),
-                                    new Property("or", new Sequence(new Scalar()))
-                                ))),
-                                new Property("having", new Scalar()),
-                                new Property("orderBy", new Container(asList(
-                                    new Property("column", new Scalar()),
-                                    new Property("dir", new Scalar(new Scalar.Choices(asList("ASC", "DESC"))))
-                                ))),
-                                new Property("groupBy", new Scalar()),
-                                new Property("distinct", new Scalar(Scalar.Boolean))
-                            )))
-                        ))),
-                        new Property("columns", new Container(asList(
+                                )),
+                                new Property("where", new Container(
+                                    new Property("and", new Sequence(Scalar.any)),
+                                    new Property("or", new Sequence(Scalar.any))
+                                )),
+                                new Property("having", Scalar.any),
+                                new Property("orderBy", new Container(
+                                    new Property("column", Scalar.any),
+                                    new Property("dir", Scalar.strictChoices("ASC", "DESC"))
+                                )),
+                                new Property("groupBy", Scalar.any),
+                                new Property("distinct", Scalar.bool)
+                            ))
+                        )),
+                        new Property("columns", new Container(
                             new Property(Pattern.compile(".*"),
-                                new Container(asList(
-                                    new Property("label", new Scalar()),
-                                    new Property("translatable", new Scalar(Scalar.Boolean)),
-                                    new Property("data_name", new Scalar()),
-                                    new Property("frontend_type", new Scalar(new Scalar.Choices(asList("string", "html", "date", "time", "datetime", "integer", "number", "decimal", "percent", "currency", "boolean", "array", "simple_array", "row_array", "select", "multi-select", "phone", "relation")))),
-                                    new Property("choices", new Scalar()),
-                                    new Property("template", new Scalar()),
-                                    new Property("type", new Scalar(new Scalar.Choices(asList("field", "url", "link", "twig", "translatable", "callback", "localized_number")))),
-                                    new Property("renderable", new Scalar(Scalar.Boolean)),
-                                    new Property("editable", new Scalar(Scalar.Boolean)),
-                                    new Property("order", new Scalar(Scalar.Integer)),
-                                    new Property("required", new Scalar(Scalar.Boolean)),
-                                    new Property("manageable", new Scalar(Scalar.Boolean)),
-                                    new Property("context", new Scalar()),
-                                    new Property("inline_editing", new Container(asList(
-                                        new Property("enable", new Scalar(Scalar.Boolean)),
-                                        new Property("editor", new Container(asList(
-                                            new Property("component", new Scalar()),
-                                            new Property("component_options", new Container(Collections.<Property>emptyList()).allowExtraProperties()),
-                                            new Property("view", new Scalar()),
-                                            new Property("view_options", new Container(Collections.<Property>emptyList()).allowExtraProperties())
-                                        ))),
-                                        new Property("save_api_accessor", new Container(Collections.<Property>emptyList()).allowExtraProperties()),
-                                        new Property("autocomplete_api_accessor", new Container(Collections.<Property>emptyList()).allowExtraProperties()),
-                                        new Property("validation_rules", new Container(Collections.<Property>emptyList()).allowExtraProperties())
-                                    )))
-                                ))
+                                new Container(
+                                    new Property("label", Scalar.any),
+                                    new Property("translatable", Scalar.bool),
+                                    new Property("data_name", Scalar.any),
+                                    new Property("frontend_type", Scalar.strictChoices("string", "html", "date", "time", "datetime", "integer", "number", "decimal", "percent", "currency", "boolean", "array", "simple_array", "row_array", "select", "multi-select", "phone", "relation")),
+                                    new Property("choices", Scalar.any),
+                                    new Property("template", Scalar.any),
+                                    new Property("type", Scalar.strictChoices("field", "url", "link", "twig", "translatable", "callback", "localized_number")),
+                                    new Property("renderable", Scalar.bool),
+                                    new Property("editable", Scalar.bool),
+                                    new Property("order", Scalar.integer),
+                                    new Property("required", Scalar.bool),
+                                    new Property("manageable", Scalar.bool),
+                                    new Property("context", Scalar.any),
+                                    new Property("inline_editing", new Container(
+                                        new Property("enable", Scalar.bool),
+                                        new Property("editor", new Container(
+                                            new Property("component", Scalar.any),
+                                            new Property("component_options", Container.any),
+                                            new Property("view", Scalar.any),
+                                            new Property("view_options", Container.any)
+                                        )),
+                                        new Property("save_api_accessor", Container.any),
+                                        new Property("autocomplete_api_accessor", Container.any),
+                                        new Property("validation_rules", Container.any)
+                                    ))
+                                )
                             )
-                        ))),
-                        new Property("sorters", new Container(asList(
-                            new Property("columns", new Container(asList(
-                                new Property("data_name", new Scalar()),
-                                new Property("disabled", new Scalar(Scalar.Boolean)),
-                                new Property("type", new Scalar()),
-                                new Property("apply_callback", new Scalar())
-                            ))),
-                            new Property("default", new Container(Collections.<Property>emptyList()).allowExtraProperties()),
-                            new Property("multiple_sorting", new Scalar(Scalar.Boolean)),
-                            new Property("toolbar_sorting", new Scalar(Scalar.Boolean))
-                        ))),
-                        new Property("filters", new Container(asList(
-                            new Property("columns", new Container(asList(
-                                new Property(Pattern.compile(".*"), new Container(asList(
-                                    new Property("type", new Scalar(new Scalar.Choices(asList(
+                        )),
+                        new Property("sorters", new Container(
+                            new Property("columns", new Container(
+                                new Property("data_name", Scalar.any),
+                                new Property("disabled", Scalar.bool),
+                                new Property("type", Scalar.any),
+                                new Property("apply_callback", Scalar.any)
+                            )),
+                            new Property("default", Container.any),
+                            new Property("multiple_sorting", Scalar.bool),
+                            new Property("toolbar_sorting", Scalar.bool)
+                        )),
+                        new Property("filters", new Container(
+                            new Property("columns", new Container(
+                                new Property(Pattern.compile(".*"), new Container(
+                                    new Property("type", Scalar.choices(
                                         "string", "selectrow", "number", "number-range", "percent", "currency", "choice",
                                         "single_choice", "entity", "boolean", "date", "datetime", "many-to-many", "choice-tree",
                                         "dictionary", "enum", "multi_enum"
-                                    )).allowExtraChoices())),
-                                    new Property("data_name", new Scalar()),
-                                    new Property("filter_condition", new Scalar(new Scalar.Choices(asList("AND", "OR")))),
-                                    new Property("filter_by_having", new Scalar(Scalar.Boolean)),
-                                    new Property("enabled", new Scalar(Scalar.Boolean)),
-                                    new Property("translatable", new Scalar(Scalar.Boolean)),
-                                    new Property("options", new Container(Collections.<Property>emptyList()).allowExtraProperties())
-                                )))
-                            ))),
-                            new Property("default", new Container(Collections.<Property>emptyList()).allowExtraProperties())
-                        ))),
-                        //TODO: type, route etc. Definition depending on a type?
-                        new Property("properties", new Scalar()),
-                        new Property("actions", new Container(asList(
-                            new Property(Pattern.compile(".*"), new Container(asList(
-                                new Property("label", new Scalar()),
-                                new Property("type", new Scalar(new Scalar.Choices(asList("navigate", "ajax", "delete", "ajaxdelete", "frontend")).allowExtraChoices())),
-                                new Property("acl_resource", new Scalar()),
-                                new Property("icon", new Scalar()),
-                                new Property("link", new Scalar()),
-                                new Property("rowAction", new Scalar(Scalar.Boolean)),
-                                new Property("selector", new Scalar())
-                            ))))
-                        )),
-                        new Property("mass_action", new Container(asList(
-                            new Property(Pattern.compile(".*"), new Container(asList(
-                                new Property("label", new Scalar()),
-                                new Property("type", new Scalar(new Scalar.Choices(asList("frontend", "merge")).allowExtraChoices())),
-                                new Property("data_identifier", new Scalar()),
-                                new Property("icon", new Scalar()),
-                                new Property("selector", new Scalar())
-                            )))
-                        ))),
-                        new Property("totals", new Container(asList(
-                            new Property(Pattern.compile(".*"), new Container(asList(
-                                new Property("per_page", new Scalar(Scalar.Boolean)),
-                                new Property("hide_if_one_page", new Scalar(Scalar.Boolean)),
-                                new Property("extends", new Scalar()),
-                                new Property("columns", new Container(asList(
-                                    new Property(Pattern.compile(".*"), new Container(asList(
-                                        new Property("label", new Scalar()),
-                                        new Property("expr", new Scalar()),
-                                        new Property("formatter", new Scalar(new Scalar.Choices(asList(
-                                            "date", "datetime", "time", "decimal", "integer", "percent", "currency"
-                                        ))))
-                                    )))
-                                )))
-                            )).allowExtraProperties())
-                        ))),
-                        new Property("inline_editing", new Container(asList(
-                            new Property("enable", new Scalar(Scalar.Boolean)),
-                            new Property("entity_name", new Scalar(Scalar.PhpClass.entity())),
-                            new Property("behaviour", new Scalar(new Scalar.Choices(asList("enable_all", "enable_selected")))),
-                            new Property("plugin", new Scalar()),
-                            new Property("default_editors", new Scalar()),
-                            new Property("cell_editor", new Container(asList(
-                                new Property("component", new Scalar()),
-                                new Property("component_options", new Container(Collections.<Property>emptyList()).allowExtraProperties())
-                            ))),
-                            new Property("save_api_accessor", new Container(asList(
-                                new Property("route", new Scalar()),
-                                new Property("http_method", new Scalar()),
-                                new Property("headers", new Scalar()),
-                                new Property("default_route_parameters", new Container(Collections.<Property>emptyList()).allowExtraProperties()),
-                                new Property("query_parameter_names", new Sequence(new Scalar()))
-                            )))
-                        ))),
-                        new Property("action_configuration", new Scalar()),
-                        new Property("options", new Container(asList(
-                            new Property("entityHint", new Scalar()),
-                            new Property("entity_pagination", new Scalar()),
-                            new Property("toolbarOptions", new Container(asList(
-                                new Property("hide", new Scalar(Scalar.Boolean)),
-                                new Property("addResetAction", new Scalar(Scalar.Boolean)),
-                                new Property("addRefreshAction", new Scalar(Scalar.Boolean)),
-                                new Property("addColumnManager", new Scalar(Scalar.Boolean)),
-                                new Property("turnOffToolbarRecordsNumber", new Scalar(Scalar.Integer)),
-                                new Property("pageSize", new Container(asList(
-                                    new Property("hide", new Scalar(Scalar.Boolean)),
-                                    new Property("default_per_page", new Scalar(Scalar.Integer)),
-                                    new Property("items", new Sequence(new Scalar(Scalar.Integer)))
-                                ))),
-                                new Property("pagination", new Container(asList(
-                                    new Property("hide", new Scalar(Scalar.Boolean)),
-                                    new Property("onePage", new Scalar(Scalar.Boolean))
-                                ))),
-                                new Property("placement", new Container(asList(
-                                    new Property("top", new Scalar(Scalar.Boolean)),
-                                    new Property("bottom", new Scalar(Scalar.Boolean))
-                                ))),
-                                new Property("columnManager", new Container(asList(
-                                    new Property("minVisibleColumnsQuantity", new Scalar(Scalar.Integer))
-                                )))
-                            ))),
-                            new Property("export", new OneOf(
-                                new Scalar(Scalar.Boolean),
-                                new Container(asList(
-                                    new Property(Pattern.compile(".*"), new Container(asList(
-                                        new Property("label", new Scalar())
-                                    ))
-                                )))
+                                    )),
+                                    new Property("data_name", Scalar.any),
+                                    new Property("filter_condition", Scalar.strictChoices("AND", "OR")),
+                                    new Property("filter_by_having", Scalar.bool),
+                                    new Property("enabled", Scalar.bool),
+                                    new Property("translatable", Scalar.bool),
+                                    new Property("options", Container.any)
+                                ))
                             )),
-                            new Property("rowSelection", new Container(asList(
-                                new Property("dataField", new Scalar()),
-                                new Property("columnName", new Scalar()),
-                                new Property("selectors", new Scalar())
-                            ))),
-                            new Property("skip_count_walker", new Scalar(Scalar.Boolean)),
-                            new Property("requireJSModules", new Sequence(new Scalar())),
-                            new Property("routerEnabled", new Scalar(Scalar.Boolean))
-                        )))
-                    )))
+                            new Property("default", Container.any)
+                        )),
+                        //TODO: type, route etc. Definition depending on a type?
+                        new Property("properties", Scalar.any),
+                        new Property("actions", new Container(
+                            new Property(Pattern.compile(".*"), new Container(
+                                new Property("label", Scalar.any),
+                                new Property("type", Scalar.choices("navigate", "ajax", "delete", "ajaxdelete", "frontend")),
+                                new Property("acl_resource", Scalar.any),
+                                new Property("icon", Scalar.any),
+                                new Property("link", Scalar.any),
+                                new Property("rowAction", Scalar.bool),
+                                new Property("selector", Scalar.any)
+                            ))
+                        )),
+                        new Property("mass_action", new Container(
+                            new Property(Pattern.compile(".*"), new Container(
+                                new Property("label", Scalar.any),
+                                new Property("type", Scalar.choices("frontend", "merge")),
+                                new Property("data_identifier", Scalar.any),
+                                new Property("icon", Scalar.any),
+                                new Property("selector", Scalar.any)
+                            ))
+                        )),
+                        new Property("totals", new Container(
+                            new Property(Pattern.compile(".*"), new Container(
+                                new Property("per_page", Scalar.bool),
+                                new Property("hide_if_one_page", Scalar.bool),
+                                new Property("extends", Scalar.any),
+                                new Property("columns", new Container(
+                                    new Property(Pattern.compile(".*"), new Container(
+                                        new Property("label", Scalar.any),
+                                        new Property("expr", Scalar.any),
+                                        new Property("formatter", Scalar.strictChoices(
+                                            "date", "datetime", "time", "decimal", "integer", "percent", "currency"
+                                        ))
+                                    ))
+                                ))
+                            ).allowExtraProperties())
+                        )),
+                        new Property("inline_editing", new Container(
+                            new Property("enable", Scalar.bool),
+                            new Property("entity_name", Scalar.entity),
+                            new Property("behaviour", Scalar.strictChoices("enable_all", "enable_selected")),
+                            new Property("plugin", Scalar.any),
+                            new Property("default_editors", Scalar.any),
+                            new Property("cell_editor", new Container(
+                                new Property("component", Scalar.any),
+                                new Property("component_options", Container.any)
+                            )),
+                            new Property("save_api_accessor", new Container(
+                                new Property("route", Scalar.any),
+                                new Property("http_method", Scalar.any),
+                                new Property("headers", Scalar.any),
+                                new Property("default_route_parameters", Container.any),
+                                new Property("query_parameter_names", new Sequence(Scalar.any))
+                            ))
+                        )),
+                        new Property("action_configuration", Scalar.any),
+                        new Property("options", new Container(
+                            new Property("entityHint", Scalar.any),
+                            new Property("entity_pagination", Scalar.any),
+                            new Property("toolbarOptions", new Container(
+                                new Property("hide", Scalar.bool),
+                                new Property("addResetAction", Scalar.bool),
+                                new Property("addRefreshAction", Scalar.bool),
+                                new Property("addColumnManager", Scalar.bool),
+                                new Property("turnOffToolbarRecordsNumber", Scalar.integer),
+                                new Property("pageSize", new Container(
+                                    new Property("hide", Scalar.bool),
+                                    new Property("default_per_page", Scalar.integer),
+                                    new Property("items", new Sequence(Scalar.integer))
+                                )),
+                                new Property("pagination", new Container(
+                                    new Property("hide", Scalar.bool),
+                                    new Property("onePage", Scalar.bool)
+                                )),
+                                new Property("placement", new Container(
+                                    new Property("top", Scalar.bool),
+                                    new Property("bottom", Scalar.bool)
+                                )),
+                                new Property("columnManager", new Container(
+                                    new Property("minVisibleColumnsQuantity", Scalar.integer)
+                                ))
+                            )),
+                            new Property("export", new OneOf(
+                                Scalar.bool,
+                                new Container(
+                                    new Property(Pattern.compile(".*"), new Container(
+                                        new Property("label", Scalar.any)
+                                    )
+                                ))
+                            )),
+                            new Property("rowSelection", new Container(
+                                new Property("dataField", Scalar.any),
+                                new Property("columnName", Scalar.any),
+                                new Property("selectors", Scalar.any)
+                            )),
+                            new Property("skip_count_walker", Scalar.bool),
+                            new Property("requireJSModules", new Sequence(Scalar.any)),
+                            new Property("routerEnabled", Scalar.bool)
+                        ))
+                    ))
                 ))
             )
-        )))
+        )
     );
 
 }

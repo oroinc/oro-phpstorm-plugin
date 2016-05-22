@@ -18,18 +18,18 @@ public class Property {
     }
 
     private Property(Pattern name, Element valueElement, boolean required) {
-        this(name, valueElement, required, new Scalar(new Scalar.Any()));
+        this(name, valueElement, required, Scalar.any);
     }
 
     public Property(String name, Element valueElement) {
         this(name, valueElement, false);
     }
 
-    public Property(String name, Element valueElement, boolean required) {
+    Property(String name, Element valueElement, boolean required) {
         this(new ExactlyPattern(name), valueElement, required);
     }
 
-    public Property(java.util.regex.Pattern name, Element valueElement) {
+    Property(java.util.regex.Pattern name, Element valueElement) {
         this(new RegexpPattern(name), valueElement, false);
     }
 

@@ -52,7 +52,7 @@ class CompletionSchemaVisitor extends YmlVisitor {
     }
 
     @Override
-    public void visitLiteralChoicesValue(Scalar.Choices choices) {
+    public void visitScalarChoicesValue(Scalar.Choices choices) {
         completion.extend(
             CompletionType.BASIC,
             psiElement(LeafPsiElement.class).withSuperParent(2, capture),
