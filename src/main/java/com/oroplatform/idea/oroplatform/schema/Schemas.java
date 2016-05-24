@@ -74,7 +74,7 @@ public class Schemas {
                             new Property("query", new Container(
                                 new Property("select", new Sequence(Scalar.any)),
                                 new Property("from", new Sequence(new Container(
-                                    new Property("table", Scalar.any),
+                                    new Property("table", Scalar.entity),
                                     new Property("alias", Scalar.any)
                                 ))),
                                 new Property("join", new Container(
@@ -154,8 +154,13 @@ public class Schemas {
                             )),
                             new Property("default", Container.any)
                         )),
-                        //TODO: type, route etc. Definition depending on a type?
-                        new Property("properties", Scalar.any),
+                        new Property("properties", new Container(
+                            new Property(Pattern.compile(".*"), new Container(
+                                new Property("type", Scalar.choices("url", "callback")),
+                                new Property("route", Scalar.any),
+                                new Property("params", new Sequence(Scalar.any))
+                            ).allowExtraProperties())
+                        )),
                         new Property("actions", new Container(
                             new Property(Pattern.compile(".*"), new Container(
                                 new Property("label", Scalar.any),
@@ -194,7 +199,7 @@ public class Schemas {
                         )),
                         new Property("inline_editing", new Container(
                             new Property("enable", Scalar.bool),
-                            new Property("entity_name", Scalar.entity),
+                            new Property("entity_name", Scalar.fullEntity),
                             new Property("behaviour", Scalar.strictChoices("enable_all", "enable_selected")),
                             new Property("plugin", Scalar.any),
                             new Property("default_editors", Scalar.any),

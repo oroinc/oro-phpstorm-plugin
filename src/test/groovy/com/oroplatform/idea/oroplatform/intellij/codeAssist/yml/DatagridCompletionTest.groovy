@@ -437,4 +437,18 @@ public class DatagridCompletionTest extends CompletionTest {
             ["enable", "entity_name", "behaviour", "plugin", "default_editors", "cell_editor", "save_api_accessor"]
         )
     }
+
+    def void "test: suggest properties for properties"() {
+        suggestions(
+            """
+            |datagrid:
+            |  some_grid:
+            |    properties:
+            |      id:
+            |        <caret>
+            """.stripMargin(),
+
+            ["type", "route", "params"]
+        )
+    }
 }
