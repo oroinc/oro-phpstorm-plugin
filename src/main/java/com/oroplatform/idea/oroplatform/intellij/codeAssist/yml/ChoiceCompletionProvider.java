@@ -52,7 +52,7 @@ class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> 
 
     @NotNull
     private Set<String> getExistingChoices(@NotNull CompletionParameters parameters) {
-        final YAMLMapping mapping = getFirstMapping(parameters.getPosition());
+        final YAMLMapping mapping = getFirstMapping(parameters.getPosition(), /* set max depth in order to skip mapping if property is not followed by colon */ 3);
         final Set<String> existingProperties = new HashSet<String>();
 
         if (mapping != null) {

@@ -89,10 +89,17 @@ class YamlPsiElements {
 
     @Nullable
     static YAMLMapping getFirstMapping(PsiElement element) {
+        return getFirstMapping(element, Integer.MAX_VALUE);
+    }
+
+    @Nullable
+    static YAMLMapping getFirstMapping(PsiElement element, int maxDepth) {
+        if(maxDepth == 0) return null;
+
         if(element instanceof YAMLMapping) {
             return (YAMLMapping) element;
         }
 
-        return element == null ? null : getFirstMapping(element.getParent());
+        return element == null ? null : getFirstMapping(element.getParent(), --maxDepth);
     }
 }

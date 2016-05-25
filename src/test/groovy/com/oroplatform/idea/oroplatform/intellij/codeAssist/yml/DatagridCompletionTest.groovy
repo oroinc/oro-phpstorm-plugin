@@ -86,6 +86,51 @@ public class DatagridCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: suggest 'columns' in 'sorters' property when 'columns' property already exists at the same level as 'sorters'"() {
+        suggestions(
+            """
+            |datagrid:
+            |  some_grid:
+            |    columns: ~
+            |    sorters:
+            |      <caret>
+            """.stripMargin(),
+
+            ["columns", "default", "multiple_sorting", "toolbar_sorting"]
+        )
+    }
+
+    def void "test: suggest 'columns' in 'sorters' property and skip duplicates when 'columns' property already exists at the same level as 'sorters'"() {
+        suggestions(
+            """
+            |datagrid:
+            |  some_grid:
+            |    columns: ~
+            |    sorters:
+            |      default: xxx
+            |      <caret>
+            """.stripMargin(),
+
+            ["columns", "multiple_sorting", "toolbar_sorting"],
+            ["default"]
+        )
+    }
+
+    def void "test: suggest 'columns' in 'sorters' property and skip duplicates for completed property when 'columns' property already exists at the same level as 'sorters'"() {
+        suggestions(
+            """
+            |datagrid:
+            |  some_grid:
+            |    columns: ~
+            |    sorters:
+            |      default: xxx
+            |      <caret>: ~
+            """.stripMargin(),
+
+            ["columns", "multiple_sorting", "toolbar_sorting"],
+            ["default"]
+        )
+    }
 
     def void "test: suggest properties of 'columns' in 'sorters'"() {
         suggestions(
