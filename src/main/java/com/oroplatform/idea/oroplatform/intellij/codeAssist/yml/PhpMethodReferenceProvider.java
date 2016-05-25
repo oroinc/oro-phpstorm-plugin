@@ -9,12 +9,12 @@ import com.oroplatform.idea.oroplatform.schema.Scalar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.PsiElements.getYamlKeyValueSiblingWithName;
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getYamlKeyValueSiblingWithName;
 
 class PhpMethodReferenceProvider extends PsiReferenceProvider {
     private final Scalar.PhpMethod phpMethod;
 
-    public PhpMethodReferenceProvider(Scalar.PhpMethod method) {
+    PhpMethodReferenceProvider(Scalar.PhpMethod method) {
         phpMethod = method;
     }
 

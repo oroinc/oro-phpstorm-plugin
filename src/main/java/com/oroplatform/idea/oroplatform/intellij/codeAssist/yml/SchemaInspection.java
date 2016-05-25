@@ -12,7 +12,7 @@ import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.PsiElements.getMappingsFrom;
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getMappingsFrom;
 
 public class SchemaInspection extends LocalInspectionTool {
     @Nullable

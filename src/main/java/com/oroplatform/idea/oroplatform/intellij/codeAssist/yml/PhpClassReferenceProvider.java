@@ -2,11 +2,9 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.ProcessingContext;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassReference;
 import com.oroplatform.idea.oroplatform.schema.Scalar;
@@ -19,19 +17,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.PsiElements.getFirstMapping;
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getFirstMapping;
 
 class PhpClassReferenceProvider extends PsiReferenceProvider {
-
-    static {
-        ElementManipulators.INSTANCE.addExplicitExtension(YAMLKeyValue.class, new YamlKeyValueManipulator());
-        ElementManipulators.INSTANCE.addExplicitExtension(LeafPsiElement.class, new LeafPsiElementManipulator());
-    }
 
     private final Scalar.PhpClass phpClass;
     private final InsertHandler<LookupElement> insertHandler;
 
-    public PhpClassReferenceProvider(Scalar.PhpClass phpClass, InsertHandler<LookupElement> insertHandler) {
+    PhpClassReferenceProvider(Scalar.PhpClass phpClass, InsertHandler<LookupElement> insertHandler) {
         this.phpClass = phpClass;
         this.insertHandler = insertHandler;
     }

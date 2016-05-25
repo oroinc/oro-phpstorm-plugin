@@ -13,12 +13,12 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.StandardPatterns.string;
 
-abstract class YmlVisitor extends VisitorAdapter {
+abstract class YamlVisitor extends VisitorAdapter {
     final ElementPattern<? extends PsiElement> capture;
     final VisitingContext context;
     final InsertHandler<LookupElement> insertHandler;
 
-    YmlVisitor(ElementPattern<? extends PsiElement> capture, VisitingContext context) {
+    YamlVisitor(ElementPattern<? extends PsiElement> capture, VisitingContext context) {
         this.capture = capture;
         this.context = context;
         this.insertHandler = context == VisitingContext.PROPERTY_KEY ? KeyInsertHandler.INSTANCE : null;
@@ -26,20 +26,20 @@ abstract class YmlVisitor extends VisitorAdapter {
 
     @Override
     public void visitSequence(Sequence sequence) {
-        sequence.getType().accept(nextVisitor(YmlPatterns.sequence(capture)));
+        sequence.getType().accept(nextVisitor(YamlPatterns.sequence(capture)));
     }
 
     protected abstract Visitor nextVisitor(ElementPattern<? extends PsiElement> capture, VisitingContext context);
 
-    protected Visitor nextVisitor(ElementPattern<? extends PsiElement> capture) {
+    private Visitor nextVisitor(ElementPattern<? extends PsiElement> capture) {
         return nextVisitor(capture, context);
     }
 
     @Override
     public void visitContainer(Container container) {
-        final ElementPattern<? extends PsiElement> newCapture = YmlPatterns.mapping(capture);
+        final ElementPattern<? extends PsiElement> newCapture = YamlPatterns.mapping(capture);
 
-        handleContainer(container, YmlPatterns.keyInProgress(capture, newCapture));
+        handleContainer(container, YamlPatterns.keyInProgress(capture, newCapture));
 
         for(final Property property : container.getProperties()) {
             final PsiElementPattern.Capture<PsiElement> propertyCapture = psiElement().withName(string().with(new PatternCondition<String>(null) {
@@ -50,7 +50,7 @@ abstract class YmlVisitor extends VisitorAdapter {
             }));
             final ElementPattern<? extends PsiElement> captureForNextVisitor = propertyCapture.withParent(newCapture);
             property.getValueElement().accept(nextVisitor(captureForNextVisitor));
-            property.getKeyElement().accept(nextVisitor(YmlPatterns.keyInProgress(capture, newCapture), VisitingContext.PROPERTY_KEY));
+            property.getKeyElement().accept(nextVisitor(YamlPatterns.keyInProgress(capture, newCapture), VisitingContext.PROPERTY_KEY));
         }
     }
 

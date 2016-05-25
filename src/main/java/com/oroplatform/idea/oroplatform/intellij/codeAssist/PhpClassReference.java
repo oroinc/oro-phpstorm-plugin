@@ -33,15 +33,11 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final PhpIndex phpIndex;
     private final PhpClass repositoryInterface;
 
-    public PhpClassReference(PsiElement psiElement, Scalar.PhpClass phpClass, @NotNull String text, InsertHandler<LookupElement> insertHandler) {
-        this(psiElement, phpClass, text, insertHandler, new HashSet<String>());
-    }
-
     public PhpClassReference(PsiElement psiElement, Scalar.PhpClass phpClass, @NotNull String text, InsertHandler<LookupElement> insertHandler, Set<String> skippedClassNames) {
         super(psiElement);
         this.phpClass = phpClass;
         this.insertHandler = insertHandler;
-        this.text = text.replace("IntellijIdeaRulezzz", "").trim().replace("\\\\", "\\");
+        this.text = text.replace(PsiElements.IN_PROGRESS_VALUE, "").trim().replace("\\\\", "\\");
         this.rootBundlePath = myElement.getContainingFile() == null ? "" : myElement.getContainingFile().getOriginalFile().getVirtualFile().getCanonicalPath().replaceFirst("/Resources/.*", "");
         this.skippedClassNames.addAll(skippedClassNames);
         this.phpIndex = PhpIndex.getInstance(psiElement.getProject());

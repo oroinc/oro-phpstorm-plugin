@@ -13,8 +13,12 @@ public class OneOf implements Element {
         this.elements.addAll(elements);
     }
 
-    public OneOf(Element... elements) {
+    private OneOf(Element... elements) {
         this(Arrays.asList(elements));
+    }
+
+    static OneOf from(Element... elements) {
+        return new OneOf(elements);
     }
 
     @Override

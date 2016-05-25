@@ -94,7 +94,8 @@ public class DatagridCompletionTest extends CompletionTest {
             |  some_grid:
             |    sorters:
             |      columns:
-            |        <caret>
+            |        id:
+            |          <caret>
             """.stripMargin(),
 
             ["data_name", "disabled", "type", "apply_callback"]

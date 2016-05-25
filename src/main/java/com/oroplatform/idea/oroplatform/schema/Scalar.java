@@ -110,7 +110,7 @@ public class Scalar implements Element {
             return Collections.unmodifiableList(choices);
         }
 
-        public Choices allowExtraChoices() {
+        Choices allowExtraChoices() {
             return new Choices(choices, true);
         }
 

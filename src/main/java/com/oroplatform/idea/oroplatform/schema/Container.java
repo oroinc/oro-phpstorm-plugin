@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Container implements Element {
 
-    final static Container any = new Container().allowExtraProperties();
+    final static Container any = with().allowExtraProperties();
 
     private final List<Property> properties = new LinkedList<Property>();
     private final boolean allowExtraProperties;
@@ -14,15 +14,19 @@ public class Container implements Element {
         this.allowExtraProperties = allowExtraProperties;
     }
 
-    Container(Property... properties) {
+    private Container(Property... properties) {
         this(Arrays.asList(properties), false);
+    }
+
+    static Container with(Property... properties) {
+        return new Container(properties);
     }
 
     public List<Property> getProperties() {
         return Collections.unmodifiableList(properties);
     }
 
-    public Container allowExtraProperties() {
+    Container allowExtraProperties() {
         return new Container(properties, true);
     }
 

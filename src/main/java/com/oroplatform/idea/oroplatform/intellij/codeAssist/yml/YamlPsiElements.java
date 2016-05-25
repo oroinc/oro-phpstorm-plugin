@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-class PsiElements {
+class YamlPsiElements {
 
     static Collection<YAMLKeyValue> getKeyValuesFrom(YAMLMapping element) {
         return getKeyValues(Arrays.asList(element.getChildren()));

@@ -10,12 +10,12 @@ import org.jetbrains.annotations.Nullable;
 @State(
     name = "OroPlatformPluginSettings",
     storages = {
-        @Storage(id = "default", file = StoragePathMacros.PROJECT_FILE),
+        @Storage(file = StoragePathMacros.PROJECT_FILE),
         @Storage(id = "dir", file = StoragePathMacros.PROJECT_CONFIG_DIR + "/oroPlatform.xml", scheme = StorageScheme.DIRECTORY_BASED)
     }
 )
 public class OroPlatformSettings implements PersistentStateComponent<Element> {
-    public static final String DEFAULT_APP_DIRECTORY = "app";
+    static final String DEFAULT_APP_DIRECTORY = "app";
 
     @NotNull
     public static OroPlatformSettings getInstance(@NotNull Project project) {
@@ -29,7 +29,7 @@ public class OroPlatformSettings implements PersistentStateComponent<Element> {
         return appDir;
     }
 
-    public void setAppDir(String appDir) {
+    void setAppDir(String appDir) {
         this.appDir = appDir;
     }
 

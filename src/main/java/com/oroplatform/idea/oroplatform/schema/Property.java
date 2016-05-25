@@ -21,20 +21,24 @@ public class Property {
         this(name, valueElement, required, Scalar.any);
     }
 
-    public Property(String name, Element valueElement) {
+    private Property(String name, Element valueElement) {
         this(name, valueElement, false);
     }
 
-    Property(String name, Element valueElement, boolean required) {
+    private Property(String name, Element valueElement, boolean required) {
         this(new ExactlyPattern(name), valueElement, required);
     }
 
-    Property(java.util.regex.Pattern name, Element valueElement) {
+    private Property(java.util.regex.Pattern name, Element valueElement) {
         this(new RegexpPattern(name), valueElement, false);
     }
 
-    public Property(java.util.regex.Pattern name, Element valueElement, boolean required) {
-        this(new RegexpPattern(name), valueElement, required);
+    static Property named(String name, Element valueElement) {
+        return new Property(name, valueElement);
+    }
+
+    static Property any(Element valueElement) {
+        return new Property(java.util.regex.Pattern.compile(".*"), valueElement);
     }
 
     public boolean nameMatches(String name) {
@@ -64,11 +68,11 @@ public class Property {
         return required;
     }
 
-    public Property required() {
+    Property required() {
         return new Property(name, valueElement, true);
     }
 
-    public Property withKeyElement(Scalar key) {
+    Property withKeyElement(Scalar key) {
         return new Property(name, valueElement, required, key);
     }
 
@@ -81,10 +85,6 @@ public class Property {
 
         RegexpPattern(java.util.regex.Pattern value) {
             this.value = value;
-        }
-
-        RegexpPattern(String name) {
-            this(java.util.regex.Pattern.compile(name));
         }
 
         public boolean matches(String value) {

@@ -2,12 +2,14 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
 import com.intellij.codeInsight.completion.PrefixMatcher;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementResolveResult;
+import com.intellij.psi.PsiPolyVariantReferenceBase;
+import com.intellij.psi.ResolveResult;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.completion.PhpLookupElement;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.oroplatform.idea.oroplatform.schema.Scalar;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -15,13 +17,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class PhpFieldReference extends PsiPolyVariantReferenceBase<PsiElement> {
-    private final Scalar.PhpField phpField;
     private final String className;
     private final String fieldName;
 
-    public PhpFieldReference(PsiElement element, Scalar.PhpField phpField, String className, String fieldName) {
+    public PhpFieldReference(PsiElement element, String className, String fieldName) {
         super(element);
-        this.phpField = phpField;
         this.className = className;
         this.fieldName = fieldName;
     }

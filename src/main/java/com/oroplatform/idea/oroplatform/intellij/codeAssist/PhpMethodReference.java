@@ -24,8 +24,8 @@ public class PhpMethodReference extends PsiPolyVariantReferenceBase<PsiElement> 
     public PhpMethodReference(PsiElement psiElement, Scalar.PhpMethod phpMethod, String className, String methodName) {
         super(psiElement);
         this.phpMethod = phpMethod;
-        this.className = className.replace("IntellijIdeaRulezzz", "").trim().replace("\\\\", "\\");
-        this.methodName = methodName.replace("IntellijIdeaRulezzz", "").trim();
+        this.className = className.replace(PsiElements.IN_PROGRESS_VALUE, "").trim().replace("\\\\", "\\");
+        this.methodName = methodName.replace(PsiElements.IN_PROGRESS_VALUE, "").trim();
     }
 
     @NotNull

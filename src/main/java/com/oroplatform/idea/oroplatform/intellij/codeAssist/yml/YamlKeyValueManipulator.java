@@ -6,7 +6,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
-//TODO: is necessary if custom InsertHandler is used?
 class YamlKeyValueManipulator extends AbstractElementManipulator<YAMLKeyValue> {
     @Override
     public YAMLKeyValue handleContentChange(@NotNull YAMLKeyValue element, @NotNull TextRange range, String newContent) throws IncorrectOperationException {

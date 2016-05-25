@@ -13,7 +13,7 @@ import java.util.List;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-class CompletionSchemaVisitor extends YmlVisitor {
+class CompletionSchemaVisitor extends YamlVisitor {
     private final CompletionContributor completion;
     private final PropertyDescriptionProvider propertyDescriptionProvider = new TypePropertyDescriptionProvider();
 

@@ -9,7 +9,7 @@ import com.oroplatform.idea.oroplatform.schema.Scalar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.PsiElements.getYamlKeyValueSiblingWithName;
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getYamlKeyValueSiblingWithName;
 
 class PhpFieldReferenceProvider extends PsiReferenceProvider {
     private final Scalar.PhpField phpField;
@@ -25,7 +25,7 @@ class PhpFieldReferenceProvider extends PsiReferenceProvider {
         if(element instanceof YAMLKeyValue) {
             YAMLKeyValue classKeyValue = getYamlKeyValueSiblingWithName((YAMLKeyValue) element, "entity");
             String className = classKeyValue == null ? "" : classKeyValue.getValueText();
-            return new PsiReference[]{new PhpFieldReference(element, phpField, className, ((YAMLKeyValue) element).getValueText())};
+            return new PsiReference[]{new PhpFieldReference(element, className, ((YAMLKeyValue) element).getValueText())};
         }
         return new PsiReference[0];
     }

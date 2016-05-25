@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.PsiElements.getFirstMapping;
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getFirstMapping;
 
 class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> {
 
@@ -40,22 +40,27 @@ class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> 
 
     @Override
     protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
-        final YAMLMapping mapping = getFirstMapping(parameters.getPosition());
-        final Set<String> existingProperties = new HashSet<String>();
-
+        final Set<String> existingProperties = getExistingChoices(parameters);
         result = result.withPrefixMatcher(new PlainPrefixMatcher(result.getPrefixMatcher().getPrefix()));
-
-        if (mapping != null) {
-            for (YAMLKeyValue keyValue : mapping.getKeyValues()) {
-                existingProperties.add(keyValue.getKeyText());
-            }
-        }
 
         for(Choice choice : choices) {
             if(!existingProperties.contains(choice.getName())) {
                 result.addElement(LookupElementBuilder.create(choice.getName()).withInsertHandler(insertHandler).withTypeText(choice.getDescription(), true));
             }
         }
+    }
+
+    @NotNull
+    private Set<String> getExistingChoices(@NotNull CompletionParameters parameters) {
+        final YAMLMapping mapping = getFirstMapping(parameters.getPosition());
+        final Set<String> existingProperties = new HashSet<String>();
+
+        if (mapping != null) {
+            for (YAMLKeyValue keyValue : mapping.getKeyValues()) {
+                existingProperties.add(keyValue.getKeyText());
+            }
+        }
+        return existingProperties;
     }
 
     static class Choice {

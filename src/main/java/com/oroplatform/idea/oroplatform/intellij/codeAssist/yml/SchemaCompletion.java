@@ -9,13 +9,13 @@ import com.oroplatform.idea.oroplatform.schema.Visitor;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import org.jetbrains.annotations.NotNull;
 
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YmlPatterns.getDocumentPattern;
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPatterns.getDocumentPattern;
 
 public class SchemaCompletion extends CompletionContributor {
 
     public SchemaCompletion() {
         for(Schema schema : Schemas.ALL) {
-            Visitor visitor = new CompletionSchemaVisitor(this, getDocumentPattern(schema.fileName), YmlVisitor.VisitingContext.PROPERTY_VALUE);
+            Visitor visitor = new CompletionSchemaVisitor(this, getDocumentPattern(schema.fileName), YamlVisitor.VisitingContext.PROPERTY_VALUE);
             schema.rootElement.accept(visitor);
         }
     }

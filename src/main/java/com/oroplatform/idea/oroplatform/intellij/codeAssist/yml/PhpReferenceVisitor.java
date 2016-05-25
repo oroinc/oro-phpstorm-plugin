@@ -7,7 +7,7 @@ import com.oroplatform.idea.oroplatform.schema.*;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-class PhpReferenceVisitor extends YmlVisitor {
+class PhpReferenceVisitor extends YamlVisitor {
 
     private final PsiReferenceRegistrar registrar;
 

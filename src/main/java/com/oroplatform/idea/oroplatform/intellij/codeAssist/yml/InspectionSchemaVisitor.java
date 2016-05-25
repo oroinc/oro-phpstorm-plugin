@@ -11,7 +11,7 @@ import org.jetbrains.yaml.psi.*;
 
 import java.util.*;
 
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.PsiElements.*;
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.*;
 
 class InspectionSchemaVisitor extends VisitorAdapter {
     private final ProblemsHolder problems;

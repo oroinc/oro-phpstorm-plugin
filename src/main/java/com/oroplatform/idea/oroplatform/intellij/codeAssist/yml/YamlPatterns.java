@@ -11,7 +11,7 @@ import org.jetbrains.yaml.psi.*;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.PlatformPatterns.psiFile;
 
-class YmlPatterns {
+class YamlPatterns {
 
     private static ElementPattern<? extends PsiElement> key(ElementPattern<? extends PsiElement> parent) {
         return psiElement().andOr(
