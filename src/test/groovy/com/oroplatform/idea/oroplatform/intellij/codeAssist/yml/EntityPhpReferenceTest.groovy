@@ -236,6 +236,37 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
+    def void "test: should complete class even when namespace is already given"() {
+        completion(
+            """
+            |oro_entity:
+            |  entity_aliases:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Count<caret>
+            """.stripMargin(),
+            """
+            |oro_entity:
+            |  entity_aliases:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Country: <caret>
+            """.stripMargin()
+        )
+    }
+
+    def void "test: should complete class in quotes even when namespace is already given"() {
+        completion(
+            """
+            |oro_entity:
+            |  exclusions:
+            |    - { entity: "Oro\\\\Bundle\\\\AcmeBundle\\\\Entity\\\\Count<caret>" }
+            """.stripMargin(),
+
+            """
+            |oro_entity:
+            |  exclusions:
+            |    - { entity: "Oro\\\\Bundle\\\\AcmeBundle\\\\Entity\\\\Country" }
+            """.stripMargin()
+        )
+    }
+
     def void "test: should not suggest already defined entity in key in progress of entity_aliases"() {
         suggestions(
             """

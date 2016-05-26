@@ -7,10 +7,10 @@ import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
-import com.jetbrains.php.completion.PhpClassLookupElement;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpNamespace;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -196,7 +196,11 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         final String shortcutName = PhpClassUtil.getDoctrineShortcutClassName(phpClass.getPresentableFQN());
         if(shortcutName != null) {
             results.add(PrioritizedLookupElement.withPriority(
-                LookupElementBuilder.create(shortcutName).withIcon(Icons.DOCTRINE).withTypeText(phpClass.getPresentableFQN()).withInsertHandler(insertHandler),
+                LookupElementBuilder.create(shortcutName)
+                    .withIcon(Icons.DOCTRINE)
+                    .withTypeText(phpClass.getPresentableFQN())
+                    .withInsertHandler(insertHandler)
+                    .withLookupString(StringUtil.trimLeading(phpClass.getFQN(), '\\')),
                 priority
             ));
         }

@@ -88,6 +88,32 @@ public class AclPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
+    def void "test: should complete entity shourtcut even when first part is already given"() {
+        completion(
+            """
+            |some:
+            |  class: OroAcmeBundle:Addre<caret>
+            """.stripMargin(),
+            """
+            |some:
+            |  class: OroAcmeBundle:Address
+            """.stripMargin(),
+        )
+    }
+
+    def void "test: should complete entity class even when namespace is already given"() {
+        completion(
+            """
+            |some:
+            |  class: Oro\\Bundle\\AcmeBundle\\Entity\\Addre<caret>
+            """.stripMargin(),
+            """
+            |some:
+            |  class: OroAcmeBundle:Address
+            """.stripMargin()
+        )
+    }
+
     def void "test: should suggest abstract classes as entity"() {
         suggestions(
             """
