@@ -227,7 +227,7 @@ public class Schemas {
                         Property.named("action_configuration", Scalar.any),
                         Property.named("options", Container.with(
                             Property.named("entityHint", Scalar.any),
-                            Property.named("entity_pagination", Scalar.any),
+                            Property.named("entity_pagination", Scalar.bool),
                             Property.named("toolbarOptions", Container.with(
                                 Property.named("hide", Scalar.bool),
                                 Property.named("addResetAction", Scalar.bool),

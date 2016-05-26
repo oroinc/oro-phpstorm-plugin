@@ -4,14 +4,11 @@ import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.ChoiceCompletionProvider.Choice;
 import com.oroplatform.idea.oroplatform.schema.*;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 class CompletionSchemaVisitor extends YamlVisitor {
     private final CompletionContributor completion;
@@ -55,7 +52,7 @@ class CompletionSchemaVisitor extends YamlVisitor {
     public void visitScalarChoicesValue(Scalar.Choices choices) {
         completion.extend(
             CompletionType.BASIC,
-            psiElement(LeafPsiElement.class).withSuperParent(2, capture),
+            YamlPatterns.scalarValue().withSuperParent(2, capture),
             ChoiceCompletionProvider.fromChoiceNames(choices.getChoices(), insertHandler)
         );
     }

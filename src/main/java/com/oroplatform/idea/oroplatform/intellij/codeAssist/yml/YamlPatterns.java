@@ -44,6 +44,14 @@ class YamlPatterns {
         );
     }
 
+    static PsiElementPattern.Capture<? extends PsiElement> scalarValue() {
+        //some: <caret>
+        //but not:
+        //some:
+        //  <caret>
+        return psiElement(LeafPsiElement.class).afterLeaf(psiElement().andNot(psiElement(YAMLTokenTypes.INDENT)));
+    }
+
     static ElementPattern<? extends PsiElement> sequence(ElementPattern<? extends PsiElement> parent) {
         return psiElement(YAMLSequenceItem.class).withSuperParent(2, parent);
     }

@@ -182,6 +182,19 @@ public class AclCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: choice values shouldn't be suggested after new line"() {
+        suggestions(
+            """
+            |some_id:
+            |  permission:
+            |    <caret>
+            """.stripMargin(),
+
+            [],
+            ["VIEW", "EDIT"]
+        )
+    }
+
     def void "test: suggestions should be case insensitive"() {
         completion(
             """
