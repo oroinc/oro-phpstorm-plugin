@@ -1,9 +1,14 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
 import com.intellij.patterns.ElementPattern;
+import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.PsiElementPattern;
+import com.intellij.patterns.PsiFilePattern;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.util.ProcessingContext;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.YAMLLanguage;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.*;
@@ -60,7 +65,14 @@ class YamlPatterns {
         return psiElement(YAMLMapping.class).withParent(parent);
     }
 
-    static PsiElementPattern.Capture<YAMLDocument> getDocumentPattern(String fileName) {
-        return psiElement(YAMLDocument.class).inFile(psiFile().withName(fileName).withLanguage(YAMLLanguage.INSTANCE));
+    static PsiElementPattern.Capture<YAMLDocument> getDocumentPattern(final String filePath) {
+        final PsiFilePattern.Capture<PsiFile> filePattern = psiFile().with(new PatternCondition<PsiFile>(filePath) {
+            @Override
+            public boolean accepts(@NotNull PsiFile psiFile, ProcessingContext context) {
+                return psiFile.getOriginalFile().getVirtualFile().getPath().endsWith(filePath);
+            }
+        });
+
+        return psiElement(YAMLDocument.class).inFile(filePattern.withLanguage(YAMLLanguage.INSTANCE));
     }
 }

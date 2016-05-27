@@ -21,7 +21,7 @@ public class PhpReferenceContributor extends PsiReferenceContributor {
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
         for(Schema schema : Schemas.ALL) {
-            final PsiElementPattern.Capture<YAMLDocument> documentPattern = getDocumentPattern(schema.fileName).inFile(fileInProjectWithPluginEnabled());
+            final PsiElementPattern.Capture<YAMLDocument> documentPattern = getDocumentPattern(schema.filePathPattern).inFile(fileInProjectWithPluginEnabled());
             Visitor visitor = new PhpReferenceVisitor(registrar, documentPattern, YamlVisitor.VisitingContext.PROPERTY_VALUE);
             schema.rootElement.accept(visitor);
         }

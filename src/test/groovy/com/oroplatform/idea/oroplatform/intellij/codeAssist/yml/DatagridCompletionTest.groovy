@@ -1,13 +1,14 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.schema.Schemas
 
 
 public class DatagridCompletionTest extends CompletionTest {
 
     @Override
     String fileName() {
-        return "datagrid.yml"
+        return Schemas.FilePathPatternss.DATAGRID
     }
 
     def void "test: suggest datagrid as top property"() {

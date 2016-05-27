@@ -2,6 +2,7 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
 import com.intellij.testFramework.LoggedErrorProcessor
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
+import com.oroplatform.idea.oroplatform.schema.Schemas
 import org.apache.log4j.Logger
 import org.jetbrains.annotations.NotNull
 
@@ -9,9 +10,8 @@ import org.jetbrains.annotations.NotNull
 class EntityPhpReferenceTest extends PhpReferenceTest {
     @Override
     String fileName() {
-        return "entity.yml"
+        return Schemas.FilePathPatternss.ENTITY
     }
-
 
     @Override
     protected void setUp() throws Exception {

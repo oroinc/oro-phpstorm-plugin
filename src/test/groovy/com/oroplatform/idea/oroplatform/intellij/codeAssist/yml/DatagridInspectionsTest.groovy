@@ -1,12 +1,13 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.InspectionTest
+import com.oroplatform.idea.oroplatform.schema.Schemas
 
 
 class DatagridInspectionsTest extends InspectionTest {
     @Override
     String fileName() {
-        return "datagrid.yml"
+        return Schemas.FilePathPatternss.DATAGRID
     }
 
     @Override

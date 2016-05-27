@@ -1,11 +1,12 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.InspectionTest
+import com.oroplatform.idea.oroplatform.schema.Schemas
 
 class AclInspectionsTest extends InspectionTest {
     @Override
     String fileName() {
-        return "acl.yml"
+        return Schemas.FilePathPatternss.ACL
     }
 
     def actionRequiredProperties = "label: someLabel"

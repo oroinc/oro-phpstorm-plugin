@@ -10,7 +10,7 @@ abstract class PhpReferenceTest extends CompletionTest{
     }
 
     def List<String> getPhpReference(String content) {
-        myFixture.configureByText(fileName(), content)
+        configureByText(content)
 
         myFixture.getProject().getBaseDir().refresh(false, true)
 

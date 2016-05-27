@@ -1,13 +1,14 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.schema.Schemas
 
 
 class EntityCompletionTest extends CompletionTest {
 
     @Override
     String fileName() {
-        return "entity.yml"
+        return Schemas.FilePathPatternss.ENTITY
     }
 
     def void "test: suggest oro_entity as top property"() {

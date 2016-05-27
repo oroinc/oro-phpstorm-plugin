@@ -1,12 +1,13 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.InspectionTest
+import com.oroplatform.idea.oroplatform.schema.Schemas
 
 
 class EntityInspectionsTest extends InspectionTest {
     @Override
     String fileName() {
-        return "entity.yml"
+        return Schemas.FilePathPatternss.ENTITY
     }
 
     @Override

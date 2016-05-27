@@ -1,12 +1,13 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.schema.Schemas
 
 public class AclCompletionTest extends CompletionTest {
 
     @Override
     String fileName() {
-        return "acl.yml"
+        return Schemas.FilePathPatternss.ACL
     }
 
     def void "test: suggest key in new line"() {

@@ -6,10 +6,16 @@ import static java.util.Arrays.asList;
 
 public class Schemas {
 
+    public static class FilePathPatternss {
+        public final static String ACL = "Resources/config/acl.yml";
+        public final static String ENTITY = "Resources/config/oro/entity.yml";
+        public final static String DATAGRID = "Resources/config/datagrid.yml";
+    }
+
     public static final Collection<Schema> ALL = asList(acl(), entity(), datagrid());
 
     private static Schema acl() {
-        return new Schema("acl.yml", Container.with(
+        return new Schema(FilePathPatternss.ACL, Container.with(
             Property.any(
                 OneOf.from(
                     Container.with(
@@ -40,7 +46,7 @@ public class Schemas {
     }
 
     private static Schema entity() {
-        return new Schema("entity.yml", Container.with(
+        return new Schema(FilePathPatternss.ENTITY, Container.with(
             Property.named("oro_entity",
                 Container.with(
                     Property.named("exclusions", Sequence.of(
@@ -69,7 +75,7 @@ public class Schemas {
             Property.named("condition", Scalar.strictChoices("ON", "WITH"))
         );
 
-        return new Schema("datagrid.yml", Container.with(
+        return new Schema(FilePathPatternss.DATAGRID, Container.with(
             Property.named("datagrid",
                 Container.with(
                     Property.any(Container.with(
