@@ -22,6 +22,17 @@ public class Container implements Element {
         return new Container(properties);
     }
 
+    static Container with(Element element) {
+        return with(Property.any(element));
+    }
+
+    Container andWith(Property... properties) {
+        List<Property> allProperties = new LinkedList<Property>();
+        allProperties.addAll(this.properties);
+        allProperties.addAll(Arrays.asList(properties));
+        return new Container(allProperties.toArray(new Property[allProperties.size()]));
+    }
+
     public List<Property> getProperties() {
         return Collections.unmodifiableList(properties);
     }

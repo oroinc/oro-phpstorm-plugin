@@ -17,30 +17,28 @@ public class Schemas {
 
     private static Schema acl() {
         return new Schema(FilePathPatterns.ACL, Container.with(
-            Property.any(
-                OneOf.from(
-                    Container.with(
-                        Property.named("type", Scalar.strictChoices("entity")),
-                        Property.named("bindings", Sequence.of(Container.with(
-                            Property.named("class", Scalar.controller).required(),
-                            Property.named("method", Scalar.phpMethod("*Action")).required()
-                        ))),
-                        Property.named("class", Scalar.entity).required(),
-                        Property.named("permission", Scalar.strictChoices("VIEW", "EDIT", "CREATE", "DELETE", "ASSIGN", "SHARE")).required(),
-                        Property.named("group_name", Scalar.any),
-                        Property.named("description", Scalar.any)
-                    ),
-                    Container.with(
-                        Property.named("type", Scalar.strictChoices("action")),
-                        Property.named("label", Scalar.any).required(),
-                        Property.named("bindings", Sequence.of(Container.with(
-                            //define as regular scalars in order to avoid double suggestions
-                            Property.named("class", Scalar.any).required(),
-                            Property.named("method", Scalar.any).required()
-                        ))),
-                        Property.named("group_name", Scalar.any),
-                        Property.named("description", Scalar.any)
-                    )
+            OneOf.from(
+                Container.with(
+                    Property.named("type", Scalar.strictChoices("entity")),
+                    Property.named("bindings", Sequence.of(Container.with(
+                        Property.named("class", Scalar.controller).required(),
+                        Property.named("method", Scalar.phpMethod("*Action")).required()
+                    ))),
+                    Property.named("class", Scalar.entity).required(),
+                    Property.named("permission", Scalar.strictChoices("VIEW", "EDIT", "CREATE", "DELETE", "ASSIGN", "SHARE")).required(),
+                    Property.named("group_name", Scalar.any),
+                    Property.named("description", Scalar.any)
+                ),
+                Container.with(
+                    Property.named("type", Scalar.strictChoices("action")),
+                    Property.named("label", Scalar.any).required(),
+                    Property.named("bindings", Sequence.of(Container.with(
+                        //define as regular scalars in order to avoid double suggestions
+                        Property.named("class", Scalar.any).required(),
+                        Property.named("method", Scalar.any).required()
+                    ))),
+                    Property.named("group_name", Scalar.any),
+                    Property.named("description", Scalar.any)
                 )
             )
         ));
@@ -79,7 +77,7 @@ public class Schemas {
         return new Schema(FilePathPatterns.DATAGRID, Container.with(
             Property.named("datagrid",
                 Container.with(
-                    Property.any(Container.with(
+                    Container.with(
                         Property.named("extended_entity_name", OneOf.from(Scalar.entity, Scalar.any)),
                         Property.named("acl_resource", Scalar.any),
                         Property.named("source", Container.with(
@@ -109,44 +107,42 @@ public class Schemas {
                             ))
                         ).allowExtraProperties()),
                         Property.named("columns", Container.with(
-                            Property.any(
-                                Container.with(
-                                    Property.named("label", Scalar.any),
-                                    Property.named("translatable", Scalar.bool),
-                                    Property.named("data_name", Scalar.any),
-                                    Property.named("frontend_type", Scalar.choices("string", "html", "date", "time", "datetime", "integer", "number", "decimal", "percent", "currency", "boolean", "array", "simple_array", "row_array", "select", "multi-select", "phone", "relation")),
-                                    Property.named("choices", Scalar.any),
-                                    Property.named("template", Scalar.any),
-                                    Property.named("type", Scalar.choices("field", "url", "link", "twig", "translatable", "callback", "localized_number")),
-                                    Property.named("renderable", Scalar.bool),
-                                    Property.named("editable", Scalar.bool),
-                                    Property.named("order", Scalar.integer),
-                                    Property.named("required", Scalar.bool),
-                                    Property.named("manageable", Scalar.bool),
-                                    Property.named("context", Scalar.any),
-                                    Property.named("inline_editing", Container.with(
-                                        Property.named("enable", Scalar.bool),
-                                        Property.named("editor", Container.with(
-                                            Property.named("component", Scalar.any),
-                                            Property.named("component_options", Container.any),
-                                            Property.named("view", Scalar.any),
-                                            Property.named("view_options", Container.any)
-                                        )),
-                                        Property.named("save_api_accessor", Container.any),
-                                        Property.named("autocomplete_api_accessor", Container.any),
-                                        Property.named("validation_rules", Container.any)
-                                    ))
-                                ).allowExtraProperties()
-                            )
+                            Container.with(
+                                Property.named("label", Scalar.any),
+                                Property.named("translatable", Scalar.bool),
+                                Property.named("data_name", Scalar.any),
+                                Property.named("frontend_type", Scalar.choices("string", "html", "date", "time", "datetime", "integer", "number", "decimal", "percent", "currency", "boolean", "array", "simple_array", "row_array", "select", "multi-select", "phone", "relation")),
+                                Property.named("choices", Scalar.any),
+                                Property.named("template", Scalar.any),
+                                Property.named("type", Scalar.choices("field", "url", "link", "twig", "translatable", "callback", "localized_number")),
+                                Property.named("renderable", Scalar.bool),
+                                Property.named("editable", Scalar.bool),
+                                Property.named("order", Scalar.integer),
+                                Property.named("required", Scalar.bool),
+                                Property.named("manageable", Scalar.bool),
+                                Property.named("context", Scalar.any),
+                                Property.named("inline_editing", Container.with(
+                                    Property.named("enable", Scalar.bool),
+                                    Property.named("editor", Container.with(
+                                        Property.named("component", Scalar.any),
+                                        Property.named("component_options", Container.any),
+                                        Property.named("view", Scalar.any),
+                                        Property.named("view_options", Container.any)
+                                    )),
+                                    Property.named("save_api_accessor", Container.any),
+                                    Property.named("autocomplete_api_accessor", Container.any),
+                                    Property.named("validation_rules", Container.any)
+                                ))
+                            ).allowExtraProperties()
                         )),
                         Property.named("sorters", Container.with(
                             Property.named("columns", Container.with(
-                                Property.any(Container.with(
+                                Container.with(
                                     Property.named("data_name", Scalar.any),
                                     Property.named("disabled", Scalar.bool),
                                     Property.named("type", Scalar.any),
                                     Property.named("apply_callback", Scalar.any)
-                                ))
+                                )
                             )),
                             Property.named("default", Container.any),
                             Property.named("multiple_sorting", Scalar.bool),
@@ -154,7 +150,7 @@ public class Schemas {
                         )),
                         Property.named("filters", Container.with(
                             Property.named("columns", Container.with(
-                                Property.any(Container.with(
+                                Container.with(
                                     Property.named("type", Scalar.choices(
                                         "string", "selectrow", "number", "number-range", "percent", "currency", "choice",
                                         "single_choice", "entity", "boolean", "date", "datetime", "many-to-many", "choice-tree",
@@ -166,19 +162,19 @@ public class Schemas {
                                     Property.named("enabled", Scalar.bool),
                                     Property.named("translatable", Scalar.bool),
                                     Property.named("options", Container.any)
-                                ).allowExtraProperties())
+                                ).allowExtraProperties()
                             )),
                             Property.named("default", Container.any)
                         )),
                         Property.named("properties", Container.with(
-                            Property.any(Container.with(
+                            Container.with(
                                 Property.named("type", Scalar.choices("url", "callback")),
                                 Property.named("route", Scalar.any),
                                 Property.named("params", Sequence.of(Scalar.any))
-                            ).allowExtraProperties())
+                            ).allowExtraProperties()
                         )),
                         Property.named("actions", Container.with(
-                            Property.any(Container.with(
+                            Container.with(
                                 Property.named("label", Scalar.any),
                                 Property.named("type", Scalar.choices("navigate", "ajax", "delete", "ajaxdelete", "frontend")),
                                 Property.named("acl_resource", Scalar.any),
@@ -186,32 +182,32 @@ public class Schemas {
                                 Property.named("link", Scalar.any),
                                 Property.named("rowAction", Scalar.bool),
                                 Property.named("selector", Scalar.any)
-                            ).allowExtraProperties())
+                            ).allowExtraProperties()
                         )),
                         Property.named("mass_action", Container.with(
-                            Property.any(Container.with(
+                            Container.with(
                                 Property.named("label", Scalar.any),
                                 Property.named("type", Scalar.choices("frontend", "merge")),
                                 Property.named("data_identifier", Scalar.any),
                                 Property.named("icon", Scalar.any),
                                 Property.named("selector", Scalar.any)
-                            ))
+                            )
                         )),
                         Property.named("totals", Container.with(
-                            Property.any(Container.with(
+                            Container.with(
                                 Property.named("per_page", Scalar.bool),
                                 Property.named("hide_if_one_page", Scalar.bool),
                                 Property.named("extends", Scalar.any),
                                 Property.named("columns", Container.with(
-                                    Property.any(Container.with(
+                                    Container.with(
                                         Property.named("label", Scalar.any),
                                         Property.named("expr", Scalar.any),
                                         Property.named("formatter", Scalar.strictChoices(
                                             "date", "datetime", "time", "decimal", "integer", "percent", "currency"
                                         ))
-                                    ))
+                                    )
                                 ))
-                            ).allowExtraProperties())
+                            ).allowExtraProperties()
                         )),
                         Property.named("inline_editing", Container.with(
                             Property.named("enable", Scalar.bool),
@@ -261,10 +257,8 @@ public class Schemas {
                             Property.named("export", OneOf.from(
                                 Scalar.bool,
                                 Container.with(
-                                    Property.any(Container.with(
-                                        Property.named("label", Scalar.any)
-                                        )
-                                    ))
+                                    Container.with(Property.named("label", Scalar.any))
+                                )
                             )),
                             Property.named("rowSelection", Container.with(
                                 Property.named("dataField", Scalar.any),
@@ -276,7 +270,7 @@ public class Schemas {
                             Property.named("routerEnabled", Scalar.bool)
                         ).allowExtraProperties())
                     ).allowExtraProperties())
-                ))
+                )
             )
         );
     }
@@ -290,68 +284,80 @@ public class Schemas {
         //TODO: implement conditions
         final Element conditions = Scalar.any;
 
+        final Container attribute = Container.with(
+            Property.named("type", Scalar.strictChoices("boolean", "bool", "integer", "int", "float", "string", "array", "object", "entity")),
+            Property.named("label", Scalar.any),
+            Property.named("entity_acl", entityAcl),
+            Property.named("property_path", Scalar.any),
+            Property.named("options", Container.with(
+                Property.named("class", Scalar.any), //TODO: support for any php class reference
+                Property.named("multiple", Scalar.bool)
+            ))
+        );
+
+        final Container step = Container.with(
+            Property.named("label", Scalar.any),
+            Property.named("order", Scalar.integer),
+            Property.named("is_final", Scalar.bool),
+            Property.named("entity_acl", entityAcl),
+            Property.named("allowed_transitions", Sequence.of(Scalar.any))
+        );
+
+        final Container transition = Container.with(
+            Property.named("step_to", Scalar.any),
+            Property.named("transition_definition", Scalar.any),
+            Property.named("is_start", Scalar.bool),
+            Property.named("is_hidden", Scalar.bool),
+            Property.named("is_unavailable_hidden", Scalar.bool),
+            Property.named("acl_resource", Scalar.any),
+            Property.named("acl_message", Scalar.any),
+            Property.named("message", Scalar.any),
+            Property.named("display_type", Scalar.any),
+            Property.named("page_template", Scalar.any),
+            Property.named("dialog_template", Scalar.any),
+            Property.named("frontend_options", Container.with(
+                Property.named("class", Scalar.any),
+                Property.named("icon", Scalar.any)
+            )),
+            Property.named("form_options", Container.any)
+        );
+
+        final Container transitionDefinition = Container.with(
+            Property.named("pre_conditions", conditions),
+            Property.named("conditions", conditions),
+            Property.named("post_actions", conditions),
+            Property.named("init_actions", conditions)
+        );
+
         return new Schema(FilePathPatterns.WORKFLOW, Container.with(
             Property.named("imports", Sequence.of(Container.with(
                 Property.named("resource", Scalar.any)
             ))),
             Property.named("workflows", Container.with(
-                Property.any(Container.with(
+                Container.with(
                     Property.named("label", Scalar.any),
                     Property.named("entity", Scalar.fullEntity),
                     Property.named("entity_attribute", Scalar.any),
                     Property.named("is_system", Scalar.bool),
                     Property.named("start_step", Scalar.any),
                     Property.named("steps_display_ordered", Scalar.bool),
-                    Property.named("attributes", Container.with(
-                        Property.any(Container.with(
-                            Property.named("type", Scalar.strictChoices("boolean", "bool", "integer", "int", "float", "string", "array", "object", "entity")),
-                            Property.named("label", Scalar.any),
-                            Property.named("entity_acl", entityAcl),
-                            Property.named("property_path", Scalar.any),
-                            Property.named("options", Container.with(
-                                Property.named("class", Scalar.any), //TODO: support for any php class reference
-                                Property.named("multiple", Scalar.bool)
-                            ))
-                        ))
+                    Property.named("attributes", OneOf.from(
+                        Container.with(attribute),
+                        Sequence.of(attribute.andWith(Property.named("name", Scalar.any)))
                     )),
-                    Property.named("steps", Container.with(
-                        Property.any(Container.with(
-                            Property.named("label", Scalar.any),
-                            Property.named("order", Scalar.integer),
-                            Property.named("is_final", Scalar.bool),
-                            Property.named("entity_acl", entityAcl),
-                            Property.named("allowed_transitions", Sequence.of(Scalar.any))
-                        ))
+                    Property.named("steps", OneOf.from(
+                        Container.with(step),
+                        Sequence.of(step.andWith(Property.named("name", Scalar.any)))
                     )),
-                    Property.named("transitions", Container.with(
-                        Property.any(Container.with(
-                            Property.named("step_to", Scalar.any),
-                            Property.named("transition_definition", Scalar.any),
-                            Property.named("is_start", Scalar.bool),
-                            Property.named("is_hidden", Scalar.bool),
-                            Property.named("is_unavailable_hidden", Scalar.bool),
-                            Property.named("acl_resource", Scalar.any),
-                            Property.named("acl_message", Scalar.any),
-                            Property.named("message", Scalar.any),
-                            Property.named("display_type", Scalar.any),
-                            Property.named("page_template", Scalar.any),
-                            Property.named("dialog_template", Scalar.any),
-                            Property.named("frontend_options", Container.with(
-                                Property.named("class", Scalar.any),
-                                Property.named("icon", Scalar.any)
-                            )),
-                            Property.named("form_options", Container.any)
-                        ))
+                    Property.named("transitions", OneOf.from(
+                        Container.with(transition),
+                        Sequence.of(transition.andWith(Property.named("name", Scalar.any)))
                     )),
-                    Property.named("transition_definitions", Container.with(
-                        Property.any(Container.with(
-                            Property.named("pre_conditions", conditions),
-                            Property.named("conditions", conditions),
-                            Property.named("post_actions", conditions),
-                            Property.named("init_actions", conditions)
-                        ))
+                    Property.named("transition_definitions", OneOf.from(
+                        Container.with(transitionDefinition),
+                        Sequence.of(transitionDefinition.andWith(Property.named("name", Scalar.any)))
                     ))
-                ))
+                )
             ))
         ));
     }

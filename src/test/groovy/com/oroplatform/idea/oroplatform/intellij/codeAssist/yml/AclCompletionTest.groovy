@@ -260,6 +260,20 @@ public class AclCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: suggest key inside sequence in expanded notation"() {
+        suggestions(
+            """
+            |some_id:
+            |  bindings:
+            |    -
+            |       <caret>
+            """.stripMargin(),
+
+            ["class", "method"],
+            ["type", "label"]
+        )
+    }
+
     def void "test: does not suggest keys of object one level up for sequence notation"() {
         suggestions(
             """

@@ -97,7 +97,22 @@ public class WorkflowCompletionTest extends CompletionTest {
             |        <caret>
             """.stripMargin(),
 
-            ["label", "order", "is_final", "entity_acl", "allowed_transitions"]
+            ["label", "order", "is_final", "entity_acl", "allowed_transitions"],
+            ["name"]
+        )
+    }
+
+    def void "test: suggest properties in 'steps' in sequence notation"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    steps:
+            |      -
+            |         <caret>
+            """.stripMargin(),
+
+            ["name", "label", "order", "is_final", "entity_acl", "allowed_transitions"]
         )
     }
 
