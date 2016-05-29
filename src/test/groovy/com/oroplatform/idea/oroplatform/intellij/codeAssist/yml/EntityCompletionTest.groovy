@@ -8,7 +8,7 @@ class EntityCompletionTest extends CompletionTest {
 
     @Override
     String fileName() {
-        return Schemas.FilePathPatternss.ENTITY
+        return Schemas.FilePathPatterns.ENTITY
     }
 
     def void "test: suggest oro_entity as top property"() {

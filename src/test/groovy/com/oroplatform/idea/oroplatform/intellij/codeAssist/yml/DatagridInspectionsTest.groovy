@@ -7,7 +7,7 @@ import com.oroplatform.idea.oroplatform.schema.Schemas
 class DatagridInspectionsTest extends InspectionTest {
     @Override
     String fileName() {
-        return Schemas.FilePathPatternss.DATAGRID
+        return Schemas.FilePathPatterns.DATAGRID
     }
 
     @Override

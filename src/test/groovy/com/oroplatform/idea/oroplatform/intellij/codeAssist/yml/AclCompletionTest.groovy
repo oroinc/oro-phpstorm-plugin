@@ -7,7 +7,7 @@ public class AclCompletionTest extends CompletionTest {
 
     @Override
     String fileName() {
-        return Schemas.FilePathPatternss.ACL
+        return Schemas.FilePathPatterns.ACL
     }
 
     def void "test: suggest key in new line"() {

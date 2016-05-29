@@ -8,7 +8,7 @@ public class DatagridCompletionTest extends CompletionTest {
 
     @Override
     String fileName() {
-        return Schemas.FilePathPatternss.DATAGRID
+        return Schemas.FilePathPatterns.DATAGRID
     }
 
     def void "test: suggest datagrid as top property"() {

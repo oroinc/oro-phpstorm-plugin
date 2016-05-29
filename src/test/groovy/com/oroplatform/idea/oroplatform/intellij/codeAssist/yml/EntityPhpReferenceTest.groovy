@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull
 class EntityPhpReferenceTest extends PhpReferenceTest {
     @Override
     String fileName() {
-        return Schemas.FilePathPatternss.ENTITY
+        return Schemas.FilePathPatterns.ENTITY
     }
 
     @Override

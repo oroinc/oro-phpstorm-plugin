@@ -7,7 +7,7 @@ public class AclPhpReferenceTest extends PhpReferenceTest {
 
     @Override
     String fileName() {
-        return Schemas.FilePathPatternss.ACL
+        return Schemas.FilePathPatterns.ACL
     }
 
     @Override

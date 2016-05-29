@@ -6,16 +6,17 @@ import static java.util.Arrays.asList;
 
 public class Schemas {
 
-    public static class FilePathPatternss {
+    public static class FilePathPatterns {
         public final static String ACL = "Resources/config/acl.yml";
         public final static String ENTITY = "Resources/config/oro/entity.yml";
         public final static String DATAGRID = "Resources/config/datagrid.yml";
+        public final static String WORKFLOW = "Resources/config/workflow.yml";
     }
 
-    public static final Collection<Schema> ALL = asList(acl(), entity(), datagrid());
+    public static final Collection<Schema> ALL = asList(acl(), entity(), datagrid(), workflow());
 
     private static Schema acl() {
-        return new Schema(FilePathPatternss.ACL, Container.with(
+        return new Schema(FilePathPatterns.ACL, Container.with(
             Property.any(
                 OneOf.from(
                     Container.with(
@@ -46,7 +47,7 @@ public class Schemas {
     }
 
     private static Schema entity() {
-        return new Schema(FilePathPatternss.ENTITY, Container.with(
+        return new Schema(FilePathPatterns.ENTITY, Container.with(
             Property.named("oro_entity",
                 Container.with(
                     Property.named("exclusions", Sequence.of(
@@ -75,7 +76,7 @@ public class Schemas {
             Property.named("condition", Scalar.strictChoices("ON", "WITH"))
         );
 
-        return new Schema(FilePathPatternss.DATAGRID, Container.with(
+        return new Schema(FilePathPatterns.DATAGRID, Container.with(
             Property.named("datagrid",
                 Container.with(
                     Property.any(Container.with(
@@ -278,5 +279,80 @@ public class Schemas {
                 ))
             )
         );
+    }
+
+    private static Schema workflow() {
+        final Element entityAcl = Container.with(
+            Property.named("update", Scalar.bool),
+            Property.named("delete", Scalar.bool)
+        );
+
+        //TODO: implement conditions
+        final Element conditions = Scalar.any;
+
+        return new Schema(FilePathPatterns.WORKFLOW, Container.with(
+            Property.named("imports", Sequence.of(Container.with(
+                Property.named("resource", Scalar.any)
+            ))),
+            Property.named("workflows", Container.with(
+                Property.any(Container.with(
+                    Property.named("label", Scalar.any),
+                    Property.named("entity", Scalar.fullEntity),
+                    Property.named("entity_attribute", Scalar.any),
+                    Property.named("is_system", Scalar.bool),
+                    Property.named("start_step", Scalar.any),
+                    Property.named("steps_display_ordered", Scalar.bool),
+                    Property.named("attributes", Container.with(
+                        Property.any(Container.with(
+                            Property.named("type", Scalar.strictChoices("boolean", "bool", "integer", "int", "float", "string", "array", "object", "entity")),
+                            Property.named("label", Scalar.any),
+                            Property.named("entity_acl", entityAcl),
+                            Property.named("property_path", Scalar.any),
+                            Property.named("options", Container.with(
+                                Property.named("class", Scalar.any), //TODO: support for any php class reference
+                                Property.named("multiple", Scalar.bool)
+                            ))
+                        ))
+                    )),
+                    Property.named("steps", Container.with(
+                        Property.any(Container.with(
+                            Property.named("label", Scalar.any),
+                            Property.named("order", Scalar.integer),
+                            Property.named("is_final", Scalar.bool),
+                            Property.named("entity_acl", entityAcl),
+                            Property.named("allowed_transitions", Sequence.of(Scalar.any))
+                        ))
+                    )),
+                    Property.named("transitions", Container.with(
+                        Property.any(Container.with(
+                            Property.named("step_to", Scalar.any),
+                            Property.named("transition_definition", Scalar.any),
+                            Property.named("is_start", Scalar.bool),
+                            Property.named("is_hidden", Scalar.bool),
+                            Property.named("is_unavailable_hidden", Scalar.bool),
+                            Property.named("acl_resource", Scalar.any),
+                            Property.named("acl_message", Scalar.any),
+                            Property.named("message", Scalar.any),
+                            Property.named("display_type", Scalar.any),
+                            Property.named("page_template", Scalar.any),
+                            Property.named("dialog_template", Scalar.any),
+                            Property.named("frontend_options", Container.with(
+                                Property.named("class", Scalar.any),
+                                Property.named("icon", Scalar.any)
+                            )),
+                            Property.named("form_options", Container.any)
+                        ))
+                    )),
+                    Property.named("transition_definitions", Container.with(
+                        Property.any(Container.with(
+                            Property.named("pre_conditions", conditions),
+                            Property.named("conditions", conditions),
+                            Property.named("post_actions", conditions),
+                            Property.named("init_actions", conditions)
+                        ))
+                    ))
+                ))
+            ))
+        ));
     }
 }

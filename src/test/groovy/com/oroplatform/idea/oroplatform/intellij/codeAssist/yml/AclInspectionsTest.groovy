@@ -6,7 +6,7 @@ import com.oroplatform.idea.oroplatform.schema.Schemas
 class AclInspectionsTest extends InspectionTest {
     @Override
     String fileName() {
-        return Schemas.FilePathPatternss.ACL
+        return Schemas.FilePathPatterns.ACL
     }
 
     def actionRequiredProperties = "label: someLabel"

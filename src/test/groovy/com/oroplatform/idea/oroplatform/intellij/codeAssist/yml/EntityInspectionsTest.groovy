@@ -7,7 +7,7 @@ import com.oroplatform.idea.oroplatform.schema.Schemas
 class EntityInspectionsTest extends InspectionTest {
     @Override
     String fileName() {
-        return Schemas.FilePathPatternss.ENTITY
+        return Schemas.FilePathPatterns.ENTITY
     }
 
     @Override
