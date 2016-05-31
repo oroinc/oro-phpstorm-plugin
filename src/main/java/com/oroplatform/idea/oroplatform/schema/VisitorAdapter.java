@@ -24,4 +24,8 @@ public abstract class VisitorAdapter implements Visitor {
     @Override
     public void visitScalarRegexpValue(Scalar.Regexp regexp) {
     }
+
+    @Override
+    public void visitScalarFileValue(Scalar.File file) {
+    }
 }

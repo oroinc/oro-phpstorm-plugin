@@ -10,4 +10,5 @@ public interface Visitor {
     void visitScalarPhpMethodValue(Scalar.PhpMethod phpMethod);
     void visitScalarPhpFieldValue(Scalar.PhpField phpField);
     void visitScalarRegexpValue(Scalar.Regexp regexp);
+    void visitScalarFileValue(Scalar.File file);
 }

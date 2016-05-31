@@ -331,7 +331,7 @@ public class Schemas {
 
         return new Schema(FilePathPatterns.WORKFLOW, Container.with(
             Property.named("imports", Sequence.of(Container.with(
-                Property.named("resource", Scalar.any)
+                Property.named("resource", Scalar.file)
             ))),
             Property.named("workflows", Container.with(
                 Container.with(

@@ -49,6 +49,8 @@ public class Scalar implements Element {
         return new Scalar(new Scalar.Regexp(Pattern.compile(pattern)));
     }
 
+    final static Scalar file = new Scalar(new Scalar.File());
+
     final static Scalar any = new Scalar();
 
     final static Scalar fullEntity = new Scalar(Scalar.PhpClass.entity(false));
@@ -200,6 +202,13 @@ public class Scalar implements Element {
         @Override
         public void accept(Visitor visitor) {
             visitor.visitScalarPhpFieldValue(this);
+        }
+    }
+
+    public static class File implements Value {
+        @Override
+        public void accept(Visitor visitor) {
+            visitor.visitScalarFileValue(this);
         }
     }
 }

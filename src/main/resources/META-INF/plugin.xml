@@ -17,7 +17,7 @@
                                 implementationClass="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.SchemaCompletion"/>
         <psi.referenceContributor
                 language="yaml"
-                implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.PhpReferenceContributor"
+                implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.ReferenceContributor"
         />
         <projectConfigurable instance="com.oroplatform.idea.oroplatform.settings.OroPlatformForm"
                              id="OroPlatform.settings"

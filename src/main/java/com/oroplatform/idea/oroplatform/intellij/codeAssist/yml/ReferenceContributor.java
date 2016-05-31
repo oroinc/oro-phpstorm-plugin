@@ -16,14 +16,21 @@ import org.jetbrains.yaml.psi.YAMLDocument;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPatterns.getDocumentPattern;
 
-public class PhpReferenceContributor extends PsiReferenceContributor {
+public class ReferenceContributor extends PsiReferenceContributor {
 
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
         for(Schema schema : Schemas.ALL) {
             final PsiElementPattern.Capture<YAMLDocument> documentPattern = getDocumentPattern(schema.filePathPattern).inFile(fileInProjectWithPluginEnabled());
-            Visitor visitor = new PhpReferenceVisitor(registrar, documentPattern, YamlVisitor.VisitingContext.PROPERTY_VALUE);
-            schema.rootElement.accept(visitor);
+
+            final Visitor[] visitors = {
+                new PhpReferenceVisitor(registrar, documentPattern, YamlVisitor.VisitingContext.PROPERTY_VALUE),
+                new FileReferenceVisitor(registrar, documentPattern, YamlVisitor.VisitingContext.PROPERTY_VALUE)
+            };
+
+            for (Visitor visitor : visitors) {
+                schema.rootElement.accept(visitor);
+            }
         }
     }
 
