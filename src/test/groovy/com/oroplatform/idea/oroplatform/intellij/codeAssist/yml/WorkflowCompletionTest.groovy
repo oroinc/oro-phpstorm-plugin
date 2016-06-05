@@ -3,7 +3,6 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
 import com.oroplatform.idea.oroplatform.schema.Schemas
 
-
 public class WorkflowCompletionTest extends CompletionTest {
     @Override
     String fileName() {
@@ -12,6 +11,68 @@ public class WorkflowCompletionTest extends CompletionTest {
 
     def void "test: suggest properties at top level"() {
         suggestions(
+            """
+            |<caret>
+            """.stripMargin(),
+
+            ["imports", "workflows"]
+        )
+    }
+
+    def void "test: support suggestions for imported file"() {
+        configureByText(Schemas.FilePathPatterns.WORKFLOW,
+            """
+            |imports:
+            |  - { resource: 'imported.yml' }
+            """.stripMargin()
+        )
+
+        suggestions(
+            "Resources/config/imported.yml",
+            """
+            |<caret>
+            """.stripMargin(),
+
+            ["imports", "workflows"]
+        )
+    }
+
+    def void "test: should not support suggestions for not imported file"() {
+        configureByText(Schemas.FilePathPatterns.WORKFLOW,
+            """
+            |imports:
+            |  - { resource: 'imported.yml' }
+            """.stripMargin()
+        )
+
+        suggestions(
+            "Resources/config/notimported.yml",
+            """
+            |<caret>
+            """.stripMargin(),
+
+            [],
+            ["imports", "workflows"]
+        )
+    }
+
+    def void "test: support suggestions for imported files deeper"() {
+        configureByText(Schemas.FilePathPatterns.WORKFLOW,
+            """
+            |imports:
+            |  - { resource: 'imported1.yml' }
+            """.stripMargin()
+        )
+
+        configureByText("Resources/config/imported1.yml",
+            """
+            |imports:
+            |  - { resource: 'imported2.yml' }
+            """.stripMargin()
+        )
+
+        suggestions(
+            "Resources/config/imported2.yml",
             """
             |<caret>
             """.stripMargin(),

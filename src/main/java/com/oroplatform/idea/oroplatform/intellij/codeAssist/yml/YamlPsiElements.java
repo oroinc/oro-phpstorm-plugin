@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-class YamlPsiElements {
+public class YamlPsiElements {
 
     static Collection<YAMLKeyValue> getKeyValuesFrom(YAMLMapping element) {
         return getKeyValues(Arrays.asList(element.getChildren()));
@@ -39,7 +39,7 @@ class YamlPsiElements {
         return children;
     }
 
-    static Collection<YAMLMapping> getMappings(Collection<PsiElement> elements) {
+    static Collection<YAMLMapping> getMappings(Collection<? extends PsiElement> elements) {
         List<YAMLMapping> children = new LinkedList<YAMLMapping>();
         for(PsiElement child : elements) {
             if(child instanceof YAMLMapping) {
@@ -50,17 +50,17 @@ class YamlPsiElements {
         return children;
     }
 
-    static List<PsiElement> getMappingsFrom(@NotNull PsiFile file) {
-        List<PsiElement> elements = new LinkedList<PsiElement>();
+    public static List<YAMLMapping> getMappingsFrom(@NotNull PsiFile file) {
+        List<YAMLMapping> elements = new LinkedList<YAMLMapping>();
         for(PsiElement element : file.getChildren()) {
             if(element instanceof YAMLDocument) {
-                elements.addAll(Arrays.asList(element.getChildren()));
+                elements.addAll(getMappings(Arrays.asList(element.getChildren())));
             }
         }
         return elements;
     }
 
-    static List<PsiElement> getSequenceItems(List<PsiElement> elements) {
+    public static List<PsiElement> getSequenceItems(List<? extends PsiElement> elements) {
         List<PsiElement> items = new LinkedList<PsiElement>();
         for(PsiElement element : elements) {
             if(element instanceof YAMLSequence) {

@@ -25,7 +25,7 @@ public class SchemaInspection extends LocalInspectionTool {
         ProblemsHolder problems = new ProblemsHolder(manager, file, isOnTheFly);
 
         for(Schema schema : Schemas.ALL) {
-            if(file.getVirtualFile().getPath().endsWith(schema.filePathPattern)) {
+            if(schema.fileMatcher.matches(file)) {
                 Visitor visitor = new InspectionSchemaVisitor(problems, getMappingsFrom(file));
                 schema.rootElement.accept(visitor);
             }

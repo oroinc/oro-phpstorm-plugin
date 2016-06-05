@@ -16,7 +16,7 @@ public class Schemas {
     public static final Collection<Schema> ALL = asList(acl(), entity(), datagrid(), workflow());
 
     private static Schema acl() {
-        return new Schema(FilePathPatterns.ACL, Container.with(
+        return new Schema(new FilePathMatcher(FilePathPatterns.ACL), Container.with(
             OneOf.from(
                 Container.with(
                     Property.named("type", Scalar.strictChoices("entity")),
@@ -45,7 +45,7 @@ public class Schemas {
     }
 
     private static Schema entity() {
-        return new Schema(FilePathPatterns.ENTITY, Container.with(
+        return new Schema(new FilePathMatcher(FilePathPatterns.ENTITY), Container.with(
             Property.named("oro_entity",
                 Container.with(
                     Property.named("exclusions", Sequence.of(
@@ -74,7 +74,7 @@ public class Schemas {
             Property.named("condition", Scalar.strictChoices("ON", "WITH"))
         );
 
-        return new Schema(FilePathPatterns.DATAGRID, Container.with(
+        return new Schema(new FilePathMatcher(FilePathPatterns.DATAGRID), Container.with(
             Property.named("datagrid",
                 Container.with(
                     Container.with(
@@ -329,7 +329,7 @@ public class Schemas {
             Property.named("init_actions", conditions)
         );
 
-        return new Schema(FilePathPatterns.WORKFLOW, Container.with(
+        return new Schema(new WorkflowMatcher(), Container.with(
             Property.named("imports", Sequence.of(Container.with(
                 Property.named("resource", Scalar.file)
             ))),

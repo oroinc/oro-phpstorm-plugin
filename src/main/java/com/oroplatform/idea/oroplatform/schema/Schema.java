@@ -1,11 +1,11 @@
 package com.oroplatform.idea.oroplatform.schema;
 
 public class Schema {
-    public final String filePathPattern;
+    public final FileMatcher fileMatcher;
     public final Element rootElement;
 
-    Schema(String filePathPattern, Element rootElement) {
-        this.filePathPattern = filePathPattern;
+    Schema(FileMatcher matcher, Element rootElement) {
+        this.fileMatcher = matcher;
         this.rootElement = rootElement;
     }
 }

@@ -8,7 +8,11 @@ public abstract class CompletionTest extends LightPlatformCodeInsightFixtureTest
     abstract def String fileName()
 
     def completion(String contents, String expected) {
-        configureByText(contents)
+        completion(fileName(), contents, expected)
+    }
+
+    def completion(String fileName, String contents, String expected) {
+        configureByText(fileName, contents)
         def elements = myFixture.completeBasic()
 
         if(elements != null) {
@@ -19,12 +23,20 @@ public abstract class CompletionTest extends LightPlatformCodeInsightFixtureTest
     }
 
     protected def configureByText(String contents) {
-        def file = myFixture.addFileToProject(fileName(), contents)
+        configureByText(fileName(), contents)
+    }
+
+    protected def configureByText(String fileName, String contents) {
+        def file = myFixture.addFileToProject(fileName, contents)
         myFixture.configureFromExistingVirtualFile(file.getVirtualFile())
     }
 
     def suggestions(String contents, Collection<String> expectedSuggestions, Collection<String> unexpectedSuggestions= []) {
-        configureByText(contents)
+        suggestions(fileName(), contents, expectedSuggestions, unexpectedSuggestions)
+    }
+
+    def suggestions(String fileName, String contents, Collection<String> expectedSuggestions, Collection<String> unexpectedSuggestions= []) {
+        configureByText(fileName, contents)
         myFixture.completeBasic()
 
         def lookupElements = myFixture.getLookupElementStrings()

@@ -17,7 +17,7 @@ class InspectionSchemaVisitor extends VisitorAdapter {
     private final ProblemsHolder problems;
     private final List<PsiElement> elements = new LinkedList<PsiElement>();
 
-    InspectionSchemaVisitor(ProblemsHolder problems, List<PsiElement> elements) {
+    InspectionSchemaVisitor(ProblemsHolder problems, List<? extends PsiElement> elements) {
         this.problems = problems;
         this.elements.addAll(elements);
     }

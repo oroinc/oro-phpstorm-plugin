@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.ProcessingContext;
+import com.oroplatform.idea.oroplatform.schema.FileMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.YAMLLanguage;
 import org.jetbrains.yaml.YAMLTokenTypes;
@@ -65,11 +66,11 @@ class YamlPatterns {
         return psiElement(YAMLMapping.class).withParent(parent);
     }
 
-    static PsiElementPattern.Capture<YAMLDocument> getDocumentPattern(final String filePath) {
-        final PsiFilePattern.Capture<PsiFile> filePattern = psiFile().with(new PatternCondition<PsiFile>(filePath) {
+    static PsiElementPattern.Capture<YAMLDocument> getDocumentPattern(final FileMatcher matcher) {
+        final PsiFilePattern.Capture<PsiFile> filePattern = psiFile().with(new PatternCondition<PsiFile>(null) {
             @Override
             public boolean accepts(@NotNull PsiFile psiFile, ProcessingContext context) {
-                return psiFile.getOriginalFile().getVirtualFile().getPath().endsWith(filePath);
+                return matcher.matches(psiFile);
             }
         });
 
