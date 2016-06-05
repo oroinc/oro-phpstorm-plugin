@@ -20,10 +20,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-//TODO: add cache for this index, because it is evaluated every time when Completion is evaluated etc.
 public class ImportIndex extends FileBasedIndexExtension<String, Collection<String>> {
 
-    public static final ID<String, Collection<String>> KEY = ID.create("com.oroplatform.idea.oroplatform.workflow");
+    public static final ID<String, Collection<String>> KEY = ID.create("com.oroplatform.idea.oroplatform.import");
     private final KeyDescriptor<String> keyDescriptor = new EnumeratorStringDescriptor();
 
     @NotNull
@@ -102,6 +101,6 @@ public class ImportIndex extends FileBasedIndexExtension<String, Collection<Stri
 
     @Override
     public int getVersion() {
-        return 3;
+        return 1;
     }
 }
