@@ -8,6 +8,7 @@ import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements;
+import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.YAMLFileType;
@@ -39,6 +40,10 @@ public class ImportIndex extends FileBasedIndexExtension<String, Collection<Stri
             @Override
             public Map<String, Collection<String>> map(@NotNull FileContent inputData) {
                 Map<String, Collection<String>> index = new THashMap<String, Collection<String>>();
+
+                if(!OroPlatformSettings.getInstance(inputData.getProject()).isPluginEnabled()) {
+                    return index;
+                }
 
                 final Set<String> importedFilePaths = getImportedFilePaths(inputData.getFile().getParent(), (YAMLFile) inputData.getPsiFile());
                 if(!importedFilePaths.isEmpty()) {
