@@ -276,10 +276,11 @@ public class Schemas {
     }
 
     private static Schema workflow() {
-        final Element entityAcl = Container.with(
+        final Container acl = Container.with(
             Property.named("update", Scalar.bool),
             Property.named("delete", Scalar.bool)
         );
+        final Element entityAcl = OneOf.from(acl, Container.with(acl));
 
         //TODO: implement conditions
         final Element conditions = Scalar.any;
@@ -319,7 +320,8 @@ public class Schemas {
                 Property.named("class", Scalar.any),
                 Property.named("icon", Scalar.any)
             )),
-            Property.named("form_options", Container.any)
+            Property.named("form_options", Container.any),
+            Property.named("label", Scalar.any)
         );
 
         final Container transitionDefinition = Container.with(
@@ -337,7 +339,7 @@ public class Schemas {
                 Container.with(
                     Property.named("label", Scalar.any),
                     Property.named("entity", Scalar.fullEntity),
-                    Property.named("entity_attribute", Scalar.any),
+                    Property.named("entity_attribute", Scalar.field),
                     Property.named("is_system", Scalar.bool),
                     Property.named("start_step", Scalar.any),
                     Property.named("steps_display_ordered", Scalar.bool),
