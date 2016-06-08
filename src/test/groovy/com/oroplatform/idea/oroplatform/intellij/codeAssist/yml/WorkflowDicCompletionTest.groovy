@@ -30,9 +30,18 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |</container>
           """.stripMargin()
         )
+
+        configureByText("Resources/config/services.yml",
+            """
+            |services:
+            |  condition3_id:
+            |    tags:
+            |      - { name: oro_workflow.condition, alias: condition3 }
+            """.stripMargin()
+        )
     }
 
-    def void "test: suggest condition"() {
+    def void "test: suggest conditions defined in xml file"() {
         suggestions(
             """
             |workflows:
@@ -44,6 +53,20 @@ class WorkflowDicCompletionTest extends CompletionTest {
             """.stripMargin(),
             ["@condition1", "@condition2", "@condition2b"],
             ["@some"]
+        )
+    }
+
+    def void "test: suggest conditions defined in yml file"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        conditions:
+            |          <caret>
+            """.stripMargin(),
+            ["@condition3"]
         )
     }
 }

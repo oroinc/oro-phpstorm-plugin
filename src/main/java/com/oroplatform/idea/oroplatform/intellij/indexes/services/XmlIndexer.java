@@ -5,10 +5,10 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.indexing.DataIndexer;
+import com.oroplatform.idea.oroplatform.intellij.indexes.ServicesFileBasedIndex;
 import com.oroplatform.idea.oroplatform.symfony.Service;
 import com.oroplatform.idea.oroplatform.symfony.Tag;
 import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -17,6 +17,13 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class XmlIndexer implements DataIndexer<String, Collection<Service>, XmlFile> {
+
+    private final ServicesFileBasedIndex.ServiceIndexPutter indexPutter;
+
+    public XmlIndexer(ServicesFileBasedIndex.ServiceIndexPutter indexPutter) {
+        this.indexPutter = indexPutter;
+    }
+
     @NotNull
     @Override
     public Map<String, Collection<Service>> map(@NotNull XmlFile file) {
@@ -29,7 +36,7 @@ public class XmlIndexer implements DataIndexer<String, Collection<Service>, XmlF
                     final Collection<Tag> serviceTags = getServiceTags(serviceTag);
                     final Service service = new Service(getXmlAttribute(servicesTag, "id"), getXmlAttribute(servicesTag, "class"), serviceTags);
 
-                    addServicesToIndex(service, index);
+                    indexPutter.put(service, index);
                 }
             }
         }
@@ -46,21 +53,6 @@ public class XmlIndexer implements DataIndexer<String, Collection<Service>, XmlF
         }
 
         return tagsWithName;
-    }
-
-    private static void addServicesToIndex(Service service, Map<String, Collection<Service>> index) {
-        Collection<Tag> serviceTags = service.getTags();
-        for (Tag tag : serviceTags) {
-            if(tag.getName() != null) {
-                if(index.containsKey(tag.getName())) {
-                    index.get(tag.getName()).add(service);
-                } else {
-                    Collection<Service> services = new THashSet<Service>();
-                    services.add(service);
-                    index.put(tag.getName(), services);
-                }
-            }
-        }
     }
 
     @NotNull
