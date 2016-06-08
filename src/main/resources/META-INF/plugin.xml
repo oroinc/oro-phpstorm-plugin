@@ -32,7 +32,7 @@
                 level="WEAK WARNING"
                 groupKey="inspection.group"
         />
-        <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ImportIndex" />
+        <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ImportFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ServicesFileBasedIndex" />
 
     </extensions>

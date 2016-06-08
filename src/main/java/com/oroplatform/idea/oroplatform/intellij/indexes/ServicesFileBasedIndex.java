@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Map;
 
 public class ServicesFileBasedIndex extends FileBasedIndexExtension<String, Collection<Service>> {
-    public static final ID<String, Collection<Service>> KEY = ID.create("com.oroplatform.idea.oroplatform.services");
+    static final ID<String, Collection<Service>> KEY = ID.create("com.oroplatform.idea.oroplatform.services");
     private final KeyDescriptor<String> keyDescriptor = new EnumeratorStringDescriptor();
     private DataExternalizer<Collection<Service>> valueExternalizer = new CollectionExternalizer<Service>(new JsonExternalizer<Service>(Service.class));
     private DataIndexer<String, Collection<Service>, XmlFile> xmlIndexer = new XmlIndexer();
