@@ -283,7 +283,7 @@ public class Schemas {
         final Element entityAcl = OneOf.from(acl, Container.with(acl));
 
         //TODO: implement conditions
-        final Element conditions = Scalar.any;
+        final Element conditions = Scalar.service("oro_workflow.condition", "@");
 
         final Container attribute = Container.with(
             Property.named("type", Scalar.strictChoices("boolean", "bool", "integer", "int", "float", "string", "array", "object", "entity")),

@@ -10,6 +10,8 @@ import com.oroplatform.idea.oroplatform.schema.*;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.intellij.patterns.PlatformPatterns.psiElement;
+
 class CompletionSchemaVisitor extends YamlVisitor {
     private final CompletionContributor completion;
     private final PropertyDescriptionProvider propertyDescriptionProvider = new TypePropertyDescriptionProvider();
@@ -54,6 +56,15 @@ class CompletionSchemaVisitor extends YamlVisitor {
             CompletionType.BASIC,
             YamlPatterns.scalarValue().withSuperParent(2, capture),
             ChoiceCompletionProvider.fromChoiceNames(choices.getChoices(), insertHandler)
+        );
+    }
+
+    @Override
+    public void visitScalarServiceValue(Scalar.Service service) {
+        completion.extend(
+            CompletionType.BASIC,
+            psiElement().withAncestor(8, capture),
+            new ServiceCompletionProvider(service)
         );
     }
 }

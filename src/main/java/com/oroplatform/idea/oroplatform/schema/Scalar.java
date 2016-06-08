@@ -49,6 +49,14 @@ public class Scalar implements Element {
         return new Scalar(new Scalar.Regexp(Pattern.compile(pattern)));
     }
 
+    static Scalar service(String tag) {
+        return service(tag, "");
+    }
+
+    static Scalar service(String tag, String prefix) {
+        return new Scalar(new Service(tag, prefix));
+    }
+
     final static Scalar file = new Scalar(new Scalar.File());
 
     final static Scalar any = new Scalar();
@@ -202,6 +210,29 @@ public class Scalar implements Element {
         @Override
         public void accept(Visitor visitor) {
             visitor.visitScalarPhpFieldValue(this);
+        }
+    }
+
+    public static class Service implements Value {
+        private final String tag;
+        private final String prefix;
+
+        private Service(String tag, String prefix) {
+            this.tag = tag;
+            this.prefix = prefix;
+        }
+
+        public String getTag() {
+            return tag;
+        }
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        @Override
+        public void accept(Visitor visitor) {
+            visitor.visitScalarServiceValue(this);
         }
     }
 

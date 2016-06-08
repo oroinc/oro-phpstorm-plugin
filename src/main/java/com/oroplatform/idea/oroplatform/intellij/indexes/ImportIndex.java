@@ -85,7 +85,7 @@ public class ImportIndex extends FileBasedIndexExtension<String, Collection<Stri
     @NotNull
     @Override
     public DataExternalizer<Collection<String>> getValueExternalizer() {
-        return new PathCollectionExternalizer();
+        return new CollectionExternalizer<String>(keyDescriptor);
     }
 
     @NotNull

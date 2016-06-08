@@ -28,4 +28,8 @@ public abstract class VisitorAdapter implements Visitor {
     @Override
     public void visitScalarFileValue(Scalar.File file) {
     }
+
+    @Override
+    public void visitScalarServiceValue(Scalar.Service service) {
+    }
 }
