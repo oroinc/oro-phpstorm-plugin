@@ -11,5 +11,5 @@ public interface Visitor {
     void visitScalarPhpFieldValue(Scalar.PhpField phpField);
     void visitScalarRegexpValue(Scalar.Regexp regexp);
     void visitScalarFileValue(Scalar.File file);
-    void visitScalarServiceValue(Scalar.Service service);
+    void visitScalarConditionValue(Scalar.Condition condition);
 }

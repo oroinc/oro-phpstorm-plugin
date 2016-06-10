@@ -60,11 +60,11 @@ class CompletionSchemaVisitor extends YamlVisitor {
     }
 
     @Override
-    public void visitScalarServiceValue(Scalar.Service service) {
+    public void visitScalarConditionValue(Scalar.Condition condition) {
         completion.extend(
             CompletionType.BASIC,
             psiElement().withAncestor(8, capture),
-            new ServiceCompletionProvider(service)
+            new ConditionCompletionProvider()
         );
     }
 }

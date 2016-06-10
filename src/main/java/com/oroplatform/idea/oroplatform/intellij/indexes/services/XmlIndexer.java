@@ -5,7 +5,6 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.indexing.DataIndexer;
-import com.oroplatform.idea.oroplatform.intellij.indexes.ServicesFileBasedIndex;
 import com.oroplatform.idea.oroplatform.symfony.Service;
 import com.oroplatform.idea.oroplatform.symfony.Tag;
 import gnu.trove.THashMap;
@@ -16,27 +15,21 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class XmlIndexer implements DataIndexer<String, Collection<Service>, XmlFile> {
-
-    private final ServicesFileBasedIndex.ServiceIndexPutter indexPutter;
-
-    public XmlIndexer(ServicesFileBasedIndex.ServiceIndexPutter indexPutter) {
-        this.indexPutter = indexPutter;
-    }
+public class XmlIndexer implements DataIndexer<Service, Void, XmlFile> {
 
     @NotNull
     @Override
-    public Map<String, Collection<Service>> map(@NotNull XmlFile file) {
-        final Map<String, Collection<Service>> index = new THashMap<String, Collection<Service>>();
+    public Map<Service, Void> map(@NotNull XmlFile file) {
+        final Map<Service, Void> index = new THashMap<Service, Void>();
         final Collection<XmlTag> roots = PsiTreeUtil.findChildrenOfType(file.getDocument(), XmlTag.class);
 
         for (XmlTag root : ofName(roots, "container")) {
             for (XmlTag servicesTag : ofName(PsiTreeUtil.findChildrenOfType(root, XmlTag.class), "services")) {
                 for (XmlTag serviceTag : ofName(PsiTreeUtil.findChildrenOfType(servicesTag, XmlTag.class), "service")) {
                     final Collection<Tag> serviceTags = getServiceTags(serviceTag);
-                    final Service service = new Service(getXmlAttribute(servicesTag, "id"), getXmlAttribute(servicesTag, "class"), serviceTags);
+                    final Service service = new Service(serviceTags);
 
-                    indexPutter.put(service, index);
+                    index.put(service, null);
                 }
             }
         }

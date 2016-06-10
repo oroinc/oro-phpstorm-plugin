@@ -2,7 +2,6 @@ package com.oroplatform.idea.oroplatform.intellij.indexes.services;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.util.indexing.DataIndexer;
-import com.oroplatform.idea.oroplatform.intellij.indexes.ServicesFileBasedIndex;
 import com.oroplatform.idea.oroplatform.symfony.Service;
 import com.oroplatform.idea.oroplatform.symfony.Tag;
 import gnu.trove.THashMap;
@@ -17,19 +16,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.*;
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getSequenceItems;
 
-public class YamlIndexer implements DataIndexer<String, Collection<Service>, YAMLFile> {
-    private final ServicesFileBasedIndex.ServiceIndexPutter indexPutter;
-
-    public YamlIndexer(ServicesFileBasedIndex.ServiceIndexPutter indexPutter) {
-        this.indexPutter = indexPutter;
-    }
+public class YamlIndexer implements DataIndexer<Service, Void, YAMLFile> {
 
     @NotNull
     @Override
-    public Map<String, Collection<Service>> map(@NotNull YAMLFile file) {
-        Map<String, Collection<Service>> index = new THashMap<String, Collection<Service>>();
+    public Map<Service, Void> map(@NotNull YAMLFile file) {
+        Map<Service, Void> index = new THashMap<Service, Void>();
 
         final YAMLKeyValue services = YAMLUtil.getQualifiedKeyInFile(file, "services");
 
@@ -52,9 +46,8 @@ public class YamlIndexer implements DataIndexer<String, Collection<Service>, YAM
                         }
                     }
 
-                    final String className = getValue(serviceMapping, "class");
-                    final Service service = new Service(serviceElement.getKeyText(), className, tags);
-                    indexPutter.put(service, index);
+                    final Service service = new Service(tags);
+                    index.put(service, null);
                 }
             }
         }

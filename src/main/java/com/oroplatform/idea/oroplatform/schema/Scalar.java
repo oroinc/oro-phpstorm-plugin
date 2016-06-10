@@ -49,13 +49,7 @@ public class Scalar implements Element {
         return new Scalar(new Scalar.Regexp(Pattern.compile(pattern)));
     }
 
-    static Scalar service(String tag) {
-        return service(tag, "");
-    }
-
-    static Scalar service(String tag, String prefix) {
-        return new Scalar(new Service(tag, prefix));
-    }
+    final static Scalar condition = new Scalar(new Condition());
 
     final static Scalar file = new Scalar(new Scalar.File());
 
@@ -213,26 +207,10 @@ public class Scalar implements Element {
         }
     }
 
-    public static class Service implements Value {
-        private final String tag;
-        private final String prefix;
-
-        private Service(String tag, String prefix) {
-            this.tag = tag;
-            this.prefix = prefix;
-        }
-
-        public String getTag() {
-            return tag;
-        }
-
-        public String getPrefix() {
-            return prefix;
-        }
-
+    public static class Condition implements Value {
         @Override
         public void accept(Visitor visitor) {
-            visitor.visitScalarServiceValue(this);
+            visitor.visitScalarConditionValue(this);
         }
     }
 

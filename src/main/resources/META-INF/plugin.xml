@@ -33,7 +33,7 @@
                 groupKey="inspection.group"
         />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ImportFileBasedIndex" />
-        <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ServicesFileBasedIndex" />
+        <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ConditionsFileBasedIndex" />
 
     </extensions>
 
