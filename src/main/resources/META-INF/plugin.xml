@@ -34,6 +34,7 @@
         />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ImportFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ConditionsFileBasedIndex" />
+        <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ActionsFileBasedIndex" />
 
     </extensions>
 

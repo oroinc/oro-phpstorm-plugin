@@ -12,4 +12,5 @@ public interface Visitor {
     void visitScalarRegexpValue(Scalar.Regexp regexp);
     void visitScalarFileValue(Scalar.File file);
     void visitScalarConditionValue(Scalar.Condition condition);
+    void visitScalarActionValue(Scalar.Action action);
 }

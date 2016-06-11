@@ -67,4 +67,13 @@ class CompletionSchemaVisitor extends YamlVisitor {
             new ConditionCompletionProvider()
         );
     }
+
+    @Override
+    public void visitScalarActionValue(Scalar.Action action) {
+        completion.extend(
+            CompletionType.BASIC,
+            capture,
+            new ActionCompletionProvider()
+        );
+    }
 }

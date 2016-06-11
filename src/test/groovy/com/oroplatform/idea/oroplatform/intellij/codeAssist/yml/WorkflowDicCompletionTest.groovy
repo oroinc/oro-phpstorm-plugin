@@ -26,6 +26,12 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |    <service id="some_service">
             |      <tag name="xxx" alias="some"/>
             |    </service>
+            |    <service id="action1_id">
+            |      <tag name="oro_workflow.action" alias="action1"/>
+            |    </service>
+            |    <service id="action2_id">
+            |      <tag name="oro_workflow.action" alias="action2|action2b"/>
+            |    </service>
             |  </services>
             |</container>
           """.stripMargin()
@@ -37,6 +43,9 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |  condition3_id:
             |    tags:
             |      - { name: oro_workflow.condition, alias: condition3 }
+            |  action3_id:
+            |    tags:
+            |      - { name: oro_workflow.action, alias: action3 }
             """.stripMargin()
         )
     }
@@ -67,6 +76,52 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |          <caret>
             """.stripMargin(),
             ["@condition3"]
+        )
+    }
+
+    def void "test: suggest actions after new line defined in xml file"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        init_actions:
+            |          -
+            |            <caret>
+            """.stripMargin(),
+            ["@action1", "@action2", "@action2b"],
+            ["@some"]
+        )
+    }
+
+    def void "test: suggest actions in the same line defined in xml file"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        init_actions:
+            |          - <caret>
+            """.stripMargin(),
+            ["@action1", "@action2", "@action2b"],
+            ["@some"]
+        )
+    }
+
+    def void "test: suggest actions defined in yml file"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        init_actions:
+            |          -
+            |            <caret>
+            """.stripMargin(),
+            ["@action3"]
         )
     }
 }

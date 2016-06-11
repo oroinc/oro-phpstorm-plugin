@@ -282,8 +282,13 @@ public class Schemas {
         );
         final Element entityAcl = OneOf.from(acl, Container.with(acl));
 
-        //TODO: implement conditions
         final Element conditions = Scalar.condition;
+
+        final Sequence actions = Sequence.of(
+            Container.with(
+                Property.any(Scalar.any).withKeyElement(Scalar.action)
+            )
+        );
 
         final Container attribute = Container.with(
             Property.named("type", Scalar.strictChoices("boolean", "bool", "integer", "int", "float", "string", "array", "object", "entity")),
@@ -324,11 +329,12 @@ public class Schemas {
             Property.named("label", Scalar.any)
         );
 
+
         final Container transitionDefinition = Container.with(
             Property.named("pre_conditions", conditions),
             Property.named("conditions", conditions),
-            Property.named("post_actions", conditions),
-            Property.named("init_actions", conditions)
+            Property.named("post_actions", actions),
+            Property.named("init_actions", actions)
         );
 
         return new Schema(new WorkflowMatcher(), Container.with(

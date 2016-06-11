@@ -32,4 +32,8 @@ public abstract class VisitorAdapter implements Visitor {
     @Override
     public void visitScalarConditionValue(Scalar.Condition condition) {
     }
+
+    @Override
+    public void visitScalarActionValue(Scalar.Action action) {
+    }
 }

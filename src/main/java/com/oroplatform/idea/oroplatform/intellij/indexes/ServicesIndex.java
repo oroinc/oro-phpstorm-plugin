@@ -20,4 +20,8 @@ public class ServicesIndex {
     public Collection<String> findConditionNames() {
         return FileBasedIndex.getInstance().getAllKeys(ConditionsFileBasedIndex.KEY, project);
     }
+
+    public Collection<String> findActionNames() {
+        return FileBasedIndex.getInstance().getAllKeys(ActionsFileBasedIndex.KEY, project);
+    }
 }
