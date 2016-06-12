@@ -111,6 +111,11 @@ class InspectionSchemaVisitor extends VisitorAdapter {
         }
     }
 
+    @Override
+    public void visitRepeatAtAnyLevel(Repeated repeated) {
+        //right now it is not used for inspections, so skip implementation
+    }
+
     private static class ProblemsHolderComparator implements Comparator<ProblemsHolder> {
 
         private final String pattern = OroPlatformBundle.message("inspection.schema.notAllowedPropertyValue", "PLACEHOLDER", "PLACEHOLDER").replace(".", "\\.").replace("PLACEHOLDER", ".*");

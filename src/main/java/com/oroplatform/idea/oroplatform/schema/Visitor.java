@@ -13,4 +13,5 @@ public interface Visitor {
     void visitScalarFileValue(Scalar.File file);
     void visitScalarConditionValue(Scalar.Condition condition);
     void visitScalarActionValue(Scalar.Action action);
+    void visitRepeatAtAnyLevel(Repeated repeated);
 }

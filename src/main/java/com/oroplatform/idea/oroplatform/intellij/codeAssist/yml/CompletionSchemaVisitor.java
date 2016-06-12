@@ -63,8 +63,8 @@ class CompletionSchemaVisitor extends YamlVisitor {
     public void visitScalarConditionValue(Scalar.Condition condition) {
         completion.extend(
             CompletionType.BASIC,
-            psiElement().withAncestor(8, capture),
-            new ConditionCompletionProvider()
+            capture,
+            new ConditionCompletionProvider(insertHandler)
         );
     }
 
@@ -73,7 +73,7 @@ class CompletionSchemaVisitor extends YamlVisitor {
         completion.extend(
             CompletionType.BASIC,
             capture,
-            new ActionCompletionProvider()
+            new ActionCompletionProvider(insertHandler)
         );
     }
 }

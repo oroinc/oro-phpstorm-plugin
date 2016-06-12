@@ -56,6 +56,11 @@ abstract class YamlVisitor extends VisitorAdapter {
 
     protected abstract void handleContainer(Container container, ElementPattern<? extends PsiElement> capture);
 
+    @Override
+    public void visitRepeatAtAnyLevel(Repeated repeated) {
+        repeated.getElement().accept(nextVisitor(psiElement().withAncestor(10, capture)));
+    }
+
     enum VisitingContext {
         PROPERTY_KEY, PROPERTY_VALUE
     }

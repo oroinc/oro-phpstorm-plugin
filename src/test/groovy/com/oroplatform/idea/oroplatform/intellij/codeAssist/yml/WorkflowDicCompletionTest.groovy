@@ -79,6 +79,21 @@ class WorkflowDicCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: does not suggest conditions as property value"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        conditions:
+            |          @not: <caret>
+            """.stripMargin(),
+            [],
+            ["@condition1", "@condition2", "@condition2b"]
+        )
+    }
+
     def void "test: suggest actions after new line defined in xml file"() {
         suggestions(
             """
@@ -122,6 +137,27 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |            <caret>
             """.stripMargin(),
             ["@action3"]
+        )
+    }
+
+    def void "test: complete conditions as keys"() {
+        completion(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        conditions:
+            |          2b<caret>
+            """.stripMargin(),
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        conditions:
+            |          @condition2b: <caret>
+            """.stripMargin(),
         )
     }
 }

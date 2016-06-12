@@ -3,6 +3,8 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.InsertHandler;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ProcessingContext;
@@ -12,6 +14,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 class ConditionCompletionProvider extends CompletionProvider<CompletionParameters> {
+    private final InsertHandler<LookupElement> insertHandler;
+
+    ConditionCompletionProvider(InsertHandler<LookupElement> insertHandler) {
+        this.insertHandler = insertHandler;
+    }
+
     @Override
     protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
         final Project project = parameters.getOriginalFile().getProject();
@@ -19,7 +27,7 @@ class ConditionCompletionProvider extends CompletionProvider<CompletionParameter
         final Collection<String> conditions = ServicesIndex.instance(project).findConditionNames();
 
         for (String condition : conditions) {
-            result.addElement(LookupElementBuilder.create("@" + condition));
+            result.addElement(LookupElementBuilder.create("@" + condition).withInsertHandler(insertHandler));
         }
     }
 }

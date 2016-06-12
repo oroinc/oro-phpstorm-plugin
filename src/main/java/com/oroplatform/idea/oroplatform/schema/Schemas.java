@@ -282,7 +282,9 @@ public class Schemas {
         );
         final Element entityAcl = OneOf.from(acl, Container.with(acl));
 
-        final Element conditions = Scalar.condition;
+        final Element conditions = Repeated.atAnyLevel(Container.with(
+            Property.any(Scalar.any).withKeyElement(Scalar.condition)
+        ));
 
         final Sequence actions = Sequence.of(
             Container.with(
