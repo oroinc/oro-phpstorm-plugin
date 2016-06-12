@@ -8,6 +8,7 @@ import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
 import com.oroplatform.idea.oroplatform.intellij.indexes.services.XmlIndexer;
 import com.oroplatform.idea.oroplatform.intellij.indexes.services.YamlIndexer;
+import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import com.oroplatform.idea.oroplatform.symfony.Service;
 import com.oroplatform.idea.oroplatform.symfony.Tag;
 import gnu.trove.THashMap;
@@ -36,6 +37,10 @@ abstract class ServicesFileBasedIndex extends ScalarIndexExtension<String> {
             @Override
             public Map<String, Void> map(@NotNull FileContent inputData) {
                 final Map<String, Void> index = new THashMap<String, Void>();
+
+                if(!OroPlatformSettings.getInstance(inputData.getProject()).isPluginEnabled()) {
+                    return index;
+                }
 
                 if(inputData.getPsiFile() instanceof XmlFile) {
                     final Set<Service> services = xmlIndexer.map((XmlFile) inputData.getPsiFile()).keySet();
