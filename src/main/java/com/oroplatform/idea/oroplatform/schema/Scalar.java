@@ -63,6 +63,8 @@ public class Scalar implements Element {
 
     final static Scalar controller = new Scalar(Scalar.PhpClass.controller());
 
+    final static Scalar phpClass = new Scalar(Scalar.PhpClass.any());
+
     final static Scalar field = new Scalar(new Scalar.PhpField());
 
     final static Scalar bool = new Scalar(new Choices(asList("true", "false")));
@@ -158,6 +160,10 @@ public class Scalar implements Element {
 
         private static PhpClass entity(boolean allowDoctrineShortcutNotation) {
             return new PhpClass("Entity", allowDoctrineShortcutNotation);
+        }
+
+        private static PhpClass any() {
+            return new PhpClass(null, false);
         }
 
         private PhpClass(String namespacePart, boolean allowDoctrineShortcutNotation) {

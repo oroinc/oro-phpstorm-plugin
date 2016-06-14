@@ -298,7 +298,7 @@ public class Schemas {
             Property.named("entity_acl", entityAcl),
             Property.named("property_path", Scalar.any),
             Property.named("options", Container.with(
-                Property.named("class", Scalar.any), //TODO: support for any php class reference
+                Property.named("class", Scalar.phpClass),
                 Property.named("multiple", Scalar.bool)
             ))
         );

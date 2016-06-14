@@ -81,6 +81,15 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     @NotNull
     @Override
     public Object[] getVariants() {
+        if(phpClass.getNamespacePart() != null) {
+            return getVariantsFromBundles();
+        } else {
+            return getVariantsFromAnyNamespace();
+        }
+    }
+
+    @NotNull
+    private Object[] getVariantsFromBundles() {
         final List<LookupElement> results = new LinkedList<LookupElement>();
 
         for (PhpClass phpClass : getPhpClassesFrom(getBundlesNamespaceNames())) {
@@ -88,9 +97,7 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
             if(this.phpClass.allowDoctrineShortcutNotation()) {
                 addEntitiesShortcutsLookups(results, phpClass, priority);
             } else {
-                final InsertHandler<LookupElement> customInsertHandler = insertHandler != null ?
-                    new ComposedInsertHandler(asList(PhpClassInsertHandler.INSTANCE, insertHandler)) : PhpClassInsertHandler.INSTANCE;
-                results.add(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, customInsertHandler), priority));
+                results.add(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, getPhpClassInsertHandler()), priority));
             }
         }
 
@@ -204,5 +211,30 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
                 priority
             ));
         }
+    }
+
+    @NotNull
+    private Object[] getVariantsFromAnyNamespace() {
+        final List<LookupElement> results = new LinkedList<LookupElement>();
+
+        for (String className : getAllPhpClassNames()) {
+            for (PhpClass phpClass : phpIndex.getClassesByName(className)) {
+                if(!(phpClass.getFQN().contains("\\__CG__\\") || phpClass.getFQN().contains("\\Tests\\") || phpClass.getPresentableFQN().startsWith("__"))) {
+                    results.add(new PhpClassLookupElement(phpClass, true, getPhpClassInsertHandler()));
+                }
+            }
+        }
+
+        return results.toArray(new LookupElement[results.size()]);
+    }
+
+    private InsertHandler<LookupElement> getPhpClassInsertHandler() {
+        return insertHandler != null ?
+                    new ComposedInsertHandler(asList(PhpClassInsertHandler.INSTANCE, insertHandler)) : PhpClassInsertHandler.INSTANCE;
+    }
+
+    private Collection<String> getAllPhpClassNames() {
+        final PrefixMatcher classMatcher = new CamelHumpMatcher(text);
+        return phpIndex.getAllClassNames(classMatcher);
     }
 }
