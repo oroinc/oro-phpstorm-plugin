@@ -41,6 +41,10 @@ public class Scalar implements Element {
         return new Scalar(new Scalar.Choices(Arrays.asList(choices)).allowExtraChoices());
     }
 
+    static Scalar propertiesFromPath(PropertyPath path, String prefix) {
+        return new Scalar(new Scalar.PropertiesFromPath(path, prefix));
+    }
+
     static Scalar phpMethod(String pattern) {
         return new Scalar(new Scalar.PhpMethod(pattern));
     }
@@ -234,6 +238,29 @@ public class Scalar implements Element {
         @Override
         public void accept(Visitor visitor) {
             visitor.visitScalarFileValue(this);
+        }
+    }
+
+    public static class PropertiesFromPath implements Value {
+        private final PropertyPath path;
+        private final String prefix;
+
+        public PropertiesFromPath(PropertyPath path, String prefix) {
+            this.path = path;
+            this.prefix = prefix;
+        }
+
+        @Override
+        public void accept(Visitor visitor) {
+            visitor.visitScalarPropertiesFromPathValue(this);
+        }
+
+        public PropertyPath getPath() {
+            return path;
+        }
+
+        public String getPrefix() {
+            return prefix;
         }
     }
 }

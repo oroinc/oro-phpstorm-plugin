@@ -26,6 +26,10 @@ public abstract class VisitorAdapter implements Visitor {
     }
 
     @Override
+    public void visitScalarPropertiesFromPathValue(Scalar.PropertiesFromPath propertiesFromPath) {
+    }
+
+    @Override
     public void visitScalarFileValue(Scalar.File file) {
     }
 

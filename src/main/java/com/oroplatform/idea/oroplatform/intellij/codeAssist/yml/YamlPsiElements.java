@@ -6,55 +6,60 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.*;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class YamlPsiElements {
 
-    static Collection<YAMLKeyValue> getKeyValuesFrom(YAMLMapping element) {
-        return getKeyValues(Arrays.asList(element.getChildren()));
+    static Collection<YAMLKeyValue> getKeyValuesFrom(PsiElement element) {
+        return filterKeyValues(Arrays.asList(element.getChildren()));
     }
 
-    private static Collection<YAMLKeyValue> getKeyValues(Collection<PsiElement> elements) {
-        List<YAMLKeyValue> children = new LinkedList<YAMLKeyValue>();
-        for(PsiElement child : elements) {
-            if(child instanceof YAMLKeyValue) {
-                children.add((YAMLKeyValue) child);
+    static Collection<YAMLKeyValue> getKeyValuesFrom(Collection<? extends PsiElement> elements) {
+        final Collection<PsiElement> children = new LinkedList<PsiElement>();
+        for (PsiElement element : elements) {
+            children.addAll(Arrays.asList(element.getChildren()));
+        }
+        return filterKeyValues(children);
+    }
+
+    private static Collection<YAMLKeyValue> filterKeyValues(Collection<PsiElement> elements) {
+        List<YAMLKeyValue> out = new LinkedList<YAMLKeyValue>();
+        for(PsiElement element : elements) {
+            if(element instanceof YAMLKeyValue) {
+                out.add((YAMLKeyValue) element);
             }
         }
 
-        return children;
+        return out;
     }
 
-    static Collection<YAMLScalar> getScalars(Collection<PsiElement> elements) {
+    static Collection<YAMLScalar> filterScalars(Collection<PsiElement> elements) {
         List<YAMLScalar> children = new LinkedList<YAMLScalar>();
-        for(PsiElement child : elements) {
-            if(child instanceof YAMLScalar) {
-                children.add((YAMLScalar) child);
+        for(PsiElement element : elements) {
+            if(element instanceof YAMLScalar) {
+                children.add((YAMLScalar) element);
             }
         }
 
         return children;
     }
 
-    static Collection<YAMLMapping> getMappings(Collection<? extends PsiElement> elements) {
-        List<YAMLMapping> children = new LinkedList<YAMLMapping>();
-        for(PsiElement child : elements) {
-            if(child instanceof YAMLMapping) {
-                children.add((YAMLMapping) child);
+    static Collection<YAMLMapping> filterMappings(Collection<? extends PsiElement> elements) {
+        List<YAMLMapping> out = new LinkedList<YAMLMapping>();
+        for(PsiElement element : elements) {
+            if(element instanceof YAMLMapping) {
+                out.add((YAMLMapping) element);
             }
         }
 
-        return children;
+        return out;
     }
 
     public static List<YAMLMapping> getMappingsFrom(@NotNull PsiFile file) {
         List<YAMLMapping> elements = new LinkedList<YAMLMapping>();
         for(PsiElement element : file.getChildren()) {
             if(element instanceof YAMLDocument) {
-                elements.addAll(getMappings(Arrays.asList(element.getChildren())));
+                elements.addAll(filterMappings(Arrays.asList(element.getChildren())));
             }
         }
         return elements;
@@ -101,5 +106,21 @@ public class YamlPsiElements {
         }
 
         return element == null ? null : getFirstMapping(element.getParent(), --maxDepth);
+    }
+
+    static Set<PsiElement> getAncestors(PsiElement element) {
+        return getAncestors(element, new HashSet<PsiElement>());
+    }
+
+    private static Set<PsiElement> getAncestors(PsiElement element, Set<PsiElement> ancestors) {
+        final PsiElement parent = element.getParent();
+
+        if(parent == null || parent instanceof PsiFile) {
+            return ancestors;
+        }
+
+        ancestors.add(parent);
+
+        return getAncestors(parent, ancestors);
     }
 }

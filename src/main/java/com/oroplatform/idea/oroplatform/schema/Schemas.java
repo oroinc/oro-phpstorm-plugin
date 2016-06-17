@@ -282,13 +282,15 @@ public class Schemas {
         );
         final Element entityAcl = OneOf.from(acl, Container.with(acl));
 
+        final Element attributesElement = Scalar.propertiesFromPath(new PropertyPath("workflows", "$this", "attributes"), "$");
+        final Element workflowAttributes = OneOf.from(attributesElement, Sequence.of(attributesElement));
         final Element conditions = Repeated.atAnyLevel(Container.with(
-            Property.any(Scalar.any).withKeyElement(Scalar.condition)
+            Property.any(workflowAttributes).withKeyElement(Scalar.condition)
         ));
 
         final Sequence actions = Sequence.of(
             Container.with(
-                Property.any(Scalar.any).withKeyElement(Scalar.action)
+                Property.any(workflowAttributes).withKeyElement(Scalar.action)
             )
         );
 

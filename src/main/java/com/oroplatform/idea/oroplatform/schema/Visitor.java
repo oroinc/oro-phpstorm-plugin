@@ -10,6 +10,7 @@ public interface Visitor {
     void visitScalarPhpMethodValue(Scalar.PhpMethod phpMethod);
     void visitScalarPhpFieldValue(Scalar.PhpField phpField);
     void visitScalarRegexpValue(Scalar.Regexp regexp);
+    void visitScalarPropertiesFromPathValue(Scalar.PropertiesFromPath propertiesFromPath);
     void visitScalarFileValue(Scalar.File file);
     void visitScalarConditionValue(Scalar.Condition condition);
     void visitScalarActionValue(Scalar.Action action);

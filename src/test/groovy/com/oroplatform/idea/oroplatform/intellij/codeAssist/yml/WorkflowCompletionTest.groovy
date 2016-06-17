@@ -236,4 +236,60 @@ public class WorkflowCompletionTest extends CompletionTest {
         )
     }
 
+
+    def void "test: suggest attributes in conditions"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    attributes:
+            |      someAttribute:
+            |        type: string
+            |    transition_definitions:
+            |      some:
+            |        conditions:
+            |          @not_blank: <caret>
+            """.stripMargin(),
+
+            ["\$someAttribute"]
+        )
+    }
+
+    def void "test: suggest attributes in conditions in sequence"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    attributes:
+            |      someAttribute:
+            |        type: string
+            |    transition_definitions:
+            |      some:
+            |        conditions:
+            |          @not_blank: [<caret>]
+            """.stripMargin(),
+
+            ["\$someAttribute"]
+        )
+    }
+
+    def void "test: not suggest attributes in conditions from different workflow"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some:
+            |        conditions:
+            |          @not_blank: <caret>
+            |  some2:
+            |    attributes:
+            |      someAttribute:
+            |        type: string
+            """.stripMargin(),
+
+            [],
+            ["\$someAttribute"],
+        )
+    }
 }

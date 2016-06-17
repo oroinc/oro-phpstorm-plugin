@@ -60,6 +60,15 @@ class CompletionSchemaVisitor extends YamlVisitor {
     }
 
     @Override
+    public void visitScalarPropertiesFromPathValue(Scalar.PropertiesFromPath propertiesFromPath) {
+        completion.extend(
+            CompletionType.BASIC,
+            YamlPatterns.scalarValue().withSuperParent(2, capture),
+            new ChoicesFromPathCompletionProvider(propertiesFromPath.getPath(), propertiesFromPath.getPrefix())
+        );
+    }
+
+    @Override
     public void visitScalarConditionValue(Scalar.Condition condition) {
         completion.extend(
             CompletionType.BASIC,
