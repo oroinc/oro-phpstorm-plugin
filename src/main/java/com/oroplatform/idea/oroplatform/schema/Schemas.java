@@ -290,7 +290,7 @@ public class Schemas {
 
         final Sequence actions = Sequence.of(
             Container.with(
-                Property.any(workflowAttributes).withKeyElement(Scalar.action)
+                Property.any(OneOf.from(workflowAttributes, Container.with(workflowAttributes))).withKeyElement(Scalar.action)
             )
         );
 

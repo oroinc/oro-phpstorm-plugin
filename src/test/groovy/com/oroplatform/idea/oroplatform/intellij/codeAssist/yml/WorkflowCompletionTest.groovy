@@ -273,6 +273,25 @@ public class WorkflowCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: suggest attributes in conditions at any level"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    attributes:
+            |      someAttribute:
+            |        type: string
+            |    transition_definitions:
+            |      some:
+            |        conditions:
+            |          @not_blank:
+            |            xxx: <caret>
+            """.stripMargin(),
+
+            ["\$someAttribute"]
+        )
+    }
+
     def void "test: not suggest attributes in conditions from different workflow"() {
         suggestions(
             """
@@ -306,6 +325,25 @@ public class WorkflowCompletionTest extends CompletionTest {
             """.stripMargin(),
 
             ["someTransitionDef"],
+        )
+    }
+
+    def void "test: suggest attributes in actions at any level"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    attributes:
+            |      someAttribute:
+            |        type: string
+            |    transition_definitions:
+            |      some:
+            |        post_actions:
+            |          - @assign_value:
+            |              xxx: <caret>
+            """.stripMargin(),
+
+            ["\$someAttribute"]
         )
     }
 }
