@@ -292,4 +292,20 @@ public class WorkflowCompletionTest extends CompletionTest {
             ["\$someAttribute"],
         )
     }
+
+    def void "test: suggest transition definitions in transition"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      someTransitionDef: ~
+            |    transitions:
+            |      xxx:
+            |        transition_definition: <caret>
+            """.stripMargin(),
+
+            ["someTransitionDef"],
+        )
+    }
 }

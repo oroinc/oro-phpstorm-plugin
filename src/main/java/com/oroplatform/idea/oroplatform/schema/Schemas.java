@@ -315,7 +315,7 @@ public class Schemas {
 
         final Container transition = Container.with(
             Property.named("step_to", Scalar.any),
-            Property.named("transition_definition", Scalar.any),
+            Property.named("transition_definition", Scalar.propertiesFromPath(new PropertyPath("workflows", "$this", "transition_definitions"))),
             Property.named("is_start", Scalar.bool),
             Property.named("is_hidden", Scalar.bool),
             Property.named("is_unavailable_hidden", Scalar.bool),

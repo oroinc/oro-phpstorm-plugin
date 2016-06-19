@@ -45,6 +45,10 @@ public class Scalar implements Element {
         return new Scalar(new Scalar.PropertiesFromPath(path, prefix));
     }
 
+    static Scalar propertiesFromPath(PropertyPath path) {
+        return new Scalar(new Scalar.PropertiesFromPath(path, ""));
+    }
+
     static Scalar phpMethod(String pattern) {
         return new Scalar(new Scalar.PhpMethod(pattern));
     }
