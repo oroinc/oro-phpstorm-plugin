@@ -20,7 +20,7 @@ intellij {
     version project.hasProperty('ideaVersion') ? ideaVersion : 'IU-2016.1'
     type 'IU'
     pluginName 'idea-oroplatform-plugin'
-    plugins = ['php', 'yaml', 'java-i18n', 'properties', 'CSS']
+    plugins = ['php', 'yaml', 'java-i18n', 'properties', 'CSS', 'JavaScriptLanguage']
     updateSinceUntilBuild false
     sameSinceUntilBuild false
     downloadSources !Boolean.valueOf(System.getenv('CI'))

@@ -11,6 +11,7 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.jetbrains.php</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
+    <depends>JavaScript</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <completion.contributor language="yaml"
