@@ -57,4 +57,13 @@ class RequireJsReferenceTest extends FileReferenceTest {
         )
     }
 
+    def void "test: suggest oroui js files"() {
+        suggestions(
+            """
+            |require('<caret>')
+            """.stripMargin(),
+            ["oroui/js/layout"]
+        )
+    }
+
 }

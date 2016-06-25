@@ -1,5 +1,7 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript;
 
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.util.TextRange;
@@ -7,6 +9,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
@@ -35,19 +38,51 @@ class RequireJsModuleReferenceProvider extends PsiReferenceProvider {
         final String text = StringUtil.unquoteString(element.getText());
 
         if(!text.startsWith(OROUI_JS)) {
-            return new PsiReference[0];
+            return emptyReferences(element);
         }
 
         final VirtualFile jsRootDir = getJsRootDir(project);
 
         if(jsRootDir == null) {
-            return new PsiReference[0];
+            return emptyReferences(element);
         }
 
         final String referenceFilePath = jsRootDir.getPath() + "/" + text.replace(OROUI_JS, "") + ".js";
         final List<FileReference> references = getFileReferences(element, jsRootDir, referenceFilePath);
 
         return references.toArray(new PsiReference[references.size()]);
+    }
+
+    private PsiReference[] emptyReferences(final PsiElement element) {
+        final Project project = element.getProject();
+        final FileReferenceSet fileReferenceSet = new FileReferenceSet("", element, 0, this, true);
+        return new PsiReference[] {
+            new FileReference(fileReferenceSet, new TextRange(1, element.getTextLength() - 1), 0, "") {
+                @NotNull
+                @Override
+                public Object[] getVariants() {
+                    final VirtualFile jsRootDir = getJsRootDir(project);
+
+                    if(jsRootDir == null) {
+                        return new Object[0];
+                    }
+
+                    final List<LookupElement> elements = new LinkedList<LookupElement>();
+
+                    VfsUtilCore.iterateChildrenRecursively(jsRootDir, null, new ContentIterator() {
+                        @Override
+                        public boolean processFile(VirtualFile jsFile) {
+                            if(!jsFile.isDirectory()) {
+                                elements.add(LookupElementBuilder.create(OROUI_JS+jsFile.getPath().replace(jsRootDir.getPath()+"/", "").replace(".js", "")));
+                            }
+                            return true;
+                        }
+                    });
+
+                    return elements.toArray();
+                }
+            }
+        };
     }
 
     @Nullable
