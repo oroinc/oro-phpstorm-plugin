@@ -20,6 +20,10 @@
                 language="yaml"
                 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.ReferenceContributor"
         />
+        <psi.referenceContributor
+                language="JavaScript"
+                implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsReferenceContributor"
+        />
         <projectConfigurable instance="com.oroplatform.idea.oroplatform.settings.OroPlatformForm"
                              id="OroPlatform.settings"
                              groupId="language" />

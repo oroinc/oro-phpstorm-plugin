@@ -29,7 +29,7 @@ public class OroPlatformSettings implements PersistentStateComponent<Element> {
         return appDir;
     }
 
-    void setAppDir(String appDir) {
+    public void setAppDir(String appDir) {
         this.appDir = appDir;
     }
 
