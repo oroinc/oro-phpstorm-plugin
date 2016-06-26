@@ -2,6 +2,7 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -38,12 +39,18 @@ class RequireJsFileReference extends FileReference {
             @Override
             public boolean processFile(VirtualFile jsFile) {
                 if(!jsFile.isDirectory()) {
-                    elements.add(LookupElementBuilder.create(OROUI_JS+jsFile.getPath().replace(jsRootDir.getPath()+"/", "").replace(".js", "")));
+                    final LookupElementBuilder lookupElement = LookupElementBuilder.create(getLookupString(jsFile)).withIcon(JavaScriptFileType.INSTANCE.getIcon());
+                    elements.add(lookupElement);
                 }
                 return true;
             }
         });
 
         return elements.toArray();
+    }
+
+    @NotNull
+    private String getLookupString(VirtualFile jsFile) {
+        return OROUI_JS + jsFile.getPath().replace(jsRootDir.getPath() + "/", "").replace(".js", "");
     }
 }
