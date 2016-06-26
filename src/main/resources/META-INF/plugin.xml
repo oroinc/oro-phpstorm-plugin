@@ -1,10 +1,20 @@
 <idea-plugin version="2">
     <id>com.oroplatform.idea.oroplatform</id>
-    <name>ORO Platform</name>
+    <name>Oro PHPStorm Plugin</name>
 
-    <description></description>
+    <description><![CDATA[
+<h1>Oro PHPStorm Plugin</h1>
 
-    <change-notes></change-notes>
+Plugin for the PHPStorm that will help to increase the development speed on the projects based on the OroPlatform.
+    ]]></description>
+
+    <change-notes><![CDATA[
+<h2>1.0.0-alpha10</h2>
+<ul>
+  <li>autocomplete for the acl.yml, entity.yml, datagrid.yml, workflow.yml</li>
+  <li>autocomplete for OroUIBundle js modules</li>
+</ul>
+    ]]></change-notes>
 
     <idea-version since-build="145.258.0"/>
 
