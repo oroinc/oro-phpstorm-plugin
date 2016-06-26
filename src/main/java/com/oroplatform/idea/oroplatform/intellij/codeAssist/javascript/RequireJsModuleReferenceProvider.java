@@ -1,15 +1,11 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
@@ -18,71 +14,52 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PsiElements;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 class RequireJsModuleReferenceProvider extends PsiReferenceProvider {
-
-    private static final String OROUI_JS = "oroui/js/";
 
     @NotNull
     @Override
     public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull ProcessingContext context) {
+        final String text = StringUtil.unquoteString(element.getText().trim().replace(PsiElements.IN_PROGRESS_VALUE, ""));
 
-        final Project project = element.getProject();
-        final String text = StringUtil.unquoteString(element.getText());
-
-        if(!text.startsWith(OROUI_JS)) {
-            return emptyReferences(element);
-        }
-
-        final VirtualFile jsRootDir = getJsRootDir(project);
-
-        if(jsRootDir == null) {
-            return emptyReferences(element);
-        }
-
-        final String referenceFilePath = jsRootDir.getPath() + "/" + text.replace(OROUI_JS, "") + ".js";
-        final List<FileReference> references = getFileReferences(element, jsRootDir, referenceFilePath);
+        final List<? extends FileReference> references = getReferences(element, text);
 
         return references.toArray(new PsiReference[references.size()]);
     }
 
-    private PsiReference[] emptyReferences(final PsiElement element) {
-        final Project project = element.getProject();
-        final FileReferenceSet fileReferenceSet = new FileReferenceSet("", element, 0, this, true);
-        return new PsiReference[] {
-            new FileReference(fileReferenceSet, new TextRange(1, element.getTextLength() - 1), 0, "") {
-                @NotNull
-                @Override
-                public Object[] getVariants() {
-                    final VirtualFile jsRootDir = getJsRootDir(project);
+    private List<? extends FileReference> getReferences(PsiElement element, String text) {
+        final VirtualFile jsRootDir = getJsRootDir(element.getProject());
 
-                    if(jsRootDir == null) {
-                        return new Object[0];
-                    }
+        if(jsRootDir == null) {
+            return Collections.emptyList();
+        }
 
-                    final List<LookupElement> elements = new LinkedList<LookupElement>();
+        if(!text.startsWith(RequireJsFileReference.OROUI_JS)) {
+            return emptyReferences(element, jsRootDir);
+        }
 
-                    VfsUtilCore.iterateChildrenRecursively(jsRootDir, null, new ContentIterator() {
-                        @Override
-                        public boolean processFile(VirtualFile jsFile) {
-                            if(!jsFile.isDirectory()) {
-                                elements.add(LookupElementBuilder.create(OROUI_JS+jsFile.getPath().replace(jsRootDir.getPath()+"/", "").replace(".js", "")));
-                            }
-                            return true;
-                        }
-                    });
+        final String referenceFilePath = jsRootDir.getPath() + "/" + text.replace(RequireJsFileReference.OROUI_JS, "") + ".js";
+        final List<FileReference> references = getFileReferences(element, jsRootDir, referenceFilePath);
+        references.addAll(emptyReferences(element, jsRootDir));
 
-                    return elements.toArray();
-                }
-            }
-        };
+        return references;
+    }
+
+    private List<? extends FileReference> emptyReferences(final PsiElement element, VirtualFile jsRootDir) {
+        final String relativePath = relativePathTo(jsRootDir, element.getOriginalElement().getContainingFile().getOriginalFile().getVirtualFile().getParent());
+
+        if(!element.getText().contains(PsiElements.IN_PROGRESS_VALUE) || relativePath == null) {
+            return Collections.emptyList();
+        }
+
+        final FileReferenceSet fileReferenceSet = new FileReferenceSet(relativePath, element, 0, this, true);
+
+        return Arrays.asList(new RequireJsFileReference(fileReferenceSet, element, "", getJsRootDir(element.getProject())));
     }
 
     @Nullable
@@ -145,11 +122,12 @@ class RequireJsModuleReferenceProvider extends PsiReferenceProvider {
             @Override
             public boolean processFile(VirtualFile jsFile) {
                 if(jsFile.getPath().equals(referenceFilePath)) {
-                    references.add(new FileReference(fileReferenceSet, new TextRange(1, element.getTextLength() - 1), 0, relativePath + "/" +jsFile.getPath().replace(jsRootDir.getPath()+"/", "")));
+                    references.add(new RequireJsFileReference(fileReferenceSet, element, relativePath + "/" +jsFile.getPath().replace(jsRootDir.getPath()+"/", ""), jsRootDir));
                 }
                 return true;
             }
         });
         return references;
     }
+
 }

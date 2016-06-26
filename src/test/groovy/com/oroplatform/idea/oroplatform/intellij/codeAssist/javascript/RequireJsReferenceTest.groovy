@@ -25,6 +25,8 @@ class RequireJsReferenceTest extends FileReferenceTest {
         )
 
         configureByText("vendor/Oro/Bundle/UIBundle/Resources/public/js/layout.js", "")
+        configureByText("vendor/Oro/Bundle/UIBundle/Resources/public/js/layout/layout2.js", "")
+        configureByText("vendor/Oro/Bundle/UIBundle/Resources/public/js/layout/layout3.js", "")
         configureByText("vendor/Oro/Bundle/UIBundle/Resources/public/js/app.js", "")
         configureByText("vendor/Oro/Bundle/UIBundle/Resources/public/js/some/func.js", "")
     }
@@ -63,6 +65,15 @@ class RequireJsReferenceTest extends FileReferenceTest {
             |require('<caret>')
             """.stripMargin(),
             ["oroui/js/layout"]
+        )
+    }
+
+    def void "test: suggest oroui js files even if given reference exists"() {
+        suggestions(
+            """
+            |require('oroui/js/layout<caret>')
+            """.stripMargin(),
+            ["oroui/js/layout/layout2"]
         )
     }
 
