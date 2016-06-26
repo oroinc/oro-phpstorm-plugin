@@ -8,12 +8,13 @@ import com.intellij.psi.PsiReferenceRegistrar;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.PsiElements.fileInProjectWithPluginEnabled;
 
 public class RequireJsReferenceContributor extends PsiReferenceContributor {
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
         final PsiElementPattern.Capture<JSLiteralExpression> pattern =
-            psiElement(JSLiteralExpression.class)
+            psiElement(JSLiteralExpression.class).inFile(fileInProjectWithPluginEnabled())
                 .and(
                     psiElement().andOr(
                         psiElement()
