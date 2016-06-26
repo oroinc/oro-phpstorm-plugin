@@ -76,6 +76,9 @@ class RequireJsModuleReferenceProvider extends PsiReferenceProvider {
         return VfsUtil.findRelativeFile(file, "Resources", "public", "js");
     }
 
+    /**
+     * @return Relative path to $file according to $relativeTo. "/" at the end is included if necessary
+     */
     private String relativePathTo(VirtualFile file, VirtualFile relativeTo) {
         final VirtualFile commonAncestor = VfsUtil.getCommonAncestor(file, relativeTo);
 
@@ -93,10 +96,12 @@ class RequireJsModuleReferenceProvider extends PsiReferenceProvider {
         }
 
         if (parts.length == 0) {
-            return file.getPath().replace(commonAncestor.getPath()+"/", "");
+            final String path = StringUtil.trimStart(file.getPath().replace(commonAncestor.getPath(), ""), "/");
+
+            return path.length() > 0 ? path + "/" : "";
         }
 
-        return StringUtil.join(parts, "/") + "/" + file.getPath().replace(commonAncestor.getPath()+"/", "");
+        return StringUtil.trimEnd(StringUtil.join(parts, "/") + "/" + StringUtil.trimStart(file.getPath().replace(commonAncestor.getPath(), ""), "/"), '/')+"/";
     }
 
     private PhpClass getOroUIBundleClass(Project project) {
@@ -122,7 +127,7 @@ class RequireJsModuleReferenceProvider extends PsiReferenceProvider {
             @Override
             public boolean processFile(VirtualFile jsFile) {
                 if(jsFile.getPath().equals(referenceFilePath)) {
-                    references.add(new RequireJsFileReference(fileReferenceSet, element, relativePath + "/" +jsFile.getPath().replace(jsRootDir.getPath()+"/", ""), jsRootDir));
+                    references.add(new RequireJsFileReference(fileReferenceSet, element, relativePath + jsFile.getPath().replace(jsRootDir.getPath()+"/", ""), jsRootDir));
                 }
                 return true;
             }

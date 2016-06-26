@@ -4,6 +4,8 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.FileReferenceTest
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings
 
 class RequireJsReferenceTest extends FileReferenceTest {
+    private String oroUIPath = "vendor/Oro/Bundle/UIBundle/Resources/public/js/"
+
     @Override
     String fileName() {
         return "some.js"
@@ -24,11 +26,11 @@ class RequireJsReferenceTest extends FileReferenceTest {
           """.stripMargin()
         )
 
-        configureByText("vendor/Oro/Bundle/UIBundle/Resources/public/js/layout.js", "")
-        configureByText("vendor/Oro/Bundle/UIBundle/Resources/public/js/layout/layout2.js", "")
-        configureByText("vendor/Oro/Bundle/UIBundle/Resources/public/js/layout/layout3.js", "")
-        configureByText("vendor/Oro/Bundle/UIBundle/Resources/public/js/app.js", "")
-        configureByText("vendor/Oro/Bundle/UIBundle/Resources/public/js/some/func.js", "")
+        configureByText(oroUIPath + "layout.js", "")
+        configureByText(oroUIPath + "layout/layout2.js", "")
+        configureByText(oroUIPath + "layout/layout3.js", "")
+        configureByText(oroUIPath + "app.js", "")
+        configureByText(oroUIPath + "some/func.js", "")
     }
 
     def void "test: detect oro js file as reference"() {
@@ -77,4 +79,42 @@ class RequireJsReferenceTest extends FileReferenceTest {
         )
     }
 
+    def void "test: detect oro js file as reference in define function"() {
+        checkFileReferences(
+            """
+            |define(['oroui/js/l<caret>ayout'])
+            """.stripMargin(),
+            ["layout.js"]
+        )
+    }
+
+    def void "test: detect oro js file as reference in file where reference files are defined"() {
+        checkFileReferences(
+            oroUIPath + "test.js",
+            """
+            |require('oroui/js/l<caret>ayout')
+            """.stripMargin(),
+            ["layout.js"]
+        )
+    }
+
+    def void "test: detect oro js file as reference in file in subdirectory where reference files are defined"() {
+        checkFileReferences(
+            oroUIPath + "some/test.js",
+            """
+            |require('oroui/js/l<caret>ayout')
+            """.stripMargin(),
+            ["layout.js"]
+        )
+    }
+
+    def void "test: detect oro js file as reference in file in completely different directory"() {
+        checkFileReferences(
+            "some/test.js",
+            """
+            |require('oroui/js/l<caret>ayout')
+            """.stripMargin(),
+            ["layout.js"]
+        )
+    }
 }
