@@ -1,11 +1,19 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
 import com.intellij.codeInsight.lookup.Lookup;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 
 public abstract class CompletionTest extends LightPlatformCodeInsightFixtureTestCase {
 
     abstract def String fileName()
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp()
+
+        OroPlatformSettings.getInstance(myFixture.project).setPluginEnabled(true)
+    }
 
     def completion(String contents, String expected) {
         completion(fileName(), contents, expected)

@@ -3,7 +3,7 @@ package com.oroplatform.idea.oroplatform.schema;
 public class Sequence implements Element {
     private final Element type;
 
-    private Sequence(Element type) {
+    Sequence(Element type) {
         this.type = type;
     }
 

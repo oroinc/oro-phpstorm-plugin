@@ -21,7 +21,7 @@ public class Property {
         this(name, valueElement, required, Scalar.any);
     }
 
-    private Property(String name, Element valueElement) {
+    Property(String name, Element valueElement) {
         this(name, valueElement, false);
     }
 

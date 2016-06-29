@@ -1,6 +1,5 @@
 package com.oroplatform.idea.oroplatform.settings;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
@@ -29,7 +28,7 @@ public class OroPlatformSettings implements PersistentStateComponent<Element> {
         return appDir;
     }
 
-    public void setAppDir(String appDir) {
+    void setAppDir(String appDir) {
         this.appDir = appDir;
     }
 
@@ -38,7 +37,7 @@ public class OroPlatformSettings implements PersistentStateComponent<Element> {
     }
 
     public boolean isPluginEnabled() {
-        return ApplicationManager.getApplication().isUnitTestMode() || pluginEnabled.isTrue();
+        return pluginEnabled.isTrue();
     }
 
     public boolean couldPluginBeEnabled() {

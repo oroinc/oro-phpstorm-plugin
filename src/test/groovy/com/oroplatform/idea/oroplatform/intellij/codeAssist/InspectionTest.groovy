@@ -1,11 +1,19 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist
 
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings
 
 abstract class InspectionTest extends LightPlatformCodeInsightFixtureTestCase {
     @Override
     def boolean isWriteActionRequired() {
         return false
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp()
+
+        OroPlatformSettings.getInstance(myFixture.project).setPluginEnabled(true)
     }
 
     abstract def String fileName()

@@ -15,8 +15,6 @@ class RequireJsReferenceTest extends FileReferenceTest {
     protected void setUp() throws Exception {
         super.setUp()
 
-        OroPlatformSettings.getInstance(myFixture.project).setAppDir("app")
-
         configureByText("vendor/Oro/Bundle/UIBundle/OroUIBundle.php",
             """
             |<?php

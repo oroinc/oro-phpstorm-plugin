@@ -13,7 +13,7 @@ public class OneOf implements Element {
         this.elements.addAll(elements);
     }
 
-    private OneOf(Element... elements) {
+    OneOf(Element... elements) {
         this(Arrays.asList(elements));
     }
 

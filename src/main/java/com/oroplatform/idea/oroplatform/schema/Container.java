@@ -14,7 +14,7 @@ public class Container implements Element {
         this.allowExtraProperties = allowExtraProperties;
     }
 
-    private Container(Property... properties) {
+    Container(Property... properties) {
         this(Arrays.asList(properties), false);
     }
 
