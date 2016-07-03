@@ -26,7 +26,8 @@ public class ProjectConfigurator implements ProjectComponent {
     }
 
     private boolean isOroPlatformDetected() {
-        return VfsUtil.findRelativeFile(project.getBaseDir(), "vendor", "oro", "platform") != null;
+        return VfsUtil.findRelativeFile(project.getBaseDir(), "vendor", "oro", "platform") != null ||
+            VfsUtil.findRelativeFile(project.getBaseDir(), "package", "platform", "src", "Oro") != null;
     }
 
     @Override

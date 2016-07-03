@@ -1,7 +1,6 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.FileReferenceTest
-import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings
 
 class RequireJsReferenceTest extends FileReferenceTest {
     private String oroUIPath = "vendor/Oro/Bundle/UIBundle/Resources/public/js/"
