@@ -49,7 +49,7 @@ class WorkflowPhpReferenceTest extends PhpReferenceTest {
             |          class: Oro\\Bundle\\AcmeBundle\\Some<caret>Class
             """.stripMargin(),
 
-            ["SomeClass"]
+            ["Oro\\Bundle\\AcmeBundle\\SomeClass"]
         )
     }
 

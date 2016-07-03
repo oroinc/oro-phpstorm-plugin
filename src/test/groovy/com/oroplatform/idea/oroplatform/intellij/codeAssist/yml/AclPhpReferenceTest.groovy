@@ -40,6 +40,10 @@ public class AclPhpReferenceTest extends PhpReferenceTest {
             |  abstract class AbstractEntity {}
             |}
             |
+            |namespace OroPro\\Bundle\\AcmeBundle\\Entity {
+            |  class Address {}
+            |}
+            |
           """.stripMargin()
         )
     }
@@ -51,7 +55,7 @@ public class AclPhpReferenceTest extends PhpReferenceTest {
             |  class: "Oro\\Bundle\\AcmeBundle\\Entity\\Address<caret>"
             """.stripMargin(),
 
-            ["Address"]
+            ["Oro\\Bundle\\AcmeBundle\\Entity\\Address"]
         )
     }
 
@@ -62,7 +66,7 @@ public class AclPhpReferenceTest extends PhpReferenceTest {
             |  class: "Oro\\\\Bundle\\\\AcmeBundle\\\\Entity\\\\Address<caret>"
             """.stripMargin(),
 
-            ["Address"]
+            ["Oro\\Bundle\\AcmeBundle\\Entity\\Address"]
         )
     }
 
@@ -73,7 +77,7 @@ public class AclPhpReferenceTest extends PhpReferenceTest {
             |  class: OroAcmeBundle:Addre<caret>ss
             """.stripMargin(),
 
-            ["Address"]
+            ["Oro\\Bundle\\AcmeBundle\\Entity\\Address"]
         )
     }
 
@@ -230,7 +234,7 @@ public class AclPhpReferenceTest extends PhpReferenceTest {
             |    - { class: "Oro\\\\Bundle\\\\AcmeBundle\\\\Controller\\\\AdminController", method: editActi<caret>on }
             """.stripMargin(),
 
-            ["editAction"]
+            ["Oro\\Bundle\\AcmeBundle\\Controller\\AdminController.editAction"]
         )
     }
 

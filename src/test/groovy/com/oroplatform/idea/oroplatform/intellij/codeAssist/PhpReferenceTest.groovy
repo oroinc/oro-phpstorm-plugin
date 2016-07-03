@@ -23,7 +23,7 @@ abstract class PhpReferenceTest extends CompletionTest{
             .collect {  it as PsiPolyVariantReferenceBase }
             .collect { it.multiResolve(false) }
             .flatten()
-            .collect { (it.getElement() as PhpNamedElement).getName() }
+            .collect { (it.getElement() as PhpNamedElement).getFQN().stripMargin('\\') }
             .unique()
             .toList()
     }

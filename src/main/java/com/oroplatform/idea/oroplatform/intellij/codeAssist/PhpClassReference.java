@@ -66,10 +66,11 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
             final String simpleName = PhpClassUtil.getSimpleName(text);
             final String namespaceShortcut = text.substring(0, text.indexOf(':'));
             final Collection<PhpClass> phpClasses = phpIndex.getClassesByName(simpleName);
+            final PrefixMatcher matcher = new StrictCamelHumpMatcher(namespaceShortcut);
 
             for(PhpClass phpClass : phpClasses) {
-                final PrefixMatcher matcher = new CamelHumpMatcher(namespaceShortcut);
-                if(matcher.isStartMatch(phpClass.getNamespaceName().replace("\\", ""))) {
+                final String simplifiedNamespace = phpClass.getNamespaceName().replace("\\Bundle\\", "").replace("\\Entity\\", "").replace("\\", "");
+                if(matcher.isStartMatch(simplifiedNamespace)) {
                     names.add(phpClass.getFQN());
                 }
             }
@@ -236,5 +237,32 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private Collection<String> getAllPhpClassNames() {
         final PrefixMatcher classMatcher = new CamelHumpMatcher(text);
         return phpIndex.getAllClassNames(classMatcher);
+    }
+
+    private static class StrictCamelHumpMatcher extends CamelHumpMatcher {
+        private final String prefixUpperLetters;
+
+        StrictCamelHumpMatcher(@NotNull String prefix) {
+            super(prefix);
+            this.prefixUpperLetters = getUpperLetters(prefix);
+        }
+
+        @NotNull
+        private String getUpperLetters(@NotNull String prefix) {
+            final StringBuilder prefixUpperLetters = new StringBuilder();
+
+            for (int i=0; i<prefix.length(); i++) {
+                char c = prefix.charAt(i);
+                if(Character.isUpperCase(c)) {
+                    prefixUpperLetters.append(c);
+                }
+            }
+            return prefixUpperLetters.toString();
+        }
+
+        @Override
+        public boolean isStartMatch(String name) {
+            return super.isStartMatch(name) && getUpperLetters(name).equals(prefixUpperLetters);
+        }
     }
 }

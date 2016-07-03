@@ -58,7 +58,7 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
             |    - { entity: Oro\\Bundle\\AcmeBundle\\Entity\\Country, field: na<caret>me }
             """.stripMargin(),
 
-            ["name"]
+            ["Oro\\Bundle\\AcmeBundle\\Entity\\Country.\$name"]
         )
     }
 
@@ -71,7 +71,7 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
             |    - { entity: OroAcmeBundle:Country, field: na<caret>me }
             """.stripMargin(),
 
-            ["name"]
+            ["Oro\\Bundle\\AcmeBundle\\Entity\\Country.\$name"]
         )
     }
 
@@ -167,7 +167,7 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
             |  entity_aliases:
             |    OroAcmeBundle:Co<caret>untry: {}
             """.stripMargin(),
-            ["Country"]
+            ["Oro\\Bundle\\AcmeBundle\\Entity\\Country"]
         )
     }
 
@@ -178,7 +178,7 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
             |  entity_aliases:
             |    Oro\\Bundle\\AcmeBundle\\Ent<caret>ity\\Country: {}
             """.stripMargin(),
-            ["Country"]
+            ["Oro\\Bundle\\AcmeBundle\\Entity\\Country"]
         )
     }
 
