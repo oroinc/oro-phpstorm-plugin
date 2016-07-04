@@ -10,6 +10,10 @@ Version
 -----------------------------
 This plugin supports all versions of the OroPlatform
 
+Install and upgrade
+-----------------------------
+[Oro PHPStorm Plugin](https://plugins.jetbrains.com/plugin/8449) is present in the official JetBrains repository, so developers are able to [install and upgrade it using PHPStorm capabilities](https://www.jetbrains.com/help/phpstorm/2016.1/managing-plugins.html).
+
 Features
 -----------------------------
 - Autocomplete for the *acl.yml*
