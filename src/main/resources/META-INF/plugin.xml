@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.oroplatform.idea.oroplatform</id>
     <name>Oro PHPStorm Plugin</name>
-    <vendor url="https://github.com/orocrm/oro-phpstorm-plugin">Oro Platform team</vendor>
+    <vendor url="https://github.com/orocrm/oro-phpstorm-plugin">Oro Inc.</vendor>
 
     <description><![CDATA[
 <h1>Oro PHPStorm Plugin</h1>
@@ -12,8 +12,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     <change-notes><![CDATA[
 <h2>1.0.0-alpha10</h2>
 <ul>
-  <li>autocomplete for the acl.yml, entity.yml, datagrid.yml, workflow.yml</li>
-  <li>autocomplete for OroUIBundle js modules</li>
+  <li>Autocomplete for the <b>acl.yml</b></li>
+  <li>Autocomplete for the <b>entity.yml</b><li>
+  <li>Autocomplete for the <b>datagrid.yml</b><li>
+  <li>Autocomplete for the <b>workflow.yml</b><li>
+  <li>Possibility to navigate via RequireJS modules<li>
 </ul>
     ]]></change-notes>
 
