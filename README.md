@@ -12,7 +12,11 @@ This plugin supports all versions of the OroPlatform
 
 Features
 -----------------------------
-- autocomplete for the acl.yml, entity.yml, datagrid.yml
+- Autocomplete for the *acl.yml*
+- Autocomplete for the *entity.yml* 
+- Autocomplete for the *datagrid.yml*
+- Autocomplete for the *workflow.yml* 
+- Possibility to navigate via RequireJS modules
 - ...
 
 Note: plugin is under heavy development, so the full list of the features will be provided when stable version is released.
