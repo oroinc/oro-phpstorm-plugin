@@ -4,7 +4,7 @@ import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
 
 public class ConditionsFileBasedIndex extends ServicesFileBasedIndex {
-    static final ID<String, Void> KEY = ID.create("com.oroplatform.idea.oroplatform.conditions");
+    public static final ID<String, Void> KEY = ID.create("com.oroplatform.idea.oroplatform.conditions");
 
     public ConditionsFileBasedIndex() {
         super("oro_workflow.condition");

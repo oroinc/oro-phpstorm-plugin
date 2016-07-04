@@ -23,7 +23,7 @@ import java.util.Set;
 
 public class ImportFileBasedIndex extends FileBasedIndexExtension<String, Collection<String>> {
 
-    static final ID<String, Collection<String>> KEY = ID.create("com.oroplatform.idea.oroplatform.import");
+    public static final ID<String, Collection<String>> KEY = ID.create("com.oroplatform.idea.oroplatform.import");
     private final KeyDescriptor<String> keyDescriptor = new EnumeratorStringDescriptor();
 
     @NotNull

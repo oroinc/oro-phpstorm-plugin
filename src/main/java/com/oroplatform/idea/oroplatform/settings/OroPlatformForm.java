@@ -11,7 +11,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.oroplatform.idea.oroplatform.OroPlatformBundle;
+import com.oroplatform.idea.oroplatform.intellij.indexes.ActionsFileBasedIndex;
+import com.oroplatform.idea.oroplatform.intellij.indexes.ConditionsFileBasedIndex;
+import com.oroplatform.idea.oroplatform.intellij.indexes.ImportFileBasedIndex;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,8 +97,21 @@ public class OroPlatformForm implements Configurable {
 
     @Override
     public void apply() throws ConfigurationException {
+        final boolean hasBeenEnabled = pluginEnabled.isRolloverEnabled() && !getSettings().isPluginEnabled();
+
         getSettings().setAppDir(appDir.getText());
         getSettings().setPluginEnabled(pluginEnabled.isSelected());
+
+        if(hasBeenEnabled) {
+            rebuildIndexes();
+        }
+    }
+
+    private void rebuildIndexes() {
+        final FileBasedIndex index = FileBasedIndex.getInstance();
+        index.requestRebuild(ImportFileBasedIndex.KEY);
+        index.requestRebuild(ActionsFileBasedIndex.KEY);
+        index.requestRebuild(ConditionsFileBasedIndex.KEY);
     }
 
     @Override

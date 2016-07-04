@@ -7,12 +7,18 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.oroplatform.idea.oroplatform.intellij.indexes.ImportIndex;
+import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import org.jetbrains.yaml.YAMLFileType;
 
 class WorkflowMatcher implements FileMatcher {
 
     @Override
     public boolean matches(PsiFile file) {
+        if(!OroPlatformSettings.getInstance(file.getProject()).isPluginEnabled()) {
+            //avoid caching empty indexes values when plugin is disabled
+            return false;
+        }
+
         if(file.getOriginalFile().getVirtualFile().getPath().endsWith(Schemas.FilePathPatterns.WORKFLOW)) {
             return true;
         }

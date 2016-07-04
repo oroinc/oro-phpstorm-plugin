@@ -4,7 +4,7 @@ import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
 
 public class ActionsFileBasedIndex extends ServicesFileBasedIndex {
-    static final ID<String, Void> KEY = ID.create("com.oroplatform.idea.oroplatform.actions");
+    public static final ID<String, Void> KEY = ID.create("com.oroplatform.idea.oroplatform.actions");
 
     public ActionsFileBasedIndex() {
         super("oro_workflow.action");
