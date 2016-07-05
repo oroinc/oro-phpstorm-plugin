@@ -11,9 +11,10 @@ public class Schemas {
         public final static String ENTITY = "Resources/config/oro/entity.yml";
         public final static String DATAGRID = "Resources/config/datagrid.yml";
         public final static String WORKFLOW = "Resources/config/workflow.yml";
+        public final static String SYSTEM_CONFIGURATION = "Resources/config/system_configuration.yml";
     }
 
-    public static final Collection<Schema> ALL = asList(acl(), entity(), datagrid(), workflow());
+    public static final Collection<Schema> ALL = asList(acl(), entity(), datagrid(), workflow(), systemConfiguration());
 
     private static Schema acl() {
         return new Schema(new FilePathMatcher(FilePathPatterns.ACL), Container.with(
@@ -370,6 +371,37 @@ public class Schemas {
                         Sequence.of(transitionDefinition.andWith(Property.named("name", Scalar.any)))
                     ))
                 )
+            ))
+        ));
+    }
+
+    private static Schema systemConfiguration() {
+        return new Schema(new FilePathMatcher(FilePathPatterns.SYSTEM_CONFIGURATION), Container.with(
+            Property.named("oro_system_configuration", Container.with(
+                Property.named("groups", Container.with(
+                    Container.with(
+                        Property.named("icon", Scalar.any),
+                        Property.named("title", Scalar.any),
+                        Property.named("page_reload", Scalar.any),
+                        Property.named("priority", Scalar.integer),
+                        Property.named("description", Scalar.any),
+                        Property.named("tooltip", Scalar.any),
+                        Property.named("configurator", Scalar.any)
+                    )
+                )),
+                Property.named("fields", Container.with(
+                    Container.with(
+                        Property.named("type", Scalar.any),
+                        Property.named("options", Scalar.any),
+                        Property.named("acl_resource", Scalar.any),
+                        Property.named("priority", Scalar.integer),
+                        Property.named("ui_only", Scalar.bool),
+                        Property.named("data_type", Scalar.any),
+                        Property.named("tooltip", Scalar.any)
+                    )
+                )),
+                Property.named("tree", Scalar.any),
+                Property.named("api_tree", Scalar.any)
             ))
         ));
     }
