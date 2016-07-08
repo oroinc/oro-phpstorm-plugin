@@ -17,5 +17,6 @@ class TypePropertyDescriptionProviderTest {
         assertEquals("integer or boolean", provider.getDescription(new Property("some", new OneOf(Scalar.integer, Scalar.bool))))
         assertEquals("integer", provider.getDescription(new Property("some", new OneOf(Scalar.integer, Scalar.integer))))
         assertEquals("boolean", provider.getDescription(new Property("some", Scalar.bool)))
+        assertEquals("boolean", provider.getDescription(new Property("some", Repeated.atAnyLevel(Scalar.bool))))
     }
 }

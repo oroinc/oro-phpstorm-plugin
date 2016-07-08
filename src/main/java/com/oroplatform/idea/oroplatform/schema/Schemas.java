@@ -403,7 +403,13 @@ public class Schemas {
                 Property.named("tree", Container.with(
                     systemConfigurationTree(10)
                 )),
-                Property.named("api_tree", Scalar.any)
+                Property.named("api_tree", Container.with(
+                    Repeated.atAnyLevel(
+                        Container.with(
+                            Property.any(Container.any).withKeyElement(Scalar.propertiesFromPath(new PropertyPath("oro_system_configuration", "fields")))
+                        )
+                    )
+                ))
             ))
         ));
     }

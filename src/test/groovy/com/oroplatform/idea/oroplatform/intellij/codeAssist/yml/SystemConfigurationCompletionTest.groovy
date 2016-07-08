@@ -57,7 +57,7 @@ class SystemConfigurationCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest groups in first level of tree"() {
+    def void "test: suggest groups on first level of tree"() {
         suggestions(
             """
             |oro_system_configuration:
@@ -77,7 +77,7 @@ class SystemConfigurationCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest children for tree element in first level"() {
+    def void "test: suggest children for tree element on first level"() {
         suggestions(
             """
             |oro_system_configuration:
@@ -94,7 +94,7 @@ class SystemConfigurationCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest groups for tree element in second level"() {
+    def void "test: suggest groups for tree element on second level"() {
         suggestions(
             """
             |oro_system_configuration:
@@ -112,7 +112,7 @@ class SystemConfigurationCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest groups for tree element in third level"() {
+    def void "test: suggest groups for tree element on third level"() {
         suggestions(
             """
             |oro_system_configuration:
@@ -134,7 +134,7 @@ class SystemConfigurationCompletionTest extends CompletionTest {
     }
 
 
-    def void "test: suggest fields for tree element in first level"() {
+    def void "test: suggest fields for tree element on first level"() {
         suggestions(
             """
             |oro_system_configuration:
@@ -158,7 +158,7 @@ class SystemConfigurationCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest fields for tree element in second level"() {
+    def void "test: suggest fields for tree element on second level"() {
         suggestions(
             """
             |oro_system_configuration:
@@ -181,6 +181,57 @@ class SystemConfigurationCompletionTest extends CompletionTest {
 
             ["field1", "field2", "field3"],
             ["group1", "group2", "group3"]
+        )
+    }
+
+    def void "test: suggest fields on first level of api_tree"() {
+        suggestions(
+            """
+            |oro_system_configuration:
+            |  fields:
+            |    field1: ~
+            |    field2: ~
+            |  api_tree:
+            |    tree1:
+            |      <caret>
+            """.stripMargin(),
+
+            ["field1", "field2"]
+        )
+    }
+
+    def void "test: suggest fields on second level of api_tree"() {
+        suggestions(
+            """
+            |oro_system_configuration:
+            |  fields:
+            |    field1: ~
+            |    field2: ~
+            |  api_tree:
+            |    section1:
+            |      section2:
+            |        <caret>
+            """.stripMargin(),
+
+            ["field1", "field2"]
+        )
+    }
+
+    def void "test: suggest fields on third level of api_tree"() {
+        suggestions(
+            """
+            |oro_system_configuration:
+            |  fields:
+            |    field1: ~
+            |    field2: ~
+            |  api_tree:
+            |    section1:
+            |      section2:
+            |        section3:
+            |          <caret>
+            """.stripMargin(),
+
+            ["field1", "field2"]
         )
     }
 }

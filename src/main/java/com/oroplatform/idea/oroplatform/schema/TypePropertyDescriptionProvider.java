@@ -37,6 +37,8 @@ public class TypePropertyDescriptionProvider implements PropertyDescriptionProvi
             }
 
             return StringUtil.join(types, " or ");
+        } else if(element instanceof Repeated) {
+            return getType(((Repeated) element).getElement());
         }
 
         return null;
