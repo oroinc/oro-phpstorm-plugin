@@ -64,7 +64,7 @@ class CompletionSchemaVisitor extends YamlVisitor {
         completion.extend(
             CompletionType.BASIC,
             context == VisitingContext.PROPERTY_VALUE ? YamlPatterns.scalarValue().withSuperParent(2, capture) : capture,
-            new ChoicesFromPathCompletionProvider(propertiesFromPath.getPath(), propertiesFromPath.getPrefix())
+            new ChoicesFromPathCompletionProvider(propertiesFromPath.getPath(), propertiesFromPath.getPrefix(), insertHandler)
         );
     }
 

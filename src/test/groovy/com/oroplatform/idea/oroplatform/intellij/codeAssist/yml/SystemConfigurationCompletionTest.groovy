@@ -77,6 +77,28 @@ class SystemConfigurationCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: complete group name on first level of tree"() {
+        completion(
+            """
+            |oro_system_configuration:
+            |  groups:
+            |    group1: ~
+            |  tree:
+            |    tree1:
+            |      <caret>
+            """.stripMargin(),
+
+            """
+            |oro_system_configuration:
+            |  groups:
+            |    group1: ~
+            |  tree:
+            |    tree1:
+            |      group1: <caret>
+            """.stripMargin(),
+        )
+    }
+
     def void "test: suggest children for tree element on first level"() {
         suggestions(
             """

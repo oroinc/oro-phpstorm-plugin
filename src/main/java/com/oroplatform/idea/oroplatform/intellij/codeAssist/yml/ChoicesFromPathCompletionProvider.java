@@ -3,6 +3,8 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.InsertHandler;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
@@ -23,10 +25,12 @@ import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiEl
 class ChoicesFromPathCompletionProvider extends CompletionProvider<CompletionParameters> {
     private final PropertyPath path;
     private final String prefix;
+    private final InsertHandler<LookupElement> insertHandler;
 
-    ChoicesFromPathCompletionProvider(PropertyPath path, String prefix) {
+    ChoicesFromPathCompletionProvider(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler) {
         this.path = path;
         this.prefix = prefix;
+        this.insertHandler = insertHandler;
     }
 
     @Override
@@ -36,7 +40,7 @@ class ChoicesFromPathCompletionProvider extends CompletionProvider<CompletionPar
         final Collection<String> properties = getPropertiesFrom(path, YamlPsiElements.getMappingsFrom(file), ancestors);
 
         for (String property : properties) {
-            result.addElement(LookupElementBuilder.create(prefix+property));
+            result.addElement(LookupElementBuilder.create(prefix+property).withInsertHandler(insertHandler));
         }
     }
 
