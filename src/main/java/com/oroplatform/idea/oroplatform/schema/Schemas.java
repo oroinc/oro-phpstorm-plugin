@@ -400,9 +400,25 @@ public class Schemas {
                         Property.named("tooltip", Scalar.any)
                     )
                 )),
-                Property.named("tree", Scalar.any),
+                Property.named("tree", Container.with(
+                    systemConfigurationTree(10)
+                )),
                 Property.named("api_tree", Scalar.any)
             ))
         ));
+    }
+
+    private static Element systemConfigurationTree(int deep) {
+        if(deep == 0) return Scalar.any;
+
+        return Container.with(
+            Property.any(Container.with(
+                Property.named("priority", Scalar.integer),
+                Property.named("children", OneOf.from(
+                    systemConfigurationTree(deep - 1),
+                    Sequence.of(Scalar.propertiesFromPath(new PropertyPath("oro_system_configuration", "fields")))
+                ))
+            )).withKeyElement(Scalar.propertiesFromPath(new PropertyPath("oro_system_configuration", "groups")))
+        );
     }
 }
