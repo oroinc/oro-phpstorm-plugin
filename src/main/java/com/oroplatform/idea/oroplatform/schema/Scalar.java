@@ -73,6 +73,8 @@ public class Scalar implements Element {
 
     final static Scalar phpClass = new Scalar(Scalar.PhpClass.any());
 
+    final static Scalar phpCallback = new Scalar(new Scalar.PhpCallback());
+
     final static Scalar field = new Scalar(new Scalar.PhpField());
 
     final static Scalar bool = new Scalar(new Choices(asList("true", "false")));
@@ -170,7 +172,7 @@ public class Scalar implements Element {
             return new PhpClass("Entity", allowDoctrineShortcutNotation);
         }
 
-        private static PhpClass any() {
+        public static PhpClass any() {
             return new PhpClass(null, false);
         }
 
@@ -220,6 +222,13 @@ public class Scalar implements Element {
         @Override
         public void accept(Visitor visitor) {
             visitor.visitScalarPhpFieldValue(this);
+        }
+    }
+
+    public static class PhpCallback implements Value {
+        @Override
+        public void accept(Visitor visitor) {
+            visitor.visitScalarPhpCallbackValue(this);
         }
     }
 

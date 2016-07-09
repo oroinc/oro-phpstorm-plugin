@@ -386,7 +386,7 @@ public class Schemas {
                         Property.named("priority", Scalar.integer),
                         Property.named("description", Scalar.any),
                         Property.named("tooltip", Scalar.any),
-                        Property.named("configurator", Scalar.any)
+                        Property.named("configurator", Scalar.phpCallback)
                     )
                 )),
                 Property.named("fields", Container.with(

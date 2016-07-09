@@ -52,4 +52,15 @@ class PhpReferenceVisitor extends YamlVisitor {
     public void visitScalarPhpFieldValue(Scalar.PhpField phpField) {
         registrar.registerReferenceProvider(capture, new PhpFieldReferenceProvider(phpField));
     }
+
+    @Override
+    public void visitScalarPhpCallbackValue(Scalar.PhpCallback phpCallback) {
+        registrar.registerReferenceProvider(
+            psiElement().andOr(
+                capture,
+                psiElement().withParent(capture)
+            ),
+            new PhpCallbackReferenceProvider()
+        );
+    }
 }

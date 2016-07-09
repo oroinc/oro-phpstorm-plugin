@@ -1,7 +1,6 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
 import com.intellij.codeInsight.completion.InsertHandler;
-import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.completion.PrefixMatcher;
 import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
@@ -163,21 +162,6 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         return namespaces;
     }
 
-    private static class ComposedInsertHandler implements InsertHandler<LookupElement> {
-        private List<InsertHandler<LookupElement>> handlers = new LinkedList<InsertHandler<LookupElement>>();
-
-        ComposedInsertHandler(List<InsertHandler<LookupElement>> handlers) {
-            this.handlers.addAll(handlers);
-        }
-
-        @Override
-        public void handleInsert(InsertionContext context, LookupElement item) {
-            for (InsertHandler<LookupElement> handler : handlers) {
-                handler.handleInsert(context, item);
-            }
-        }
-    }
-
     private int getPriorityFor(PhpClass phpClass) {
         int priority = 150;
 
@@ -220,7 +204,7 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
         for (String className : getAllPhpClassNames()) {
             for (PhpClass phpClass : phpIndex.getClassesByName(className)) {
-                if(!(phpClass.getFQN().contains("\\__CG__\\") || phpClass.getFQN().contains("\\Tests\\") || phpClass.getPresentableFQN().startsWith("__"))) {
+                if(!PhpClassUtil.isTestOrGeneratedClass(phpClass.getPresentableFQN())) {
                     results.add(new PhpClassLookupElement(phpClass, true, getPhpClassInsertHandler()));
                 }
             }

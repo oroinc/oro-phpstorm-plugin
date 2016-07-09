@@ -40,4 +40,8 @@ public abstract class VisitorAdapter implements Visitor {
     @Override
     public void visitScalarActionValue(Scalar.Action action) {
     }
+
+    @Override
+    public void visitScalarPhpCallbackValue(Scalar.PhpCallback phpCallback) {
+    }
 }

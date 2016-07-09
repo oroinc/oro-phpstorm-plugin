@@ -27,4 +27,8 @@ public class PhpClassUtil {
         final String[] parts = className.split("(\\\\)|:");
         return parts.length > 0 ? parts[parts.length - 1] : "";
     }
+
+    public static boolean isTestOrGeneratedClass(@NotNull String className) {
+        return className.contains("\\__CG__\\") || className.contains("\\Tests\\") || className.startsWith("__");
+    }
 }
