@@ -382,7 +382,7 @@ public class Schemas {
                     Container.with(
                         Property.named("icon", Scalar.any),
                         Property.named("title", Scalar.any),
-                        Property.named("page_reload", Scalar.any),
+                        Property.named("page_reload", Scalar.bool),
                         Property.named("priority", Scalar.integer),
                         Property.named("description", Scalar.any),
                         Property.named("tooltip", Scalar.any),
