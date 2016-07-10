@@ -29,7 +29,29 @@ public class DatagridCompletionTest extends CompletionTest {
             |    <caret>
             """.stripMargin(),
 
-            ["extended_entity_name", "source", "columns", "sorters", "filters", "properties", "actions", "action_configuration", "options", "mass_action", "totals", "inline_editing", "acl_resource"]
+            ["extended_entity_name", "mixins", "source", "columns", "sorters", "filters", "properties", "actions", "action_configuration", "options", "mass_action", "totals", "inline_editing", "acl_resource"]
+        )
+    }
+
+    def void "test: suggest datagrids as mixins"() {
+        configureByText(
+            "some/"+Schemas.FilePathPatterns.DATAGRID,
+            """
+            |datagrid:
+            |  grid1: ~
+            |  grid2: ~
+            """.stripMargin()
+        )
+
+        suggestions(
+            """
+            |datagrid:
+            |  grid3:
+            |    mixins:
+            |      - <caret>
+            """.stripMargin(),
+
+            ["grid1", "grid2"]
         )
     }
 

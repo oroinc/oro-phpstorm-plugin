@@ -81,6 +81,7 @@ public class Schemas {
                     Container.with(
                         Property.named("extended_entity_name", OneOf.from(Scalar.entity, Scalar.any)),
                         Property.named("acl_resource", Scalar.any),
+                        Property.named("mixins", Sequence.of(Scalar.datagrid)),
                         Property.named("source", Container.with(
                             Property.named("type", Scalar.choices("orm", "search")),
                             Property.named("acl_resource", Scalar.any),

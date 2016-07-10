@@ -44,4 +44,8 @@ public abstract class VisitorAdapter implements Visitor {
     @Override
     public void visitScalarPhpCallbackValue(Scalar.PhpCallback phpCallback) {
     }
+
+    @Override
+    public void visitScalarDatagridValue(Scalar.Datagrid datagrid) {
+    }
 }

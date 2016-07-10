@@ -15,6 +15,7 @@ import com.intellij.util.indexing.FileBasedIndex;
 import com.oroplatform.idea.oroplatform.OroPlatformBundle;
 import com.oroplatform.idea.oroplatform.intellij.indexes.ActionsFileBasedIndex;
 import com.oroplatform.idea.oroplatform.intellij.indexes.ConditionsFileBasedIndex;
+import com.oroplatform.idea.oroplatform.intellij.indexes.DatagridFileBasedIndex;
 import com.oroplatform.idea.oroplatform.intellij.indexes.ImportFileBasedIndex;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -112,6 +113,7 @@ public class OroPlatformForm implements Configurable {
         index.requestRebuild(ImportFileBasedIndex.KEY);
         index.requestRebuild(ActionsFileBasedIndex.KEY);
         index.requestRebuild(ConditionsFileBasedIndex.KEY);
+        index.requestRebuild(DatagridFileBasedIndex.KEY);
     }
 
     @Override

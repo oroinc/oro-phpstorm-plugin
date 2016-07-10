@@ -54,6 +54,7 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ImportFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ConditionsFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ActionsFileBasedIndex" />
+        <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.DatagridFileBasedIndex" />
 
     </extensions>
 

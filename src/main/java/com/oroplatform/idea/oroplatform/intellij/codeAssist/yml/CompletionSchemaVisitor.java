@@ -85,4 +85,13 @@ class CompletionSchemaVisitor extends YamlVisitor {
             new ActionCompletionProvider(insertHandler)
         );
     }
+
+    @Override
+    public void visitScalarDatagridValue(Scalar.Datagrid datagrid) {
+        completion.extend(
+            CompletionType.BASIC,
+            YamlPatterns.scalarValue().withSuperParent(2, capture),
+            new DatagridCompletionProvider()
+        );
+    }
 }

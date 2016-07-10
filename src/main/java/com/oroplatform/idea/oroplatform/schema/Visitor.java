@@ -16,4 +16,5 @@ public interface Visitor {
     void visitScalarActionValue(Scalar.Action action);
     void visitRepeatAtAnyLevel(Repeated repeated);
     void visitScalarPhpCallbackValue(Scalar.PhpCallback phpCallback);
+    void visitScalarDatagridValue(Scalar.Datagrid datagrid);
 }

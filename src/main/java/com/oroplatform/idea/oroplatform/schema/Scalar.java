@@ -61,6 +61,8 @@ public class Scalar implements Element {
 
     final static Scalar action = new Scalar(new Action());
 
+    final static Scalar datagrid = new Scalar(new Datagrid());
+
     final static Scalar file = new Scalar(new Scalar.File());
 
     final static Scalar any = new Scalar();
@@ -244,6 +246,14 @@ public class Scalar implements Element {
         @Override
         public void accept(Visitor visitor) {
             visitor.visitScalarActionValue(this);
+        }
+    }
+
+    public static class Datagrid implements Value {
+
+        @Override
+        public void accept(Visitor visitor) {
+            visitor.visitScalarDatagridValue(this);
         }
     }
 
