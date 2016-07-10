@@ -160,4 +160,46 @@ class WorkflowDicCompletionTest extends CompletionTest {
             """.stripMargin(),
         )
     }
+
+    def void "test: complete quoted conditions as keys"() {
+        completion(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        conditions:
+            |          '2b<caret>'
+            """.stripMargin(),
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        conditions:
+            |          '@condition2b': <caret>
+            """.stripMargin(),
+        )
+    }
+
+    def void "test: complete quoted at beginning conditions as keys"() {
+        completion(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        conditions:
+            |          '2b<caret>
+            """.stripMargin(),
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        conditions:
+            |          '@condition2b': <caret>
+            """.stripMargin(),
+        )
+    }
 }
