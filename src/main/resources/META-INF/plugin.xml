@@ -10,6 +10,19 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.0-alpha12</h2>
+<ul>
+  <li>Autocomplete for the <b>system_configuration.yml</b></li>
+  <li>Autocomplete for mixins in the <b>datagrid.yml</b><li>
+</ul>
+
+<h2>1.0.0-alpha11</h2>
+<ul>
+  <li>Improvements for the plugin enabling / disabling feature</li>
+  <li>Improvements for doctrine entity references support<li>
+  <li>Improvements for Oro Platform detection logic<li>
+</ul>
+
 <h2>1.0.0-alpha10</h2>
 <ul>
   <li>Autocomplete for the <b>acl.yml</b></li>
