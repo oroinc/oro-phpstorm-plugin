@@ -87,6 +87,15 @@ class CompletionSchemaVisitor extends YamlVisitor {
     }
 
     @Override
+    public void visitScalarFormTypeValue(Scalar.FormType formType) {
+        completion.extend(
+            CompletionType.BASIC,
+            YamlPatterns.scalarValue().withSuperParent(2, capture),
+            new FormTypeCompletionProvider()
+        );
+    }
+
+    @Override
     public void visitScalarDatagridValue(Scalar.Datagrid datagrid) {
         completion.extend(
             CompletionType.BASIC,

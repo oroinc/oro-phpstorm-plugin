@@ -13,10 +13,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.oroplatform.idea.oroplatform.OroPlatformBundle;
-import com.oroplatform.idea.oroplatform.intellij.indexes.ActionsFileBasedIndex;
-import com.oroplatform.idea.oroplatform.intellij.indexes.ConditionsFileBasedIndex;
-import com.oroplatform.idea.oroplatform.intellij.indexes.DatagridFileBasedIndex;
-import com.oroplatform.idea.oroplatform.intellij.indexes.ImportFileBasedIndex;
+import com.oroplatform.idea.oroplatform.intellij.indexes.*;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -113,6 +110,7 @@ public class OroPlatformForm implements Configurable {
         index.requestRebuild(ImportFileBasedIndex.KEY);
         index.requestRebuild(ActionsFileBasedIndex.KEY);
         index.requestRebuild(ConditionsFileBasedIndex.KEY);
+        index.requestRebuild(FormTypesFileBasedIndex.KEY);
         index.requestRebuild(DatagridFileBasedIndex.KEY);
     }
 

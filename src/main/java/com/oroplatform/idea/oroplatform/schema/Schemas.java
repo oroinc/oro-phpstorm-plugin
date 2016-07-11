@@ -392,7 +392,7 @@ public class Schemas {
                 )),
                 Property.named("fields", Container.with(
                     Container.with(
-                        Property.named("type", Scalar.any),
+                        Property.named("type", Scalar.formType),
                         Property.named("options", Scalar.any),
                         Property.named("acl_resource", Scalar.any),
                         Property.named("priority", Scalar.integer),

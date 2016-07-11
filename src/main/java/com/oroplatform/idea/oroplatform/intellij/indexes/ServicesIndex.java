@@ -24,4 +24,8 @@ public class ServicesIndex {
     public Collection<String> findActionNames() {
         return FileBasedIndex.getInstance().getAllKeys(ActionsFileBasedIndex.KEY, project);
     }
+
+    public Collection<String> findFormTypes() {
+        return FileBasedIndex.getInstance().getAllKeys(FormTypesFileBasedIndex.KEY, project);
+    }
 }
