@@ -397,7 +397,7 @@ public class Schemas {
                         Property.named("acl_resource", Scalar.any),
                         Property.named("priority", Scalar.integer),
                         Property.named("ui_only", Scalar.bool),
-                        Property.named("data_type", Scalar.any),
+                        Property.named("data_type", Scalar.choices("boolean", "integer", "float", "double", "string", "array")),
                         Property.named("tooltip", Scalar.any)
                     )
                 )),
