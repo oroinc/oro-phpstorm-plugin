@@ -1,4 +1,4 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.referenceProvider;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -8,7 +8,7 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpCallbackReference
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLScalar;
 
-class PhpCallbackReferenceProvider extends PsiReferenceProvider {
+public class PhpCallbackReferenceProvider extends PsiReferenceProvider {
 
     @NotNull
     @Override

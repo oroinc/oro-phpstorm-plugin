@@ -10,27 +10,11 @@ public abstract class VisitorAdapter implements Visitor {
     }
 
     @Override
-    public void visitScalarPhpClassValue(Scalar.PhpClass phpClass) {
-    }
-
-    @Override
-    public void visitScalarPhpMethodValue(Scalar.PhpMethod phpMethod) {
-    }
-
-    @Override
-    public void visitScalarPhpFieldValue(Scalar.PhpField phpField) {
-    }
-
-    @Override
     public void visitScalarRegexpValue(Scalar.Regexp regexp) {
     }
 
     @Override
     public void visitScalarPropertiesFromPathValue(Scalar.PropertiesFromPath propertiesFromPath) {
-    }
-
-    @Override
-    public void visitScalarFileValue(Scalar.File file) {
     }
 
     @Override
@@ -42,14 +26,14 @@ public abstract class VisitorAdapter implements Visitor {
     }
 
     @Override
-    public void visitScalarPhpCallbackValue(Scalar.PhpCallback phpCallback) {
-    }
-
-    @Override
     public void visitScalarDatagridValue(Scalar.Datagrid datagrid) {
     }
 
     @Override
     public void visitScalarFormTypeValue(Scalar.FormType formType) {
+    }
+
+    @Override
+    public void visitScalarReferenceValue(Scalar.Reference reference) {
     }
 }

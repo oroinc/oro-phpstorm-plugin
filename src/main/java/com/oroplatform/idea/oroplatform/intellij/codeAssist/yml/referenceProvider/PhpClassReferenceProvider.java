@@ -1,4 +1,4 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.referenceProvider;
 
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -7,6 +7,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassReference;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements;
 import com.oroplatform.idea.oroplatform.schema.Scalar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
@@ -17,14 +18,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getFirstMapping;
-
-class PhpClassReferenceProvider extends PsiReferenceProvider {
+public class PhpClassReferenceProvider extends PsiReferenceProvider {
 
     private final Scalar.PhpClass phpClass;
     private final InsertHandler<LookupElement> insertHandler;
 
-    PhpClassReferenceProvider(Scalar.PhpClass phpClass, InsertHandler<LookupElement> insertHandler) {
+    public PhpClassReferenceProvider(Scalar.PhpClass phpClass, InsertHandler<LookupElement> insertHandler) {
         this.phpClass = phpClass;
         this.insertHandler = insertHandler;
     }
@@ -41,7 +40,7 @@ class PhpClassReferenceProvider extends PsiReferenceProvider {
 
         // skip scalar element in key context
         } else if(element instanceof YAMLScalar && context.get("key") == null) {
-            YAMLMapping mapping = getFirstMapping(element);
+            YAMLMapping mapping = YamlPsiElements.getFirstMapping(element);
             final Set<String> skippedClassNames = mapping == null ? Collections.<String>emptySet() : getClassNames(mapping);
 
             return new PsiReference[]{new PhpClassReference(element, phpClass, ((YAMLScalar) element).getTextValue(), insertHandler, skippedClassNames)};

@@ -20,8 +20,7 @@ public class ReferenceContributor extends PsiReferenceContributor {
             final PsiElementPattern.Capture<YAMLDocument> documentPattern = getDocumentPattern(schema.fileMatcher).inFile(fileInProjectWithPluginEnabled());
 
             final Visitor[] visitors = {
-                new PhpReferenceVisitor(registrar, documentPattern, YamlVisitor.VisitingContext.PROPERTY_VALUE),
-                new FileReferenceVisitor(registrar, documentPattern, YamlVisitor.VisitingContext.PROPERTY_VALUE)
+                new ReferenceVisitor(registrar, documentPattern, YamlVisitor.VisitingContext.PROPERTY_VALUE)
             };
 
             for (Visitor visitor : visitors) {

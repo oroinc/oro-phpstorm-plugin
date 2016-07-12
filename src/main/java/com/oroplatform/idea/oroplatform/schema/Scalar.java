@@ -1,5 +1,8 @@
 package com.oroplatform.idea.oroplatform.schema;
 
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceProviders;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.*;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -49,8 +52,8 @@ public class Scalar implements Element {
         return new Scalar(new Scalar.PropertiesFromPath(path, ""));
     }
 
-    static Scalar phpMethod(String pattern) {
-        return new Scalar(new Scalar.PhpMethod(pattern));
+    static Scalar phpMethod(final String pattern) {
+        return new Scalar(new Reference(new PhpMethodReferenceProviders(pattern)));
     }
 
     static Scalar regexp(String pattern) {
@@ -65,27 +68,31 @@ public class Scalar implements Element {
 
     final static Scalar datagrid = new Scalar(new Datagrid());
 
-    final static Scalar file = new Scalar(new Scalar.File());
+    final static Scalar file = new Scalar(new Reference(new FilePathReferenceProviders()));
 
     final static Scalar any = new Scalar();
 
-    final static Scalar fullEntity = new Scalar(Scalar.PhpClass.entity(false));
+    final static Scalar fullEntity = phpClass(Scalar.PhpClass.entity(false));
 
-    final static Scalar entity = new Scalar(Scalar.PhpClass.entity(true));
+    final static Scalar entity = phpClass(Scalar.PhpClass.entity(true));
 
-    final static Scalar controller = new Scalar(Scalar.PhpClass.controller());
+    final static Scalar controller = phpClass(Scalar.PhpClass.controller());
 
-    final static Scalar phpClass = new Scalar(Scalar.PhpClass.any());
+    final static Scalar phpClass = phpClass(Scalar.PhpClass.any());
 
-    final static Scalar phpCallback = new Scalar(new Scalar.PhpCallback());
+    private static Scalar phpClass(final Scalar.PhpClass phpClass) {
+        return new Scalar(new Reference(new PhpClassReferenceProviders(phpClass)));
+    }
 
-    final static Scalar field = new Scalar(new Scalar.PhpField());
+    final static Scalar phpCallback = new Scalar(new Reference(new PhpCallbackReferenceProviders()));
+
+    final static Scalar field = new Scalar(new Reference(new PhpFieldReferenceProviders()));
 
     final static Scalar bool = new Scalar(new Choices(asList("true", "false")));
 
     final static Scalar integer = new Scalar(new Regexp(Pattern.compile("^\\d+$")));
 
-    interface Value {
+    public interface Value {
         void accept(Visitor visitor);
     }
 
@@ -164,7 +171,7 @@ public class Scalar implements Element {
         }
     }
 
-    public static class PhpClass implements Value {
+    public static class PhpClass {
         private final String namespacePart;
         private final boolean allowDoctrineShortcutNotation;
 
@@ -185,11 +192,6 @@ public class Scalar implements Element {
             this.allowDoctrineShortcutNotation = allowDoctrineShortcutNotation;
         }
 
-        @Override
-        public void accept(Visitor visitor) {
-            visitor.visitScalarPhpClassValue(this);
-        }
-
         public boolean allowDoctrineShortcutNotation() {
             return allowDoctrineShortcutNotation;
         }
@@ -199,40 +201,18 @@ public class Scalar implements Element {
         }
     }
 
-    public static class PhpMethod implements Value {
+    public static class PhpMethod {
         private final Pattern pattern;
 
         /**
          * @param pattern Simple pattern, use * for any string
          */
-        private PhpMethod(String pattern) {
+        public PhpMethod(String pattern) {
             this.pattern = Pattern.compile("^"+pattern.replace("*", ".*")+"$");
         }
 
         public boolean matches(String name) {
             return pattern.matcher(name).matches();
-        }
-
-        @Override
-        public void accept(Visitor visitor) {
-            visitor.visitScalarPhpMethodValue(this);
-        }
-    }
-
-    public static class PhpField implements Value {
-
-        private PhpField(){}
-
-        @Override
-        public void accept(Visitor visitor) {
-            visitor.visitScalarPhpFieldValue(this);
-        }
-    }
-
-    public static class PhpCallback implements Value {
-        @Override
-        public void accept(Visitor visitor) {
-            visitor.visitScalarPhpCallbackValue(this);
         }
     }
 
@@ -259,18 +239,29 @@ public class Scalar implements Element {
         }
     }
 
+    public static class Reference implements Value {
+
+        private final ReferenceProviders referenceProviders;
+
+        public Reference(ReferenceProviders referenceProviders) {
+            this.referenceProviders = referenceProviders;
+        }
+
+        public ReferenceProviders getReferenceProviders() {
+            return referenceProviders;
+        }
+
+        @Override
+        public void accept(Visitor visitor) {
+            visitor.visitScalarReferenceValue(this);
+        }
+    }
+
     public static class Datagrid implements Value {
 
         @Override
         public void accept(Visitor visitor) {
             visitor.visitScalarDatagridValue(this);
-        }
-    }
-
-    public static class File implements Value {
-        @Override
-        public void accept(Visitor visitor) {
-            visitor.visitScalarFileValue(this);
         }
     }
 
@@ -296,4 +287,5 @@ public class Scalar implements Element {
             return prefix;
         }
     }
+
 }

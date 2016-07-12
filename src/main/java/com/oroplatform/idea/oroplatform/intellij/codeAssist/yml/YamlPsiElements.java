@@ -82,7 +82,7 @@ public class YamlPsiElements {
 
 
     @Nullable
-    static YAMLKeyValue getYamlKeyValueSiblingWithName(YAMLKeyValue keyValue, String name) {
+    public static YAMLKeyValue getYamlKeyValueSiblingWithName(YAMLKeyValue keyValue, String name) {
         for(PsiElement element : keyValue.getParent().getChildren()) {
             if(element instanceof YAMLKeyValue && name.equals(((YAMLKeyValue) element).getKeyText())) {
                 return ((YAMLKeyValue) element);
@@ -93,7 +93,7 @@ public class YamlPsiElements {
     }
 
     @Nullable
-    static YAMLMapping getFirstMapping(PsiElement element) {
+    public static YAMLMapping getFirstMapping(PsiElement element) {
         return getFirstMapping(element, Integer.MAX_VALUE);
     }
 
