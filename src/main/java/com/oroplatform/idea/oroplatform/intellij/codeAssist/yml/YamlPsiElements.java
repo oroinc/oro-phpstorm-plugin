@@ -10,11 +10,11 @@ import java.util.*;
 
 public class YamlPsiElements {
 
-    static Collection<YAMLKeyValue> getKeyValuesFrom(PsiElement element) {
+    public static Collection<YAMLKeyValue> getKeyValuesFrom(PsiElement element) {
         return filterKeyValues(Arrays.asList(element.getChildren()));
     }
 
-    static Collection<YAMLKeyValue> getKeyValuesFrom(Collection<? extends PsiElement> elements) {
+    public static Collection<YAMLKeyValue> getKeyValuesFrom(Collection<? extends PsiElement> elements) {
         final Collection<PsiElement> children = new LinkedList<PsiElement>();
         for (PsiElement element : elements) {
             children.addAll(Arrays.asList(element.getChildren()));
@@ -44,7 +44,7 @@ public class YamlPsiElements {
         return children;
     }
 
-    static Collection<YAMLMapping> filterMappings(Collection<? extends PsiElement> elements) {
+    public static Collection<YAMLMapping> filterMappings(Collection<? extends PsiElement> elements) {
         List<YAMLMapping> out = new LinkedList<YAMLMapping>();
         for(PsiElement element : elements) {
             if(element instanceof YAMLMapping) {
@@ -98,7 +98,7 @@ public class YamlPsiElements {
     }
 
     @Nullable
-    static YAMLMapping getFirstMapping(PsiElement element, int maxDepth) {
+    public static YAMLMapping getFirstMapping(PsiElement element, int maxDepth) {
         if(maxDepth == 0) return null;
 
         if(element instanceof YAMLMapping) {
@@ -108,7 +108,7 @@ public class YamlPsiElements {
         return element == null ? null : getFirstMapping(element.getParent(), --maxDepth);
     }
 
-    static Set<PsiElement> getAncestors(PsiElement element) {
+    public static Set<PsiElement> getAncestors(PsiElement element) {
         return getAncestors(element, new HashSet<PsiElement>());
     }
 

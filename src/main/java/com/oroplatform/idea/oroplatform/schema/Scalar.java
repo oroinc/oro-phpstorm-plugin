@@ -1,15 +1,18 @@
 package com.oroplatform.idea.oroplatform.schema;
 
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionProvider;
+import com.intellij.codeInsight.completion.InsertHandler;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.psi.PsiReferenceProvider;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceProviders;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.*;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.Pattern;
-
-import static java.util.Arrays.asList;
 
 public class Scalar implements Element {
 
@@ -23,10 +26,6 @@ public class Scalar implements Element {
         this.value = value;
     }
 
-    public Scalar(List<String> choices) {
-        this(new Choices(choices));
-    }
-
     @Override
     public void accept(Visitor visitor) {
         value.accept(visitor);
@@ -36,39 +35,83 @@ public class Scalar implements Element {
         return value;
     }
 
-    static Scalar strictChoices(String... choices) {
-        return new Scalar(new Scalar.Choices(Arrays.asList(choices)));
+    static Scalar strictChoices(final String... choices) {
+        return choices(Arrays.asList(new Lookup.StrictLookupsRequirement(Arrays.asList(choices))), choices);
     }
 
-    static Scalar choices(String... choices) {
-        return new Scalar(new Scalar.Choices(Arrays.asList(choices)).allowExtraChoices());
+    private static Scalar choices(Collection<? extends Lookup.Requirement> requirements, final String[] choices) {
+        return new Scalar(new Lookup(requirements) {
+            @Override
+            public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return providers.choices(Arrays.asList(choices), insertHandler);
+            }
+        });
     }
 
-    static Scalar propertiesFromPath(PropertyPath path, String prefix) {
-        return new Scalar(new Scalar.PropertiesFromPath(path, prefix));
+    static Scalar choices(final String... choices) {
+        return choices(Collections.<Lookup.Requirement>emptyList(), choices);
+    }
+
+    static Scalar propertiesFromPath(final PropertyPath path, final String prefix) {
+        return new Scalar(new Lookup() {
+            @Override
+            public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return providers.propertiesFromPath(path, prefix, insertHandler);
+            }
+        });
     }
 
     static Scalar propertiesFromPath(PropertyPath path) {
-        return new Scalar(new Scalar.PropertiesFromPath(path, ""));
+        return propertiesFromPath(path, "");
     }
 
     static Scalar phpMethod(final String pattern) {
-        return new Scalar(new Reference(new PhpMethodReferenceProviders(pattern)));
+        return new Scalar(new Reference() {
+            @Override
+            public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return providers.phpMethod(pattern, insertHandler);
+            }
+        });
     }
 
     static Scalar regexp(String pattern) {
         return new Scalar(new Scalar.Regexp(Pattern.compile(pattern)));
     }
 
-    final static Scalar condition = new Scalar(new Condition());
+    final static Scalar condition = new Scalar(new Lookup() {
+        @Override
+        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.condition(insertHandler);
+        }
+    });
 
-    final static Scalar action = new Scalar(new Action());
+    final static Scalar action = new Scalar(new Lookup() {
+        @Override
+        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.action(insertHandler);
+        }
+    });
 
-    final static Scalar formType = new Scalar(new FormType());
+    final static Scalar formType = new Scalar(new Lookup() {
+        @Override
+        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.formType(insertHandler);
+        }
+    });
 
-    final static Scalar datagrid = new Scalar(new Datagrid());
+    final static Scalar datagrid = new Scalar(new Lookup() {
+        @Override
+        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.datagrid(insertHandler);
+        }
+    });
 
-    final static Scalar file = new Scalar(new Reference(new FilePathReferenceProviders()));
+    final static Scalar file = new Scalar(new Reference() {
+        @Override
+        public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.filePath(insertHandler);
+        }
+    });
 
     final static Scalar any = new Scalar();
 
@@ -81,14 +124,29 @@ public class Scalar implements Element {
     final static Scalar phpClass = phpClass(Scalar.PhpClass.any());
 
     private static Scalar phpClass(final Scalar.PhpClass phpClass) {
-        return new Scalar(new Reference(new PhpClassReferenceProviders(phpClass)));
+        return new Scalar(new Reference() {
+            @Override
+            public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return providers.phpClass(phpClass, insertHandler);
+            }
+        });
     }
 
-    final static Scalar phpCallback = new Scalar(new Reference(new PhpCallbackReferenceProviders()));
+    final static Scalar phpCallback = new Scalar(new Reference() {
+        @Override
+        public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.phpCallback(insertHandler);
+        }
+    });
 
-    final static Scalar field = new Scalar(new Reference(new PhpFieldReferenceProviders()));
+    final static Scalar field = new Scalar(new Reference() {
+        @Override
+        public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.phpField(insertHandler);
+        }
+    });
 
-    final static Scalar bool = new Scalar(new Choices(asList("true", "false")));
+    final static Scalar bool = strictChoices("true", "false");
 
     final static Scalar integer = new Scalar(new Regexp(Pattern.compile("^\\d+$")));
 
@@ -119,55 +177,6 @@ public class Scalar implements Element {
 
         public Pattern getPattern() {
             return pattern;
-        }
-    }
-
-    public static class Choices implements Value {
-        private final List<String> choices = new LinkedList<String>();
-        private final boolean allowExtraChoices;
-
-        private Choices(List<String> choices) {
-            this(choices, false);
-        }
-
-        private Choices(List<String> choices, boolean allowExtraChoices) {
-            this.choices.addAll(choices);
-            this.allowExtraChoices = allowExtraChoices;
-        }
-
-        public List<String> getChoices() {
-            return Collections.unmodifiableList(choices);
-        }
-
-        Choices allowExtraChoices() {
-            return new Choices(choices, true);
-        }
-
-        public boolean doesAllowExtraChoices() {
-            return allowExtraChoices;
-        }
-
-        @Override
-        public void accept(Visitor visitor) {
-            visitor.visitScalarChoicesValue(this);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Choices choices1 = (Choices) o;
-
-            if (allowExtraChoices != choices1.allowExtraChoices) return false;
-            return choices.equals(choices1.choices);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = choices.hashCode();
-            result = 31 * result + (allowExtraChoices ? 1 : 0);
-            return result;
         }
     }
 
@@ -216,76 +225,51 @@ public class Scalar implements Element {
         }
     }
 
-    public static class Condition implements Value {
-        @Override
-        public void accept(Visitor visitor) {
-            visitor.visitScalarConditionValue(this);
+    public abstract static class Lookup implements Value {
+        private final Collection<Requirement> requirements = new LinkedList<Requirement>();
+
+        public Lookup(Collection<? extends Requirement> requirements) {
+            this.requirements.addAll(requirements);
         }
-    }
 
-    public static class Action implements Value {
-
-        @Override
-        public void accept(Visitor visitor) {
-            visitor.visitScalarActionValue(this);
+        public Lookup() {
+            this(Collections.<Requirement>emptyList());
         }
-    }
-
-    public static class FormType implements Value {
 
         @Override
         public void accept(Visitor visitor) {
-            visitor.visitScalarFormTypeValue(this);
+            visitor.visitScalarLookupValue(this);
+        }
+
+        public abstract CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler);
+
+        public Collection<Requirement> getRequirements() {
+            return Collections.unmodifiableCollection(requirements);
+        }
+
+        public interface Requirement {
+        }
+
+        public static class StrictLookupsRequirement implements Requirement {
+            private final Collection<String> allowedLookups;
+
+            public StrictLookupsRequirement(Collection<String> allowedLookups) {
+                this.allowedLookups = allowedLookups;
+            }
+
+            public Collection<String> getAllowedLookups() {
+                return Collections.unmodifiableCollection(allowedLookups);
+            }
         }
     }
 
-    public static class Reference implements Value {
-
-        private final ReferenceProviders referenceProviders;
-
-        public Reference(ReferenceProviders referenceProviders) {
-            this.referenceProviders = referenceProviders;
-        }
-
-        public ReferenceProviders getReferenceProviders() {
-            return referenceProviders;
-        }
-
+    public abstract static class Reference implements Value {
         @Override
         public void accept(Visitor visitor) {
             visitor.visitScalarReferenceValue(this);
         }
-    }
 
-    public static class Datagrid implements Value {
-
-        @Override
-        public void accept(Visitor visitor) {
-            visitor.visitScalarDatagridValue(this);
-        }
-    }
-
-    public static class PropertiesFromPath implements Value {
-        private final PropertyPath path;
-        private final String prefix;
-
-        public PropertiesFromPath(PropertyPath path, String prefix) {
-            this.path = path;
-            this.prefix = prefix;
-        }
-
-        @Override
-        public void accept(Visitor visitor) {
-            visitor.visitScalarPropertiesFromPathValue(this);
-        }
-
-        public PropertyPath getPath() {
-            return path;
-        }
-
-        public String getPrefix() {
-            return prefix;
-        }
+        public abstract PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler);
     }
 
 }

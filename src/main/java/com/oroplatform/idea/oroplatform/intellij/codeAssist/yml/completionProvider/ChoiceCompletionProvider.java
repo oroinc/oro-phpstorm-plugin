@@ -1,9 +1,10 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.util.ProcessingContext;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLMapping;
@@ -13,14 +14,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getFirstMapping;
-
-class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> {
+public class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> {
 
     private final List<Choice> choices = new LinkedList<Choice>();
     private final InsertHandler<LookupElement> insertHandler;
 
-    static ChoiceCompletionProvider fromChoiceNames(List<String> choices, InsertHandler<LookupElement> insertHandler) {
+    public static ChoiceCompletionProvider fromChoiceNames(List<String> choices, InsertHandler<LookupElement> insertHandler) {
         return new ChoiceCompletionProvider(toChoices(choices), insertHandler);
     }
 
@@ -33,7 +32,7 @@ class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> 
         return choices;
     }
 
-    ChoiceCompletionProvider(List<Choice> choices, InsertHandler<LookupElement> insertHandler) {
+    public ChoiceCompletionProvider(List<Choice> choices, InsertHandler<LookupElement> insertHandler) {
         this.insertHandler = insertHandler;
         this.choices.addAll(choices);
     }
@@ -52,7 +51,7 @@ class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> 
 
     @NotNull
     private Set<String> getExistingChoices(@NotNull CompletionParameters parameters) {
-        final YAMLMapping mapping = getFirstMapping(parameters.getPosition(), /* set max depth in order to skip mapping if property is not followed by colon */ 3);
+        final YAMLMapping mapping = YamlPsiElements.getFirstMapping(parameters.getPosition(), /* set max depth in order to skip mapping if property is not followed by colon */ 3);
         final Set<String> existingProperties = new HashSet<String>();
 
         if (mapping != null) {
@@ -63,11 +62,11 @@ class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> 
         return existingProperties;
     }
 
-    static class Choice {
+    public static class Choice {
         private final String name;
         private final String description;
 
-        Choice(String name, String description) {
+        public Choice(String name, String description) {
             this.name = name;
             this.description = description;
         }

@@ -1,4 +1,4 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.completionProvider;
 
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
@@ -13,10 +13,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-class ConditionCompletionProvider extends CompletionProvider<CompletionParameters> {
+public class ConditionCompletionProvider extends CompletionProvider<CompletionParameters> {
     private final InsertHandler<LookupElement> insertHandler;
 
-    ConditionCompletionProvider(InsertHandler<LookupElement> insertHandler) {
+    public ConditionCompletionProvider(InsertHandler<LookupElement> insertHandler) {
         this.insertHandler = insertHandler;
     }
 

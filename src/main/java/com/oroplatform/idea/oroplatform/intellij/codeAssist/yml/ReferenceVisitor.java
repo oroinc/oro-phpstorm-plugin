@@ -3,6 +3,7 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceRegistrar;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceProviders;
 import com.oroplatform.idea.oroplatform.schema.*;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
@@ -10,15 +11,17 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 class ReferenceVisitor extends YamlVisitor {
 
     private final PsiReferenceRegistrar registrar;
+    private final ReferenceProviders referenceProviders;
 
-    ReferenceVisitor(PsiReferenceRegistrar registrar, ElementPattern<? extends PsiElement> capture, VisitingContext context) {
+    ReferenceVisitor(ReferenceProviders referenceProviders, PsiReferenceRegistrar registrar, ElementPattern<? extends PsiElement> capture, VisitingContext context) {
         super(capture, context);
+        this.referenceProviders = referenceProviders;
         this.registrar = registrar;
     }
 
     @Override
     protected Visitor nextVisitor(ElementPattern<? extends PsiElement> capture, VisitingContext context) {
-        return new ReferenceVisitor(registrar, capture, context);
+        return new ReferenceVisitor(referenceProviders, registrar, capture, context);
     }
 
     @Override
@@ -39,7 +42,7 @@ class ReferenceVisitor extends YamlVisitor {
                 capture,
                 psiElement().withParent(capture)
             ),
-            reference.getReferenceProviders().forYaml(insertHandler)
+            reference.getProvider(referenceProviders, insertHandler)
         );
     }
 }

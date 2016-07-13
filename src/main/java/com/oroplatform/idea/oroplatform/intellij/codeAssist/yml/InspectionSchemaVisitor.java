@@ -94,10 +94,17 @@ class InspectionSchemaVisitor extends VisitorAdapter {
     }
 
     @Override
-    public void visitScalarChoicesValue(Scalar.Choices choices) {
-        for(YAMLScalar element : filterScalars(elements)) {
-            if(!choices.doesAllowExtraChoices() && !choices.getChoices().contains(element.getTextValue())) {
-                problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.notAllowedPropertyValue", element.getTextValue(), StringUtil.join(choices.getChoices(), ", ")));
+    public void visitScalarLookupValue(Scalar.Lookup lookup) {
+        for (Scalar.Lookup.Requirement requirement : lookup.getRequirements()) {
+            //TODO: refactoring when new "requirement" is created. Add requirements to each Scalar.Value? Reqexp as requirement?
+            if(requirement instanceof Scalar.Lookup.StrictLookupsRequirement) {
+                final Collection<String> choices = ((Scalar.Lookup.StrictLookupsRequirement) requirement).getAllowedLookups();
+
+                for(YAMLScalar element : filterScalars(elements)) {
+                    if(!choices.contains(element.getTextValue())) {
+                        problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.notAllowedPropertyValue", element.getTextValue(), StringUtil.join(choices, ", ")));
+                    }
+                }
             }
         }
     }

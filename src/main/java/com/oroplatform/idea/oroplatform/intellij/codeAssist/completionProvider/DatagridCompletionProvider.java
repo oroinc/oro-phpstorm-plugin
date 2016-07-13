@@ -1,4 +1,4 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.completionProvider;
 
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-class DatagridCompletionProvider extends CompletionProvider<CompletionParameters> {
+public class DatagridCompletionProvider extends CompletionProvider<CompletionParameters> {
     @Override
     protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
         final Project project = parameters.getOriginalFile().getProject();

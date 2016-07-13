@@ -1,4 +1,4 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.referenceProvider;
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;

@@ -1,4 +1,4 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider;
 
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
@@ -8,6 +8,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -22,12 +23,12 @@ import java.util.Set;
 
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.*;
 
-class ChoicesFromPathCompletionProvider extends CompletionProvider<CompletionParameters> {
+public class ChoicesFromPathCompletionProvider extends CompletionProvider<CompletionParameters> {
     private final PropertyPath path;
     private final String prefix;
     private final InsertHandler<LookupElement> insertHandler;
 
-    ChoicesFromPathCompletionProvider(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler) {
+    public ChoicesFromPathCompletionProvider(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler) {
         this.path = path;
         this.prefix = prefix;
         this.insertHandler = insertHandler;

@@ -4,26 +4,28 @@ import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.ChoiceCompletionProvider.Choice;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionProviders;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ChoiceCompletionProvider;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ChoiceCompletionProvider.Choice;
 import com.oroplatform.idea.oroplatform.schema.*;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.intellij.patterns.PlatformPatterns.psiElement;
-
 class CompletionSchemaVisitor extends YamlVisitor {
+    private final CompletionProviders completionProviders;
     private final CompletionContributor completion;
     private final PropertyDescriptionProvider propertyDescriptionProvider = new TypePropertyDescriptionProvider();
 
-    CompletionSchemaVisitor(CompletionContributor completion, ElementPattern<? extends PsiElement> capture, VisitingContext context) {
+    CompletionSchemaVisitor(CompletionProviders completionProviders, CompletionContributor completion, ElementPattern<? extends PsiElement> capture, VisitingContext context) {
         super(capture, context);
+        this.completionProviders = completionProviders;
         this.completion = completion;
     }
 
     @Override
     protected Visitor nextVisitor(ElementPattern<? extends PsiElement> capture, VisitingContext context) {
-        return new CompletionSchemaVisitor(completion, capture, context);
+        return new CompletionSchemaVisitor(completionProviders, completion, capture, context);
     }
 
     @Override
@@ -51,56 +53,11 @@ class CompletionSchemaVisitor extends YamlVisitor {
     }
 
     @Override
-    public void visitScalarChoicesValue(Scalar.Choices choices) {
-        completion.extend(
-            CompletionType.BASIC,
-            YamlPatterns.scalarValue().withSuperParent(2, capture),
-            ChoiceCompletionProvider.fromChoiceNames(choices.getChoices(), insertHandler)
-        );
-    }
-
-    @Override
-    public void visitScalarPropertiesFromPathValue(Scalar.PropertiesFromPath propertiesFromPath) {
+    public void visitScalarLookupValue(Scalar.Lookup lookup) {
         completion.extend(
             CompletionType.BASIC,
             context == VisitingContext.PROPERTY_VALUE ? YamlPatterns.scalarValue().withSuperParent(2, capture) : capture,
-            new ChoicesFromPathCompletionProvider(propertiesFromPath.getPath(), propertiesFromPath.getPrefix(), insertHandler)
-        );
-    }
-
-    @Override
-    public void visitScalarConditionValue(Scalar.Condition condition) {
-        completion.extend(
-            CompletionType.BASIC,
-            capture,
-            new ConditionCompletionProvider(insertHandler)
-        );
-    }
-
-    @Override
-    public void visitScalarActionValue(Scalar.Action action) {
-        completion.extend(
-            CompletionType.BASIC,
-            capture,
-            new ActionCompletionProvider(insertHandler)
-        );
-    }
-
-    @Override
-    public void visitScalarFormTypeValue(Scalar.FormType formType) {
-        completion.extend(
-            CompletionType.BASIC,
-            YamlPatterns.scalarValue().withSuperParent(2, capture),
-            new FormTypeCompletionProvider()
-        );
-    }
-
-    @Override
-    public void visitScalarDatagridValue(Scalar.Datagrid datagrid) {
-        completion.extend(
-            CompletionType.BASIC,
-            YamlPatterns.scalarValue().withSuperParent(2, capture),
-            new DatagridCompletionProvider()
+            lookup.getProvider(completionProviders, insertHandler)
         );
     }
 }
