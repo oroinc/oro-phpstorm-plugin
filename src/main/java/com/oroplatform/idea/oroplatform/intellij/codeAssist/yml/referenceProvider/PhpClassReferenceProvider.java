@@ -8,7 +8,7 @@ import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassReference;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements;
-import com.oroplatform.idea.oroplatform.schema.Scalar;
+import com.oroplatform.idea.oroplatform.schema.PhpClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLMapping;
@@ -20,10 +20,10 @@ import java.util.Set;
 
 public class PhpClassReferenceProvider extends PsiReferenceProvider {
 
-    private final Scalar.PhpClass phpClass;
+    private final PhpClass phpClass;
     private final InsertHandler<LookupElement> insertHandler;
 
-    public PhpClassReferenceProvider(Scalar.PhpClass phpClass, InsertHandler<LookupElement> insertHandler) {
+    public PhpClassReferenceProvider(PhpClass phpClass, InsertHandler<LookupElement> insertHandler) {
         this.phpClass = phpClass;
         this.insertHandler = insertHandler;
     }

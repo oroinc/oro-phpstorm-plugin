@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.StandardPatterns.string;
 
-abstract class YamlVisitor extends VisitorAdapter {
+abstract class YamlVisitor implements Visitor {
     final ElementPattern<? extends PsiElement> capture;
     final VisitingContext context;
     final InsertHandler<LookupElement> insertHandler;

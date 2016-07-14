@@ -18,7 +18,7 @@ public class Property {
     }
 
     private Property(Pattern name, Element valueElement, boolean required) {
-        this(name, valueElement, required, Scalar.any);
+        this(name, valueElement, required, Scalars.any);
     }
 
     Property(String name, Element valueElement) {

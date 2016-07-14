@@ -15,7 +15,6 @@ import com.jetbrains.php.lang.psi.elements.PhpNamespace;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.oroplatform.idea.oroplatform.Icons;
 import com.oroplatform.idea.oroplatform.PhpClassUtil;
-import com.oroplatform.idea.oroplatform.schema.Scalar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,12 +26,12 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final String text;
     private final InsertHandler<LookupElement> insertHandler;
     private final String rootBundlePath;
-    private final Scalar.PhpClass phpClass;
+    private final com.oroplatform.idea.oroplatform.schema.PhpClass phpClass;
     private final Set<String> skippedClassNames = new HashSet<String>();
     private final PhpIndex phpIndex;
     private final PhpClass repositoryInterface;
 
-    public PhpClassReference(PsiElement psiElement, Scalar.PhpClass phpClass, @NotNull String text, InsertHandler<LookupElement> insertHandler, Set<String> skippedClassNames) {
+    public PhpClassReference(PsiElement psiElement, com.oroplatform.idea.oroplatform.schema.PhpClass phpClass, @NotNull String text, InsertHandler<LookupElement> insertHandler, Set<String> skippedClassNames) {
         super(psiElement);
         this.phpClass = phpClass;
         this.insertHandler = insertHandler;

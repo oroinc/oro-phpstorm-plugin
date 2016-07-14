@@ -6,7 +6,8 @@ import com.intellij.psi.PsiReferenceProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.FilePathReferenceProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.referenceProvider.*;
-import com.oroplatform.idea.oroplatform.schema.Scalar;
+import com.oroplatform.idea.oroplatform.schema.PhpClass;
+import com.oroplatform.idea.oroplatform.schema.PhpMethod;
 
 class YamlReferenceProviders implements ReferenceProviders {
     @Override
@@ -20,7 +21,7 @@ class YamlReferenceProviders implements ReferenceProviders {
     }
 
     @Override
-    public PsiReferenceProvider phpClass(Scalar.PhpClass phpClass, InsertHandler<LookupElement> insertHandler) {
+    public PsiReferenceProvider phpClass(PhpClass phpClass, InsertHandler<LookupElement> insertHandler) {
         return new PhpClassReferenceProvider(phpClass, insertHandler);
     }
 
@@ -31,6 +32,6 @@ class YamlReferenceProviders implements ReferenceProviders {
 
     @Override
     public PsiReferenceProvider phpMethod(String pattern, InsertHandler<LookupElement> insertHandler) {
-        return new PhpMethodReferenceProvider(new Scalar.PhpMethod(pattern));
+        return new PhpMethodReferenceProvider(new PhpMethod(pattern));
     }
 }

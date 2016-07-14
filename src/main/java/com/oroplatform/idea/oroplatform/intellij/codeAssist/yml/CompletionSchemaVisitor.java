@@ -1,6 +1,8 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
 import com.intellij.codeInsight.completion.CompletionContributor;
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
@@ -53,11 +55,15 @@ class CompletionSchemaVisitor extends YamlVisitor {
     }
 
     @Override
-    public void visitScalarLookupValue(Scalar.Lookup lookup) {
-        completion.extend(
-            CompletionType.BASIC,
-            context == VisitingContext.PROPERTY_VALUE ? YamlPatterns.scalarValue().withSuperParent(2, capture) : capture,
-            lookup.getProvider(completionProviders, insertHandler)
-        );
+    public void visitScalar(Scalar scalar) {
+        final CompletionProvider<CompletionParameters> provider = scalar.getProvider(completionProviders, insertHandler);
+
+        if(provider != null) {
+            completion.extend(
+                CompletionType.BASIC,
+                context == VisitingContext.PROPERTY_VALUE ? YamlPatterns.scalarValue().withSuperParent(2, capture) : capture,
+                provider
+            );
+        }
     }
 }

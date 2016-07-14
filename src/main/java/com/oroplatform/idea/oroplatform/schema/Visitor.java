@@ -5,8 +5,5 @@ public interface Visitor {
     void visitContainer(Container container);
     void visitOneOf(OneOf oneOf);
     void visitRepeatAtAnyLevel(Repeated repeated);
-
-    void visitScalarAnyValue(Scalar.Any any);
-    void visitScalarReferenceValue(Scalar.Reference reference);
-    void visitScalarLookupValue(Scalar.Lookup lookup);
+    void visitScalar(Scalar scalar);
 }

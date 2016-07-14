@@ -15,7 +15,7 @@ import java.util.*;
 
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.*;
 
-class InspectionSchemaVisitor extends VisitorAdapter {
+class InspectionSchemaVisitor implements Visitor {
     private final ProblemsHolder problems;
     private final List<PsiElement> elements = new LinkedList<PsiElement>();
 
@@ -96,11 +96,12 @@ class InspectionSchemaVisitor extends VisitorAdapter {
     }
 
     @Override
-    public void visitScalarLookupValue(Scalar.Lookup lookup) {
-        visitScalarValue(lookup);
+    public void visitRepeatAtAnyLevel(Repeated repeated) {
+        //right now it is not used for inspections, so skip implementation
     }
 
-    private void visitScalarValue(Scalar.Value scalar) {
+    @Override
+    public void visitScalar(Scalar scalar) {
         for (Requirement requirement : scalar.getRequirements()) {
             for(YAMLScalar element : filterScalars(elements)) {
                 for (String error : requirement.getErrors(element.getTextValue())) {
@@ -108,21 +109,6 @@ class InspectionSchemaVisitor extends VisitorAdapter {
                 }
             }
         }
-    }
-
-    @Override
-    public void visitScalarAnyValue(Scalar.Any any) {
-        visitScalarValue(any);
-    }
-
-    @Override
-    public void visitScalarReferenceValue(Scalar.Reference reference) {
-        visitScalarValue(reference);
-    }
-
-    @Override
-    public void visitRepeatAtAnyLevel(Repeated repeated) {
-        //right now it is not used for inspections, so skip implementation
     }
 
     private static class ProblemsHolderComparator implements Comparator<ProblemsHolder> {
