@@ -7,11 +7,11 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.PsiReferenceProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceProviders;
+import com.oroplatform.idea.oroplatform.schema.requirements.PatternRequirement;
+import com.oroplatform.idea.oroplatform.schema.requirements.Requirement;
+import com.oroplatform.idea.oroplatform.schema.requirements.StrictLookupsRequirement;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class Scalar implements Element {
@@ -36,10 +36,10 @@ public class Scalar implements Element {
     }
 
     static Scalar strictChoices(final String... choices) {
-        return choices(Arrays.asList(new Lookup.StrictLookupsRequirement(Arrays.asList(choices))), choices);
+        return choices(Collections.singletonList(new StrictLookupsRequirement(Arrays.asList(choices))), choices);
     }
 
-    private static Scalar choices(Collection<? extends Lookup.Requirement> requirements, final String[] choices) {
+    private static Scalar choices(Collection<? extends Requirement> requirements, final String[] choices) {
         return new Scalar(new Lookup(requirements) {
             @Override
             public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
@@ -49,7 +49,7 @@ public class Scalar implements Element {
     }
 
     static Scalar choices(final String... choices) {
-        return choices(Collections.<Lookup.Requirement>emptyList(), choices);
+        return choices(Collections.<Requirement>emptyList(), choices);
     }
 
     static Scalar propertiesFromPath(final PropertyPath path, final String prefix) {
@@ -75,7 +75,7 @@ public class Scalar implements Element {
     }
 
     static Scalar regexp(String pattern) {
-        return new Scalar(new Scalar.Regexp(Pattern.compile(pattern)));
+        return new Scalar(new Scalar.Any(Collections.singletonList(new PatternRequirement(Pattern.compile(pattern)))));
     }
 
     final static Scalar condition = new Scalar(new Lookup() {
@@ -148,35 +148,40 @@ public class Scalar implements Element {
 
     final static Scalar bool = strictChoices("true", "false");
 
-    final static Scalar integer = new Scalar(new Regexp(Pattern.compile("^\\d+$")));
+    final static Scalar integer = regexp("^\\d+$");
 
     public interface Value {
         void accept(Visitor visitor);
+        Collection<Requirement> getRequirements();
     }
 
-    static class Any implements Value {
-        private Any(){}
+    private static abstract class AbstractValue implements Value {
+        private final Collection<Requirement> requirements = new LinkedList<Requirement>();
+
+        AbstractValue(Collection<? extends Requirement> requirements) {
+            this.requirements.addAll(requirements);
+        }
+
+        AbstractValue() {
+            this(Collections.<Requirement>emptyList());
+        }
+
+        @Override
+        public Collection<Requirement> getRequirements() {
+            return Collections.unmodifiableCollection(requirements);
+        }
+    }
+
+    public static class Any extends AbstractValue {
+        private Any() {}
+
+        private Any(Collection<? extends Requirement> requirements) {
+            super(requirements);
+        }
 
         @Override
         public void accept(Visitor visitor) {
             visitor.visitScalarAnyValue(this);
-        }
-    }
-
-    public static class Regexp implements Value {
-        private final Pattern pattern;
-
-        private Regexp(Pattern pattern) {
-            this.pattern = pattern;
-        }
-
-        @Override
-        public void accept(Visitor visitor) {
-            visitor.visitScalarRegexpValue(this);
-        }
-
-        public Pattern getPattern() {
-            return pattern;
         }
     }
 
@@ -225,14 +230,12 @@ public class Scalar implements Element {
         }
     }
 
-    public abstract static class Lookup implements Value {
-        private final Collection<Requirement> requirements = new LinkedList<Requirement>();
-
-        public Lookup(Collection<? extends Requirement> requirements) {
-            this.requirements.addAll(requirements);
+    public abstract static class Lookup extends AbstractValue {
+        Lookup(Collection<? extends Requirement> requirements) {
+            super(requirements);
         }
 
-        public Lookup() {
+        Lookup() {
             this(Collections.<Requirement>emptyList());
         }
 
@@ -242,28 +245,9 @@ public class Scalar implements Element {
         }
 
         public abstract CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler);
-
-        public Collection<Requirement> getRequirements() {
-            return Collections.unmodifiableCollection(requirements);
-        }
-
-        public interface Requirement {
-        }
-
-        public static class StrictLookupsRequirement implements Requirement {
-            private final Collection<String> allowedLookups;
-
-            public StrictLookupsRequirement(Collection<String> allowedLookups) {
-                this.allowedLookups = allowedLookups;
-            }
-
-            public Collection<String> getAllowedLookups() {
-                return Collections.unmodifiableCollection(allowedLookups);
-            }
-        }
     }
 
-    public abstract static class Reference implements Value {
+    public abstract static class Reference extends AbstractValue {
         @Override
         public void accept(Visitor visitor) {
             visitor.visitScalarReferenceValue(this);

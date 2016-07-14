@@ -2,12 +2,14 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.oroplatform.idea.oroplatform.OroPlatformBundle;
 import com.oroplatform.idea.oroplatform.schema.*;
+import com.oroplatform.idea.oroplatform.schema.requirements.Requirement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.yaml.psi.*;
+import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.YAMLMapping;
+import org.jetbrains.yaml.psi.YAMLScalar;
 
 import java.util.*;
 
@@ -95,27 +97,27 @@ class InspectionSchemaVisitor extends VisitorAdapter {
 
     @Override
     public void visitScalarLookupValue(Scalar.Lookup lookup) {
-        for (Scalar.Lookup.Requirement requirement : lookup.getRequirements()) {
-            //TODO: refactoring when new "requirement" is created. Add requirements to each Scalar.Value? Reqexp as requirement?
-            if(requirement instanceof Scalar.Lookup.StrictLookupsRequirement) {
-                final Collection<String> choices = ((Scalar.Lookup.StrictLookupsRequirement) requirement).getAllowedLookups();
+        visitScalarValue(lookup);
+    }
 
-                for(YAMLScalar element : filterScalars(elements)) {
-                    if(!choices.contains(element.getTextValue())) {
-                        problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.notAllowedPropertyValue", element.getTextValue(), StringUtil.join(choices, ", ")));
-                    }
+    private void visitScalarValue(Scalar.Value scalar) {
+        for (Requirement requirement : scalar.getRequirements()) {
+            for(YAMLScalar element : filterScalars(elements)) {
+                for (String error : requirement.getErrors(element.getTextValue())) {
+                    problems.registerProblem(element, error);
                 }
             }
         }
     }
 
     @Override
-    public void visitScalarRegexpValue(Scalar.Regexp regexp) {
-        for (YAMLScalar element : filterScalars(elements)) {
-            if(!regexp.getPattern().matcher(element.getTextValue()).matches()) {
-                problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.valueDoesNotMatchPattern", element.getTextValue(), regexp.getPattern().pattern()));
-            }
-        }
+    public void visitScalarAnyValue(Scalar.Any any) {
+        visitScalarValue(any);
+    }
+
+    @Override
+    public void visitScalarReferenceValue(Scalar.Reference reference) {
+        visitScalarValue(reference);
     }
 
     @Override
