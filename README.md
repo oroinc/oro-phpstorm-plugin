@@ -4,7 +4,7 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
 
 Requirements
 -----------------------------
-Plugin require requires PHPStorm 2016.1+
+Plugin requires PHPStorm 2016.1+
 
 Version
 -----------------------------
