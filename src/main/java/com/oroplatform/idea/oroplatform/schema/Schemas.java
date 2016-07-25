@@ -492,10 +492,34 @@ public class Schemas {
             ))
         );
 
+        final Container fields = Container.with(
+            Property.any(Container.with(//TODO: fields
+                Property.named("exclude", Scalars.bool),
+                Property.named("description", Scalars.any),
+                Property.named("property_path", Scalars.any),
+                Property.named("data_transformer", Scalars.any),//TODO: service + FQCN
+                Property.named("collapse", Scalars.bool),
+                Property.named("form_type", Scalars.formType),
+                Property.named("form_options", Scalars.any),
+                Property.named("data_type", dataType()),
+                Property.named("meta_property", Scalars.bool),
+                Property.named("target_class", Scalars.fullEntity),
+                Property.named("target_type", targetType)
+            ))
+        );
+        final Container sorters = Container.with(
+            Property.named("exclusion_policy", Scalars.choices("all", "none")),
+            Property.named("fields", Container.with(
+                Property.any(Container.with(//TODO: fields
+                    Property.named("exclude", Scalars.bool),
+                    Property.named("property_path", Scalars.any)
+                ))
+            ))
+        );
         return new Schema(new FilePathMatcher(FilePathPatterns.API), Container.with(
             Property.named("oro_api", Container.with(
                 Property.named("entities", Container.with(
-                    Property.any(Container.with(//TODO: entity FQCN
+                    Property.any(Container.with(
                         Property.named("exclude", Scalars.bool),
                         Property.named("inherit", Scalars.bool),
                         Property.named("exclusion_policy", Scalars.choices("all", "none")),
@@ -509,31 +533,9 @@ public class Schemas {
                         Property.named("delete_handler", Scalars.any),//TODO: service support?
                         Property.named("form_type", Scalars.formType),
                         Property.named("form_options", formOptions),
-                        Property.named("fields", Container.with(
-                            Property.any(Container.with(//TODO: fields
-                                Property.named("exclude", Scalars.bool),
-                                Property.named("description", Scalars.any),
-                                Property.named("property_path", Scalars.any),
-                                Property.named("data_transformer", Scalars.any),//TODO: service + FQCN
-                                Property.named("collapse", Scalars.bool),
-                                Property.named("form_type", Scalars.formType),
-                                Property.named("form_options", Scalars.any),
-                                Property.named("data_type", dataType()),
-                                Property.named("meta_property", Scalars.bool),
-                                Property.named("target_class", Scalars.fullEntity),
-                                Property.named("target_type", targetType)
-                            ))
-                        )),
+                        Property.named("fields", fields),
                         Property.named("filters", filters),
-                        Property.named("sorters", Container.with(
-                            Property.named("exclusion_policy", Scalars.choices("all", "none")),
-                            Property.named("fields", Container.with(
-                                Property.any(Container.with(//TODO: fields
-                                    Property.named("exclude", Scalars.bool),
-                                    Property.named("property_path", Scalars.any)
-                                ))
-                            ))
-                        )),
+                        Property.named("sorters", sorters),
                         Property.named("actions", Container.with(
                             Property.named("get", action),
                             Property.named("get_list", action),
@@ -547,21 +549,30 @@ public class Schemas {
                                 Property.named("exclude", Scalars.bool),
                                 Property.named("target_class", Scalars.fullEntity),
                                 Property.named("target_type", targetType),
-                                Property.named("actions", Container.with(//TODO: allowed actions?
-                                    Property.any(action)
+                                Property.named("actions", Container.with(
+                                    Property.named("get", action),
+                                    Property.named("get_list", action),
+                                    Property.named("create", action),
+                                    Property.named("update", action),
+                                    Property.named("delete", action),
+                                    Property.named("delete_list", action),
+                                    Property.named("get_subresource", action),
+                                    Property.named("get_relationship", action),
+                                    Property.named("add_relationship", action),
+                                    Property.named("update_relationship", action),
+                                    Property.named("delete_relationship", action)
                                 )),
                                 Property.named("filters", filters)
                             ))
                         ))
-                    ))
+                    )).withKeyElement(Scalars.fullEntity)
                 )),
-                //TODO: details
                 Property.named("relations", Container.with(
-                    Property.any(Container.with(//TODO entity FQCN
-                        Property.named("fields", Scalars.any),
-                        Property.named("filters", Scalars.any),
-                        Property.named("sorters", Scalars.any)
-                    ))
+                    Property.any(Container.with(
+                        Property.named("fields", fields),
+                        Property.named("filters", filters),
+                        Property.named("sorters", sorters)
+                    )).withKeyElement(Scalars.fullEntity)
                 ))
             ))
         ));
