@@ -54,6 +54,47 @@ class ApiPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
+    def void "test: suggest Entity fields as property"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      fields:
+            |        <caret>
+            """.stripMargin(),
+            ["field1"]
+        )
+    }
+
+    def void "test: suggest Entity fields in filters as property"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      filters:
+            |        fields:
+            |          <caret>
+            """.stripMargin(),
+            ["field1"]
+        )
+    }
+
+    def void "test: suggest Entity fields in sorters as property"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      sorters:
+            |        fields:
+            |          <caret>
+            """.stripMargin(),
+            ["field1"]
+        )
+    }
+
     @Override
     protected void tearDown() throws Exception {
         super.tearDown()

@@ -5,20 +5,42 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpFieldReference;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements;
+import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.YAMLScalar;
 
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getYamlKeyValueSiblingWithName;
+import java.util.Collection;
+import java.util.Set;
+
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.*;
 
 public class PhpFieldReferenceProvider extends PsiReferenceProvider {
+    private final PropertyPath classPropertyPath;
+
+    public PhpFieldReferenceProvider(PropertyPath classPropertyPath) {
+
+        this.classPropertyPath = classPropertyPath;
+    }
+
     @NotNull
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
 
         if(element instanceof YAMLKeyValue) {
+            //TODO: refactor this - support for classPropertyPath. Add support for sequences in classPropertyPath
             YAMLKeyValue classKeyValue = getYamlKeyValueSiblingWithName((YAMLKeyValue) element, "entity");
             String className = classKeyValue == null ? "" : classKeyValue.getValueText();
             return new PsiReference[]{new PhpFieldReference(element, className, ((YAMLKeyValue) element).getValueText())};
+        } else if(element instanceof YAMLScalar) {
+            final YAMLFile file = (YAMLFile) element.getContainingFile();
+            final Set<PsiElement> ancestors = getAncestors(element);
+            final Collection<String> properties = getPropertyNamesFrom(classPropertyPath, YamlPsiElements.getMappingsFrom(file), ancestors);
+            if(!properties.isEmpty()) {
+                return new PsiReference[]{new PhpFieldReference(element, properties.iterator().next(), ((YAMLScalar) element).getTextValue())};
+            }
         }
         return new PsiReference[0];
     }

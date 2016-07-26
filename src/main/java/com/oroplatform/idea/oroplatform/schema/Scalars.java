@@ -124,12 +124,17 @@ final class Scalars {
         }
     };
 
-    final static Scalar field = new Scalar() {
-        @Override
-        public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.phpField(insertHandler);
-        }
-    };
+    //TODO: remove this field, use function "field(path)" instead
+    final static Scalar field = field(new PropertyPath("$this"));
+
+    static Scalar field(final PropertyPath classPropertyPath) {
+        return new Scalar() {
+            @Override
+            public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return providers.phpField(classPropertyPath, insertHandler);
+            }
+        };
+    }
 
     final static Scalar bool = strictChoices("true", "false");
 

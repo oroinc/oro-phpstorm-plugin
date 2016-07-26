@@ -434,6 +434,49 @@ public class Schemas {
         );
     }
 
+    private static Container apiFilters(PropertyPath entityPropertyPath) {
+        return Container.with(
+            Property.named("exclusion_policy", Scalars.choices("all", "none")),
+            Property.named("fields", Container.with(
+                Property.any(Container.with(
+                    Property.named("exclude", Scalars.bool),
+                    Property.named("description", Scalars.any),
+                    Property.named("property_path", Scalars.any),
+                    Property.named("data_type", Scalars.choices("boolean", "bool", "integer", "int", "float", "string")),
+                    Property.named("allow_array", Scalars.bool)
+                )).withKeyElement(Scalars.field(entityPropertyPath))
+            ))
+        );
+    }
+
+    private static Container apiFields(PropertyPath entityPropertyPath) {
+        return Container.with(
+            Property.any(Container.with(
+                Property.named("exclude", Scalars.bool),
+                Property.named("description", Scalars.any),
+                Property.named("property_path", Scalars.any),
+                Property.named("data_transformer", Scalars.any),//TODO: service + FQCN
+                Property.named("collapse", Scalars.bool),
+                Property.named("form_type", Scalars.formType),
+                Property.named("form_options", Scalars.any),
+                Property.named("data_type", dataType()),
+                Property.named("meta_property", Scalars.bool),
+                Property.named("target_class", Scalars.fullEntity),
+                Property.named("target_type", Scalars.choices("to-one", "to-many", "collection"))
+            )).withKeyElement(Scalars.field(entityPropertyPath))
+        );
+    }
+    private static Container apiSorters(PropertyPath entityPropertyPath) {
+        return Container.with(
+            Property.named("exclusion_policy", Scalars.choices("all", "none")),
+            Property.named("fields", Container.with(
+                Property.any(Container.with(
+                    Property.named("exclude", Scalars.bool),
+                    Property.named("property_path", Scalars.any)
+                )).withKeyElement(Scalars.field(entityPropertyPath))
+            ))
+        );
+    }
 
     private static Schema api() {
         final Container formOptions = Container.with(
@@ -443,7 +486,7 @@ public class Schemas {
         );
 
         final Container orderBy = Container.with(
-            Property.any(Scalars.strictChoices("ASC", "DESC"))//TODO: field
+            Property.any(Scalars.strictChoices("ASC", "DESC")).withKeyElement(Scalars.field(new PropertyPath("oro_api", "entities", "$this")))
         );
 
         final Element action = OneOf.from(
@@ -467,55 +510,16 @@ public class Schemas {
                     )).withKeyElement(Scalars.choices("200", "201", "202", "203", "204", "205", "206", "400", "401", "403", "404", "406", "417"))
                 )),
                 Property.named("fields", Container.with(
-                    Property.any(Container.with(//TODO: fields
+                    Property.any(Container.with(
                         Property.named("exclude", Scalars.bool),
                         Property.named("form_type", Scalars.formType),
                         Property.named("form_options", formOptions)
-                    ))
+                    )).withKeyElement(Scalars.field(new PropertyPath("oro_api", "entities", "$this")))
                 ))
             ),
             Scalars.bool
         );
 
-        final Element targetType = Scalars.choices("to-one", "to-many", "collection");
-
-        final Container filters = Container.with(
-            Property.named("exclusion_policy", Scalars.choices("all", "none")),
-            Property.named("fields", Container.with(
-                Property.any(Container.with(//TODO: fields
-                    Property.named("exclude", Scalars.bool),
-                    Property.named("description", Scalars.any),
-                    Property.named("property_path", Scalars.any),
-                    Property.named("data_type", Scalars.choices("boolean", "bool", "integer", "int", "float", "string")),
-                    Property.named("allow_array", Scalars.bool)
-                ))
-            ))
-        );
-
-        final Container fields = Container.with(
-            Property.any(Container.with(//TODO: fields
-                Property.named("exclude", Scalars.bool),
-                Property.named("description", Scalars.any),
-                Property.named("property_path", Scalars.any),
-                Property.named("data_transformer", Scalars.any),//TODO: service + FQCN
-                Property.named("collapse", Scalars.bool),
-                Property.named("form_type", Scalars.formType),
-                Property.named("form_options", Scalars.any),
-                Property.named("data_type", dataType()),
-                Property.named("meta_property", Scalars.bool),
-                Property.named("target_class", Scalars.fullEntity),
-                Property.named("target_type", targetType)
-            ))
-        );
-        final Container sorters = Container.with(
-            Property.named("exclusion_policy", Scalars.choices("all", "none")),
-            Property.named("fields", Container.with(
-                Property.any(Container.with(//TODO: fields
-                    Property.named("exclude", Scalars.bool),
-                    Property.named("property_path", Scalars.any)
-                ))
-            ))
-        );
         return new Schema(new FilePathMatcher(FilePathPatterns.API), Container.with(
             Property.named("oro_api", Container.with(
                 Property.named("entities", Container.with(
@@ -533,9 +537,9 @@ public class Schemas {
                         Property.named("delete_handler", Scalars.any),//TODO: service support?
                         Property.named("form_type", Scalars.formType),
                         Property.named("form_options", formOptions),
-                        Property.named("fields", fields),
-                        Property.named("filters", filters),
-                        Property.named("sorters", sorters),
+                        Property.named("fields", apiFields(new PropertyPath("oro_api", "entities", "$this"))),
+                        Property.named("filters", apiFilters(new PropertyPath("oro_api", "entities", "$this"))),
+                        Property.named("sorters", apiSorters(new PropertyPath("oro_api", "entities", "$this"))),
                         Property.named("actions", Container.with(
                             Property.named("get", action),
                             Property.named("get_list", action),
@@ -548,7 +552,7 @@ public class Schemas {
                             Property.any(Container.with(//TODO: what should be property?
                                 Property.named("exclude", Scalars.bool),
                                 Property.named("target_class", Scalars.fullEntity),
-                                Property.named("target_type", targetType),
+                                Property.named("target_type", Scalars.choices("to-one", "to-many", "collection")),
                                 Property.named("actions", Container.with(
                                     Property.named("get", action),
                                     Property.named("get_list", action),
@@ -562,16 +566,16 @@ public class Schemas {
                                     Property.named("update_relationship", action),
                                     Property.named("delete_relationship", action)
                                 )),
-                                Property.named("filters", filters)
+                                Property.named("filters", apiFilters(new PropertyPath("oro_api", "entity", "$this")))
                             ))
                         ))
                     )).withKeyElement(Scalars.fullEntity)
                 )),
                 Property.named("relations", Container.with(
                     Property.any(Container.with(
-                        Property.named("fields", fields),
-                        Property.named("filters", filters),
-                        Property.named("sorters", sorters)
+                        Property.named("fields", apiFields(new PropertyPath("oro_api", "relations", "$this"))),
+                        Property.named("filters", apiFilters(new PropertyPath("oro_api", "relations", "$this"))),
+                        Property.named("sorters", apiSorters(new PropertyPath("oro_api", "relations", "$this")))
                     )).withKeyElement(Scalars.fullEntity)
                 ))
             ))

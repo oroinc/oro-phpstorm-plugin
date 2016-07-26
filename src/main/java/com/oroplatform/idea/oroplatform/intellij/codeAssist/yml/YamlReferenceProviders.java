@@ -8,6 +8,7 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.Fi
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.referenceProvider.*;
 import com.oroplatform.idea.oroplatform.schema.PhpClass;
 import com.oroplatform.idea.oroplatform.schema.PhpMethod;
+import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 
 class YamlReferenceProviders implements ReferenceProviders {
     @Override
@@ -26,8 +27,8 @@ class YamlReferenceProviders implements ReferenceProviders {
     }
 
     @Override
-    public PsiReferenceProvider phpField(InsertHandler<LookupElement> insertHandler) {
-        return new PhpFieldReferenceProvider();
+    public PsiReferenceProvider phpField(PropertyPath classPropertyPath, InsertHandler<LookupElement> insertHandler) {
+        return new PhpFieldReferenceProvider(classPropertyPath);
     }
 
     @Override
