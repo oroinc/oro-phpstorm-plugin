@@ -27,7 +27,8 @@ public class XmlIndexer implements DataIndexer<Service, Void, XmlFile> {
             for (XmlTag servicesTag : ofName(PsiTreeUtil.findChildrenOfType(root, XmlTag.class), "services")) {
                 for (XmlTag serviceTag : ofName(PsiTreeUtil.findChildrenOfType(servicesTag, XmlTag.class), "service")) {
                     final Collection<Tag> serviceTags = getServiceTags(serviceTag);
-                    final Service service = new Service(serviceTags);
+                    final String id = serviceTag.getAttributeValue("id");
+                    final Service service = new Service(id, serviceTags);
 
                     index.put(service, null);
                 }

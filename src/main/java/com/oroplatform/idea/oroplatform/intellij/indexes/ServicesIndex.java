@@ -28,4 +28,8 @@ public class ServicesIndex {
     public Collection<String> findFormTypes() {
         return FileBasedIndex.getInstance().getAllKeys(FormTypesFileBasedIndex.KEY, project);
     }
+
+    public Collection<String> findServices() {
+        return FileBasedIndex.getInstance().getAllKeys(ServicesFileBasedIndex.KEY, project);
+    }
 }

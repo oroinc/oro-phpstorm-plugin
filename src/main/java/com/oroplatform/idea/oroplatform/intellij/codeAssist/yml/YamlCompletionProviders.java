@@ -5,10 +5,7 @@ import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionProviders;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.completionProvider.ActionCompletionProvider;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.completionProvider.ConditionCompletionProvider;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.completionProvider.DatagridCompletionProvider;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.completionProvider.FormTypeCompletionProvider;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.completionProvider.*;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ChoiceCompletionProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ChoicesFromPathCompletionProvider;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
@@ -34,6 +31,11 @@ class YamlCompletionProviders implements CompletionProviders {
     @Override
     public CompletionProvider<CompletionParameters> datagrid(InsertHandler<LookupElement> insertHandler) {
         return new DatagridCompletionProvider();
+    }
+
+    @Override
+    public CompletionProvider<CompletionParameters> service(InsertHandler<LookupElement> insertHandler) {
+        return new ServiceCompletionProvider(insertHandler);
     }
 
     @Override

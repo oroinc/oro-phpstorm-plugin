@@ -455,7 +455,7 @@ public class Schemas {
                 Property.named("exclude", Scalars.bool),
                 Property.named("description", Scalars.any),
                 Property.named("property_path", Scalars.any),
-                Property.named("data_transformer", Scalars.any),//TODO: service + FQCN
+                Property.named("data_transformer", OneOf.from(Scalars.service, Scalars.phpClass)),
                 Property.named("collapse", Scalars.bool),
                 Property.named("form_type", Scalars.formType),
                 Property.named("form_options", Scalars.any),
@@ -539,7 +539,7 @@ public class Schemas {
                         )),
                         Property.named("identifier_field_names", Sequence.of(Scalars.field(new PropertyPath("oro_api", "entities", "$this")))),
                         Property.named("post_serialize", Scalars.any),//TODO: callable as array?
-                        Property.named("delete_handler", Scalars.any),//TODO: service support?
+                        Property.named("delete_handler", Scalars.service),
                         Property.named("form_type", Scalars.formType),
                         Property.named("form_options", formOptions),
                         Property.named("fields", apiFields(new PropertyPath("oro_api", "entities", "$this"))),

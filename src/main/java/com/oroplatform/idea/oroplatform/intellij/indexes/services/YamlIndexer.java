@@ -46,7 +46,7 @@ public class YamlIndexer implements DataIndexer<Service, Void, YAMLFile> {
                         }
                     }
 
-                    final Service service = new Service(tags);
+                    final Service service = new Service(serviceElement.getKeyText(), tags);
                     index.put(service, null);
                 }
             }

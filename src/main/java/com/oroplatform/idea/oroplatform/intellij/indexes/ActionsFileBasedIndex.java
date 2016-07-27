@@ -3,7 +3,7 @@ package com.oroplatform.idea.oroplatform.intellij.indexes;
 import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
 
-public class ActionsFileBasedIndex extends ServicesFileBasedIndex {
+public class ActionsFileBasedIndex extends BaseServicesFileBasedIndex {
     public static final ID<String, Void> KEY = ID.create("com.oroplatform.idea.oroplatform.actions");
 
     public ActionsFileBasedIndex() {

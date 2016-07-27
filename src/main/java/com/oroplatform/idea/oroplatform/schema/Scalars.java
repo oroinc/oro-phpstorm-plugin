@@ -76,6 +76,13 @@ final class Scalars {
         }
     };
 
+    final static Scalar service = new Scalar() {
+        @Override
+        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.service(insertHandler);
+        }
+    };
+
     final static Scalar formType = new Scalar() {
         @Override
         public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
