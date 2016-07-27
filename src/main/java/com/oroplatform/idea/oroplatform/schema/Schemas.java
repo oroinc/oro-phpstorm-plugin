@@ -531,8 +531,13 @@ public class Schemas {
                         Property.named("order_by", orderBy),
                         Property.named("disable_inclusion", Scalars.bool),
                         Property.named("disable_fieldset", Scalars.bool),
-                        Property.named("hints", Scalars.any),//TODO: doctrine hints support?
-                        Property.named("identifier_field_names", Sequence.of(Scalars.any)),//TODO: fields?
+                        Property.named("hints", Sequence.of(
+                            OneOf.from(Scalars.any, Container.with(
+                                Property.named("name", Scalars.any),
+                                Property.named("value", Scalars.any)
+                            ))
+                        )),
+                        Property.named("identifier_field_names", Sequence.of(Scalars.field(new PropertyPath("oro_api", "entities", "$this")))),
                         Property.named("post_serialize", Scalars.any),//TODO: callable as array?
                         Property.named("delete_handler", Scalars.any),//TODO: service support?
                         Property.named("form_type", Scalars.formType),
@@ -549,7 +554,7 @@ public class Schemas {
                             Property.named("delete_list", action)
                         )),
                         Property.named("subresources", Container.with(
-                            Property.any(Container.with(//TODO: what should be property?
+                            Property.any(Container.with(
                                 Property.named("exclude", Scalars.bool),
                                 Property.named("target_class", Scalars.fullEntity),
                                 Property.named("target_type", Scalars.choices("to-one", "to-many", "collection")),

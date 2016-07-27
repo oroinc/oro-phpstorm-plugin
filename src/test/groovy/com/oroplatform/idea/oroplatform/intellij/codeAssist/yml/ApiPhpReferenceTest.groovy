@@ -95,6 +95,18 @@ class ApiPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
+    def void "test: suggest fields as identifier field names"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      identifier_field_names: [<caret>]
+            """.stripMargin(),
+            ["field1"]
+        )
+    }
+
     @Override
     protected void tearDown() throws Exception {
         super.tearDown()
