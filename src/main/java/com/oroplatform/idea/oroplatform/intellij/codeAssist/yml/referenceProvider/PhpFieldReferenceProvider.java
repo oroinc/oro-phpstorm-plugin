@@ -29,11 +29,21 @@ public class PhpFieldReferenceProvider extends PsiReferenceProvider {
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
 
+        //TODO: refactor this class...
         if(element instanceof YAMLKeyValue) {
-            //TODO: refactor this - support for classPropertyPath. Add support for sequences in classPropertyPath
-            YAMLKeyValue classKeyValue = getYamlKeyValueSiblingWithName((YAMLKeyValue) element, "entity");
-            String className = classKeyValue == null ? "" : classKeyValue.getValueText();
-            return new PsiReference[]{new PhpFieldReference(element, className, ((YAMLKeyValue) element).getValueText())};
+            if(classPropertyPath.getProperties().isEmpty()) {
+                //TODO: refactor this - support for classPropertyPath. Add support for sequences in classPropertyPath
+                final YAMLKeyValue classKeyValue = getYamlKeyValueSiblingWithName((YAMLKeyValue) element, "entity");
+                final String className = classKeyValue == null ? "" : classKeyValue.getValueText();
+                return new PsiReference[]{new PhpFieldReference(element, className, ((YAMLKeyValue) element).getValueText())};
+            } else {
+                final YAMLFile file = (YAMLFile) element.getContainingFile();
+                final Set<PsiElement> ancestors = getAncestors(element);
+                final Collection<String> properties = getPropertyNamesFrom(classPropertyPath, YamlPsiElements.getMappingsFrom(file), ancestors);
+                if(!properties.isEmpty()) {
+                    return new PsiReference[]{new PhpFieldReference(((YAMLKeyValue) element).getKey(), properties.iterator().next(), ((YAMLKeyValue) element).getKeyText())};
+                }
+            }
         } else if(element instanceof YAMLScalar) {
             final YAMLFile file = (YAMLFile) element.getContainingFile();
             final Set<PsiElement> ancestors = getAncestors(element);

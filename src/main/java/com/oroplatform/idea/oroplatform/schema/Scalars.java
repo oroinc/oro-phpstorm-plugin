@@ -132,7 +132,7 @@ final class Scalars {
     };
 
     //TODO: remove this field, use function "field(path)" instead
-    final static Scalar field = field(new PropertyPath("$this"));
+    final static Scalar field = field(new PropertyPath());
 
     static Scalar field(final PropertyPath classPropertyPath) {
         return new Scalar() {

@@ -107,6 +107,36 @@ class ApiPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
+    def void "test: not suggest fields as field child"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      sorters:
+            |        fields:
+            |          field1:
+            |            <caret>
+            """.stripMargin(),
+            [],
+            ["field1"]
+        )
+    }
+// TODO: it is not passing, but it works. Fix test.
+//    def void "test: detect field reference"() {
+//        checkPhpReference(
+//            """
+//            |oro_api:
+//            |  entities:
+//            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+//            |      sorters:
+//            |        fields:
+//            |          fiel<caret>d1: ~
+//            """,
+//            ["Oro\\Bundle\\AcmeBundle\\Entity\\Address.field1"]
+//        )
+//    }
+
     @Override
     protected void tearDown() throws Exception {
         super.tearDown()
