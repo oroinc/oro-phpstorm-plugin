@@ -43,7 +43,6 @@ class ReferenceVisitor extends YamlVisitor {
         if (provider != null) {
             registrar.registerReferenceProvider(
                 context == VisitingContext.PROPERTY_VALUE ? psiElement().andOr(capture, psiElement().withParent(capture)) : capture,
-//                psiElement().andOr(capture, psiElement().withParent(capture)),
                 provider
             );
         }

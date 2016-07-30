@@ -122,20 +122,20 @@ class ApiPhpReferenceTest extends PhpReferenceTest {
             ["field1"]
         )
     }
-// TODO: it is not passing, but it works. Fix test.
-//    def void "test: detect field reference"() {
-//        checkPhpReference(
-//            """
-//            |oro_api:
-//            |  entities:
-//            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
-//            |      sorters:
-//            |        fields:
-//            |          fiel<caret>d1: ~
-//            """,
-//            ["Oro\\Bundle\\AcmeBundle\\Entity\\Address.field1"]
-//        )
-//    }
+
+    def void "test: detect field reference"() {
+        checkPhpReference(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      sorters:
+            |        fields:
+            |          fie<caret>ld1: ~
+            """.stripMargin(),
+            ["Oro\\Bundle\\AcmeBundle\\Entity\\Address.\$field1"]
+        )
+    }
 
     @Override
     protected void tearDown() throws Exception {
