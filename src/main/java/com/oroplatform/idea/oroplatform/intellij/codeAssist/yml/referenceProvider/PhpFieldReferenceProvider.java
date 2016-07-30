@@ -10,6 +10,7 @@ import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.YAMLPsiElement;
 import org.jetbrains.yaml.psi.YAMLScalar;
 
 import java.util.Collection;
@@ -21,37 +22,37 @@ public class PhpFieldReferenceProvider extends PsiReferenceProvider {
     private final PropertyPath classPropertyPath;
 
     public PhpFieldReferenceProvider(PropertyPath classPropertyPath) {
-
         this.classPropertyPath = classPropertyPath;
     }
 
     @NotNull
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-
-        //TODO: refactor this class...
-        if(element instanceof YAMLKeyValue) {
-            if(classPropertyPath.getProperties().isEmpty()) {
-                //TODO: refactor this - support for classPropertyPath. Add support for sequences in classPropertyPath
-                final YAMLKeyValue classKeyValue = getYamlKeyValueSiblingWithName((YAMLKeyValue) element, "entity");
-                final String className = classKeyValue == null ? "" : classKeyValue.getValueText();
-                return new PsiReference[]{new PhpFieldReference(element, className, ((YAMLKeyValue) element).getValueText())};
-            } else {
-                final YAMLFile file = (YAMLFile) element.getContainingFile();
-                final Set<PsiElement> ancestors = getAncestors(element);
-                final Collection<String> properties = getPropertyNamesFrom(classPropertyPath, YamlPsiElements.getMappingsFrom(file), ancestors);
-                if(!properties.isEmpty()) {
-                    return new PsiReference[]{new PhpFieldReference(((YAMLKeyValue) element).getKey(), properties.iterator().next(), ((YAMLKeyValue) element).getKeyText())};
-                }
-            }
-        } else if(element instanceof YAMLScalar) {
+        if(element instanceof YAMLPsiElement) {
             final YAMLFile file = (YAMLFile) element.getContainingFile();
             final Set<PsiElement> ancestors = getAncestors(element);
-            final Collection<String> properties = getPropertyNamesFrom(classPropertyPath, YamlPsiElements.getMappingsFrom(file), ancestors);
+            final Collection<String> properties = classPropertyPath.doesPointToValue() ?
+                getPropertyValuesFrom(classPropertyPath, YamlPsiElements.getMappingsFrom(file), ancestors) :
+                getPropertyKeysFrom(classPropertyPath, YamlPsiElements.getMappingsFrom(file), ancestors);
             if(!properties.isEmpty()) {
-                return new PsiReference[]{new PhpFieldReference(element, properties.iterator().next(), ((YAMLScalar) element).getTextValue())};
+                return new PsiReference[]{new PhpFieldReference(getReferenceElement(element), properties.iterator().next(), getReferenceText(element))};
             }
         }
+
         return new PsiReference[0];
+    }
+
+    private static PsiElement getReferenceElement(PsiElement element) {
+        return element instanceof YAMLKeyValue ? ((YAMLKeyValue) element).getKey() : element;
+    }
+
+    private static String getReferenceText(PsiElement element) {
+        if(element instanceof YAMLScalar) {
+            return ((YAMLScalar) element).getTextValue();
+        } else if(element instanceof YAMLKeyValue) {
+            return ((YAMLKeyValue) element).getKeyText();
+        } else {
+            return element.getText();
+        }
     }
 }

@@ -35,7 +35,7 @@ public class YamlPsiElements {
         return out;
     }
 
-    static Collection<YAMLScalar> filterScalars(Collection<PsiElement> elements) {
+    static Collection<YAMLScalar> filterScalars(Collection<? extends PsiElement> elements) {
         List<YAMLScalar> children = new LinkedList<YAMLScalar>();
         for(PsiElement element : elements) {
             if(element instanceof YAMLScalar) {
@@ -57,6 +57,17 @@ public class YamlPsiElements {
         return out;
     }
 
+    private static Collection<YAMLSequence> filterSequences(Collection<? extends PsiElement> elements) {
+        List<YAMLSequence> out = new LinkedList<YAMLSequence>();
+        for(PsiElement element : elements) {
+            if(element instanceof YAMLSequence) {
+                out.add((YAMLSequence) element);
+            }
+        }
+
+        return out;
+    }
+
     public static List<YAMLMapping> getMappingsFrom(@NotNull PsiFile file) {
         List<YAMLMapping> elements = new LinkedList<YAMLMapping>();
         for(PsiElement element : file.getChildren()) {
@@ -67,8 +78,8 @@ public class YamlPsiElements {
         return elements;
     }
 
-    public static List<PsiElement> getSequenceItems(List<? extends PsiElement> elements) {
-        List<PsiElement> items = new LinkedList<PsiElement>();
+    public static List<YAMLPsiElement> getSequenceItems(Collection<? extends PsiElement> elements) {
+        List<YAMLPsiElement> items = new LinkedList<YAMLPsiElement>();
         for(PsiElement element : elements) {
             if(element instanceof YAMLSequence) {
                 for(YAMLSequenceItem item : ((YAMLSequence) element).getItems()) {
@@ -126,24 +137,24 @@ public class YamlPsiElements {
         return getAncestors(parent, ancestors);
     }
 
-    public static Collection<String> getPropertiesFrom(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
-        if(path.getProperties().isEmpty()) {
-            return getPropertiesFrom(elements);
-        }
-
-        final PropertyPath.Property property = path.getProperties().element();
-
-        return getPropertiesFrom(path.dropHead(), getElementsForProperty(property, elements, ancestors), ancestors);
-    }
-
-    public static Collection<String> getPropertyNamesFrom(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
+    public static Collection<String> getPropertyKeysFrom(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
         if(path.getProperties().isEmpty()) {
             return getParentKeysFrom(elements);
         }
 
         final PropertyPath.Property property = path.getProperties().element();
 
-        return getPropertyNamesFrom(path.dropHead(), getElementsForProperty(property, elements, ancestors), ancestors);
+        return getPropertyKeysFrom(path.dropHead(), getElementsForProperty(property, elements, ancestors), ancestors);
+    }
+
+    public static Collection<String> getPropertyValuesFrom(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
+        if(path.getProperties().isEmpty()) {
+            return getPropertyValuesFrom(elements);
+        }
+
+        final PropertyPath.Property property = path.getProperties().element();
+
+        return getPropertyValuesFrom(path.dropHead(), getElementsForProperty(property, elements, ancestors), ancestors);
     }
 
     @NotNull
@@ -156,6 +167,12 @@ public class YamlPsiElements {
                     newElements.add(keyValue.getValue());
                 }
             }
+
+            for (YAMLPsiElement item : getSequenceItems(elements)) {
+                if(ancestors.contains(item)) {
+                    newElements.add(item);
+                }
+            }
         } else {
             for (YAMLMapping mapping : filterMappings(elements)) {
                 final YAMLKeyValue keyValue = mapping.getKeyValueByKey(property.getName());
@@ -163,20 +180,12 @@ public class YamlPsiElements {
                     newElements.add(keyValue.getValue());
                 }
             }
-        }
-        return newElements;
-    }
 
-    private static Collection<String> getPropertiesFrom(Collection<? extends YAMLPsiElement> elements) {
-        Collection<String> properties = new THashSet<String>();
-
-        for (YAMLMapping mapping : filterMappings(elements)) {
-            for (YAMLKeyValue keyValue : YamlPsiElements.getKeyValuesFrom(mapping)) {
-                properties.add(keyValue.getKeyText());
+            for (YAMLSequence sequence : filterSequences(elements)) {
+                newElements.add(sequence);
             }
         }
-
-        return properties;
+        return newElements;
     }
 
     private static Collection<String> getParentKeysFrom(Collection<? extends YAMLPsiElement> elements) {
@@ -190,6 +199,21 @@ public class YamlPsiElements {
         }
 
         return keys;
+    }
+
+    private static Collection<String> getPropertyValuesFrom(Collection<? extends YAMLPsiElement> elements) {
+        final Collection<String> values = new THashSet<String>();
+        for (YAMLScalar element : filterScalars(elements)) {
+            values.add(element.getTextValue());
+        }
+
+        for(YAMLMapping element : filterMappings(elements)) {
+            for (YAMLKeyValue keyValue : element.getKeyValues()) {
+                values.add(keyValue.getKeyText());
+            }
+        }
+
+        return values;
     }
 
 }

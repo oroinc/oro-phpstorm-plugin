@@ -53,7 +53,7 @@ public class Schemas {
                     Property.named("exclusions", Sequence.of(
                         Container.with(
                             Property.named("entity", Scalars.fullEntity).required(),
-                            Property.named("field", Scalars.field)
+                            Property.named("field", Scalars.field(new PropertyPath("oro_entity", "$this", "exclusions", "$this", "entity").pointsToValue()))
                         )
                     )),
                     Property.named("entity_alias_exclusions", Sequence.of(Scalars.fullEntity)),
@@ -352,7 +352,7 @@ public class Schemas {
                 Container.with(
                     Property.named("label", Scalars.any),
                     Property.named("entity", Scalars.fullEntity),
-                    Property.named("entity_attribute", Scalars.field),
+                    Property.named("entity_attribute", Scalars.field(new PropertyPath("workflows", "$this", "entity").pointsToValue())),
                     Property.named("is_system", Scalars.bool),
                     Property.named("start_step", Scalars.any),
                     Property.named("steps_display_ordered", Scalars.bool),
