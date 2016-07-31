@@ -538,7 +538,7 @@ public class Schemas {
                             ))
                         )),
                         Property.named("identifier_field_names", Sequence.of(Scalars.field(new PropertyPath("oro_api", "entities", "$this")))),
-                        Property.named("post_serialize", Scalars.any),//TODO: callable as array?
+                        Property.named("post_serialize", Sequence.of(Scalars.callable)),
                         Property.named("delete_handler", Scalars.service),
                         Property.named("form_type", Scalars.formType),
                         Property.named("form_options", formOptions),

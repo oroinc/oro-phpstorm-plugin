@@ -12,7 +12,7 @@ public class PhpClass {
         return new PhpClass("Entity", allowDoctrineShortcutNotation);
     }
 
-    static PhpClass any() {
+    public static PhpClass any() {
         return new PhpClass(null, false);
     }
 

@@ -57,7 +57,7 @@ public class PhpMethodReference extends PsiPolyVariantReferenceBase<PsiElement> 
 
         for(PhpClass phpClass : phpClasses) {
             for(Method method : phpClass.getMethods()) {
-                if(method.getAccess() == PhpModifier.Access.PUBLIC && phpMethod.matches(method.getName())) {
+                if(method.getAccess() == PhpModifier.Access.PUBLIC && phpMethod.matches(method)) {
                     methods.add(new PhpLookupElement(method));
                 }
             }

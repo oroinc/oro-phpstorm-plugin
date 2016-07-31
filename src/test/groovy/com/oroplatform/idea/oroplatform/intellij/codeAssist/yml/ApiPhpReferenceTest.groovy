@@ -30,6 +30,9 @@ class ApiPhpReferenceTest extends PhpReferenceTest {
             |
             |namespace Oro\\Bundle\\AcmeBundle {
             |  class AcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+            |  class PostSerializeHandler {
+            |    public static function someFunc() {}
+            |  }
             |}
             |
             |namespace Oro\\Bundle\\AcmeBundle\\Entity {
@@ -134,6 +137,66 @@ class ApiPhpReferenceTest extends PhpReferenceTest {
             |          fie<caret>ld1: ~
             """.stripMargin(),
             ["Oro\\Bundle\\AcmeBundle\\Entity\\Address.\$field1"]
+        )
+    }
+
+    def void "test: suggest php class in post_serialize"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      post_serialize: [<caret>]
+            """.stripMargin(),
+            ["PostSerializeHandler"]
+        )
+    }
+
+    def void "test: suggest php class method in post_serialize"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      post_serialize: [Oro\\Bundle\\AcmeBundle\\PostSerializeHandler, <caret>]
+            """.stripMargin(),
+            ["someFunc"]
+        )
+    }
+
+    def void "test: detect php class in post_serialize"() {
+        checkPhpReference(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      post_serialize: [Oro\\Bundle\\AcmeB<caret>undle\\PostSerializeHandler]
+            """.stripMargin(),
+            ["Oro\\Bundle\\AcmeBundle\\PostSerializeHandler"]
+        )
+    }
+
+    def void "test: detect php class method in post_serialize"() {
+        checkPhpReference(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      post_serialize: [Oro\\Bundle\\AcmeBundle\\PostSerializeHandler, someF<caret>unc]
+            """.stripMargin(),
+            ["Oro\\Bundle\\AcmeBundle\\PostSerializeHandler.someFunc"]
+        )
+    }
+
+    def void "test: suggest quoted php class in post_serialize"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      post_serialize: ["<caret>"]
+            """.stripMargin(),
+            ["PostSerializeHandler"]
         )
     }
 

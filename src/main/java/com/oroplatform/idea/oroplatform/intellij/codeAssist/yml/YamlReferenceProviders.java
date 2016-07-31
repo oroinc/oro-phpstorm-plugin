@@ -22,6 +22,11 @@ class YamlReferenceProviders implements ReferenceProviders {
     }
 
     @Override
+    public PsiReferenceProvider phpCallable(InsertHandler<LookupElement> insertHandler) {
+        return new PhpCallableReferenceProvider();
+    }
+
+    @Override
     public PsiReferenceProvider phpClass(PhpClass phpClass, InsertHandler<LookupElement> insertHandler) {
         return new PhpClassReferenceProvider(phpClass, insertHandler);
     }

@@ -10,6 +10,7 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceProviders;
 import com.oroplatform.idea.oroplatform.schema.requirements.PatternRequirement;
 import com.oroplatform.idea.oroplatform.schema.requirements.Requirement;
 import com.oroplatform.idea.oroplatform.schema.requirements.ChoicesRequirement;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -114,6 +115,13 @@ final class Scalars {
 
     final static Scalar phpClass = phpClass(PhpClass.any());
 
+    final static Scalar callable = new Scalar() {
+        @Nullable
+        @Override
+        public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.phpCallable(insertHandler);
+        }
+    };
 
     private static Scalar phpClass(final PhpClass clazz) {
         return new Scalar() {
