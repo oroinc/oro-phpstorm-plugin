@@ -32,7 +32,7 @@ public class YamlSupport implements ApplicationComponent {
     @Override
     public void disposeComponent() {
         for (ManipulatorItem<? extends PsiElement> manipulator : manipulators) {
-            if(ElementManipulators.INSTANCE.forKey(manipulator.key).isEmpty()) {
+            if(!ElementManipulators.INSTANCE.forKey(manipulator.key).isEmpty()) {
                 ElementManipulators.INSTANCE.removeExplicitExtension(manipulator.key, manipulator.manipulator);
             }
         }
