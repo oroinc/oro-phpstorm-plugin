@@ -581,7 +581,7 @@ public class Schemas {
                         Property.named("fields", apiFields(new PropertyPath("oro_api", "relations", "$this"))),
                         Property.named("filters", apiFilters(new PropertyPath("oro_api", "relations", "$this"))),
                         Property.named("sorters", apiSorters(new PropertyPath("oro_api", "relations", "$this")))
-                    )).withKeyElement(Scalars.fullEntity)
+                    ).allowExtraProperties()).withKeyElement(Scalars.fullEntity)
                 ))
             ))
         ));
