@@ -1,5 +1,6 @@
 package com.oroplatform.idea.oroplatform.schema;
 
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
@@ -16,6 +17,12 @@ class WorkflowMatcher implements FileMatcher {
     public boolean matches(PsiFile file) {
         if(!OroPlatformSettings.getInstance(file.getProject()).isPluginEnabled()) {
             //avoid caching empty indexes values when plugin is disabled
+            return false;
+        }
+
+        if(ProgressManager.getInstance().hasModalProgressIndicator()) {
+            //fix for: https://github.com/orocrm/oro-phpstorm-plugin/issues/5
+            //refactoring or other heavy stuff is in progress, skip in order to avoid indexing
             return false;
         }
 

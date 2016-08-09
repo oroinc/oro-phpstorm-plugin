@@ -39,7 +39,7 @@ public class ImportFileBasedIndex extends FileBasedIndexExtension<String, Collec
             @NotNull
             @Override
             public Map<String, Collection<String>> map(@NotNull FileContent inputData) {
-                Map<String, Collection<String>> index = new THashMap<String, Collection<String>>();
+                final Map<String, Collection<String>> index = new THashMap<String, Collection<String>>();
 
                 if(!OroPlatformSettings.getInstance(inputData.getProject()).isPluginEnabled()) {
                     return index;
@@ -91,10 +91,10 @@ public class ImportFileBasedIndex extends FileBasedIndexExtension<String, Collec
     @NotNull
     @Override
     public FileBasedIndex.InputFilter getInputFilter() {
-        return new FileBasedIndex.InputFilter() {
+        return new DefaultFileTypeSpecificInputFilter(YAMLFileType.YML) {
             @Override
             public boolean acceptInput(@NotNull VirtualFile file) {
-                return file.getFileType().equals(YAMLFileType.YML) && file.getPath().contains("Resources/config");
+                return file.getFileType().equals(YAMLFileType.YML) && file.getPath().contains("/Resources/config/");
             }
         };
     }
