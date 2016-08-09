@@ -10,6 +10,12 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.0-alpha14</h2>
+<ul>
+  <li>[#5] bug fix for reindex during php field rename refactoring</li>
+  <li>Fixes for <b>api.yml</b> inspections</li>
+</ul>
+
 <h2>1.0.0-alpha13</h2>
 <ul>
   <li>Autocomplete for the <b>api.yml</b></li>
