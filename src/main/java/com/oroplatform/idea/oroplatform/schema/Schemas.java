@@ -13,9 +13,10 @@ public class Schemas {
         public final static String WORKFLOW = "Resources/config/workflow.yml";
         public final static String SYSTEM_CONFIGURATION = "Resources/config/system_configuration.yml";
         public final static String API = "Resources/config/oro/api.yml";
+        public final static String ACTIONS = "Resources/config/oro/actions.yml";
     }
 
-    public static final Collection<Schema> ALL = asList(acl(), entity(), datagrid(), workflow(), systemConfiguration(), api());
+    public static final Collection<Schema> ALL = asList(acl(), entity(), datagrid(), workflow(), systemConfiguration(), api(), actions());
 
     private static Schema acl() {
         return new Schema(new FilePathMatcher(FilePathPatterns.ACL), Container.with(
@@ -583,6 +584,111 @@ public class Schemas {
                         Property.named("sorters", apiSorters(new PropertyPath("oro_api", "relations", "$this")))
                     ).allowExtraProperties()).withKeyElement(Scalars.fullEntity)
                 ))
+            ))
+        ));
+    }
+
+    private static Schema actions() {
+        return new Schema(new FilePathMatcher(FilePathPatterns.ACTIONS), Container.with(
+            Property.named("operations", Container.with(
+                Property.any(
+                    Container.with(
+                        Property.named("name", Scalars.any),
+                        //TODO: any operation or only from this file?
+                        Property.named("extends", Scalars.choices("UPDATE", "DELETE")),
+                        Property.named("label", Scalars.any),
+                        //TODO: what operations should be suggested? From all files or maybe only from this file?
+                        Property.named("substitute_operation", Scalars.any),
+                        Property.named("button_options", Container.with(
+                            Property.named("icon", Scalars.any),
+                            Property.named("class", Scalars.any),
+                            Property.named("group", Scalars.any),
+                            Property.named("template", Scalars.any),
+                            Property.named("data", Scalars.any),
+                            Property.named("page_component_module", Scalars.any),
+                            Property.named("page_component_options", Scalars.any)
+                        )),
+                        Property.named("enabled", Scalars.bool),
+                        //TODO: entities: full or shortcuts possible?
+                        Property.named("entities", Scalars.any),
+                        Property.named("for_all_entities", Scalars.bool),
+                        //TODO: entities,
+                        Property.named("exclude_entities", Scalars.any),
+                        //TODO: index routes - how? from cache?
+                        Property.named("routes", Sequence.of(Scalars.any)),
+                        Property.named("groups", Sequence.of(Scalars.any)),
+                        //TODO: index datagrids
+                        Property.named("datagrids", Sequence.of(Scalars.any)),
+                        Property.named("for_all_datagrids", Scalars.bool),
+                        //TODO: datagrids
+                        Property.named("exclude_datagrids", Scalars.any),
+                        Property.named("order", Scalars.integer),
+                        //TODO: index acl (from acl.yml)
+                        Property.named("acl_resource", Scalars.any),
+                        Property.named("frontend_options", Container.with(
+                            //TODO: index twig templates
+                            Property.named("template", Scalars.any),
+                            Property.named("title", Scalars.any),
+                            //TODO: options
+                            Property.named("options", Scalars.any),
+                            //TODO: index messages?
+                            Property.named("confirmation", Scalars.any),
+                            Property.named("show_dialog", Scalars.bool)
+                        )),
+                        //TODO: actions?
+                        Property.named("preactions", Scalars.any),
+                        //TODO: conditions?
+                        Property.named("preconditions", Scalars.any),
+                        Property.named("attributes", Container.with(
+                            Container.with(
+                                Property.named("type", Scalars.any),
+                                Property.named("label", Scalars.any),
+                                Property.named("property_path", Scalars.any),
+                                Property.named("options", Container.with(
+                                    //TODO: suggest any class
+                                    Property.named("class", Scalars.any)
+                                ))
+                            )
+                        )),
+                        Property.named("datagrid_options", Container.with(
+                            //TODO: suggest service?
+                            Property.named("mass_action_provider", Scalars.any),
+                            //TODO: the same as in datagrid?
+                            Property.named("mass_action", Sequence.of(Scalars.any))
+                        )),
+                        Property.named("form_options", Container.with(
+                            //TODO: suggestions from "attributes" property
+                            Property.named("attribute_fields", Sequence.of(Scalars.any)),
+                            Property.named("attribute_default_values", Sequence.of(Scalars.any))
+                        )),
+                        //TODO: actions?
+                        Property.named("form_init", Scalars.any),
+                        //TODO: conditions
+                        Property.named("conditions", Scalars.any),
+                        //TODO: actions
+                        Property.named("actions", Scalars.any)
+                    )
+                ).withKeyElement(Scalars.choices("UPDATE", "DELETE"))
+            )),
+            Property.named("action_groups", Container.with(
+                Container.with(
+                    Property.named("parameters", Container.with(
+                        Container.with(
+                            //TODO: choice
+                            Property.named("type", Scalars.any),
+                            Property.named("default", Scalars.any),
+                            Property.named("required", Scalars.bool),
+                            //TODO: translation message?
+                            Property.named("message", Scalars.any)
+                        )
+                    )),
+                    //TODO: actions
+                    Property.named("actions", Scalars.any),
+                    //TODO: conditions
+                    Property.named("conditions", Scalars.any),
+                    //TODO: acl
+                    Property.named("acl_resource", Scalars.any)
+                )
             ))
         ));
     }
