@@ -1,11 +1,7 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
-import com.intellij.testFramework.LoggedErrorProcessor
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
 import com.oroplatform.idea.oroplatform.schema.Schemas
-import org.apache.log4j.Logger
-import org.jetbrains.annotations.NotNull
-
 
 class EntityPhpReferenceTest extends PhpReferenceTest {
     @Override
@@ -16,13 +12,6 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
     @Override
     protected void setUp() throws Exception {
         super.setUp()
-
-        //turn off falling tests on internal errors because there is bug in php plugin during indexing class with field
-        LoggedErrorProcessor.setNewInstance(new LoggedErrorProcessor() {
-            @Override
-            void processError(String message, Throwable t, String[] details, @NotNull Logger logger) {
-            }
-        })
 
         myFixture.configureByText("classes.php",
             """
@@ -290,11 +279,5 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
             [],
             ["Country"]
         )
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown()
-        LoggedErrorProcessor.setNewInstance(new LoggedErrorProcessor())
     }
 }

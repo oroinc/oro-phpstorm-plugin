@@ -1,10 +1,26 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist
 
 import com.intellij.psi.PsiPolyVariantReferenceBase
+import com.intellij.testFramework.LoggedErrorProcessor
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement
+import org.apache.log4j.Logger
+import org.jetbrains.annotations.NotNull
 
 
-abstract class PhpReferenceTest extends CompletionTest{
+abstract class PhpReferenceTest extends CompletionTest {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp()
+
+        //turn off falling tests on internal errors because there is bug in php plugin during indexing class with field
+        LoggedErrorProcessor.setNewInstance(new LoggedErrorProcessor() {
+            @Override
+            void processError(String message, Throwable t, String[] details, @NotNull Logger logger) {
+            }
+        })
+    }
+
     def checkPhpReference(String content, List<String> expectedReferences) {
         assertEquals(expectedReferences, getPhpReference(content))
     }
@@ -28,4 +44,9 @@ abstract class PhpReferenceTest extends CompletionTest{
             .toList()
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown()
+        LoggedErrorProcessor.setNewInstance(new LoggedErrorProcessor())
+    }
 }

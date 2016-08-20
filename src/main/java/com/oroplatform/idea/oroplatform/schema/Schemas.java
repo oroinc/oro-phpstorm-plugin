@@ -609,11 +609,9 @@ public class Schemas {
                             Property.named("page_component_options", Scalars.any)
                         )),
                         Property.named("enabled", Scalars.bool),
-                        //TODO: entities: full or shortcuts possible?
-                        Property.named("entities", Scalars.any),
+                        Property.named("entities", Sequence.of(Scalars.fullEntity)),
                         Property.named("for_all_entities", Scalars.bool),
-                        //TODO: entities,
-                        Property.named("exclude_entities", Scalars.any),
+                        Property.named("exclude_entities", Sequence.of(Scalars.fullEntity)),
                         //TODO: index routes - how? from cache?
                         Property.named("routes", Sequence.of(Scalars.any)),
                         Property.named("groups", Sequence.of(Scalars.any)),
@@ -651,22 +649,30 @@ public class Schemas {
                             )
                         )),
                         Property.named("datagrid_options", Container.with(
-                            //TODO: suggest service?
-                            Property.named("mass_action_provider", Scalars.any),
+                            Property.named("mass_action_provider", Scalars.massActionProvider),
                             //TODO: the same as in datagrid?
                             Property.named("mass_action", Sequence.of(Scalars.any))
                         )),
                         Property.named("form_options", Container.with(
-                            //TODO: suggestions from "attributes" property
-                            Property.named("attribute_fields", Sequence.of(Scalars.any)),
-                            Property.named("attribute_default_values", Sequence.of(Scalars.any))
+                            Property.named("attribute_fields", Container.with(
+                                Container.with(
+                                    Property.named("form_type", Scalars.formType),
+                                    Property.named("options", Container.any)
+                                )
+                            )),
+                            Property.named("attribute_default_values", Container.with(
+                                Property.any(Scalars.any)
+                                    .withKeyElement(Scalars.propertiesFromPath(new PropertyPath("operations", "$this", "form_options", "attribute_fields")))
+                            ))
                         )),
                         //TODO: actions?
                         Property.named("form_init", Scalars.any),
                         //TODO: conditions
                         Property.named("conditions", Scalars.any),
                         //TODO: actions
-                        Property.named("actions", Scalars.any)
+                        Property.named("actions", Scalars.any),
+                        Property.named("replace", Scalars.any),
+                        Property.named("applications", Sequence.of(Scalars.any))
                     )
                 ).withKeyElement(Scalars.choices("UPDATE", "DELETE"))
             )),

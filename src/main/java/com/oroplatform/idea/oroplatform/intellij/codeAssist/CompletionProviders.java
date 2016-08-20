@@ -14,6 +14,7 @@ public interface CompletionProviders {
     CompletionProvider<CompletionParameters> formType(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> datagrid(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> service(InsertHandler<LookupElement> insertHandler);
+    CompletionProvider<CompletionParameters> massActionProvider(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> propertiesFromPath(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> choices(List<String> choices, InsertHandler<LookupElement> insertHandler);
 }

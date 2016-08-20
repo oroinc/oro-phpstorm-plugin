@@ -32,4 +32,8 @@ public class ServicesIndex {
     public Collection<String> findServices() {
         return FileBasedIndex.getInstance().getAllKeys(ServicesFileBasedIndex.KEY, project);
     }
+
+    public Collection<String> findMassActionProviders() {
+        return FileBasedIndex.getInstance().getAllKeys(MassActionProviderFileBasedIndex.KEY, project);
+    }
 }

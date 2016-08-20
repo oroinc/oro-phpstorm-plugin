@@ -39,6 +39,11 @@ class YamlCompletionProviders implements CompletionProviders {
     }
 
     @Override
+    public CompletionProvider<CompletionParameters> massActionProvider(InsertHandler<LookupElement> insertHandler) {
+        return new MassActionProviderCompletionProvider(insertHandler);
+    }
+
+    @Override
     public CompletionProvider<CompletionParameters> propertiesFromPath(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler) {
         return new ChoicesFromPathCompletionProvider(path, prefix, insertHandler);
     }

@@ -84,6 +84,14 @@ final class Scalars {
         }
     };
 
+    final static Scalar massActionProvider = new Scalar() {
+        @Nullable
+        @Override
+        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.massActionProvider(insertHandler);
+        }
+    };
+
     final static Scalar formType = new Scalar() {
         @Override
         public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {

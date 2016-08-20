@@ -164,4 +164,38 @@ class ActionsCompletionTest extends CompletionTest {
             ["type", "default", "required", "message"]
         )
     }
+
+    def void "test: suggest properties for attribute_fields"() {
+        suggestions(
+            """
+            |operations:
+            |  some_op:
+            |    form_options:
+            |      attribute_fields:
+            |        field1:
+            |          <caret>
+            |
+            """.stripMargin(),
+
+            ["form_type", "options"]
+        )
+    }
+
+    def void "test: suggest attributes for attribute_default_values"() {
+        suggestions(
+            """
+            |operations:
+            |  some_op:
+            |    form_options:
+            |      attribute_fields:
+            |        attr1: ~
+            |        attr2: ~
+            |      attribute_default_values:
+            |        <caret>
+            |
+            """.stripMargin(),
+
+            ["attr1", "attr2"]
+        )
+    }
 }
