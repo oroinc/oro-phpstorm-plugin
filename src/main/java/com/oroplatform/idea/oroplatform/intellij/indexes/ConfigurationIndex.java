@@ -5,19 +5,23 @@ import com.intellij.util.indexing.FileBasedIndex;
 
 import java.util.Collection;
 
-public class DatagridIndex {
+public class ConfigurationIndex {
 
     private final Project project;
 
-    private DatagridIndex(Project project) {
+    private ConfigurationIndex(Project project) {
         this.project = project;
     }
 
-    public static DatagridIndex instance(Project project) {
-        return new DatagridIndex(project);
+    public static ConfigurationIndex instance(Project project) {
+        return new ConfigurationIndex(project);
     }
 
     public Collection<String> getDatagrids() {
         return FileBasedIndex.getInstance().getAllKeys(DatagridFileBasedIndex.KEY, project);
+    }
+
+    public Collection<String> getAcls() {
+        return FileBasedIndex.getInstance().getAllKeys(AclFileBasedIndex.KEY, project);
     }
 }

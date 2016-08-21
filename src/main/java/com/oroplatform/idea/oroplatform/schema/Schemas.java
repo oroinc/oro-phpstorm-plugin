@@ -41,7 +41,8 @@ public class Schemas {
                         Property.named("method", Scalars.any).required()
                     ))),
                     Property.named("group_name", Scalars.any),
-                    Property.named("description", Scalars.any)
+                    Property.named("description", Scalars.any),
+                    Property.named("category", Scalars.any)
                 )
             )
         ));
@@ -597,6 +598,7 @@ public class Schemas {
         ));
         //TODO: what operations should be suggested? From all files or maybe only from this file?
         final Element operations = Scalars.choices("UPDATE", "DELETE");
+        final Scalar acl = Scalars.acl;
 
         return new Schema(new FilePathMatcher(FilePathPatterns.ACTIONS), Container.with(
             Property.named("operations", Container.with(
@@ -623,14 +625,11 @@ public class Schemas {
                         //TODO: index routes - how? from cache?
                         Property.named("routes", Sequence.of(Scalars.any)),
                         Property.named("groups", Sequence.of(Scalars.any)),
-                        //TODO: index datagrids
-                        Property.named("datagrids", Sequence.of(Scalars.any)),
+                        Property.named("datagrids", Sequence.of(Scalars.datagrid)),
                         Property.named("for_all_datagrids", Scalars.bool),
-                        //TODO: datagrids
-                        Property.named("exclude_datagrids", Scalars.any),
+                        Property.named("exclude_datagrids", Sequence.of(Scalars.datagrid)),
                         Property.named("order", Scalars.integer),
-                        //TODO: index acl (from acl.yml)
-                        Property.named("acl_resource", Scalars.any),
+                        Property.named("acl_resource", acl),
                         Property.named("frontend_options", Container.with(
                             //TODO: index twig templates
                             Property.named("template", Scalars.any),
@@ -690,8 +689,7 @@ public class Schemas {
                     )),
                     Property.named("actions", actions),
                     Property.named("conditions", conditions),
-                    //TODO: acl
-                    Property.named("acl_resource", Scalars.any)
+                    Property.named("acl_resource", acl)
                 )
             )),
             Property.named("skipped_config", Container.any)

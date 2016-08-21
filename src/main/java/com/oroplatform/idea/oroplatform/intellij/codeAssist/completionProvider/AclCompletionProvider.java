@@ -11,15 +11,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class DatagridCompletionProvider extends CompletionProvider<CompletionParameters> {
+public class AclCompletionProvider extends CompletionProvider<CompletionParameters> {
     @Override
     protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
         final Project project = parameters.getOriginalFile().getProject();
 
-        final Collection<String> datagrids = ConfigurationIndex.instance(project).getDatagrids();
+        final Collection<String> acls = ConfigurationIndex.instance(project).getAcls();
 
-        for (String datagrid : datagrids) {
-            result.addElement(LookupElementBuilder.create(datagrid));
+        for (String acl : acls) {
+            result.addElement(LookupElementBuilder.create(acl));
         }
     }
 }

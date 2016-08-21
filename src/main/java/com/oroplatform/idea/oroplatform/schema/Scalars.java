@@ -106,6 +106,13 @@ final class Scalars {
         }
     };
 
+    final static Scalar acl = new Scalar() {
+        @Override
+        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.acl(insertHandler);
+        }
+    };
+
     final static Scalar file = new Scalar() {
         @Override
         public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {

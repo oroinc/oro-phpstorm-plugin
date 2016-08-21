@@ -198,4 +198,48 @@ class ActionsCompletionTest extends CompletionTest {
             ["attr1", "attr2"]
         )
     }
+
+    def void "test: suggest datagrids for datagrid related properties"() {
+        configureByText(
+            "some/"+Schemas.FilePathPatterns.DATAGRID,
+            """
+            |datagrid:
+            |  grid1: ~
+            |  grid2: ~
+            """.stripMargin()
+        )
+
+        suggestions(
+            """
+            |operations:
+            |  some_op:
+            |    datagrids:
+            |      - <caret>
+            |
+            """.stripMargin(),
+
+            ["grid1", "grid2"]
+        )
+    }
+
+    def void "test: suggest acl_resources for acl related properties"() {
+        configureByText(
+            "some/"+Schemas.FilePathPatterns.ACL,
+            """
+            |acl1: ~
+            |acl2: ~
+            """.stripMargin()
+        )
+
+        suggestions(
+            """
+            |operations:
+            |  some_op:
+            |    acl_resource: <caret>
+            |
+            """.stripMargin(),
+
+            ["acl1", "acl2"]
+        )
+    }
 }

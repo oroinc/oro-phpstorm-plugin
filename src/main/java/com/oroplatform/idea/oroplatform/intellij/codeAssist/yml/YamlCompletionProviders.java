@@ -34,6 +34,11 @@ class YamlCompletionProviders implements CompletionProviders {
     }
 
     @Override
+    public CompletionProvider<CompletionParameters> acl(InsertHandler<LookupElement> insertHandler) {
+        return new AclCompletionProvider();
+    }
+
+    @Override
     public CompletionProvider<CompletionParameters> service(InsertHandler<LookupElement> insertHandler) {
         return new ServiceCompletionProvider(insertHandler);
     }
