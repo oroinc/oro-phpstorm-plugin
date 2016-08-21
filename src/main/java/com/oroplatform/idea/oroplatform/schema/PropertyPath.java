@@ -11,7 +11,7 @@ public class PropertyPath {
     private final List<Property> properties = new LinkedList<Property>();
     private final boolean pointsToValue;
 
-    PropertyPath(String... properties) {
+    public PropertyPath(String... properties) {
         this(getProperties(properties), false);
     }
 
