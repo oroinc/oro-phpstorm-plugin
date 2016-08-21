@@ -595,23 +595,24 @@ public class Schemas {
         final Element actions = Sequence.of(Container.with(
             Property.any(Container.any).withKeyElement(Scalars.action)
         ));
+        //TODO: what operations should be suggested? From all files or maybe only from this file?
+        final Element operations = Scalars.choices("UPDATE", "DELETE");
 
         return new Schema(new FilePathMatcher(FilePathPatterns.ACTIONS), Container.with(
             Property.named("operations", Container.with(
                 Property.any(
                     Container.with(
                         Property.named("name", Scalars.any),
-                        //TODO: any operation or only from this file?
-                        Property.named("extends", Scalars.choices("UPDATE", "DELETE")),
+                        Property.named("extends", operations),
                         Property.named("label", Scalars.any),
-                        //TODO: what operations should be suggested? From all files or maybe only from this file?
-                        Property.named("substitute_operation", Scalars.any),
+                        Property.named("substitute_operation", operations),
                         Property.named("button_options", Container.with(
                             Property.named("icon", Scalars.any),
                             Property.named("class", Scalars.any),
                             Property.named("group", Scalars.any),
+                            //TODO: twig template, index?
                             Property.named("template", Scalars.any),
-                            Property.named("data", Scalars.any),
+                            Property.named("data", Container.any),
                             Property.named("page_component_module", Scalars.any),
                             Property.named("page_component_options", Scalars.any)
                         )),
@@ -634,8 +635,7 @@ public class Schemas {
                             //TODO: index twig templates
                             Property.named("template", Scalars.any),
                             Property.named("title", Scalars.any),
-                            //TODO: options
-                            Property.named("options", Scalars.any),
+                            Property.named("options", Container.any),
                             //TODO: index messages?
                             Property.named("confirmation", Scalars.any),
                             Property.named("show_dialog", Scalars.bool)
@@ -648,8 +648,7 @@ public class Schemas {
                                 Property.named("label", Scalars.any),
                                 Property.named("property_path", Scalars.any),
                                 Property.named("options", Container.with(
-                                    //TODO: suggest any class
-                                    Property.named("class", Scalars.any)
+                                    Property.named("class", Scalars.phpClass)
                                 ))
                             )
                         )),
@@ -682,8 +681,7 @@ public class Schemas {
                 Container.with(
                     Property.named("parameters", Container.with(
                         Container.with(
-                            //TODO: choice
-                            Property.named("type", Scalars.any),
+                            Property.named("type", OneOf.from(Scalars.fullEntity, Scalars.choices("string", "integer", "boolean"))),
                             Property.named("default", Scalars.any),
                             Property.named("required", Scalars.bool),
                             //TODO: translation message?
@@ -695,8 +693,9 @@ public class Schemas {
                     //TODO: acl
                     Property.named("acl_resource", Scalars.any)
                 )
-            ))
-        ));
+            )),
+            Property.named("skipped_config", Container.any)
+        ).allowExtraProperties());
     }
 
 }
