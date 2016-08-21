@@ -26,6 +26,12 @@ class ActionsDicCompletionTest extends CompletionTest {
             |    <service id="service6">
             |      <tag name="form.type" alias="form1"/>
             |    </service>
+            |    <service id="service7">
+            |      <tag name="oro_workflow.condition" alias="condition1"/>
+            |    </service>
+            |    <service id="service8">
+            |      <tag name="oro_workflow.action" alias="action2"/>
+            |    </service>
             |  </services>
             |</container>
           """.stripMargin()
@@ -69,6 +75,51 @@ class ActionsDicCompletionTest extends CompletionTest {
             """.stripMargin(),
 
             ["form1"]
+        )
+    }
+
+    def void "test: suggest conditions in preconditions property"() {
+        suggestions(
+            """
+            |operations:
+            |  some_op:
+            |    preconditions:
+            |      <caret>
+            |
+            """.stripMargin(),
+
+            ["@condition1"],
+            ["@action1"]
+        )
+    }
+
+    def void "test: suggest conditions in conditions property"() {
+        suggestions(
+            """
+            |operations:
+            |  some_op:
+            |    conditions:
+            |      <caret>
+            |
+            """.stripMargin(),
+
+            ["@condition1"],
+            ["@action1"]
+        )
+    }
+
+    def void "test: suggest actions in preactions property"() {
+        suggestions(
+            """
+            |operations:
+            |  some_op:
+            |    preactions:
+            |      - <caret>
+            |
+            """.stripMargin(),
+
+            ["@action1"],
+            ["@condition1"]
         )
     }
 }

@@ -589,6 +589,13 @@ public class Schemas {
     }
 
     private static Schema actions() {
+        final Element conditions = Repeated.atAnyLevel(
+            Container.with(Property.any(Scalars.any).withKeyElement(Scalars.condition))
+        );
+        final Element actions = Sequence.of(Container.with(
+            Property.any(Container.any).withKeyElement(Scalars.action)
+        ));
+
         return new Schema(new FilePathMatcher(FilePathPatterns.ACTIONS), Container.with(
             Property.named("operations", Container.with(
                 Property.any(
@@ -633,10 +640,8 @@ public class Schemas {
                             Property.named("confirmation", Scalars.any),
                             Property.named("show_dialog", Scalars.bool)
                         )),
-                        //TODO: actions?
-                        Property.named("preactions", Scalars.any),
-                        //TODO: conditions?
-                        Property.named("preconditions", Scalars.any),
+                        Property.named("preactions", actions),
+                        Property.named("preconditions", conditions),
                         Property.named("attributes", Container.with(
                             Container.with(
                                 Property.named("type", Scalars.any),
@@ -665,12 +670,9 @@ public class Schemas {
                                     .withKeyElement(Scalars.propertiesFromPath(new PropertyPath("operations", "$this", "form_options", "attribute_fields")))
                             ))
                         )),
-                        //TODO: actions?
-                        Property.named("form_init", Scalars.any),
-                        //TODO: conditions
-                        Property.named("conditions", Scalars.any),
-                        //TODO: actions
-                        Property.named("actions", Scalars.any),
+                        Property.named("form_init", actions),
+                        Property.named("conditions", conditions),
+                        Property.named("actions", actions),
                         Property.named("replace", Scalars.any),
                         Property.named("applications", Sequence.of(Scalars.any))
                     )
@@ -688,10 +690,8 @@ public class Schemas {
                             Property.named("message", Scalars.any)
                         )
                     )),
-                    //TODO: actions
-                    Property.named("actions", Scalars.any),
-                    //TODO: conditions
-                    Property.named("conditions", Scalars.any),
+                    Property.named("actions", actions),
+                    Property.named("conditions", conditions),
                     //TODO: acl
                     Property.named("acl_resource", Scalars.any)
                 )
