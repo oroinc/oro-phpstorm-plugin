@@ -150,6 +150,7 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         return phpClasses;
     }
 
+    //TODO: extract somewhere this logic, because it should be used in TwigTemplateReference as well
     private Collection<String> getBundlesNamespaceNames() {
         Collection<PhpClass> classes = phpIndex.getAllSubclasses("\\Symfony\\Component\\HttpKernel\\Bundle\\Bundle");
         Collection<String> namespaces = new HashSet<String>();

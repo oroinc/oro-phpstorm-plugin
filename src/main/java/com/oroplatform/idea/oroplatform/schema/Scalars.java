@@ -120,6 +120,14 @@ final class Scalars {
         }
     };
 
+    final static Scalar twig = new Scalar() {
+        @Nullable
+        @Override
+        public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.twigTemplate(insertHandler);
+        }
+    };
+
     final static Scalar any = new Scalar();
 
     final static Scalar fullEntity = phpClass(PhpClass.entity(false));

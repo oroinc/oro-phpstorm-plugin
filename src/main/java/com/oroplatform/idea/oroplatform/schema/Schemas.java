@@ -613,7 +613,7 @@ public class Schemas {
                             Property.named("class", Scalars.any),
                             Property.named("group", Scalars.any),
                             //TODO: twig template, index?
-                            Property.named("template", Scalars.any),
+                            Property.named("template", Scalars.twig),
                             Property.named("data", Container.any),
                             Property.named("page_component_module", Scalars.any),
                             Property.named("page_component_options", Scalars.any)

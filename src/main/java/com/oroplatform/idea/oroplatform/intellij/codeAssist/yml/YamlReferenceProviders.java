@@ -40,4 +40,9 @@ class YamlReferenceProviders implements ReferenceProviders {
     public PsiReferenceProvider phpMethod(String pattern, InsertHandler<LookupElement> insertHandler) {
         return new PhpMethodReferenceProvider(new PhpMethod(pattern));
     }
+
+    @Override
+    public PsiReferenceProvider twigTemplate(InsertHandler<LookupElement> insertHandler) {
+        return new TwigTemplateReferenceProvider();
+    }
 }

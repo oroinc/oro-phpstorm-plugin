@@ -13,4 +13,5 @@ public interface ReferenceProviders {
     PsiReferenceProvider phpClass(PhpClass phpClass, InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider phpField(PropertyPath classPropertyPath, InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider phpMethod(String pattern, InsertHandler<LookupElement> insertHandler);
+    PsiReferenceProvider twigTemplate(InsertHandler<LookupElement> insertHandler);
 }

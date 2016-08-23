@@ -16,10 +16,20 @@ public class PhpClassUtil {
 
         if(parts.size() < 3 || entityIndex <= 0 || entityIndex == parts.size() - 1) return null;
 
-        final String vendor = entityIndex == 1 ? "" : parts.get(0);
-        final String bundle = parts.get(entityIndex - 1);
+        return getBundleName(parts.subList(0, entityIndex))+":"+StringUtil.join(parts.subList(entityIndex + 1, parts.size()), "\\");
+    }
 
-        return vendor+bundle+":"+StringUtil.join(parts.subList(entityIndex + 1, parts.size()), "\\");
+    //TODO: extract Bundle class
+    public static String getBundleName(@NotNull String namespaceName) {
+        return getBundleName(Arrays.asList(StringUtil.trimStart(namespaceName, "\\").split("\\\\")));
+    }
+
+    @Nullable
+    private static String getBundleName(@NotNull List<String> bundlePathParts) {
+        if(bundlePathParts.size() < 1) return null;
+        if(bundlePathParts.size() == 1) return bundlePathParts.get(0);
+
+        return bundlePathParts.get(0) + bundlePathParts.get(bundlePathParts.size() - 1);
     }
 
     @NotNull
