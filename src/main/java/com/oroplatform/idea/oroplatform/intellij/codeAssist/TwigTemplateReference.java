@@ -1,14 +1,18 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
+import com.intellij.codeInsight.completion.PrefixMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpNamespace;
+import com.oroplatform.idea.oroplatform.Icons;
 import com.oroplatform.idea.oroplatform.PhpClassUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +32,31 @@ public class TwigTemplateReference extends PsiPolyVariantReferenceBase<PsiElemen
     @NotNull
     @Override
     public ResolveResult[] multiResolve(boolean incompleteCode) {
-        return new ResolveResult[0];
+        final String simpleTemplateName = getSimpleTemplateName();
+        final PsiFile[] files = FilenameIndex.getFilesByName(getElement().getProject(), simpleTemplateName, GlobalSearchScope.allScope(getElement().getProject()));
+
+        final List<ResolveResult> results = new LinkedList<ResolveResult>();
+
+        final PrefixMatcher matcher = new StrictCamelHumpMatcher(templateName.replace(simpleTemplateName, "").replace(":", "").replace("/", ""));
+
+        for (PsiFile file : files) {
+            if(file.getVirtualFile() != null && matches(matcher, file.getVirtualFile().getPath())) {
+                results.add(new PsiElementResolveResult(file));
+            }
+        }
+
+        return results.toArray(new ResolveResult[results.size()]);
+    }
+
+    private boolean matches(PrefixMatcher matcher, String path) {
+        final int slashIndex = path.indexOf("/");
+        if(slashIndex < 0) return false;
+        return matcher.prefixMatches(path) || matches(matcher, path.substring(slashIndex + 1));
+    }
+
+    private String getSimpleTemplateName() {
+        final String[] parts = templateName.split("/|:");
+        return parts.length > 0 ? parts[parts.length - 1] : "";
     }
 
     @NotNull
@@ -51,7 +79,7 @@ public class TwigTemplateReference extends PsiPolyVariantReferenceBase<PsiElemen
                     final List<String> parts = Arrays.asList(StringUtil.trimStart(twigFile, "/").split("/"));
                     final String actionPart = parts.size() == 1 ? "" : parts.get(0);
                     final List<String> otherParts = parts.size() > 1 ? parts.subList(1, parts.size()) : parts;
-                    results.add(LookupElementBuilder.create(bundleName+":"+actionPart+":"+StringUtil.join(otherParts, "/")));
+                    results.add(LookupElementBuilder.create(bundleName+":"+actionPart+":"+StringUtil.join(otherParts, "/")).withIcon(Icons.TWIG));
                 }
             }
         }
@@ -64,11 +92,11 @@ public class TwigTemplateReference extends PsiPolyVariantReferenceBase<PsiElemen
 
         final Collection<String> twigFiles = new LinkedList<String>();
 
-        for (VirtualFile xxx : dir.getChildren()) {
-            if("twig".equals(xxx.getExtension())) {
-                twigFiles.add(prefixPath + "/" + xxx.getName());
-            } else if(xxx.isDirectory()) {
-                twigFiles.addAll(getTwigFiles(prefixPath + "/" + xxx.getName(), xxx));
+        for (VirtualFile file : dir.getChildren()) {
+            if("twig".equals(file.getExtension())) {
+                twigFiles.add(prefixPath + "/" + file.getName());
+            } else if(file.isDirectory()) {
+                twigFiles.addAll(getTwigFiles(prefixPath + "/" + file.getName(), file));
             }
         }
 

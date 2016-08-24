@@ -26,9 +26,9 @@ class ActionsTwigReferenceTest extends TwigReferenceTest {
             |}
             """.stripMargin("|")
         )
-        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/some.html.twig", "abc")
-        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/Foo/some.html.twig", "abc")
-        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/Foo/bar/some.html.twig", "abc")
+        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/some1.html.twig", "abc")
+        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/Foo/some2.html.twig", "abc")
+        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/Foo/bar/some3.html.twig", "abc")
     }
 
     def void "test: suggest twig templates"() {
@@ -39,7 +39,19 @@ class ActionsTwigReferenceTest extends TwigReferenceTest {
             |    button_options:
             |      template: <caret>
             """.stripMargin("|"),
-            ["OroAcmeBundle::some.html.twig", "OroAcmeBundle:Foo:some.html.twig", "OroAcmeBundle:Foo:bar/some.html.twig"]
+            ["OroAcmeBundle::some1.html.twig", "OroAcmeBundle:Foo:some2.html.twig", "OroAcmeBundle:Foo:bar/some3.html.twig"]
+        )
+    }
+
+    def void "test: detect twig template reference"() {
+        checkTwigReference(
+            """
+            |operations:
+            |  some_op:
+            |    button_options:
+            |      template: OroAcmeBundle:Fo<caret>o:some2.html.twig
+            """.stripMargin("|"),
+            ["some2.html.twig"]
         )
     }
 }

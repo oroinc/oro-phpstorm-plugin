@@ -612,7 +612,6 @@ public class Schemas {
                             Property.named("icon", Scalars.any),
                             Property.named("class", Scalars.any),
                             Property.named("group", Scalars.any),
-                            //TODO: twig template, index?
                             Property.named("template", Scalars.twig),
                             Property.named("data", Container.any),
                             Property.named("page_component_module", Scalars.any),
@@ -631,8 +630,7 @@ public class Schemas {
                         Property.named("order", Scalars.integer),
                         Property.named("acl_resource", acl),
                         Property.named("frontend_options", Container.with(
-                            //TODO: index twig templates
-                            Property.named("template", Scalars.any),
+                            Property.named("template", Scalars.twig),
                             Property.named("title", Scalars.any),
                             Property.named("options", Container.any),
                             //TODO: index messages?
