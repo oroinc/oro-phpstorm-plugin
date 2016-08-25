@@ -15,6 +15,10 @@ import com.jetbrains.php.lang.psi.elements.PhpNamespace;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.oroplatform.idea.oroplatform.Icons;
 import com.oroplatform.idea.oroplatform.PhpClassUtil;
+import com.oroplatform.idea.oroplatform.symfony.Bundle;
+import com.oroplatform.idea.oroplatform.symfony.BundleNamespace;
+import com.oroplatform.idea.oroplatform.symfony.Bundles;
+import com.oroplatform.idea.oroplatform.symfony.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,7 +95,7 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private Object[] getVariantsFromBundles() {
         final List<LookupElement> results = new LinkedList<LookupElement>();
 
-        for (PhpClass phpClass : getPhpClassesFrom(getBundlesNamespaceNames())) {
+        for (PhpClass phpClass : getPhpClassesFrom(getBundlesNamespaces())) {
             final int priority = getPriorityFor(phpClass);
             if(this.phpClass.allowDoctrineShortcutNotation()) {
                 addEntitiesShortcutsLookups(results, phpClass, priority);
@@ -103,13 +107,11 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         return results.toArray();
     }
 
-    private Collection<PhpClass> getPhpClassesFrom(Collection<String> namespaceNames) {
+    private Collection<PhpClass> getPhpClassesFrom(Collection<BundleNamespace> bundleNamespaces) {
         final Set<PhpClass> phpClasses = new HashSet<PhpClass>();
 
-
-        for (String namespaceName : namespaceNames) {
-
-            for (PhpNamespace phpNamespace : phpIndex.getNamespacesByName(namespaceName)) {
+        for (BundleNamespace bundleNamespace : bundleNamespaces) {
+            for (PhpNamespace phpNamespace : phpIndex.getNamespacesByName(bundleNamespace.getName())) {
                 for (PhpClass phpClass : getPhpClassesFrom(phpNamespace)) {
                     final boolean isClass = !phpClass.isInterface() && !phpClass.isTrait();
                     if(isClass && !skippedClassNames.contains(phpClass.getFQN()) &&
@@ -150,13 +152,12 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         return phpClasses;
     }
 
-    //TODO: extract somewhere this logic, because it should be used in TwigTemplateReference as well
-    private Collection<String> getBundlesNamespaceNames() {
-        Collection<PhpClass> classes = phpIndex.getAllSubclasses("\\Symfony\\Component\\HttpKernel\\Bundle\\Bundle");
-        Collection<String> namespaces = new HashSet<String>();
+    private Collection<BundleNamespace> getBundlesNamespaces() {
+        final Collection<Bundle> bundles = new Bundles(phpIndex).findAll();
+        final Collection<BundleNamespace> namespaces = new LinkedList<BundleNamespace>();
 
-        for (PhpClass phpClass : classes) {
-            namespaces.add(phpClass.getNamespaceName()+this.phpClass.getNamespacePart());
+        for (Bundle bundle : bundles) {
+            namespaces.add(new BundleNamespace(bundle, this.phpClass.getNamespacePart()));
         }
 
         return namespaces;
@@ -185,10 +186,10 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     }
 
     private void addEntitiesShortcutsLookups(List<LookupElement> results, PhpClass phpClass, int priority) {
-        final String shortcutName = PhpClassUtil.getDoctrineShortcutClassName(phpClass.getPresentableFQN());
-        if(shortcutName != null) {
+        final Entity entity = Entity.fromFqn(phpClass.getPresentableFQN());
+        if(entity != null) {
             results.add(PrioritizedLookupElement.withPriority(
-                LookupElementBuilder.create(shortcutName)
+                LookupElementBuilder.create(entity.getShortcutName())
                     .withIcon(Icons.DOCTRINE)
                     .withTypeText(phpClass.getPresentableFQN())
                     .withInsertHandler(insertHandler)

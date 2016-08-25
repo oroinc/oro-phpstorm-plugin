@@ -3,17 +3,17 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 import com.intellij.codeInsight.completion.PrefixMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.php.PhpIndex;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpNamespace;
 import com.oroplatform.idea.oroplatform.Icons;
-import com.oroplatform.idea.oroplatform.PhpClassUtil;
+import com.oroplatform.idea.oroplatform.symfony.Bundle;
+import com.oroplatform.idea.oroplatform.symfony.Bundles;
+import com.oroplatform.idea.oroplatform.symfony.TwigTemplate;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -22,11 +22,13 @@ public class TwigTemplateReference extends PsiPolyVariantReferenceBase<PsiElemen
 
     private final String templateName;
     private final PhpIndex phpIndex;
+    private final Bundles bundles;
 
     public TwigTemplateReference(PsiElement psiElement, String templateName) {
         super(psiElement);
         this.templateName = templateName;
         this.phpIndex = PhpIndex.getInstance(psiElement.getProject());
+        this.bundles = new Bundles(this.phpIndex);
     }
 
     @NotNull
@@ -62,24 +64,17 @@ public class TwigTemplateReference extends PsiPolyVariantReferenceBase<PsiElemen
     @NotNull
     @Override
     public Object[] getVariants() {
-        final Collection<String> bundleNamespaceNames = getBundleNamespaceNames();
-
         final List<LookupElement> results = new LinkedList<LookupElement>();
 
-        //TODO: refactor - maybe extract ResourceFile or something
-        for (String namespaceName : bundleNamespaceNames) {
-            for (PhpNamespace phpNamespace : phpIndex.getNamespacesByName(namespaceName)) {
+        for (Bundle bundle : bundles.findAll()) {
+            for (PhpNamespace phpNamespace : phpIndex.getNamespacesByName(bundle.getNamespaceName())) {
                 final PsiDirectory dir = phpNamespace.getContainingFile().getContainingDirectory();
                 final VirtualFile views = VfsUtil.findRelativeFile(dir.getVirtualFile(), "Resources", "views");
 
-                final Collection<String> twigFiles = getTwigFiles("", views);
-                final String bundleName = PhpClassUtil.getBundleName(namespaceName);
+                final Collection<TwigTemplate> twigTemplates = findTwigTemplates(bundle, "", "", views);
 
-                for (String twigFile : twigFiles) {
-                    final List<String> parts = Arrays.asList(StringUtil.trimStart(twigFile, "/").split("/"));
-                    final String actionPart = parts.size() == 1 ? "" : parts.get(0);
-                    final List<String> otherParts = parts.size() > 1 ? parts.subList(1, parts.size()) : parts;
-                    results.add(LookupElementBuilder.create(bundleName+":"+actionPart+":"+StringUtil.join(otherParts, "/")).withIcon(Icons.TWIG));
+                for (TwigTemplate twigTemplate : twigTemplates) {
+                    results.add(LookupElementBuilder.create(twigTemplate.getName()).withIcon(Icons.TWIG));
                 }
             }
         }
@@ -87,31 +82,24 @@ public class TwigTemplateReference extends PsiPolyVariantReferenceBase<PsiElemen
         return results.toArray();
     }
 
-    private Collection<String> getTwigFiles(String prefixPath, VirtualFile dir) {
+    private Collection<TwigTemplate> findTwigTemplates(Bundle bundle, String topDirectory, String prefixPath, VirtualFile dir) {
         if(dir == null) return Collections.emptyList();
 
-        final Collection<String> twigFiles = new LinkedList<String>();
+        final Collection<TwigTemplate> twigFiles = new LinkedList<TwigTemplate>();
 
         for (VirtualFile file : dir.getChildren()) {
             if("twig".equals(file.getExtension())) {
-                twigFiles.add(prefixPath + "/" + file.getName());
+                twigFiles.add(new TwigTemplate(bundle, topDirectory, prefixPath + "/" + file.getName()));
             } else if(file.isDirectory()) {
-                twigFiles.addAll(getTwigFiles(prefixPath + "/" + file.getName(), file));
+                if("".equals(topDirectory)) {
+                    twigFiles.addAll(findTwigTemplates(bundle, file.getName(), prefixPath, file));
+                } else {
+                    twigFiles.addAll(findTwigTemplates(bundle, topDirectory, prefixPath + "/" + file.getName(), file));
+                }
             }
         }
 
         return twigFiles;
     }
 
-    //TODO: almost copy & paste from PhpClassReference
-    private Collection<String> getBundleNamespaceNames() {
-        Collection<PhpClass> classes = phpIndex.getAllSubclasses("\\Symfony\\Component\\HttpKernel\\Bundle\\Bundle");
-        Collection<String> namespaces = new HashSet<String>();
-
-        for (PhpClass phpClass : classes) {
-            namespaces.add(StringUtil.trimEnd(phpClass.getNamespaceName(), "\\"));
-        }
-
-        return namespaces;
-    }
 }
