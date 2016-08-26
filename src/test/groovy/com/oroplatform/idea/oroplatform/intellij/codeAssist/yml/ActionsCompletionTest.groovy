@@ -242,4 +242,19 @@ class ActionsCompletionTest extends CompletionTest {
             ["acl1", "acl2"]
         )
     }
+
+    def void "test: suggest datagrid for mass_action"() {
+        suggestions(
+            """
+            |operations:
+            |  some_op:
+            |    datagrid_options:
+            |      mass_action:
+            |        <caret>
+            |
+            """.stripMargin(),
+
+            ["type", "label", "route"]
+        )
+    }
 }

@@ -1,5 +1,7 @@
 package com.oroplatform.idea.oroplatform.schema;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
@@ -190,13 +192,7 @@ public class Schemas {
                             ).allowExtraProperties()
                         )),
                         Property.named("mass_action", Container.with(
-                            Container.with(
-                                Property.named("label", Scalars.any),
-                                Property.named("type", Scalars.choices("frontend", "merge")),
-                                Property.named("data_identifier", Scalars.any),
-                                Property.named("icon", Scalars.any),
-                                Property.named("selector", Scalars.any)
-                            )
+                            massAction()
                         )),
                         Property.named("totals", Container.with(
                             Container.with(
@@ -278,6 +274,20 @@ public class Schemas {
                 )
             )
         );
+    }
+
+    private static Element massAction() {
+        return Container.with(
+            Property.named("label", Scalars.any),
+            Property.named("type", Scalars.choices("frontend", "merge")),
+            Property.named("data_identifier", Scalars.any),
+            Property.named("icon", Scalars.any),
+            Property.named("selector", Scalars.any),
+            Property.named("entity_name", Scalars.any),
+            Property.named("data_identifier", Scalars.any),
+            Property.named("route", Scalars.any),
+            Property.named("frontend_options", Container.any)
+        ).allowExtraProperties();
     }
 
     private static Schema workflow() {
@@ -651,8 +661,7 @@ public class Schemas {
                         )),
                         Property.named("datagrid_options", Container.with(
                             Property.named("mass_action_provider", Scalars.massActionProvider),
-                            //TODO: the same as in datagrid?
-                            Property.named("mass_action", Sequence.of(Scalars.any))
+                            Property.named("mass_action", massAction())
                         )),
                         Property.named("form_options", Container.with(
                             Property.named("attribute_fields", Container.with(
