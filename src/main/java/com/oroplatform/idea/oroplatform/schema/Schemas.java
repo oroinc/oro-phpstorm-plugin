@@ -606,8 +606,7 @@ public class Schemas {
         final Element actions = Sequence.of(Container.with(
             Property.any(Container.any).withKeyElement(Scalars.action)
         ));
-        //TODO: what operations should be suggested? From all files or maybe only from this file?
-        final Element operations = Scalars.choices("UPDATE", "DELETE");
+        final Element operations = OneOf.from(Scalars.choices("UPDATE", "DELETE"), Scalars.operation);
         final Scalar acl = Scalars.acl;
 
         return new Schema(new FilePathMatcher(FilePathPatterns.ACTIONS), Container.with(

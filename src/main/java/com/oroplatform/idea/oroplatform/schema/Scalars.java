@@ -106,6 +106,13 @@ final class Scalars {
         }
     };
 
+    final static Scalar operation = new Scalar() {
+        @Override
+        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.operation(insertHandler);
+        }
+    };
+
     final static Scalar acl = new Scalar() {
         @Override
         public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {

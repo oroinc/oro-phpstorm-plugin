@@ -24,4 +24,8 @@ public class ConfigurationIndex {
     public Collection<String> getAcls() {
         return FileBasedIndex.getInstance().getAllKeys(AclFileBasedIndex.KEY, project);
     }
+
+    public Collection<String> getOperations() {
+        return FileBasedIndex.getInstance().getAllKeys(OperationFileBasedIndex.KEY, project);
+    }
 }

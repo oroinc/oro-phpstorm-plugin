@@ -257,4 +257,40 @@ class ActionsCompletionTest extends CompletionTest {
             ["type", "label", "route"]
         )
     }
+
+    def void "test: suggest operation from different files"() {
+        configureByText(
+            "some/"+Schemas.FilePathPatterns.ACTIONS,
+            """
+            |operations:
+            |  op1: ~
+            |  op2: ~
+            """.stripMargin()
+        )
+
+        suggestions(
+            """
+            |operations:
+            |  op3:
+            |    extends: <caret>
+            |
+            """.stripMargin(),
+
+            ["op1", "op2"]
+        )
+    }
+
+    def void "test: suggest operation from the same file"() {
+        suggestions(
+            """
+            |operations:
+            |  op4: ~
+            |  op3:
+            |    extends: <caret>
+            |
+            """.stripMargin(),
+
+            ["op4"]
+        )
+    }
 }
