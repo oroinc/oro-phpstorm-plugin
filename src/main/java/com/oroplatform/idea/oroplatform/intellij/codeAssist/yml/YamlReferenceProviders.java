@@ -45,4 +45,9 @@ class YamlReferenceProviders implements ReferenceProviders {
     public PsiReferenceProvider twigTemplate(InsertHandler<LookupElement> insertHandler) {
         return new TwigTemplateReferenceProvider();
     }
+
+    @Override
+    public PsiReferenceProvider route(InsertHandler<LookupElement> insertHandler) {
+        return new RouteReferenceProvider();
+    }
 }

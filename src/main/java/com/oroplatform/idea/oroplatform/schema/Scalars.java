@@ -135,6 +135,14 @@ final class Scalars {
         }
     };
 
+    final static Scalar route = new Scalar() {
+        @Nullable
+        @Override
+        public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.route(insertHandler);
+        }
+    };
+
     final static Scalar any = new Scalar();
 
     final static Scalar fullEntity = phpClass(PhpClass.entity(false));

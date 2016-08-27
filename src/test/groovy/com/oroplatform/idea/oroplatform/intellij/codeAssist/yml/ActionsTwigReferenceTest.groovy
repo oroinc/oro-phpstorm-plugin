@@ -1,10 +1,10 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.TwigReferenceTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceTest
 import com.oroplatform.idea.oroplatform.schema.Schemas
 
 
-class ActionsTwigReferenceTest extends TwigReferenceTest {
+class ActionsTwigReferenceTest extends ReferenceTest {
     @Override
     String fileName() {
         return Schemas.FilePathPatterns.ACTIONS
@@ -44,7 +44,7 @@ class ActionsTwigReferenceTest extends TwigReferenceTest {
     }
 
     def void "test: detect twig template reference"() {
-        checkTwigReference(
+        checkReference(
             """
             |operations:
             |  some_op:

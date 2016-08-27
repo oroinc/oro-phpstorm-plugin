@@ -285,6 +285,7 @@ public class Schemas {
             Property.named("selector", Scalars.any),
             Property.named("entity_name", Scalars.any),
             Property.named("data_identifier", Scalars.any),
+            //TODO: route
             Property.named("route", Scalars.any),
             Property.named("frontend_options", Container.any)
         ).allowExtraProperties();
@@ -630,8 +631,7 @@ public class Schemas {
                         Property.named("entities", Sequence.of(Scalars.fullEntity)),
                         Property.named("for_all_entities", Scalars.bool),
                         Property.named("exclude_entities", Sequence.of(Scalars.fullEntity)),
-                        //TODO: index routes - how? from cache?
-                        Property.named("routes", Sequence.of(Scalars.any)),
+                        Property.named("routes", Sequence.of(Scalars.route)),
                         Property.named("groups", Sequence.of(Scalars.any)),
                         Property.named("datagrids", Sequence.of(Scalars.datagrid)),
                         Property.named("for_all_datagrids", Scalars.bool),

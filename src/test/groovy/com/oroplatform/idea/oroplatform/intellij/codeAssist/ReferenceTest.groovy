@@ -3,13 +3,13 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiPolyVariantReferenceBase
 
-abstract class TwigReferenceTest extends CompletionTest {
+abstract class ReferenceTest extends CompletionTest {
 
-    def checkTwigReference(String content, List<String> expectedReferences) {
-        assertEquals(expectedReferences, getTwigReferences(content))
+    def checkReference(String content, List<String> expectedReferences) {
+        assertEquals(expectedReferences, getReferences(content))
     }
 
-    def List<String> getTwigReferences(String content) {
+    def List<String> getReferences(String content) {
         configureByText(content)
 
         myFixture.getProject().getBaseDir().refresh(false, true)

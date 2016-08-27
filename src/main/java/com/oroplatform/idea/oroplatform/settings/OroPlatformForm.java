@@ -12,6 +12,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.util.indexing.ID;
 import com.oroplatform.idea.oroplatform.OroPlatformBundle;
 import com.oroplatform.idea.oroplatform.intellij.indexes.*;
 import org.jetbrains.annotations.Nls;
@@ -107,11 +108,16 @@ public class OroPlatformForm implements Configurable {
 
     private void rebuildIndexes() {
         final FileBasedIndex index = FileBasedIndex.getInstance();
-        index.requestRebuild(ImportFileBasedIndex.KEY);
-        index.requestRebuild(ActionsFileBasedIndex.KEY);
-        index.requestRebuild(ConditionsFileBasedIndex.KEY);
-        index.requestRebuild(FormTypesFileBasedIndex.KEY);
-        index.requestRebuild(DatagridFileBasedIndex.KEY);
+
+        final ID<?, ?>[] indexIds = new ID<?, ?>[] {
+            ImportFileBasedIndex.KEY, ImportFileBasedIndex.KEY, ConditionsFileBasedIndex.KEY, FormTypesFileBasedIndex.KEY,
+            DatagridFileBasedIndex.KEY, ServicesFileBasedIndex.KEY, MassActionProviderFileBasedIndex.KEY, AclFileBasedIndex.KEY,
+            OperationFileBasedIndex.KEY, RouteFileBasedIndex.KEY
+        };
+
+        for (ID<?, ?> indexId : indexIds) {
+            index.requestRebuild(indexId);
+        }
     }
 
     @Override
