@@ -14,15 +14,20 @@ class RouteExternalizer implements DataExternalizer<Route> {
 
     @Override
     public void save(@NotNull DataOutput out, Route value) throws IOException {
-        stringExternalizer.save(out, value.getControllerName());
-        stringExternalizer.save(out, value.getAction());
+        if(value != null) {
+            stringExternalizer.save(out, value.getControllerName());
+            stringExternalizer.save(out, value.getAction());
+        }
     }
 
     @Override
     public Route read(@NotNull DataInput in) throws IOException {
-        final String controller = stringExternalizer.read(in);
-        final String action = stringExternalizer.read(in);
-
-        return new Route(controller, action);
+        try {
+            final String controller = stringExternalizer.read(in);
+            final String action = stringExternalizer.read(in);
+            return new Route(controller, action);
+        } catch (IOException ex) {
+            return null;
+        }
     }
 }
