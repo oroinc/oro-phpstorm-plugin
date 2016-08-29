@@ -1,7 +1,5 @@
 package com.oroplatform.idea.oroplatform.schema;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
@@ -176,7 +174,7 @@ public class Schemas {
                         Property.named("properties", Container.with(
                             Container.with(
                                 Property.named("type", Scalars.choices("url", "callback")),
-                                Property.named("route", Scalars.any),
+                                Property.named("route", Scalars.route),
                                 Property.named("params", Sequence.of(Scalars.any))
                             ).allowExtraProperties()
                         )),
@@ -221,7 +219,7 @@ public class Schemas {
                                 Property.named("component_options", Container.any)
                             )),
                             Property.named("save_api_accessor", Container.with(
-                                Property.named("route", Scalars.any),
+                                Property.named("route", Scalars.route),
                                 Property.named("http_method", Scalars.any),
                                 Property.named("headers", Scalars.any),
                                 Property.named("default_route_parameters", Container.any),
@@ -285,8 +283,7 @@ public class Schemas {
             Property.named("selector", Scalars.any),
             Property.named("entity_name", Scalars.any),
             Property.named("data_identifier", Scalars.any),
-            //TODO: route
-            Property.named("route", Scalars.any),
+            Property.named("route", Scalars.route),
             Property.named("frontend_options", Container.any)
         ).allowExtraProperties();
     }
