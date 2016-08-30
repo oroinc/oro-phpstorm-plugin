@@ -143,6 +143,14 @@ final class Scalars {
         }
     };
 
+    final static Scalar trans = new Scalar() {
+        @Nullable
+        @Override
+        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.translation(insertHandler);
+        }
+    };
+
     final static Scalar any = new Scalar();
 
     final static Scalar fullEntity = phpClass(PhpClass.entity(false));

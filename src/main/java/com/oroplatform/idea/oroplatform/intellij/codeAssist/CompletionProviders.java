@@ -19,4 +19,5 @@ public interface CompletionProviders {
     CompletionProvider<CompletionParameters> propertiesFromPath(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> choices(List<String> choices, InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> operation(InsertHandler<LookupElement> insertHandler);
+    CompletionProvider<CompletionParameters> translation(InsertHandler<LookupElement> insertHandler);
 }

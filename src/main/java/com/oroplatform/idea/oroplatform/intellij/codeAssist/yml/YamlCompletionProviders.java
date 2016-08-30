@@ -63,4 +63,9 @@ class YamlCompletionProviders implements CompletionProviders {
     public CompletionProvider<CompletionParameters> operation(InsertHandler<LookupElement> insertHandler) {
         return new OperationCompletionProvider();
     }
+
+    @Override
+    public CompletionProvider<CompletionParameters> translation(InsertHandler<LookupElement> insertHandler) {
+        return new TranslationCompletionProvider();
+    }
 }

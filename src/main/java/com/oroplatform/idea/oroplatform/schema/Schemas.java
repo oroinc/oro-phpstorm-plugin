@@ -639,8 +639,11 @@ public class Schemas {
                             Property.named("template", Scalars.twig),
                             Property.named("title", Scalars.any),
                             Property.named("options", Container.any),
-                            //TODO: index messages?
-                            Property.named("confirmation", Scalars.any),
+                            Property.named("confirmation", OneOf.from(Scalars.trans, Container.with(
+                                Property.named("title", Scalars.trans),
+                                Property.named("message", Scalars.trans),
+                                Property.named("message_parameters", Container.any)
+                            ))),
                             Property.named("show_dialog", Scalars.bool)
                         )),
                         Property.named("preactions", actions),
@@ -686,8 +689,7 @@ public class Schemas {
                             Property.named("type", OneOf.from(Scalars.fullEntity, Scalars.choices("string", "integer", "boolean"))),
                             Property.named("default", Scalars.any),
                             Property.named("required", Scalars.bool),
-                            //TODO: translation message?
-                            Property.named("message", Scalars.any)
+                            Property.named("message", Scalars.trans)
                         )
                     )),
                     Property.named("actions", actions),
