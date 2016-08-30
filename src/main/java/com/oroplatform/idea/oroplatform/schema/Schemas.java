@@ -14,9 +14,10 @@ public class Schemas {
         public final static String SYSTEM_CONFIGURATION = "Resources/config/system_configuration.yml";
         public final static String API = "Resources/config/oro/api.yml";
         public final static String ACTIONS = "Resources/config/oro/actions.yml";
+        public final static String DASHBOARD = "Resources/config/dashboard.yml";
     }
 
-    public static final Collection<Schema> ALL = asList(acl(), entity(), datagrid(), workflow(), systemConfiguration(), api(), actions());
+    public static final Collection<Schema> ALL = asList(acl(), entity(), datagrid(), workflow(), systemConfiguration(), api(), actions(), dashboard());
 
     private static Schema acl() {
         return new Schema(new FilePathMatcher(FilePathPatterns.ACL), Container.with(
@@ -701,4 +702,40 @@ public class Schemas {
         ).allowExtraProperties());
     }
 
+    private static Schema dashboard() {
+        final Element configuration = Container.with(
+            Container.with(
+                Property.named("type", Scalars.formType),
+                Property.named("options", Container.with(
+                    Property.named("required", Scalars.bool),
+                    Property.named("label", Scalars.trans)
+                ).allowExtraProperties()),
+                Property.named("show_on_widget", Scalars.bool)
+            )
+        );
+
+        return new Schema(new FilePathMatcher(FilePathPatterns.DASHBOARD), Container.with(
+            Property.named("oro_dashboard_config", Container.with(
+                Property.named("widgets", Container.with(
+                    Container.with(
+                        Property.named("icon", Scalars.any),
+                        Property.named("label", Scalars.trans),
+                        Property.named("description", Scalars.trans),
+                        Property.named("acl", Scalars.acl),
+                        Property.named("route", OneOf.from(Scalars.route, Scalars.choices("oro_dashboard_grid"))),
+                        Property.named("route_parameters", Container.any),
+                        Property.named("isNew", Scalars.bool),
+                        Property.named("items", Container.any),
+                        Property.named("configuration", configuration)
+                    )
+                )),
+                Property.named("widgets_configuration", configuration),
+                Property.named("dashboards", Container.with(
+                    Container.with(
+                        Property.named("twig", Scalars.twig)
+                    )
+                ))
+            ))
+        ));
+    }
 }
