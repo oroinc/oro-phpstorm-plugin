@@ -20,6 +20,7 @@ Features
 - Autocomplete for the *entity.yml* 
 - Autocomplete for the *datagrid.yml*
 - Autocomplete for the *workflow.yml* 
+- Autocomplete for the *actions.yml* 
 - Possibility to navigate via RequireJS modules
 - ...
 
