@@ -718,6 +718,7 @@ public class Schemas {
             Property.named("oro_dashboard_config", Container.with(
                 Property.named("widgets", Container.with(
                     Container.with(
+                        //TODO: support for icons
                         Property.named("icon", Scalars.any),
                         Property.named("label", Scalars.trans),
                         Property.named("description", Scalars.trans),
@@ -725,7 +726,14 @@ public class Schemas {
                         Property.named("route", OneOf.from(Scalars.route, Scalars.choices("oro_dashboard_grid"))),
                         Property.named("route_parameters", Container.any),
                         Property.named("isNew", Scalars.bool),
-                        Property.named("items", Container.any),
+                        Property.named("items", Container.with(
+                            Container.with(
+                                Property.named("label", Scalars.trans),
+                                Property.named("acl", Scalars.acl),
+                                Property.named("route", Scalars.route),
+                                Property.named("position", Scalars.integer)
+                            )
+                        )),
                         Property.named("configuration", configuration)
                     )
                 )),

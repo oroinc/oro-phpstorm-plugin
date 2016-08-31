@@ -90,4 +90,18 @@ class DashboardCompletionTest extends CompletionTest {
             ["oro_dashboard_grid"]
         )
     }
+
+    def void "test: suggest items for widget"() {
+        suggestions(
+            """
+            |oro_dashboard_config:
+            |  widgets:
+            |    some_widget:
+            |      items:
+            |        some_item:
+            |          <caret>
+            """.stripMargin(),
+            ["label", "route", "acl", "position"]
+        )
+    }
 }
