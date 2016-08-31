@@ -8,6 +8,7 @@ import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 
 public interface ReferenceProviders {
     PsiReferenceProvider filePath(InsertHandler<LookupElement> insertHandler);
+    PsiReferenceProvider filePathIn(String relativeToAppDir, InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider phpCallback(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider phpCallable(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider phpClass(PhpClass phpClass, InsertHandler<LookupElement> insertHandler);

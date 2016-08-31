@@ -127,6 +127,15 @@ final class Scalars {
         }
     };
 
+    static Scalar fileIn(final String dir) {
+        return new Scalar() {
+            @Override
+            public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return providers.filePathIn(dir, insertHandler);
+            }
+        };
+    }
+
     final static Scalar twig = new Scalar() {
         @Nullable
         @Override

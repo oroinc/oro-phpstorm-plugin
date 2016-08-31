@@ -57,7 +57,7 @@ class WorkflowMatcher implements FileMatcher {
             final VirtualFile nextImportedFile = fileSystem.findFileByPath(nextImportedFilePath);
 
             if (nextImportedFile != null) {
-                PsiFile importedPsiFile = PsiManager.getInstance(importedFile.getProject()).findFile(nextImportedFile);
+                final PsiFile importedPsiFile = PsiManager.getInstance(importedFile.getProject()).findFile(nextImportedFile);
                 if (importedPsiFile != null && isImported(index, importedFile, importedPsiFile)) {
                     return true;
                 }

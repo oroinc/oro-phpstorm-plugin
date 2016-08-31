@@ -718,8 +718,7 @@ public class Schemas {
             Property.named("oro_dashboard_config", Container.with(
                 Property.named("widgets", Container.with(
                     Container.with(
-                        //TODO: support for icons
-                        Property.named("icon", Scalars.any),
+                        Property.named("icon", Scalars.fileIn("../web")),
                         Property.named("label", Scalars.trans),
                         Property.named("description", Scalars.trans),
                         Property.named("acl", Scalars.acl),

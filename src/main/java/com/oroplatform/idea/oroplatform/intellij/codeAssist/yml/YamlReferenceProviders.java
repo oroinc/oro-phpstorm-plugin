@@ -17,6 +17,11 @@ class YamlReferenceProviders implements ReferenceProviders {
     }
 
     @Override
+    public PsiReferenceProvider filePathIn(String relativeToAppDir, InsertHandler<LookupElement> insertHandler) {
+        return new FilePathReferenceProvider(relativeToAppDir);
+    }
+
+    @Override
     public PsiReferenceProvider phpCallback(InsertHandler<LookupElement> insertHandler) {
         return new PhpCallbackReferenceProvider();
     }
