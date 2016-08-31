@@ -10,6 +10,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.0-alpha16</h2>
+<ul>
+  <li>Autocomplete for the <b>dashboard.yml</b></li>
+</ul>
+
 <h2>1.0.0-alpha15</h2>
 <ul>
   <li>Autocomplete for the <b>actions.yml</b></li>

@@ -17,10 +17,11 @@ Install and upgrade
 Features
 -----------------------------
 - Autocomplete for the *acl.yml*
-- Autocomplete for the *entity.yml* 
+- Autocomplete for the *entity.yml*
 - Autocomplete for the *datagrid.yml*
-- Autocomplete for the *workflow.yml* 
-- Autocomplete for the *actions.yml* 
+- Autocomplete for the *workflow.yml*
+- Autocomplete for the *actions.yml*
+- Autocomplete for the *dashboard.yml*
 - Possibility to navigate via RequireJS modules
 - ...
 
