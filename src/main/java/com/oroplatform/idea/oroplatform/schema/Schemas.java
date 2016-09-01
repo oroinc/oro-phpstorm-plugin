@@ -15,9 +15,13 @@ public class Schemas {
         public final static String API = "Resources/config/oro/api.yml";
         public final static String ACTIONS = "Resources/config/oro/actions.yml";
         public final static String DASHBOARD = "Resources/config/dashboard.yml";
+        public final static String NAVIGATION = "Resources/config/navigation.yml";
     }
 
-    public static final Collection<Schema> ALL = asList(acl(), entity(), datagrid(), workflow(), systemConfiguration(), api(), actions(), dashboard());
+    public static final Collection<Schema> ALL = asList(
+        acl(), entity(), datagrid(), workflow(), systemConfiguration(), api(), actions(), dashboard(), navigation()
+    );
+
 
     private static Schema acl() {
         return new Schema(new FilePathMatcher(FilePathPatterns.ACL), Container.with(
@@ -743,6 +747,60 @@ public class Schemas {
                     )
                 ))
             ))
+        ));
+    }
+
+    private static Schema navigation() {
+        return new Schema(new FilePathMatcher(FilePathPatterns.NAVIGATION), Container.with(
+            Property.named("oro_menu_config", Container.with(
+                Property.named("templates", Container.with(
+                    Container.with(
+                        Property.named("template", Scalars.twig),
+                        Property.named("clear_matcher", Scalars.bool),
+                        Property.named("depth", Scalars.integer),
+                        Property.named("currentAsLink", Scalars.bool),
+                        Property.named("currentClass", Scalars.any),
+                        Property.named("ancestorClass", Scalars.any),
+                        Property.named("firstClass", Scalars.any),
+                        Property.named("lastClass", Scalars.any),
+                        Property.named("compressed", Scalars.bool),
+                        Property.named("block", Scalars.any),
+                        Property.named("rootClass", Scalars.any),
+                        Property.named("isDropdown", Scalars.bool)
+                    )
+                )),
+                Property.named("items", Container.with(
+                    Container.with(
+                        Property.named("aclResourceId", Scalars.acl),
+                        //TODO: suggest translateDomain
+                        Property.named("translateDomain", Scalars.any),
+                        Property.named("translateParameters", Container.any),
+                        Property.named("label", Scalars.trans),
+                        Property.named("name", Scalars.any),
+                        Property.named("uri", Scalars.any),
+                        Property.named("route", Scalars.route),
+                        Property.named("routeParameters", Container.any),
+                        //TODO: attributes etc.
+                        Property.named("attributes", Container.any),
+                        Property.named("linkAttributes", Container.any),
+                        Property.named("labelAttributes", Container.any),
+                        Property.named("childrenAttributes", Container.any),
+                        Property.named("showNonAuthorized", Scalars.bool),
+                        Property.named("display", Scalars.bool),
+                        Property.named("displayChildren", Scalars.bool),
+                        Property.named("extras", Container.any)
+                    )
+                )),
+                Property.named("tree", Container.with(
+                    Property.any(Container.with(
+                        Property.named("type", Scalars.any),
+                        Property.named("merge_strategy", Scalars.any),
+                        Property.named("extras", Container.any),
+                        Property.named("children", Container.any)
+                    ))
+                ))
+            )),
+            Property.named("oro_titles", Container.any)
         ));
     }
 }
