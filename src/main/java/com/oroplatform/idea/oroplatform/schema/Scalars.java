@@ -205,5 +205,5 @@ final class Scalars {
 
     final static Scalar bool = strictChoices("true", "false");
 
-    final static Scalar integer = regexp("^\\d+$");
+    final static Scalar integer = regexp("^-?\\d+$");
 }
