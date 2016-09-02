@@ -72,4 +72,106 @@ class NavigationCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: suggest properties for linkAttributes"() {
+        suggestions(
+            """
+            |oro_menu_config:
+            |  items:
+            |    some_item:
+            |      linkAttributes:
+            |        <caret>
+            """.stripMargin(),
+
+            ["class", "id", "target", "type"]
+        )
+
+    }
+
+    def void "test: suggest tree extras properties"() {
+        suggestions(
+            """
+            |oro_menu_config:
+            |  tree:
+            |    some_menu:
+            |      extras:
+            |        <caret>
+            """.stripMargin(),
+
+            ["brand", "brandLink"]
+        )
+    }
+
+    def void "test: suggest tree children at the first level"() {
+        suggestions(
+            """
+            |oro_menu_config:
+            |  items:
+            |    item1: ~
+            |    item2: ~
+            |    item3: ~
+            |  tree:
+            |    some_menu:
+            |      children:
+            |        <caret>
+            """.stripMargin(),
+
+            ["item1", "item2", "item3"]
+        )
+    }
+
+    def void "test: suggest position as property of tree children"() {
+        suggestions(
+            """
+            |oro_menu_config:
+            |  tree:
+            |    some_menu:
+            |      children:
+            |        <caret>
+            """.stripMargin(),
+
+            ["position"]
+        )
+    }
+
+    def void "test: suggest tree children at the second level"() {
+        suggestions(
+            """
+            |oro_menu_config:
+            |  items:
+            |    item1: ~
+            |    item2: ~
+            |    item3: ~
+            |  tree:
+            |    some_menu:
+            |      children:
+            |        some_child:
+            |          children:
+            |            <caret>
+            """.stripMargin(),
+
+            ["item1", "item2", "item3"]
+        )
+    }
+
+    def void "test: suggest tree children at the third level"() {
+        suggestions(
+            """
+            |oro_menu_config:
+            |  items:
+            |    item1: ~
+            |    item2: ~
+            |    item3: ~
+            |  tree:
+            |    some_menu:
+            |      children:
+            |        some_child:
+            |          children:
+            |            some_child2:
+            |              children:
+            |                <caret>
+            """.stripMargin(),
+
+            ["item1", "item2", "item3"]
+        )
+    }
 }

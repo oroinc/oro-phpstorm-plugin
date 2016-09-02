@@ -32,10 +32,11 @@ public class PhpClassReferenceProvider extends PsiReferenceProvider {
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         if(element instanceof YAMLKeyValue) {
-            final HashSet<String> skippedClassNames = getClassNamesFromSiblings((YAMLKeyValue) element);
+            final YAMLKeyValue keyValue = (YAMLKeyValue) element;
+            final HashSet<String> skippedClassNames = getClassNamesFromSiblings(keyValue);
 
             return new PsiReference[] {
-                new PhpClassReference(((YAMLKeyValue) element).getKey(), phpClass, ((YAMLKeyValue) element).getKeyText(), insertHandler, skippedClassNames)
+                new PhpClassReference(keyValue.getKey(), phpClass, keyValue.getKeyText(), insertHandler, skippedClassNames)
             };
 
         // skip scalar element in key context

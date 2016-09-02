@@ -15,6 +15,9 @@ public class RouteReferenceProvider extends PsiReferenceProvider {
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         if(element instanceof YAMLScalar) {
             return new PsiReference[] { new RouteReference(element, ((YAMLScalar) element).getTextValue()) };
+        } else if(element instanceof YAMLKeyValue && context.get("key") != null) {
+            final YAMLKeyValue keyValue = (YAMLKeyValue) element;
+            return new PsiReference[] { new RouteReference(keyValue.getKey(), keyValue.getKeyText()) };
         }
 
         return new PsiReference[0];

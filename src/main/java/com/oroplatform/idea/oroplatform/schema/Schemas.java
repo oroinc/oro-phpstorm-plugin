@@ -751,6 +751,11 @@ public class Schemas {
     }
 
     private static Schema navigation() {
+        final Container attributes = Container.with(
+            Property.named("class", Scalars.any),
+            Property.named("id", Scalars.any)
+        );
+
         return new Schema(new FilePathMatcher(FilePathPatterns.NAVIGATION), Container.with(
             Property.named("oro_menu_config", Container.with(
                 Property.named("templates", Container.with(
@@ -780,11 +785,16 @@ public class Schemas {
                         Property.named("uri", Scalars.any),
                         Property.named("route", Scalars.route),
                         Property.named("routeParameters", Container.any),
-                        //TODO: attributes etc.
-                        Property.named("attributes", Container.any),
-                        Property.named("linkAttributes", Container.any),
-                        Property.named("labelAttributes", Container.any),
-                        Property.named("childrenAttributes", Container.any),
+                        Property.named("attributes", attributes),
+                        Property.named("linkAttributes", attributes.andWith(
+                            Property.named("target", Scalars.any),
+                            Property.named("title", Scalars.any),
+                            Property.named("rel", Scalars.any),
+                            Property.named("type", Scalars.any),
+                            Property.named("name", Scalars.any)
+                        )),
+                        Property.named("labelAttributes", attributes),
+                        Property.named("childrenAttributes", attributes),
                         Property.named("showNonAuthorized", Scalars.bool),
                         Property.named("display", Scalars.bool),
                         Property.named("displayChildren", Scalars.bool),
@@ -794,13 +804,28 @@ public class Schemas {
                 Property.named("tree", Container.with(
                     Property.any(Container.with(
                         Property.named("type", Scalars.any),
-                        Property.named("merge_strategy", Scalars.any),
-                        Property.named("extras", Container.any),
-                        Property.named("children", Container.any)
+                        Property.named("merge_strategy", Scalars.strictChoices("append", "replace", "move")),
+                        Property.named("extras", Container.with(
+                            Property.named("brand", Scalars.any),
+                            Property.named("brandLink", Scalars.any)
+                        )),
+                        Property.named("children", navigationTree(10))
                     ))
                 ))
             )),
-            Property.named("oro_titles", Container.any)
+            Property.named("oro_titles", Container.with(
+                Property.any(Scalars.any).withKeyElement(Scalars.route)
+            ))
         ));
+    }
+
+    private static Element navigationTree(int deep) {
+        if(deep == 0) return Scalars.any;
+
+        return Container.with(
+            Property.any(navigationTree(deep - 1))
+                .withKeyElement(Scalars.propertiesFromPath(new PropertyPath("oro_menu_config", "items"))),
+            Property.named("position", Scalars.integer)
+        );
     }
 }
