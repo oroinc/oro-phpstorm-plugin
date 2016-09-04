@@ -21,4 +21,8 @@ public class TranslationIndex {
         return FileBasedIndex.getInstance().getAllKeys(TranslationFileBasedIndex.KEY, project);
     }
 
+    public Collection<String> findDomains() {
+        return FileBasedIndex.getInstance().getAllKeys(TranslationDomainFileBasedIndex.KEY, project);
+    }
+
 }

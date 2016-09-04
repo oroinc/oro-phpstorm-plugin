@@ -778,8 +778,7 @@ public class Schemas {
                 Property.named("items", Container.with(
                     Container.with(
                         Property.named("aclResourceId", Scalars.acl),
-                        //TODO: suggest translateDomain
-                        Property.named("translateDomain", Scalars.any),
+                        Property.named("translateDomain", Scalars.transDomain),
                         Property.named("translateParameters", Container.any),
                         Property.named("label", Scalars.trans),
                         Property.named("name", Scalars.any),

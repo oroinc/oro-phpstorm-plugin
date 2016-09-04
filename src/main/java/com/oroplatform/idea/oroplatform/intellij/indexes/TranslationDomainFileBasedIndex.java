@@ -6,14 +6,15 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
 import com.jetbrains.php.lang.PhpFileType;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
+import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class TranslationFileBasedIndex extends ScalarIndexExtension<String> {
+public class TranslationDomainFileBasedIndex extends ScalarIndexExtension<String> {
     private final KeyDescriptor<String> keyDescriptor = new EnumeratorStringDescriptor();
-    public static final ID<String, Void> KEY = ID.create("com.oroplatform.idea.oroplatform.translations");
+    public static final ID<String, Void> KEY = ID.create("com.oroplatform.idea.oroplatform.translation_domains");
 
     @NotNull
     @Override
@@ -44,19 +45,9 @@ public class TranslationFileBasedIndex extends ScalarIndexExtension<String> {
             @Override
             void indexCatalogue(Map<String, Void> index, ArrayCreationExpression catalogue) {
                 for (ArrayHashElement domainHash : catalogue.getHashElements()) {
-                    if(!(domainHash.getValue() instanceof ArrayCreationExpression)) continue;
+                    if(domainHash.getKey() == null) continue;
 
-                    final ArrayCreationExpression translations = (ArrayCreationExpression) domainHash.getValue();
-
-                    indexTranslations(index, translations);
-                }
-            }
-
-            private void indexTranslations(Map<String, Void> index, ArrayCreationExpression translations) {
-                for (ArrayHashElement translationHash : translations.getHashElements()) {
-                    if(translationHash.getKey() == null) continue;
-                    final String translation = translationHash.getKey().getText();
-                    index.put(StringUtil.stripQuotesAroundValue(translation), null);
+                    index.put(StringUtil.stripQuotesAroundValue(domainHash.getKey().getText()), null);
                 }
             }
         };

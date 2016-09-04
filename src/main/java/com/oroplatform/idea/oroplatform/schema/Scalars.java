@@ -160,6 +160,14 @@ final class Scalars {
         }
     };
 
+    final static Element transDomain = new Scalar() {
+        @Nullable
+        @Override
+        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.translationDomain(insertHandler);
+        }
+    };
+
     final static Scalar any = new Scalar();
 
     final static Scalar fullEntity = phpClass(PhpClass.entity(false));
