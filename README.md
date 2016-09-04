@@ -22,6 +22,7 @@ Features
 - Autocomplete for the *workflow.yml*
 - Autocomplete for the *actions.yml*
 - Autocomplete for the *dashboard.yml*
+- Autocomplete for the *navigation.yml*
 - Possibility to navigate via RequireJS modules
 - ...
 
