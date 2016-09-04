@@ -174,4 +174,16 @@ class NavigationCompletionTest extends CompletionTest {
             ["item1", "item2", "item3"]
         )
     }
+
+    def void "test: suggest oro_navigation_elements properties"() {
+        suggestions(
+            """
+            |oro_navigation_elements:
+            |  some_element:
+            |    <caret>
+            """.stripMargin(),
+
+            ["routes", "default"]
+        )
+    }
 }

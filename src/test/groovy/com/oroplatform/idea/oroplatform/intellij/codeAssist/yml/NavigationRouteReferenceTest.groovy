@@ -89,7 +89,8 @@ class NavigationRouteReferenceTest extends ReferenceTest {
             """
             |oro_navigation_elements:
             |  some_element:
-            |    <caret>
+            |    routes:
+            |      <caret>
             """.stripMargin(),
 
             ["oro_route1", "oro_route2"]

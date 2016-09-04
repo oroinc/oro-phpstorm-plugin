@@ -772,7 +772,8 @@ public class Schemas {
                         Property.named("compressed", Scalars.bool),
                         Property.named("block", Scalars.any),
                         Property.named("rootClass", Scalars.any),
-                        Property.named("isDropdown", Scalars.bool)
+                        Property.named("isDropdown", Scalars.bool),
+                        Property.named("allow_safe_labels", Scalars.bool)
                     )
                 )),
                 Property.named("items", Container.with(
@@ -818,7 +819,10 @@ public class Schemas {
             )),
             Property.named("oro_navigation_elements", Container.with(
                 Container.with(
-                    Property.any(Scalars.bool).withKeyElement(Scalars.route)
+                    Property.named("routes", Container.with(
+                        Property.any(Scalars.bool).withKeyElement(Scalars.route)
+                    )),
+                    Property.named("default", Scalars.bool)
                 )
             ))
         ));
