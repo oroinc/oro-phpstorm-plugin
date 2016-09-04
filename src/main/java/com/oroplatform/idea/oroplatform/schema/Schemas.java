@@ -734,7 +734,8 @@ public class Schemas {
                                 Property.named("label", Scalars.trans),
                                 Property.named("acl", Scalars.acl),
                                 Property.named("route", Scalars.route),
-                                Property.named("position", Scalars.integer)
+                                Property.named("position", Scalars.integer),
+                                Property.named("icon", Scalars.any)
                             )
                         )),
                         Property.named("configuration", configuration)
@@ -815,6 +816,11 @@ public class Schemas {
             )),
             Property.named("oro_titles", Container.with(
                 Property.any(Scalars.any).withKeyElement(Scalars.route)
+            )),
+            Property.named("oro_navigation_elements", Container.with(
+                Container.with(
+                    Property.any(Scalars.bool).withKeyElement(Scalars.route)
+                )
             ))
         ));
     }

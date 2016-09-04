@@ -83,4 +83,16 @@ class NavigationRouteReferenceTest extends ReferenceTest {
             ["createAction"]
         )
     }
+
+    def void "test: suggest routes in oro_navigation_elements"() {
+        suggestions(
+            """
+            |oro_navigation_elements:
+            |  some_element:
+            |    <caret>
+            """.stripMargin(),
+
+            ["oro_route1", "oro_route2"]
+        )
+    }
 }

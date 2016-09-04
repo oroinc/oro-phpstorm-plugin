@@ -15,7 +15,7 @@ class NavigationCompletionTest extends CompletionTest {
             |<caret>
             """.stripMargin(),
 
-            ["oro_menu_config", "oro_titles"]
+            ["oro_menu_config", "oro_titles", "oro_navigation_elements"]
         )
     }
 
