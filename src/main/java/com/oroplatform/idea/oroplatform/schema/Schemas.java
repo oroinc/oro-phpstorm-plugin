@@ -16,12 +16,12 @@ public class Schemas {
         public final static String ACTIONS = "Resources/config/oro/actions.yml";
         public final static String DASHBOARD = "Resources/config/dashboard.yml";
         public final static String NAVIGATION = "Resources/config/navigation.yml";
+        public final static String SEARCH = "Resources/config/search.yml";
     }
 
     public static final Collection<Schema> ALL = asList(
-        acl(), entity(), datagrid(), workflow(), systemConfiguration(), api(), actions(), dashboard(), navigation()
+        acl(), entity(), datagrid(), workflow(), systemConfiguration(), api(), actions(), dashboard(), navigation(), search()
     );
-
 
     private static Schema acl() {
         return new Schema(new FilePathMatcher(FilePathPatterns.ACL), Container.with(
@@ -836,5 +836,35 @@ public class Schemas {
                 .withKeyElement(Scalars.propertiesFromPath(new PropertyPath("oro_menu_config", "items"))),
             Property.named("position", Scalars.integer)
         );
+    }
+
+    private static Schema search() {
+        final Element targetType = Scalars.strictChoices("text", "integer", "double", "datetime");
+        final Element targetFields = Sequence.of(Scalars.any);
+
+        return new Schema(new FilePathMatcher(FilePathPatterns.SEARCH), Container.with(
+            Property.any(Container.with(
+                Property.named("alias", Scalars.any),
+                Property.named("search_template", Scalars.twig),
+                Property.named("label", Scalars.trans),
+                Property.named("route", Container.with(
+                    Property.named("name", Scalars.route),
+                    Property.named("parameters", Container.any)
+                )),
+                Property.named("mode", Scalars.any),
+                Property.named("title_fields", Sequence.of(Scalars.any)),
+                Property.named("fields", Sequence.of(Container.with(
+                    Property.named("name", Scalars.any),
+                    Property.named("target_type", targetType),
+                    Property.named("target_fields", targetFields),
+                    Property.named("relation_type", Scalars.choices("many-to-one", "many-to-many", "one-to-many", "one-to-one")),
+                    Property.named("relation_fields", Sequence.of(Container.with(
+                        Property.named("name", Scalars.any),
+                        Property.named("target_type", targetType),
+                        Property.named("target_fields", targetFields)
+                    )))
+                )))
+            )).withKeyElement(Scalars.fullEntity)
+        ));
     }
 }
