@@ -3,7 +3,7 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
 import com.oroplatform.idea.oroplatform.schema.Schemas
 
-class SearchTest extends CompletionTest {
+class SearchCompletionTest extends CompletionTest {
     @Override
     String fileName() {
         return Schemas.FilePathPatterns.SEARCH

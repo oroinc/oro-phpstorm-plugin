@@ -840,7 +840,8 @@ public class Schemas {
 
     private static Schema search() {
         final Element targetType = Scalars.strictChoices("text", "integer", "double", "datetime");
-        final Element targetFields = Sequence.of(Scalars.any);
+        final Element field = Scalars.field(new PropertyPath("$this"));
+        final Element targetFields = Sequence.of(field);
 
         return new Schema(new FilePathMatcher(FilePathPatterns.SEARCH), Container.with(
             Property.any(Container.with(
@@ -851,14 +852,15 @@ public class Schemas {
                     Property.named("name", Scalars.route),
                     Property.named("parameters", Container.any)
                 )),
-                Property.named("mode", Scalars.any),
-                Property.named("title_fields", Sequence.of(Scalars.any)),
+                Property.named("mode", Scalars.strictChoices("normal", "with_descendants", "only_descendants")),
+                Property.named("title_fields", Sequence.of(field)),
                 Property.named("fields", Sequence.of(Container.with(
-                    Property.named("name", Scalars.any),
+                    Property.named("name", field),
                     Property.named("target_type", targetType),
                     Property.named("target_fields", targetFields),
                     Property.named("relation_type", Scalars.choices("many-to-one", "many-to-many", "one-to-many", "one-to-one")),
                     Property.named("relation_fields", Sequence.of(Container.with(
+                        //TODO: get class reference from field "name" property and suggest here fields
                         Property.named("name", Scalars.any),
                         Property.named("target_type", targetType),
                         Property.named("target_fields", targetFields)
