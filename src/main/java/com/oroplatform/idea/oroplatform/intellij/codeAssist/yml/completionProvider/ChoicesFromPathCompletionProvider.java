@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getAncestors;
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getPropertyValuesFrom;
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getPropertyFrom;
 
 public class ChoicesFromPathCompletionProvider extends CompletionProvider<CompletionParameters> {
     private final PropertyPath path;
@@ -34,7 +34,7 @@ public class ChoicesFromPathCompletionProvider extends CompletionProvider<Comple
     protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
         final YAMLFile file = (YAMLFile) parameters.getPosition().getContainingFile();
         final Set<PsiElement> ancestors = getAncestors(parameters.getPosition());
-        final Collection<String> properties = getPropertyValuesFrom(path, YamlPsiElements.getMappingsFrom(file), ancestors);
+        final Collection<String> properties = getPropertyFrom(path, YamlPsiElements.getMappingsFrom(file), ancestors);
 
         for (String property : properties) {
             result.addElement(LookupElementBuilder.create(prefix+property).withInsertHandler(insertHandler));

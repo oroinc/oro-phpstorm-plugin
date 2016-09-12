@@ -137,7 +137,11 @@ public class YamlPsiElements {
         return getAncestors(parent, ancestors);
     }
 
-    public static Collection<String> getPropertyKeysFrom(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
+    public static Collection<String> getPropertyFrom(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
+        return path.doesPointToValue() ? getPropertyValuesFrom(path, elements, ancestors) : getPropertyKeysFrom(path, elements, ancestors);
+    }
+
+    private static Collection<String> getPropertyKeysFrom(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
         if(path.getProperties().isEmpty()) {
             return getParentKeysFrom(elements);
         }
@@ -147,7 +151,7 @@ public class YamlPsiElements {
         return getPropertyKeysFrom(path.dropHead(), getElementsForProperty(property, elements, ancestors), ancestors);
     }
 
-    public static Collection<String> getPropertyValuesFrom(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
+    private static Collection<String> getPropertyValuesFrom(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
         if(path.getProperties().isEmpty()) {
             return getPropertyValuesFrom(elements);
         }

@@ -1,5 +1,7 @@
 package com.oroplatform.idea.oroplatform.schema;
 
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.php.FieldTypePhpClassProvider;
+
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
@@ -300,7 +302,7 @@ public class Schemas {
         );
         final Element entityAcl = OneOf.from(acl, Container.with(acl));
 
-        final Element attributesElement = Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "attributes"), "$");
+        final Element attributesElement = Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "attributes").pointsToValue(), "$");
         final Element workflowAttributes = OneOf.from(attributesElement, Sequence.of(attributesElement));
         final Element conditions = Repeated.atAnyLevel(Container.with(
             Property.any(workflowAttributes).withKeyElement(Scalars.condition)
@@ -333,7 +335,7 @@ public class Schemas {
 
         final Container transition = Container.with(
             Property.named("step_to", Scalars.any),
-            Property.named("transition_definition", Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "transition_definitions"))),
+            Property.named("transition_definition", Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "transition_definitions").pointsToValue())),
             Property.named("is_start", Scalars.bool),
             Property.named("is_hidden", Scalars.bool),
             Property.named("is_unavailable_hidden", Scalars.bool),
@@ -423,7 +425,7 @@ public class Schemas {
                 Property.named("api_tree", Container.with(
                     Repeated.atAnyLevel(
                         Container.with(
-                            Property.any(Container.any).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("oro_system_configuration", "fields")))
+                            Property.any(Container.any).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("oro_system_configuration", "fields").pointsToValue()))
                         )
                     )
                 ))
@@ -443,9 +445,9 @@ public class Schemas {
                 Property.named("priority", Scalars.integer),
                 Property.named("children", OneOf.from(
                     systemConfigurationTree(deep - 1),
-                    Sequence.of(Scalars.propertiesFromPath(new PropertyPath("oro_system_configuration", "fields")))
+                    Sequence.of(Scalars.propertiesFromPath(new PropertyPath("oro_system_configuration", "fields").pointsToValue()))
                 ))
-            )).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("oro_system_configuration", "groups")))
+            )).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("oro_system_configuration", "groups").pointsToValue()))
         );
     }
 
@@ -676,7 +678,7 @@ public class Schemas {
                             )),
                             Property.named("attribute_default_values", Container.with(
                                 Property.any(Scalars.any)
-                                    .withKeyElement(Scalars.propertiesFromPath(new PropertyPath("operations", "$this", "form_options", "attribute_fields")))
+                                    .withKeyElement(Scalars.propertiesFromPath(new PropertyPath("operations", "$this", "form_options", "attribute_fields").pointsToValue()))
                             ))
                         )),
                         Property.named("form_init", actions),
@@ -833,14 +835,15 @@ public class Schemas {
 
         return Container.with(
             Property.any(navigationTree(deep - 1))
-                .withKeyElement(Scalars.propertiesFromPath(new PropertyPath("oro_menu_config", "items"))),
+                .withKeyElement(Scalars.propertiesFromPath(new PropertyPath("oro_menu_config", "items").pointsToValue())),
             Property.named("position", Scalars.integer)
         );
     }
 
     private static Schema search() {
         final Element targetType = Scalars.strictChoices("text", "integer", "double", "datetime");
-        final Element field = Scalars.field(new PropertyPath("$this"));
+        final PropertyPath classPropertyPath = new PropertyPath("$this");
+        final Element field = Scalars.field(classPropertyPath);
         final Element targetFields = Sequence.of(field);
 
         return new Schema(new FilePathMatcher(FilePathPatterns.SEARCH), Container.with(
@@ -860,8 +863,7 @@ public class Schemas {
                     Property.named("target_fields", targetFields),
                     Property.named("relation_type", Scalars.choices("many-to-one", "many-to-many", "one-to-many", "one-to-one")),
                     Property.named("relation_fields", Sequence.of(Container.with(
-                        //TODO: get class reference from field "name" property and suggest here fields
-                        Property.named("name", Scalars.any),
+                        Property.named("name", Scalars.field(new PropertyPath("$this", "fields", "$this", "name").pointsToValue(), new FieldTypePhpClassProvider(classPropertyPath))),
                         Property.named("target_type", targetType),
                         Property.named("target_fields", targetFields)
                     )))

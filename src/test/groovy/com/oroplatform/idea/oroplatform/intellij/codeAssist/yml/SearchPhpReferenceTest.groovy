@@ -22,13 +22,47 @@ class SearchPhpReferenceTest extends PhpReferenceTest {
             |}
             |
             |namespace Oro\\Bundle\\AcmeBundle\\Entity {
+            |  use Oro\\Bundle;
+            |  use Oro\\Bundle as SomeAlias;
             |  class Country {
             |    private \$name;
             |    private \$code;
+            |    /**
+            |     * @ORM\\ManyToMany(
+            |     *      targetEntity="Oro\\Bundle\\AcmeBundle\\Entity\\City",
+            |     *      cascade={"ALL"},
+            |     *      orphanRemoval=true
+            |     * )
+            |     */
+            |    private \$cities;
+            |    /**
+            |     * @ORM\\ManyToMany(
+            |     *      targetEntity="City",
+            |     *      cascade={"ALL"},
+            |     *      orphanRemoval=true
+            |     * )
+            |     */
+            |    private \$citiesBySimpleName;
+            |    /**
+            |     * @ORM\\ManyToMany(
+            |     *      targetEntity="Bundle\\AcmeBundle\\Entity\\City",
+            |     *      cascade={"ALL"},
+            |     *      orphanRemoval=true
+            |     * )
+            |     */
+            |    private \$citiesByImportedNamespace;
+            |    /**
+            |     * @ORM\\ManyToMany(
+            |     *      targetEntity="SomeAlias\\AcmeBundle\\Entity\\City",
+            |     *      cascade={"ALL"},
+            |     *      orphanRemoval=true
+            |     * )
+            |     */
+            |    private \$citiesByAliasedNamespace;
             |  }
             |
             |  class City {
-            |    private \$name;
+            |    private \$string;
             |  }
             |}
             |
@@ -73,6 +107,66 @@ class SearchPhpReferenceTest extends PhpReferenceTest {
             |  title_fields: [<caret>]
             """.stripMargin(),
             ["name", "code"]
+        )
+    }
+
+    def void "test: suggest relation field names"() {
+        suggestions(
+            """
+            |Oro\\Bundle\\AcmeBundle\\Entity\\Country:
+            |  fields:
+            |    -
+            |      name: cities
+            |      relation_fields:
+            |        -
+            |          name: <caret>
+            """.stripMargin(),
+            ["string"]
+        )
+    }
+
+    def void "test: suggest relation field names by simple name"() {
+        suggestions(
+            """
+            |Oro\\Bundle\\AcmeBundle\\Entity\\Country:
+            |  fields:
+            |    -
+            |      name: citiesBySimpleName
+            |      relation_fields:
+            |        -
+            |          name: <caret>
+            """.stripMargin(),
+            ["string"]
+        )
+    }
+
+    def void "test: suggest relation field names by imported namespace"() {
+        suggestions(
+            """
+            |Oro\\Bundle\\AcmeBundle\\Entity\\Country:
+            |  fields:
+            |    -
+            |      name: citiesByImportedNamespace
+            |      relation_fields:
+            |        -
+            |          name: <caret>
+            """.stripMargin(),
+            ["string"]
+        )
+    }
+
+    def void "test: suggest relation field names by aliased namespace"() {
+        suggestions(
+            """
+            |Oro\\Bundle\\AcmeBundle\\Entity\\Country:
+            |  fields:
+            |    -
+            |      name: citiesByAliasedNamespace
+            |      relation_fields:
+            |        -
+            |          name: <caret>
+            """.stripMargin(),
+            ["string"]
         )
     }
 }

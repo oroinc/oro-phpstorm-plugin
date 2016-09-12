@@ -17,12 +17,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class PhpFieldReference extends PsiPolyVariantReferenceBase<PsiElement> {
-    private final String className;
+    private final Collection<String> classNames = new LinkedList<String>();
     private final String fieldName;
 
-    public PhpFieldReference(PsiElement element, String className, String fieldName) {
+    public PhpFieldReference(PsiElement element, Collection<String> classNames, String fieldName) {
         super(element);
-        this.className = className;
+        this.classNames.addAll(classNames);
         this.fieldName = fieldName;
     }
 
@@ -47,22 +47,26 @@ public class PhpFieldReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     @NotNull
     private Collection<PhpClass> getClasses(PhpIndex phpIndex) {
-        if(className.contains(":") && className.length() > className.indexOf(":") + 1) {
-            final PrefixMatcher matcher = new CamelHumpMatcher(className.replace(":", ""));
-            final String classSimpleName = className.split(":")[1];
-            final Collection<PhpClass> phpClasses = phpIndex.getClassesByName(classSimpleName);
-            final Collection<PhpClass> result = new LinkedList<PhpClass>();
+        final Collection<PhpClass> result = new LinkedList<PhpClass>();
 
-            for(PhpClass phpClass : phpClasses) {
-                if(matcher.isStartMatch(phpClass.getFQN().replace("\\", ""))) {
-                    result.add(phpClass);
+        for (String className : classNames) {
+            if(className.contains(":") && className.length() > className.indexOf(":") + 1) {
+                final PrefixMatcher matcher = new CamelHumpMatcher(className.replace(":", ""));
+                final String classSimpleName = className.split(":")[1];
+                final Collection<PhpClass> phpClasses = phpIndex.getClassesByName(classSimpleName);
+
+                for(PhpClass phpClass : phpClasses) {
+                    if(matcher.isStartMatch(phpClass.getFQN().replace("\\", ""))) {
+                        result.add(phpClass);
+                    }
                 }
-            }
 
-            return result;
-        } else {
-            return phpIndex.getClassesByFQN(className);
+            } else {
+                result.addAll(phpIndex.getClassesByFQN(className));
+            }
         }
+
+        return result;
     }
 
     @NotNull

@@ -6,6 +6,8 @@ import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.PsiReferenceProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionProviders;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.php.DirectPhpClassProvider;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.php.PhpClassProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceProviders;
 import com.oroplatform.idea.oroplatform.schema.requirements.PatternRequirement;
 import com.oroplatform.idea.oroplatform.schema.requirements.Requirement;
@@ -203,10 +205,14 @@ final class Scalars {
     };
 
     static Scalar field(final PropertyPath classPropertyPath) {
+        return field(classPropertyPath, new DirectPhpClassProvider());
+    }
+
+    static Scalar field(final PropertyPath propertyPath, final PhpClassProvider phpClassProvider) {
         return new Scalar() {
             @Override
             public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return providers.phpField(classPropertyPath, insertHandler);
+                return providers.phpField(propertyPath, phpClassProvider, insertHandler);
             }
         };
     }

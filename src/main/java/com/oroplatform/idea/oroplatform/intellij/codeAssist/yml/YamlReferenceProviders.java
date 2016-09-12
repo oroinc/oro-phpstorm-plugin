@@ -3,6 +3,7 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.PsiReferenceProvider;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.php.PhpClassProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.FilePathReferenceProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.referenceProvider.*;
@@ -37,8 +38,8 @@ class YamlReferenceProviders implements ReferenceProviders {
     }
 
     @Override
-    public PsiReferenceProvider phpField(PropertyPath classPropertyPath, InsertHandler<LookupElement> insertHandler) {
-        return new PhpFieldReferenceProvider(classPropertyPath);
+    public PsiReferenceProvider phpField(PropertyPath classPropertyPath, PhpClassProvider phpClassProvider, InsertHandler<LookupElement> insertHandler) {
+        return new PhpFieldReferenceProvider(classPropertyPath, phpClassProvider);
     }
 
     @Override

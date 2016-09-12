@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getMappingsFrom;
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getPropertyValuesFrom;
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getPropertyFrom;
 
 class YamlPropertiesFileBasedIndex extends ScalarIndexExtension<String> {
 
@@ -54,7 +54,7 @@ class YamlPropertiesFileBasedIndex extends ScalarIndexExtension<String> {
                 final YAMLFile file = (YAMLFile) inputData.getPsiFile();
 
                 final Collection<String> values =
-                    getPropertyValuesFrom(propertyPath, getMappingsFrom(file), Collections.<PsiElement>emptySet());
+                    getPropertyFrom(propertyPath, getMappingsFrom(file), Collections.<PsiElement>emptySet());
 
                 for (String value : values) {
                     index.put(value, null);
