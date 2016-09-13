@@ -3,11 +3,14 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.PsiReferenceProvider;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.php.PhpClassProvider;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.php.PhpClassProvider;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.php.PhpClassProviders;
 import com.oroplatform.idea.oroplatform.schema.PhpClass;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 
 public interface ReferenceProviders {
+
+    PhpClassProviders phpClassProviders();
 
     PsiReferenceProvider filePath(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider filePathIn(String relativeToAppDir, InsertHandler<LookupElement> insertHandler);

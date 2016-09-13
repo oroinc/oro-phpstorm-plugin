@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.php.PhpClassProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 import gnu.trove.THashSet;
@@ -23,10 +24,10 @@ import java.util.regex.Pattern;
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getAncestors;
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getPropertyFrom;
 
-public class FieldTypePhpClassProvider implements PhpClassProvider {
+class FieldTypePhpClassProvider implements PhpClassProvider {
     private final PropertyPath classPropertyPath;
 
-    public FieldTypePhpClassProvider(PropertyPath classPropertyPath) {
+    FieldTypePhpClassProvider(PropertyPath classPropertyPath) {
         this.classPropertyPath = classPropertyPath;
     }
 

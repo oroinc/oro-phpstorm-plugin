@@ -1,7 +1,5 @@
 package com.oroplatform.idea.oroplatform.schema;
 
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.php.FieldTypePhpClassProvider;
-
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
@@ -863,7 +861,7 @@ public class Schemas {
                     Property.named("target_fields", targetFields),
                     Property.named("relation_type", Scalars.choices("many-to-one", "many-to-many", "one-to-many", "one-to-one")),
                     Property.named("relation_fields", Sequence.of(Container.with(
-                        Property.named("name", Scalars.field(new PropertyPath("$this", "fields", "$this", "name").pointsToValue(), new FieldTypePhpClassProvider(classPropertyPath))),
+                        Property.named("name", Scalars.fieldOfFieldTypeClass(classPropertyPath, new PropertyPath("$this", "fields", "$this", "name").pointsToValue())),
                         Property.named("target_type", targetType),
                         Property.named("target_fields", targetFields)
                     )))
