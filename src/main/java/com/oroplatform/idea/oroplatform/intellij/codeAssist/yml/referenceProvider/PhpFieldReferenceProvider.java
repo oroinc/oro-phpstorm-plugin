@@ -27,27 +27,36 @@ public class PhpFieldReferenceProvider extends PsiReferenceProvider {
     @NotNull
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+        final boolean allowsKey = context.get("key") != null;
+        if(!allowsKey && element instanceof YAMLKeyValue) return new PsiReference[0];
+
         if(element instanceof YAMLPsiElement) {
             final PhpIndex phpIndex = PhpIndex.getInstance(element.getProject());
             final Collection<String> properties = phpClassProvider.getPhpClasses(phpIndex, element, classPropertyPath);
 
             if(!properties.isEmpty()) {
-                return new PsiReference[]{new PhpFieldReference(getReferenceElement(element), properties, getReferenceText(element))};
+                return new PsiReference[]{new PhpFieldReference(getReferenceElement(element, allowsKey), properties, getReferenceText(element, allowsKey))};
             }
         }
 
         return new PsiReference[0];
     }
 
-    private static PsiElement getReferenceElement(PsiElement element) {
-        return element instanceof YAMLKeyValue ? ((YAMLKeyValue) element).getKey() : element;
+    private static PsiElement getReferenceElement(PsiElement element, boolean allowsKey) {
+        if(element instanceof YAMLKeyValue) {
+            final YAMLKeyValue keyValue = (YAMLKeyValue) element;
+            return allowsKey ? keyValue.getKey() : keyValue.getValue();
+        } else {
+            return element;
+        }
     }
 
-    private static String getReferenceText(PsiElement element) {
+    private static String getReferenceText(PsiElement element, boolean allowsKey) {
         if(element instanceof YAMLScalar) {
             return ((YAMLScalar) element).getTextValue();
         } else if(element instanceof YAMLKeyValue) {
-            return ((YAMLKeyValue) element).getKeyText();
+            final YAMLKeyValue keyValue = (YAMLKeyValue) element;
+            return allowsKey ? keyValue.getKeyText() : keyValue.getValueText();
         } else {
             return element.getText();
         }

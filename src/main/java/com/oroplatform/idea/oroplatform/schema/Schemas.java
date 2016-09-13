@@ -478,7 +478,7 @@ public class Schemas {
                 Property.named("meta_property", Scalars.bool),
                 Property.named("target_class", Scalars.fullEntity),
                 Property.named("target_type", Scalars.choices("to-one", "to-many", "collection"))
-            )).withKeyElement(Scalars.field(entityPropertyPath))
+            ).allowExtraProperties()).withKeyElement(Scalars.field(entityPropertyPath))
         );
     }
     private static Container apiSorters(PropertyPath entityPropertyPath) {

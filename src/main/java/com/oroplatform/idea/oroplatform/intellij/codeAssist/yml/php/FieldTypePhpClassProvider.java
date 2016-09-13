@@ -61,7 +61,7 @@ class FieldTypePhpClassProvider implements PhpClassProvider {
 
         if(docComment == null) return classNames;
 
-        final Pattern targetEntityPattern = Pattern.compile("targetEntity=\"(.*)\"");
+        final Pattern targetEntityPattern = Pattern.compile("targetEntity=\"(.*?)\"");
 
         for (PsiElement maybeDocTag : docComment.getChildren()) {
             if(!(maybeDocTag instanceof PhpDocTag)) continue;

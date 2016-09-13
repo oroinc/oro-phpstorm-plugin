@@ -59,6 +59,10 @@ class SearchPhpReferenceTest extends PhpReferenceTest {
             |     * )
             |     */
             |    private \$citiesByAliasedNamespace;
+            |    /**
+            |     * @ORM\\ManyToMany(targetEntity="Oro\\Bundle\\AcmeBundle\\Entity\\City", cascade={"ALL"}, orphanRemoval=true)
+            |     */
+            |    private \$citiesInSingleLine;
             |  }
             |
             |  class City {
@@ -85,6 +89,18 @@ class SearchPhpReferenceTest extends PhpReferenceTest {
             |Oro\\Bundle\\AcmeBundle\\Entity\\Co<caret>untry: ~
             """.stripMargin(),
             ["Oro\\Bundle\\AcmeBundle\\Entity\\Country"]
+        )
+    }
+
+    def void "test: not detect entity reference for 'name' key"() {
+        checkPhpReference(
+            """
+            |Oro\\Bundle\\AcmeBundle\\Entity\\Country:
+            |  fields:
+            |    -
+            |      na<caret>me: code
+            """.stripMargin(),
+            []
         )
     }
 
@@ -162,6 +178,21 @@ class SearchPhpReferenceTest extends PhpReferenceTest {
             |  fields:
             |    -
             |      name: citiesByAliasedNamespace
+            |      relation_fields:
+            |        -
+            |          name: <caret>
+            """.stripMargin(),
+            ["string"]
+        )
+    }
+
+    def void "test: suggest relation field names with the PhpDoc in single line"() {
+        suggestions(
+            """
+            |Oro\\Bundle\\AcmeBundle\\Entity\\Country:
+            |  fields:
+            |    -
+            |      name: citiesInSingleLine
             |      relation_fields:
             |        -
             |          name: <caret>
