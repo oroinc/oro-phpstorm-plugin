@@ -23,6 +23,7 @@ Features
 - Autocomplete for the *actions.yml*
 - Autocomplete for the *dashboard.yml*
 - Autocomplete for the *navigation.yml*
+- Autocomplete for the *search.yml*
 - Possibility to navigate via RequireJS modules
 - ...
 
