@@ -8,6 +8,7 @@ import java.util.List;
 
 public class Entity {
     private final String shortcutName;
+    private final Bundle bundle;
     private final String fqn;
 
     @Nullable
@@ -20,15 +21,20 @@ public class Entity {
 
         final Bundle bundle = new Bundle(parts.subList(0, entityIndex));
 
-        return new Entity(bundle.getName()+":"+StringUtil.join(parts.subList(entityIndex + 1, parts.size()), "\\"), fqn);
+        return new Entity(bundle.getName()+":"+StringUtil.join(parts.subList(entityIndex + 1, parts.size()), "\\"), fqn, bundle);
     }
 
-    private Entity(String shortcutName, String fqn) {
+    private Entity(String shortcutName, String fqn, Bundle bundle) {
         this.shortcutName = shortcutName;
         this.fqn = fqn;
+        this.bundle = bundle;
     }
 
     public String getShortcutName() {
         return shortcutName;
+    }
+
+    public Bundle getBundle() {
+        return bundle;
     }
 }

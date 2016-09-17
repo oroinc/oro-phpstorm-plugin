@@ -82,6 +82,7 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
                 language="JavaScript"
                 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsReferenceContributor"
         />
+        <php.typeProvider3 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.php.EntityExtensionTypeProvider"/>
         <projectConfigurable instance="com.oroplatform.idea.oroplatform.settings.OroPlatformForm"
                              id="OroPlatform.settings"
                              groupId="language" />
