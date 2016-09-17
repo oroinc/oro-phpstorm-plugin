@@ -6,7 +6,7 @@ import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.PhpIndex;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpFieldReference;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.php.PhpClassProvider;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassProvider;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;

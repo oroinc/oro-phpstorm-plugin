@@ -10,7 +10,7 @@ import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.php.PhpClassProvider;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 import gnu.trove.THashSet;

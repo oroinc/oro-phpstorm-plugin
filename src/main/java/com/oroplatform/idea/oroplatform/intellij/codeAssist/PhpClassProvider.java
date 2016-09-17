@@ -1,4 +1,4 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist.php;
+package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.PhpIndex;

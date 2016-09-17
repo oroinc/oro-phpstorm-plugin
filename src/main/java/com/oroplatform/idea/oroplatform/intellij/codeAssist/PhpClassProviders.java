@@ -1,4 +1,4 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist.php;
+package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 

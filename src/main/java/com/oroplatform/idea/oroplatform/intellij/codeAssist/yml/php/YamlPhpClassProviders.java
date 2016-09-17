@@ -1,7 +1,7 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.php;
 
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.php.PhpClassProvider;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.php.PhpClassProviders;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassProvider;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassProviders;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 
 public class YamlPhpClassProviders implements PhpClassProviders {
