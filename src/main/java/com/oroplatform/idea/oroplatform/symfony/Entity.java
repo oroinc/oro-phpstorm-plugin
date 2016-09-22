@@ -9,6 +9,7 @@ import java.util.List;
 public class Entity {
     private final String shortcutName;
     private final Bundle bundle;
+    private final String simpleName;
     private final String fqn;
 
     @Nullable
@@ -21,17 +22,22 @@ public class Entity {
 
         final Bundle bundle = new Bundle(parts.subList(0, entityIndex));
 
-        return new Entity(bundle.getName()+":"+StringUtil.join(parts.subList(entityIndex + 1, parts.size()), "\\"), fqn, bundle);
+        return new Entity(bundle.getName()+":"+StringUtil.join(parts.subList(entityIndex + 1, parts.size()), "\\"), fqn, bundle, parts.get(parts.size() - 1));
     }
 
-    private Entity(String shortcutName, String fqn, Bundle bundle) {
+    private Entity(String shortcutName, String fqn, Bundle bundle, String simpleName) {
         this.shortcutName = shortcutName;
         this.fqn = fqn;
         this.bundle = bundle;
+        this.simpleName = simpleName;
     }
 
     public String getShortcutName() {
         return shortcutName;
+    }
+
+    public String getSimpleName() {
+        return simpleName;
     }
 
     public Bundle getBundle() {

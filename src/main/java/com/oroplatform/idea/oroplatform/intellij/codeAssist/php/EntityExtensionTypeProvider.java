@@ -80,14 +80,10 @@ public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
         final PhpIndex phpIndex = PhpIndex.getInstance(project);
         final PhpType outputType = new PhpType();
 
-        for (PhpClass phpClass : phpIndex.getClassesByFQN(className)) {
-            final Entity entity = Entity.fromFqn(phpClass.getPresentableFQN());
-
-            if(entity == null) return null;
-
+        for (Entity entity : Entities.instance(project).findEntities(className)) {
             final String bundleName = entity.getBundle().getName();
 
-            final String extensionClassName = "\\Extend\\Entity\\EX_" + bundleName + "_" + phpClass.getName();
+            final String extensionClassName = "\\Extend\\Entity\\EX_" + bundleName + "_" + entity.getSimpleName();
 
             for (PhpClass extensionClass : phpIndex.getClassesByFQN(extensionClassName)) {
                 outputType.add(extensionClass);
