@@ -24,6 +24,7 @@ Features
 - Autocomplete for the *dashboard.yml*
 - Autocomplete for the *navigation.yml*
 - Autocomplete for the *search.yml*
+- Autocomplete for entity methods added dynamically during application execution
 - Possibility to navigate via RequireJS modules
 - ...
 

@@ -6,7 +6,7 @@ plugins {
 import de.undercouch.gradle.tasks.download.Download
 
 group 'com.oroplatform'
-version '1.0.0-alpha18'
+version '1.0.0-alpha19'
 
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
