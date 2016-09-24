@@ -19,6 +19,7 @@ class EntityExtensionCompletionTest extends CompletionTest {
             """
             |<?php
             |class Ex_OroAcmeBundle_User {
+            |  public function __construct() {}
             |  public function getFullName() {}
             |}
             """.stripMargin()
@@ -48,6 +49,45 @@ class EntityExtensionCompletionTest extends CompletionTest {
             |<?php
             |\$user = new Oro\\Bundle\\AcmeBundle\\Entity\\User();
             |\$user-><caret>
+            """.stripMargin(),
+            ["getFullName()"]
+        )
+    }
+
+    def void "test: doesn't suggest magic methods"() {
+        suggestions(
+            """
+            |<?php
+            |\$user = new Oro\\Bundle\\AcmeBundle\\Entity\\User();
+            |\$user-><caret>
+            """.stripMargin(),
+            [],
+            ["__construct()"]
+        )
+    }
+
+    def void "test: suggest extension method on method result"() {
+        suggestions(
+            """
+            |<?php
+            |class SomeClass {
+            |  public static function getUser() { return new Oro\\Bundle\\AcmeBundle\\Entity\\User(); }
+            |}
+            |SomeClass::getUser()-><caret>
+            """.stripMargin(),
+            ["getFullName()"]
+        )
+    }
+
+    def void "test: suggest extension method for field"() {
+        suggestions(
+            """
+            |<?php
+            |class SomeClass {
+            |  /** @var Oro\\Bundle\\AcmeBundle\\Entity\\User */
+            |  public static \$user;
+            |}
+            |SomeClass::\$user-><caret>
             """.stripMargin(),
             ["getFullName()"]
         )

@@ -1,7 +1,11 @@
 package com.oroplatform.idea.oroplatform.settings;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ModificationTracker;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,8 +17,14 @@ import org.jetbrains.annotations.Nullable;
         @Storage(id = "dir", file = StoragePathMacros.PROJECT_CONFIG_DIR + "/oroPlatform.xml", scheme = StorageScheme.DIRECTORY_BASED)
     }
 )
-public class OroPlatformSettings implements PersistentStateComponent<Element> {
+public class OroPlatformSettings implements PersistentStateComponent<Element>, ModificationTracker {
     static final String DEFAULT_APP_DIRECTORY = "app";
+
+    private final Project project;
+
+    public OroPlatformSettings(Project project) {
+        this.project = project;
+    }
 
     @NotNull
     public static OroPlatformSettings getInstance(@NotNull Project project) {
@@ -23,17 +33,29 @@ public class OroPlatformSettings implements PersistentStateComponent<Element> {
 
     private String appDir = DEFAULT_APP_DIRECTORY;
     private VerboseBoolean pluginEnabled = new VerboseBoolean(false, false);
+    private long lastModifiedTimeStamp = 0;
 
     public String getAppDir() {
         return appDir;
     }
 
+    public VirtualFile getAppVirtualDir() {
+        return getProjectRoot(project).findFileByRelativePath(OroPlatformSettings.getInstance(project).getAppDir());
+    }
+
+    private static VirtualFile getProjectRoot(Project project) {
+        return ApplicationManager.getApplication().isUnitTestMode() ?
+            VirtualFileManager.getInstance().findFileByUrl("temp:///").findChild("src") : project.getBaseDir();
+    }
+
     void setAppDir(String appDir) {
         this.appDir = appDir;
+        this.lastModifiedTimeStamp = System.currentTimeMillis();
     }
 
     public void setPluginEnabled(boolean f) {
         pluginEnabled = pluginEnabled.set(f);
+        lastModifiedTimeStamp = System.currentTimeMillis();
     }
 
     public boolean isPluginEnabled() {
@@ -59,6 +81,9 @@ public class OroPlatformSettings implements PersistentStateComponent<Element> {
         Element pluginEnabledElement = new Element("pluginEnabled");
         writeVerboseBoolean(pluginEnabledElement, pluginEnabled);
 
+        Element timeStampElement = new Element("lastModifiedTimeStamp");
+        timeStampElement.setText(lastModifiedTimeStamp + "");
+
         element.addContent(appDirElement);
         element.addContent(pluginEnabledElement);
 
@@ -79,6 +104,7 @@ public class OroPlatformSettings implements PersistentStateComponent<Element> {
     public void loadState(Element state) {
         Element appDirElement = state.getChild("appDir");
         Element pluginEnabledElement = state.getChild("pluginEnabled");
+        Element timeStampElement = state.getChild("lastModifiedTimeStamp");
 
         if(appDirElement != null) {
             appDir = appDirElement.getText();
@@ -86,6 +112,14 @@ public class OroPlatformSettings implements PersistentStateComponent<Element> {
 
         if(pluginEnabledElement != null) {
             pluginEnabled = readVerboseBoolean(pluginEnabledElement);
+        }
+
+        if(timeStampElement != null) {
+            try {
+                lastModifiedTimeStamp = Long.getLong(timeStampElement.getText());
+            } catch (NumberFormatException e) {
+                //ignore
+            }
         }
     }
 
@@ -98,6 +132,11 @@ public class OroPlatformSettings implements PersistentStateComponent<Element> {
         }
 
         return new VerboseBoolean(false, false);
+    }
+
+    @Override
+    public long getModificationCount() {
+        return lastModifiedTimeStamp;
     }
 
     private static class VerboseBoolean {

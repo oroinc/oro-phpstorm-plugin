@@ -1,5 +1,6 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.php;
 
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -25,7 +26,7 @@ public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
     public PhpType getType(PsiElement psiElement) {
         final Project project = psiElement.getProject();
 
-        if(!OroPlatformSettings.getInstance(project).isPluginEnabled()) {
+        if(!OroPlatformSettings.getInstance(project).isPluginEnabled() || DumbService.isDumb(project)) {
             return null;
         }
 
