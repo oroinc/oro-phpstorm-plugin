@@ -1,5 +1,10 @@
 Oro PHPStorm Plugin
 ========================
+
+[![Version](http://phpstorm.espend.de/badge/8449/version)](https://plugins.jetbrains.com/plugin/8449)
+[![Downloads](http://phpstorm.espend.de/badge/8449/downloads)](https://plugins.jetbrains.com/plugin/8449)
+[![Downloads last month](http://phpstorm.espend.de/badge/8449/last-month)](https://plugins.jetbrains.com/plugin/8449)
+
 Plugin for the PHPStorm that will help to increase the development speed on the projects based on the OroPlatform
 
 Requirements
