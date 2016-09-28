@@ -17,10 +17,11 @@ public class Schemas {
         public final static String DASHBOARD = "Resources/config/dashboard.yml";
         public final static String NAVIGATION = "Resources/config/navigation.yml";
         public final static String SEARCH = "Resources/config/search.yml";
+        public final static String LAYOUT_UPDATE = "Resources/views/layouts/*/*.yml";
     }
 
     public static final Collection<Schema> ALL = asList(
-        acl(), entity(), datagrid(), workflow(), systemConfiguration(), api(), actions(), dashboard(), navigation(), search()
+        acl(), entity(), datagrid(), workflow(), systemConfiguration(), api(), actions(), dashboard(), navigation(), search(), layoutUpdate()
     );
 
     private static Schema acl() {
@@ -867,6 +868,118 @@ public class Schemas {
                     )))
                 )))
             )).withKeyElement(Scalars.fullEntity)
+        ));
+    }
+
+    private static Schema layoutUpdate() {
+        final Element option = OneOf.from(
+            Sequence.of(Scalars.any),
+            Container.with(
+                Property.named("id", Scalars.any).required(),
+                Property.named("optionName", Scalars.any).required(),
+                Property.named("optionValue", Scalars.any).required()
+            )
+        );
+
+        //TODO: exclude Resources/views/layouts/*/theme.yml
+        return new Schema(new FilePathMatcher(FilePathPatterns.LAYOUT_UPDATE), Container.with(
+            Property.named("layout", Container.with(
+                Property.named("actions", Sequence.of(Container.with(
+                    //TODO: suggest blocks from "addTree"
+                    Property.named("@add", OneOf.from(
+                        Sequence.of(Scalars.any),
+                        Container.with(
+                            Property.named("id", Scalars.any).required(),
+                            Property.named("parentId", Scalars.any).required(),
+                            Property.named("blockType", Scalars.any).required(),
+                            Property.named("options", Container.any),
+                            Property.named("siblingId", Scalars.any),
+                            Property.named("prepend", Scalars.bool)
+                        )
+                    )),
+                    Property.named("@addTree", Container.with(
+                        Property.named("items", Container.with(
+                            Container.with(
+                                Property.named("blockType", Scalars.any),
+                                Property.named("options", Container.any)
+                            )
+                        )),
+                        //TODO: support for X levels
+                        Property.named("tree", Container.with(
+                            Property.any(
+                                Container.with(
+                                    Property.any(Container.any).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("layout", "actions", "$this", "$this", "items").pointsToValue()))
+                                )
+                            )
+                        ))
+                    )),
+                    Property.named("@remove", OneOf.from(
+                        Sequence.of(Scalars.any),
+                        Container.with(
+                            Property.named("id", Scalars.any).required()
+                        )
+                    )),
+                    Property.named("@move", OneOf.from(
+                        Sequence.of(Scalars.any),
+                        Container.with(
+                            Property.named("id", Scalars.any).required(),
+                            Property.named("parentId", Scalars.any),
+                            Property.named("siblingId", Scalars.any),
+                            Property.named("prepend", Scalars.bool)
+                        )
+                    )),
+                    Property.named("@addAlias", OneOf.from(
+                        Sequence.of(Scalars.any),
+                        Container.with(
+                            Property.named("alias", Scalars.any).required(),
+                            Property.named("id", Scalars.any).required()
+                        )
+                    )),
+                    Property.named("@removeAlias", OneOf.from(
+                        Sequence.of(Scalars.any),
+                        Container.with(
+                            Property.named("alias", Scalars.any).required()
+                        )
+                    )),
+                    Property.named("@setOption", option),
+                    Property.named("@appendOption", option),
+                    Property.named("@subtractOption", option),
+                    Property.named("@replaceOption", OneOf.from(
+                        Sequence.of(Scalars.any),
+                        Container.with(
+                            Property.named("id", Scalars.any).required(),
+                            Property.named("optionName", Scalars.any).required(),
+                            Property.named("oldOptionValue", Scalars.any).required(),
+                            Property.named("newOptionValue", Scalars.any).required()
+                        )
+                    )),
+                    Property.named("@removeOption", OneOf.from(
+                        Sequence.of(Scalars.any),
+                        Container.with(
+                            Property.named("id", Scalars.any).required(),
+                            Property.named("optionName", Scalars.any).required()
+                        )
+                    )),
+                    Property.named("@changeBlockType", OneOf.from(
+                        Sequence.of(Scalars.any),
+                        Container.with(
+                            Property.named("id", Scalars.any).required(),
+                            Property.named("blockType", Scalars.any).required(),
+                            Property.named("optionsCallback", Scalars.any)
+                        )
+                    )),
+                    Property.named("@setBlockTheme", OneOf.from(
+                        Sequence.of(Scalars.any),
+                        Container.with(
+                            Property.named("themes", OneOf.from(Scalars.twig, Sequence.of(Scalars.twig))).required(),
+                            Property.named("id", Scalars.any)
+                        )
+                    )),
+                    Property.named("@clear", Container.any)
+                ))),
+                Property.named("conditions", Container.any),
+                Property.named("imports", Sequence.of(Container.any))
+            ))
         ));
     }
 }
