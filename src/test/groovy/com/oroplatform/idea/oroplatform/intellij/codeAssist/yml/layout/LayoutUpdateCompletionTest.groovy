@@ -277,6 +277,27 @@ class LayoutUpdateCompletionTest extends CompletionTest {
             [],
             ["layout"]
         )
+    }
 
+    def void "test: suggest properties for layout update in imports directory"() {
+        suggestions("Resources/views/layouts/some_theme/imports/some_import/layout.yml",
+            """
+            |<caret>
+            """.stripMargin(),
+            ["layout"]
+        )
+    }
+
+    def void "test: suggest properties for imports"() {
+        suggestions(
+            """
+            |layout:
+            |  actions: []
+            |  imports:
+            |    -
+            |      <caret>
+            """.stripMargin(),
+            ["id", "namespace", "root"]
+        )
     }
 }

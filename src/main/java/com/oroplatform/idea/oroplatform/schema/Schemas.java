@@ -18,6 +18,7 @@ public class Schemas {
         public final static String NAVIGATION = "Resources/config/navigation.yml";
         public final static String SEARCH = "Resources/config/search.yml";
         public final static String LAYOUT_UPDATE = "Resources/views/layouts/*/*.yml";
+        public final static String LAYOUT_UPDATE_IMPORT = "Resources/views/layouts/*/imports/*/layout.yml";
         public final static String THEME = "Resources/views/layouts/*/theme.yml";
     }
 
@@ -882,9 +883,12 @@ public class Schemas {
             )
         );
 
-        final FileMatcher matcher = new AndFileMatcher(
-            new NotFileMatcher(new FilePathMatcher(FilePathPatterns.THEME)),
-            new FilePathMatcher(FilePathPatterns.LAYOUT_UPDATE)
+        final FileMatcher matcher = new OrFileMatcher(
+            new FilePathMatcher(FilePathPatterns.LAYOUT_UPDATE_IMPORT),
+            new AndFileMatcher(
+                new NotFileMatcher(new FilePathMatcher(FilePathPatterns.THEME)),
+                new FilePathMatcher(FilePathPatterns.LAYOUT_UPDATE)
+            )
         );
 
         return new Schema(matcher, Container.with(
@@ -977,7 +981,12 @@ public class Schemas {
                     Property.named("@clear", Container.any)
                 ))),
                 Property.named("conditions", Container.any),
-                Property.named("imports", Sequence.of(Container.any))
+                Property.named("imports", Sequence.of(OneOf.from(Scalars.any, Container.with(
+                    //TODO: suggest id of imported layout
+                    Property.named("id", Scalars.any),
+                    Property.named("namespace", Scalars.any),
+                    Property.named("root", Scalars.any)
+                ))))
             ))
         ));
     }
