@@ -18,6 +18,7 @@ public class Schemas {
         public final static String NAVIGATION = "Resources/config/navigation.yml";
         public final static String SEARCH = "Resources/config/search.yml";
         public final static String LAYOUT_UPDATE = "Resources/views/layouts/*/*.yml";
+        public final static String THEME = "Resources/views/layouts/*/theme.yml";
     }
 
     public static final Collection<Schema> ALL = asList(
@@ -881,11 +882,14 @@ public class Schemas {
             )
         );
 
-        //TODO: exclude Resources/views/layouts/*/theme.yml
-        return new Schema(new FilePathMatcher(FilePathPatterns.LAYOUT_UPDATE), Container.with(
+        final FileMatcher matcher = new AndFileMatcher(
+            new NotFileMatcher(new FilePathMatcher(FilePathPatterns.THEME)),
+            new FilePathMatcher(FilePathPatterns.LAYOUT_UPDATE)
+        );
+
+        return new Schema(matcher, Container.with(
             Property.named("layout", Container.with(
                 Property.named("actions", Sequence.of(Container.with(
-                    //TODO: suggest blocks from "addTree"
                     Property.named("@add", OneOf.from(
                         Sequence.of(Scalars.any),
                         Container.with(
@@ -904,13 +908,8 @@ public class Schemas {
                                 Property.named("options", Container.any)
                             )
                         )),
-                        //TODO: support for X levels
                         Property.named("tree", Container.with(
-                            Property.any(
-                                Container.with(
-                                    Property.any(Container.any).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("layout", "actions", "$this", "$this", "items").pointsToValue()))
-                                )
-                            )
+                            Property.any(layoutUpdateTree(10))
                         ))
                     )),
                     Property.named("@remove", OneOf.from(
@@ -981,5 +980,13 @@ public class Schemas {
                 Property.named("imports", Sequence.of(Container.any))
             ))
         ));
+    }
+
+    private static Element layoutUpdateTree(int deep) {
+        if(deep == 0) return Container.any;
+
+        return Container.with(
+            Property.any(layoutUpdateTree(deep - 1)).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("layout", "actions", "$this", "$this", "items").pointsToValue()))
+        );
     }
 }

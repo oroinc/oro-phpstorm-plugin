@@ -228,4 +228,55 @@ class LayoutUpdateCompletionTest extends CompletionTest {
             ["block1", "block2", "block3"]
         )
     }
+
+    def void "test: suggest @addTree/tree properties at third level"() {
+        suggestions(
+            """
+            |layout:
+            |  actions:
+            |    - '@addTree':
+            |        items:
+            |          block1: ~
+            |          block2: ~
+            |          block3: ~
+            |        tree:
+            |          root:
+            |            block1:
+            |              <caret>
+            """.stripMargin(),
+            ["block2", "block3"]
+        )
+    }
+
+
+    def void "test: suggest @addTree/tree properties at fourth level"() {
+        suggestions(
+            """
+            |layout:
+            |  actions:
+            |    - '@addTree':
+            |        items:
+            |          block1: ~
+            |          block2: ~
+            |          block3: ~
+            |        tree:
+            |          root:
+            |            block1:
+            |              block2:
+            |                <caret>
+            """.stripMargin(),
+            ["block3"]
+        )
+    }
+
+    def void "test: don't suggest properties for theme.yml"() {
+        suggestions("Resources/views/layouts/some_theme/theme.yml",
+            """
+            |<caret>
+            """.stripMargin(),
+            [],
+            ["layout"]
+        )
+
+    }
 }
