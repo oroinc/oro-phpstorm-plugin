@@ -7,6 +7,7 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.FilePathReferenceProvider;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeDirectoryResolver;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.php.YamlPhpClassProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.referenceProvider.*;
 import com.oroplatform.idea.oroplatform.schema.PhpClass;
@@ -20,13 +21,13 @@ class YamlReferenceProviders implements ReferenceProviders {
     }
 
     @Override
-    public PsiReferenceProvider filePath(InsertHandler<LookupElement> insertHandler) {
-        return new FilePathReferenceProvider();
+    public PsiReferenceProvider filePath(RelativeDirectoryResolver relativeDirectoryResolver, InsertHandler<LookupElement> insertHandler) {
+        return filePath(relativeDirectoryResolver, Integer.MAX_VALUE, insertHandler);
     }
 
     @Override
-    public PsiReferenceProvider filePathIn(String relativeToAppDir, InsertHandler<LookupElement> insertHandler) {
-        return new FilePathReferenceProvider(relativeToAppDir);
+    public PsiReferenceProvider filePath(RelativeDirectoryResolver relativeDirectoryResolver, int allowedDepth, InsertHandler<LookupElement> insertHandler) {
+        return new FilePathReferenceProvider(relativeDirectoryResolver, allowedDepth);
     }
 
     @Override

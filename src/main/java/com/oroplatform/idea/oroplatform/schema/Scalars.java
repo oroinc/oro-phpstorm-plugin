@@ -7,6 +7,8 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.PsiReferenceProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceProviders;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeToAppDirectoryResolver;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeToElementResolver;
 import com.oroplatform.idea.oroplatform.schema.requirements.ChoicesRequirement;
 import com.oroplatform.idea.oroplatform.schema.requirements.PatternRequirement;
 import com.oroplatform.idea.oroplatform.schema.requirements.Requirement;
@@ -123,15 +125,24 @@ final class Scalars {
     final static Scalar file = new Scalar() {
         @Override
         public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.filePath(insertHandler);
+            return providers.filePath(new RelativeToElementResolver(), insertHandler);
         }
     };
 
-    static Scalar fileIn(final String dir) {
+    static Scalar fileRelativeToElementIn(final String dir, final int allowedDepth) {
         return new Scalar() {
             @Override
             public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return providers.filePathIn(dir, insertHandler);
+                return providers.filePath(new RelativeToElementResolver(dir), allowedDepth, insertHandler);
+            }
+        };
+    }
+
+    static Scalar fileRelativeToAppIn(final String dir) {
+        return new Scalar() {
+            @Override
+            public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return providers.filePath(new RelativeToAppDirectoryResolver(dir), insertHandler);
             }
         };
     }

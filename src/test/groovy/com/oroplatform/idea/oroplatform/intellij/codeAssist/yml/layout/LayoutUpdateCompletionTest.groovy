@@ -300,4 +300,52 @@ class LayoutUpdateCompletionTest extends CompletionTest {
             ["id", "namespace", "root"]
         )
     }
+
+    def void "test: suggest import ids"() {
+        configureByText("Resources/views/layouts/some_theme/imports/some_import/layout.yml", "")
+
+        suggestions(
+            "Resources/views/layouts/some_theme/some.yml",
+            """
+            |layout:
+            |  actions: []
+            |  imports:
+            |    -
+            |      id: <caret>
+            """.stripMargin(),
+            ["some_import"]
+        )
+    }
+
+    def void "test: suggest import ids as simple scalar"() {
+        configureByText("Resources/views/layouts/some_theme/imports/some_import/layout.yml", "")
+
+        suggestions(
+            "Resources/views/layouts/some_theme/some.yml",
+            """
+            |layout:
+            |  actions: []
+            |  imports:
+            |    - <caret>
+            """.stripMargin(),
+            ["some_import"]
+        )
+    }
+
+    def void "test: not suggest filename as import ids"() {
+        configureByText("Resources/views/layouts/some_theme/imports/some_import/layout.yml", "")
+
+        suggestions(
+            "Resources/views/layouts/some_theme/some.yml",
+            """
+            |layout:
+            |  actions: []
+            |  imports:
+            |    -
+            |      id: some_import/<caret>
+            """.stripMargin(),
+            [],
+            ["layout.yml"]
+        )
+    }
 }

@@ -725,7 +725,7 @@ public class Schemas {
             Property.named("oro_dashboard_config", Container.with(
                 Property.named("widgets", Container.with(
                     Container.with(
-                        Property.named("icon", Scalars.fileIn("../web")),
+                        Property.named("icon", Scalars.fileRelativeToAppIn("../web")),
                         Property.named("label", Scalars.trans),
                         Property.named("description", Scalars.trans),
                         Property.named("acl", Scalars.acl),
@@ -882,6 +882,7 @@ public class Schemas {
                 Property.named("optionValue", Scalars.any).required()
             )
         );
+        final Scalar importId = Scalars.fileRelativeToElementIn("imports", 1);
 
         final FileMatcher matcher = new OrFileMatcher(
             new FilePathMatcher(FilePathPatterns.LAYOUT_UPDATE_IMPORT),
@@ -981,9 +982,8 @@ public class Schemas {
                     Property.named("@clear", Container.any)
                 ))),
                 Property.named("conditions", Container.any),
-                Property.named("imports", Sequence.of(OneOf.from(Scalars.any, Container.with(
-                    //TODO: suggest id of imported layout
-                    Property.named("id", Scalars.any),
+                Property.named("imports", Sequence.of(OneOf.from(importId, Container.with(
+                    Property.named("id", importId),
                     Property.named("namespace", Scalars.any),
                     Property.named("root", Scalars.any)
                 ))))
