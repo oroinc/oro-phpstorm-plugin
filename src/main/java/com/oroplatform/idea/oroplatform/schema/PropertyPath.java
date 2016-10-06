@@ -29,6 +29,14 @@ public class PropertyPath {
         this.properties.addAll(properties);
     }
 
+    PropertyPath add(String... properties) {
+        final List<Property> newProperties = new LinkedList<Property>();
+        newProperties.addAll(this.properties);
+        newProperties.addAll(getProperties(properties));
+
+        return new PropertyPath(newProperties, pointsToValue);
+    }
+
     public Queue<Property> getProperties() {
         return new LinkedList<Property>(properties);
     }

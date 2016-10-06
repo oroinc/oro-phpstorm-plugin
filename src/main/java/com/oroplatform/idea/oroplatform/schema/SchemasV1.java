@@ -1,5 +1,7 @@
 package com.oroplatform.idea.oroplatform.schema;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
@@ -27,7 +29,12 @@ public class SchemasV1 {
     );
 
     private static Schema acl() {
-        return new Schema(new FilePathMatcher(FilePathPatterns.ACL), Container.with(
+        return new Schema(new FilePathMatcher(FilePathPatterns.ACL), aclElementProperties());
+    }
+
+    @NotNull
+    static Container aclElementProperties() {
+        return Container.with(
             OneOf.from(
                 Container.with(
                     Property.named("type", Scalars.strictChoices("entity")),
@@ -53,7 +60,7 @@ public class SchemasV1 {
                     Property.named("category", Scalars.any)
                 )
             )
-        ));
+        );
     }
 
     private static Schema entity() {
@@ -79,6 +86,16 @@ public class SchemasV1 {
     }
 
     private static Schema datagrid() {
+        return new Schema(new FilePathMatcher(FilePathPatterns.DATAGRID), Container.with(
+                Property.named("datagrid",
+                    datagridElementProperties()
+                )
+            )
+        );
+    }
+
+    @NotNull
+    static Container datagridElementProperties() {
         final Element queryJoin = Container.with(
             Property.named("join", Scalars.any).required(),
             Property.named("alias", Scalars.any).required(),
@@ -86,200 +103,195 @@ public class SchemasV1 {
             Property.named("condition", Scalars.strictChoices("ON", "WITH"))
         );
 
-        return new Schema(new FilePathMatcher(FilePathPatterns.DATAGRID), Container.with(
-            Property.named("datagrid",
-                Container.with(
+        return Container.with(
+            Container.with(
+                Property.named("extended_entity_name", OneOf.from(Scalars.entity, Scalars.any)),
+                Property.named("acl_resource", Scalars.any),
+                Property.named("mixins", Sequence.of(Scalars.datagrid)),
+                Property.named("source", Container.with(
+                    Property.named("type", Scalars.choices("orm", "search")),
+                    Property.named("acl_resource", Scalars.any),
+                    Property.named("query", Container.with(
+                        Property.named("select", Sequence.of(Scalars.any)),
+                        Property.named("from", Sequence.of(Container.with(
+                            Property.named("table", Scalars.entity),
+                            Property.named("alias", Scalars.any)
+                        ))),
+                        Property.named("join", Container.with(
+                            Property.named("left", Sequence.of(queryJoin)),
+                            Property.named("inner", Sequence.of(queryJoin))
+                        )),
+                        Property.named("where", Container.with(
+                            Property.named("and", Sequence.of(Scalars.any)),
+                            Property.named("or", Sequence.of(Scalars.any))
+                        )),
+                        Property.named("having", Scalars.any),
+                        Property.named("orderBy", Container.with(
+                            Property.named("column", Scalars.any),
+                            Property.named("dir", Scalars.strictChoices("ASC", "DESC"))
+                        )),
+                        Property.named("groupBy", Scalars.any),
+                        Property.named("distinct", Scalars.bool)
+                    ))
+                ).allowExtraProperties()),
+                Property.named("columns", Container.with(
                     Container.with(
-                        Property.named("extended_entity_name", OneOf.from(Scalars.entity, Scalars.any)),
+                        Property.named("label", Scalars.any),
+                        Property.named("translatable", Scalars.bool),
+                        Property.named("data_name", Scalars.any),
+                        Property.named("frontend_type", Scalars.choices("string", "html", "date", "time", "datetime", "integer", "number", "decimal", "percent", "currency", "boolean", "array", "simple_array", "row_array", "select", "multi-select", "phone", "relation")),
+                        Property.named("choices", Scalars.any),
+                        Property.named("template", Scalars.any),
+                        Property.named("type", Scalars.choices("field", "url", "link", "twig", "translatable", "callback", "localized_number")),
+                        Property.named("renderable", Scalars.bool),
+                        Property.named("editable", Scalars.bool),
+                        Property.named("order", Scalars.integer),
+                        Property.named("required", Scalars.bool),
+                        Property.named("manageable", Scalars.bool),
+                        Property.named("context", Scalars.any),
+                        Property.named("inline_editing", Container.with(
+                            Property.named("enable", Scalars.bool),
+                            Property.named("editor", Container.with(
+                                Property.named("component", Scalars.any),
+                                Property.named("component_options", Container.any),
+                                Property.named("view", Scalars.any),
+                                Property.named("view_options", Container.any)
+                            )),
+                            Property.named("save_api_accessor", Container.any),
+                            Property.named("autocomplete_api_accessor", Container.any),
+                            Property.named("validation_rules", Container.any)
+                        ))
+                    ).allowExtraProperties()
+                )),
+                Property.named("sorters", Container.with(
+                    Property.named("columns", Container.with(
+                        Container.with(
+                            Property.named("data_name", Scalars.any),
+                            Property.named("disabled", Scalars.bool),
+                            Property.named("type", Scalars.any),
+                            Property.named("apply_callback", Scalars.any)
+                        )
+                    )),
+                    Property.named("default", Container.any),
+                    Property.named("multiple_sorting", Scalars.bool),
+                    Property.named("toolbar_sorting", Scalars.bool)
+                )),
+                Property.named("filters", Container.with(
+                    Property.named("columns", Container.with(
+                        Container.with(
+                            Property.named("type", Scalars.choices(
+                                "string", "selectrow", "number", "number-range", "percent", "currency", "choice",
+                                "single_choice", "entity", "boolean", "date", "datetime", "many-to-many", "choice-tree",
+                                "dictionary", "enum", "multi_enum"
+                            )),
+                            Property.named("data_name", Scalars.any),
+                            Property.named("filter_condition", Scalars.strictChoices("AND", "OR")),
+                            Property.named("filter_by_having", Scalars.bool),
+                            Property.named("enabled", Scalars.bool),
+                            Property.named("translatable", Scalars.bool),
+                            Property.named("options", Container.any)
+                        ).allowExtraProperties()
+                    )),
+                    Property.named("default", Container.any)
+                )),
+                Property.named("properties", Container.with(
+                    Container.with(
+                        Property.named("type", Scalars.choices("url", "callback")),
+                        Property.named("route", Scalars.route),
+                        Property.named("params", Sequence.of(Scalars.any))
+                    ).allowExtraProperties()
+                )),
+                Property.named("actions", Container.with(
+                    Container.with(
+                        Property.named("label", Scalars.any),
+                        Property.named("type", Scalars.choices("navigate", "ajax", "delete", "ajaxdelete", "frontend")),
                         Property.named("acl_resource", Scalars.any),
-                        Property.named("mixins", Sequence.of(Scalars.datagrid)),
-                        Property.named("source", Container.with(
-                            Property.named("type", Scalars.choices("orm", "search")),
-                            Property.named("acl_resource", Scalars.any),
-                            Property.named("query", Container.with(
-                                Property.named("select", Sequence.of(Scalars.any)),
-                                Property.named("from", Sequence.of(Container.with(
-                                    Property.named("table", Scalars.entity),
-                                    Property.named("alias", Scalars.any)
-                                ))),
-                                Property.named("join", Container.with(
-                                    Property.named("left", Sequence.of(queryJoin)),
-                                    Property.named("inner", Sequence.of(queryJoin))
-                                )),
-                                Property.named("where", Container.with(
-                                    Property.named("and", Sequence.of(Scalars.any)),
-                                    Property.named("or", Sequence.of(Scalars.any))
-                                )),
-                                Property.named("having", Scalars.any),
-                                Property.named("orderBy", Container.with(
-                                    Property.named("column", Scalars.any),
-                                    Property.named("dir", Scalars.strictChoices("ASC", "DESC"))
-                                )),
-                                Property.named("groupBy", Scalars.any),
-                                Property.named("distinct", Scalars.bool)
-                            ))
-                        ).allowExtraProperties()),
+                        Property.named("icon", Scalars.any),
+                        Property.named("link", Scalars.any),
+                        Property.named("rowAction", Scalars.bool),
+                        Property.named("selector", Scalars.any)
+                    ).allowExtraProperties()
+                )),
+                Property.named("mass_action", Container.with(
+                    massAction()
+                )),
+                Property.named("totals", Container.with(
+                    Container.with(
+                        Property.named("per_page", Scalars.bool),
+                        Property.named("hide_if_one_page", Scalars.bool),
+                        Property.named("extends", Scalars.any),
                         Property.named("columns", Container.with(
                             Container.with(
                                 Property.named("label", Scalars.any),
-                                Property.named("translatable", Scalars.bool),
-                                Property.named("data_name", Scalars.any),
-                                Property.named("frontend_type", Scalars.choices("string", "html", "date", "time", "datetime", "integer", "number", "decimal", "percent", "currency", "boolean", "array", "simple_array", "row_array", "select", "multi-select", "phone", "relation")),
-                                Property.named("choices", Scalars.any),
-                                Property.named("template", Scalars.any),
-                                Property.named("type", Scalars.choices("field", "url", "link", "twig", "translatable", "callback", "localized_number")),
-                                Property.named("renderable", Scalars.bool),
-                                Property.named("editable", Scalars.bool),
-                                Property.named("order", Scalars.integer),
-                                Property.named("required", Scalars.bool),
-                                Property.named("manageable", Scalars.bool),
-                                Property.named("context", Scalars.any),
-                                Property.named("inline_editing", Container.with(
-                                    Property.named("enable", Scalars.bool),
-                                    Property.named("editor", Container.with(
-                                        Property.named("component", Scalars.any),
-                                        Property.named("component_options", Container.any),
-                                        Property.named("view", Scalars.any),
-                                        Property.named("view_options", Container.any)
-                                    )),
-                                    Property.named("save_api_accessor", Container.any),
-                                    Property.named("autocomplete_api_accessor", Container.any),
-                                    Property.named("validation_rules", Container.any)
+                                Property.named("expr", Scalars.any),
+                                Property.named("formatter", Scalars.strictChoices(
+                                    "date", "datetime", "time", "decimal", "integer", "percent", "currency"
                                 ))
-                            ).allowExtraProperties()
+                            )
+                        ))
+                    ).allowExtraProperties()
+                )),
+                Property.named("inline_editing", Container.with(
+                    Property.named("enable", Scalars.bool),
+                    Property.named("entity_name", Scalars.fullEntity),
+                    Property.named("behaviour", Scalars.strictChoices("enable_all", "enable_selected")),
+                    Property.named("plugin", Scalars.any),
+                    Property.named("default_editors", Scalars.any),
+                    Property.named("cell_editor", Container.with(
+                        Property.named("component", Scalars.any),
+                        Property.named("component_options", Container.any)
+                    )),
+                    Property.named("save_api_accessor", Container.with(
+                        Property.named("route", Scalars.route),
+                        Property.named("http_method", Scalars.any),
+                        Property.named("headers", Scalars.any),
+                        Property.named("default_route_parameters", Container.any),
+                        Property.named("query_parameter_names", Sequence.of(Scalars.any))
+                    ))
+                )),
+                Property.named("action_configuration", Scalars.any),
+                Property.named("options", Container.with(
+                    Property.named("entityHint", Scalars.any),
+                    Property.named("entity_pagination", Scalars.bool),
+                    Property.named("toolbarOptions", Container.with(
+                        Property.named("hide", Scalars.bool),
+                        Property.named("addResetAction", Scalars.bool),
+                        Property.named("addRefreshAction", Scalars.bool),
+                        Property.named("addColumnManager", Scalars.bool),
+                        Property.named("turnOffToolbarRecordsNumber", Scalars.integer),
+                        Property.named("pageSize", Container.with(
+                            Property.named("hide", Scalars.bool),
+                            Property.named("default_per_page", Scalars.integer),
+                            Property.named("items", Sequence.of(Scalars.integer))
                         )),
-                        Property.named("sorters", Container.with(
-                            Property.named("columns", Container.with(
-                                Container.with(
-                                    Property.named("data_name", Scalars.any),
-                                    Property.named("disabled", Scalars.bool),
-                                    Property.named("type", Scalars.any),
-                                    Property.named("apply_callback", Scalars.any)
-                                )
-                            )),
-                            Property.named("default", Container.any),
-                            Property.named("multiple_sorting", Scalars.bool),
-                            Property.named("toolbar_sorting", Scalars.bool)
+                        Property.named("pagination", Container.with(
+                            Property.named("hide", Scalars.bool),
+                            Property.named("onePage", Scalars.bool)
                         )),
-                        Property.named("filters", Container.with(
-                            Property.named("columns", Container.with(
-                                Container.with(
-                                    Property.named("type", Scalars.choices(
-                                        "string", "selectrow", "number", "number-range", "percent", "currency", "choice",
-                                        "single_choice", "entity", "boolean", "date", "datetime", "many-to-many", "choice-tree",
-                                        "dictionary", "enum", "multi_enum"
-                                    )),
-                                    Property.named("data_name", Scalars.any),
-                                    Property.named("filter_condition", Scalars.strictChoices("AND", "OR")),
-                                    Property.named("filter_by_having", Scalars.bool),
-                                    Property.named("enabled", Scalars.bool),
-                                    Property.named("translatable", Scalars.bool),
-                                    Property.named("options", Container.any)
-                                ).allowExtraProperties()
-                            )),
-                            Property.named("default", Container.any)
+                        Property.named("placement", Container.with(
+                            Property.named("top", Scalars.bool),
+                            Property.named("bottom", Scalars.bool)
                         )),
-                        Property.named("properties", Container.with(
-                            Container.with(
-                                Property.named("type", Scalars.choices("url", "callback")),
-                                Property.named("route", Scalars.route),
-                                Property.named("params", Sequence.of(Scalars.any))
-                            ).allowExtraProperties()
-                        )),
-                        Property.named("actions", Container.with(
-                            Container.with(
-                                Property.named("label", Scalars.any),
-                                Property.named("type", Scalars.choices("navigate", "ajax", "delete", "ajaxdelete", "frontend")),
-                                Property.named("acl_resource", Scalars.any),
-                                Property.named("icon", Scalars.any),
-                                Property.named("link", Scalars.any),
-                                Property.named("rowAction", Scalars.bool),
-                                Property.named("selector", Scalars.any)
-                            ).allowExtraProperties()
-                        )),
-                        Property.named("mass_action", Container.with(
-                            massAction()
-                        )),
-                        Property.named("totals", Container.with(
-                            Container.with(
-                                Property.named("per_page", Scalars.bool),
-                                Property.named("hide_if_one_page", Scalars.bool),
-                                Property.named("extends", Scalars.any),
-                                Property.named("columns", Container.with(
-                                    Container.with(
-                                        Property.named("label", Scalars.any),
-                                        Property.named("expr", Scalars.any),
-                                        Property.named("formatter", Scalars.strictChoices(
-                                            "date", "datetime", "time", "decimal", "integer", "percent", "currency"
-                                        ))
-                                    )
-                                ))
-                            ).allowExtraProperties()
-                        )),
-                        Property.named("inline_editing", Container.with(
-                            Property.named("enable", Scalars.bool),
-                            Property.named("entity_name", Scalars.fullEntity),
-                            Property.named("behaviour", Scalars.strictChoices("enable_all", "enable_selected")),
-                            Property.named("plugin", Scalars.any),
-                            Property.named("default_editors", Scalars.any),
-                            Property.named("cell_editor", Container.with(
-                                Property.named("component", Scalars.any),
-                                Property.named("component_options", Container.any)
-                            )),
-                            Property.named("save_api_accessor", Container.with(
-                                Property.named("route", Scalars.route),
-                                Property.named("http_method", Scalars.any),
-                                Property.named("headers", Scalars.any),
-                                Property.named("default_route_parameters", Container.any),
-                                Property.named("query_parameter_names", Sequence.of(Scalars.any))
-                            ))
-                        )),
-                        Property.named("action_configuration", Scalars.any),
-                        Property.named("options", Container.with(
-                            Property.named("entityHint", Scalars.any),
-                            Property.named("entity_pagination", Scalars.bool),
-                            Property.named("toolbarOptions", Container.with(
-                                Property.named("hide", Scalars.bool),
-                                Property.named("addResetAction", Scalars.bool),
-                                Property.named("addRefreshAction", Scalars.bool),
-                                Property.named("addColumnManager", Scalars.bool),
-                                Property.named("turnOffToolbarRecordsNumber", Scalars.integer),
-                                Property.named("pageSize", Container.with(
-                                    Property.named("hide", Scalars.bool),
-                                    Property.named("default_per_page", Scalars.integer),
-                                    Property.named("items", Sequence.of(Scalars.integer))
-                                )),
-                                Property.named("pagination", Container.with(
-                                    Property.named("hide", Scalars.bool),
-                                    Property.named("onePage", Scalars.bool)
-                                )),
-                                Property.named("placement", Container.with(
-                                    Property.named("top", Scalars.bool),
-                                    Property.named("bottom", Scalars.bool)
-                                )),
-                                Property.named("columnManager", Container.with(
-                                    Property.named("minVisibleColumnsQuantity", Scalars.integer)
-                                ))
-                            )),
-                            Property.named("export", OneOf.from(
-                                Scalars.bool,
-                                Container.with(
-                                    Container.with(Property.named("label", Scalars.any))
-                                )
-                            )),
-                            Property.named("rowSelection", Container.with(
-                                Property.named("dataField", Scalars.any),
-                                Property.named("columnName", Scalars.any),
-                                Property.named("selectors", Scalars.any)
-                            )),
-                            Property.named("skip_count_walker", Scalars.bool),
-                            Property.named("requireJSModules", Sequence.of(Scalars.any)),
-                            Property.named("routerEnabled", Scalars.bool)
-                        ).allowExtraProperties())
-                    ).allowExtraProperties())
-                )
-            )
-        );
+                        Property.named("columnManager", Container.with(
+                            Property.named("minVisibleColumnsQuantity", Scalars.integer)
+                        ))
+                    )),
+                    Property.named("export", OneOf.from(
+                        Scalars.bool,
+                        Container.with(
+                            Container.with(Property.named("label", Scalars.any))
+                        )
+                    )),
+                    Property.named("rowSelection", Container.with(
+                        Property.named("dataField", Scalars.any),
+                        Property.named("columnName", Scalars.any),
+                        Property.named("selectors", Scalars.any)
+                    )),
+                    Property.named("skip_count_walker", Scalars.bool),
+                    Property.named("requireJSModules", Sequence.of(Scalars.any)),
+                    Property.named("routerEnabled", Scalars.bool)
+                ).allowExtraProperties())
+            ).allowExtraProperties());
     }
 
     private static Element massAction() {
@@ -297,6 +309,11 @@ public class SchemasV1 {
     }
 
     private static Schema workflow() {
+        return new Schema(new WorkflowMatcher(), workflowElement());
+    }
+
+    @NotNull
+    static Container workflowElement() {
         final Container acl = Container.with(
             Property.named("update", Scalars.bool),
             Property.named("delete", Scalars.bool)
@@ -362,7 +379,7 @@ public class SchemasV1 {
             Property.named("init_actions", actions)
         );
 
-        return new Schema(new WorkflowMatcher(), Container.with(
+        return Container.with(
             Property.named("imports", Sequence.of(Container.with(
                 Property.named("resource", Scalars.file)
             ))),
@@ -392,63 +409,68 @@ public class SchemasV1 {
                     ))
                 )
             ))
-        ));
+        );
     }
 
     private static Schema systemConfiguration() {
         return new Schema(new FilePathMatcher(FilePathPatterns.SYSTEM_CONFIGURATION), Container.with(
-            Property.named("oro_system_configuration", Container.with(
-                Property.named("groups", Container.with(
-                    Container.with(
-                        Property.named("icon", Scalars.any),
-                        Property.named("title", Scalars.any),
-                        Property.named("page_reload", Scalars.bool),
-                        Property.named("priority", Scalars.integer),
-                        Property.named("description", Scalars.any),
-                        Property.named("tooltip", Scalars.any),
-                        Property.named("configurator", Scalars.phpCallback)
-                    )
-                )),
-                Property.named("fields", Container.with(
-                    Container.with(
-                        Property.named("type", Scalars.formType),
-                        Property.named("options", Scalars.any),
-                        Property.named("acl_resource", Scalars.any),
-                        Property.named("priority", Scalars.integer),
-                        Property.named("ui_only", Scalars.bool),
-                        Property.named("data_type", dataType()),
-                        Property.named("tooltip", Scalars.any)
-                    )
-                )),
-                Property.named("tree", Container.with(
-                    systemConfigurationTree(10)
-                )),
-                Property.named("api_tree", Container.with(
-                    Repeated.atAnyLevel(
-                        Container.with(
-                            Property.any(Container.any).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("oro_system_configuration", "fields").pointsToValue()))
-                        )
-                    )
-                ))
-            ))
+            Property.named("oro_system_configuration", systemConfigurationElementProperties("oro_system_configuration"))
         ));
+    }
+
+    @NotNull
+    static Container systemConfigurationElementProperties(final String rootElementName) {
+        return Container.with(
+            Property.named("groups", Container.with(
+                Container.with(
+                    Property.named("icon", Scalars.any),
+                    Property.named("title", Scalars.any),
+                    Property.named("page_reload", Scalars.bool),
+                    Property.named("priority", Scalars.integer),
+                    Property.named("description", Scalars.any),
+                    Property.named("tooltip", Scalars.any),
+                    Property.named("configurator", Scalars.phpCallback)
+                )
+            )),
+            Property.named("fields", Container.with(
+                Container.with(
+                    Property.named("type", Scalars.formType),
+                    Property.named("options", Scalars.any),
+                    Property.named("acl_resource", Scalars.any),
+                    Property.named("priority", Scalars.integer),
+                    Property.named("ui_only", Scalars.bool),
+                    Property.named("data_type", dataType()),
+                    Property.named("tooltip", Scalars.any)
+                )
+            )),
+            Property.named("tree", Container.with(
+                systemConfigurationTree(rootElementName, 10)
+            )),
+            Property.named("api_tree", Container.with(
+                Repeated.atAnyLevel(
+                    Container.with(
+                        Property.any(Container.any).withKeyElement(Scalars.propertiesFromPath(new PropertyPath(rootElementName, "fields").pointsToValue()))
+                    )
+                )
+            ))
+        );
     }
 
     private static Scalar dataType() {
         return Scalars.choices("boolean", "integer", "float", "double", "string", "array");
     }
 
-    private static Element systemConfigurationTree(int deep) {
+    private static Element systemConfigurationTree(String rootElementName, int deep) {
         if(deep == 0) return Scalars.any;
 
         return Container.with(
             Property.any(Container.with(
                 Property.named("priority", Scalars.integer),
                 Property.named("children", OneOf.from(
-                    systemConfigurationTree(deep - 1),
-                    Sequence.of(Scalars.propertiesFromPath(new PropertyPath("oro_system_configuration", "fields").pointsToValue()))
+                    systemConfigurationTree(rootElementName, deep - 1),
+                    Sequence.of(Scalars.propertiesFromPath(new PropertyPath(rootElementName, "fields").pointsToValue()))
                 ))
-            )).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("oro_system_configuration", "groups").pointsToValue()))
+            )).withKeyElement(Scalars.propertiesFromPath(new PropertyPath(rootElementName, "groups").pointsToValue()))
         );
     }
 
@@ -497,6 +519,11 @@ public class SchemasV1 {
     }
 
     private static Schema api() {
+        return new Schema(new FilePathMatcher(FilePathPatterns.API), apiElement("oro_api"));
+    }
+
+    @NotNull
+    static Container apiElement(final String rootElementName) {
         final Container formOptions = Container.with(
             Property.named("data_class", Scalars.phpClass),
             Property.named("validation_groups", Sequence.of(Scalars.any)),
@@ -504,7 +531,7 @@ public class SchemasV1 {
         );
 
         final Container orderBy = Container.with(
-            Property.any(Scalars.strictChoices("ASC", "DESC")).withKeyElement(Scalars.field(new PropertyPath("oro_api", "entities", "$this")))
+            Property.any(Scalars.strictChoices("ASC", "DESC")).withKeyElement(Scalars.field(new PropertyPath(rootElementName, "entities", "$this")))
         );
 
         final Element action = OneOf.from(
@@ -532,14 +559,14 @@ public class SchemasV1 {
                         Property.named("exclude", Scalars.bool),
                         Property.named("form_type", Scalars.formType),
                         Property.named("form_options", formOptions)
-                    )).withKeyElement(Scalars.field(new PropertyPath("oro_api", "entities", "$this")))
+                    )).withKeyElement(Scalars.field(new PropertyPath(rootElementName, "entities", "$this")))
                 ))
             ),
             Scalars.bool
         );
 
-        return new Schema(new FilePathMatcher(FilePathPatterns.API), Container.with(
-            Property.named("oro_api", Container.with(
+        return Container.with(
+            Property.named(rootElementName, Container.with(
                 Property.named("entities", Container.with(
                     Property.any(Container.with(
                         Property.named("exclude", Scalars.bool),
@@ -555,14 +582,14 @@ public class SchemasV1 {
                                 Property.named("value", Scalars.any)
                             ))
                         )),
-                        Property.named("identifier_field_names", Sequence.of(Scalars.field(new PropertyPath("oro_api", "entities", "$this")))),
+                        Property.named("identifier_field_names", Sequence.of(Scalars.field(new PropertyPath(rootElementName, "entities", "$this")))),
                         Property.named("post_serialize", Sequence.of(Scalars.callable)),
                         Property.named("delete_handler", Scalars.service),
                         Property.named("form_type", Scalars.formType),
                         Property.named("form_options", formOptions),
-                        Property.named("fields", apiFields(new PropertyPath("oro_api", "entities", "$this"))),
-                        Property.named("filters", apiFilters(new PropertyPath("oro_api", "entities", "$this"))),
-                        Property.named("sorters", apiSorters(new PropertyPath("oro_api", "entities", "$this"))),
+                        Property.named("fields", apiFields(new PropertyPath(rootElementName, "entities", "$this"))),
+                        Property.named("filters", apiFilters(new PropertyPath(rootElementName, "entities", "$this"))),
+                        Property.named("sorters", apiSorters(new PropertyPath(rootElementName, "entities", "$this"))),
                         Property.named("actions", Container.with(
                             Property.named("get", action),
                             Property.named("get_list", action),
@@ -589,20 +616,20 @@ public class SchemasV1 {
                                     Property.named("update_relationship", action),
                                     Property.named("delete_relationship", action)
                                 )),
-                                Property.named("filters", apiFilters(new PropertyPath("oro_api", "entity", "$this")))
+                                Property.named("filters", apiFilters(new PropertyPath(rootElementName, "entity", "$this")))
                             ))
                         ))
                     )).withKeyElement(Scalars.fullEntity)
                 )),
                 Property.named("relations", Container.with(
                     Property.any(Container.with(
-                        Property.named("fields", apiFields(new PropertyPath("oro_api", "relations", "$this"))),
-                        Property.named("filters", apiFilters(new PropertyPath("oro_api", "relations", "$this"))),
-                        Property.named("sorters", apiSorters(new PropertyPath("oro_api", "relations", "$this")))
+                        Property.named("fields", apiFields(new PropertyPath(rootElementName, "relations", "$this"))),
+                        Property.named("filters", apiFilters(new PropertyPath(rootElementName, "relations", "$this"))),
+                        Property.named("sorters", apiSorters(new PropertyPath(rootElementName, "relations", "$this")))
                     ).allowExtraProperties()).withKeyElement(Scalars.fullEntity)
                 ))
             ))
-        ));
+        ).allowExtraProperties();
     }
 
     private static Schema actions() {
@@ -710,6 +737,11 @@ public class SchemasV1 {
     }
 
     private static Schema dashboard() {
+        return new Schema(new FilePathMatcher(FilePathPatterns.DASHBOARD), dashboardElement("oro_dashboard_config"));
+    }
+
+    @NotNull
+    static Container dashboardElement(final String rootElement) {
         final Element configuration = Container.with(
             Container.with(
                 Property.named("type", Scalars.formType),
@@ -721,8 +753,8 @@ public class SchemasV1 {
             )
         );
 
-        return new Schema(new FilePathMatcher(FilePathPatterns.DASHBOARD), Container.with(
-            Property.named("oro_dashboard_config", Container.with(
+        return Container.with(
+            Property.named(rootElement, Container.with(
                 Property.named("widgets", Container.with(
                     Container.with(
                         Property.named("icon", Scalars.fileRelativeToAppIn("../web")),
@@ -751,17 +783,22 @@ public class SchemasV1 {
                     )
                 ))
             ))
-        ));
+        );
     }
 
     private static Schema navigation() {
+        return new Schema(new FilePathMatcher(FilePathPatterns.NAVIGATION), navigationElementProperties("oro_"));
+    }
+
+    @NotNull
+    static Container navigationElementProperties(final String propertiesPrefix) {
         final Container attributes = Container.with(
             Property.named("class", Scalars.any),
             Property.named("id", Scalars.any)
         );
 
-        return new Schema(new FilePathMatcher(FilePathPatterns.NAVIGATION), Container.with(
-            Property.named("oro_menu_config", Container.with(
+        return Container.with(
+            Property.named(propertiesPrefix+"menu_config", Container.with(
                 Property.named("templates", Container.with(
                     Container.with(
                         Property.named("template", Scalars.twig),
@@ -817,10 +854,10 @@ public class SchemasV1 {
                     ))
                 ))
             )),
-            Property.named("oro_titles", Container.with(
+            Property.named(propertiesPrefix+"titles", Container.with(
                 Property.any(Scalars.any).withKeyElement(Scalars.route)
             )),
-            Property.named("oro_navigation_elements", Container.with(
+            Property.named(propertiesPrefix+"navigation_elements", Container.with(
                 Container.with(
                     Property.named("routes", Container.with(
                         Property.any(Scalars.bool).withKeyElement(Scalars.route)
@@ -828,7 +865,7 @@ public class SchemasV1 {
                     Property.named("default", Scalars.bool)
                 )
             ))
-        ));
+        );
     }
 
     private static Element navigationTree(int deep) {
@@ -842,12 +879,17 @@ public class SchemasV1 {
     }
 
     private static Schema search() {
+        return new Schema(new FilePathMatcher(FilePathPatterns.SEARCH), searchElementProperties(new PropertyPath()));
+    }
+
+    @NotNull
+    static Container searchElementProperties(final PropertyPath pathToRoot) {
         final Element targetType = Scalars.strictChoices("text", "integer", "double", "datetime");
-        final PropertyPath classPropertyPath = new PropertyPath("$this");
+        final PropertyPath classPropertyPath = pathToRoot.add("$this");
         final Element field = Scalars.field(classPropertyPath);
         final Element targetFields = Sequence.of(field);
 
-        return new Schema(new FilePathMatcher(FilePathPatterns.SEARCH), Container.with(
+        return Container.with(
             Property.any(Container.with(
                 Property.named("alias", Scalars.any),
                 Property.named("search_template", Scalars.twig),
@@ -864,13 +906,13 @@ public class SchemasV1 {
                     Property.named("target_fields", targetFields),
                     Property.named("relation_type", Scalars.choices("many-to-one", "many-to-many", "one-to-many", "one-to-one")),
                     Property.named("relation_fields", Sequence.of(Container.with(
-                        Property.named("name", Scalars.fieldOfFieldTypeClass(classPropertyPath, new PropertyPath("$this", "fields", "$this", "name").pointsToValue())),
+                        Property.named("name", Scalars.fieldOfFieldTypeClass(classPropertyPath, pathToRoot.add("$this", "fields", "$this", "name").pointsToValue())),
                         Property.named("target_type", targetType),
                         Property.named("target_fields", targetFields)
                     )))
                 )))
             )).withKeyElement(Scalars.fullEntity)
-        ));
+        );
     }
 
     private static Schema layoutUpdate() {
