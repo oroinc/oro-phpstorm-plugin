@@ -26,7 +26,7 @@ class WorkflowMatcher implements FileMatcher {
             return false;
         }
 
-        if(file.getOriginalFile().getVirtualFile().getPath().endsWith(Schemas.FilePathPatterns.WORKFLOW)) {
+        if(file.getOriginalFile().getVirtualFile().getPath().endsWith(SchemasV1.FilePathPatterns.WORKFLOW)) {
             return true;
         }
 
@@ -35,7 +35,7 @@ class WorkflowMatcher implements FileMatcher {
         final ImportIndex index = ImportIndex.instance(file.getProject());
 
         for (PsiFile workflow : workflows) {
-            if(filePath(workflow).endsWith(Schemas.FilePathPatterns.WORKFLOW)) {
+            if(filePath(workflow).endsWith(SchemasV1.FilePathPatterns.WORKFLOW)) {
                 if (isImported(index, file, workflow)) return true;
             }
         }
