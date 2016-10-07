@@ -10,6 +10,12 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.0-alpha20</h2>
+<ul>
+  <li>Support for Oro Platform 2.+</li>
+  <li>Autocomplete for layouts yaml files</li>
+</ul>
+
 <h2>1.0.0-alpha19</h2>
 <ul>
   <li>Autocomplete for entity methods added dynamically during application execution</li>
