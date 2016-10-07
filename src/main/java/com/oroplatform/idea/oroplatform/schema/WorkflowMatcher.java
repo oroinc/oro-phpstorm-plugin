@@ -11,6 +11,10 @@ import com.oroplatform.idea.oroplatform.intellij.indexes.ImportIndex;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import org.jetbrains.yaml.YAMLFileType;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+
 class WorkflowMatcher implements FileMatcher {
 
     @Override
@@ -26,21 +30,28 @@ class WorkflowMatcher implements FileMatcher {
             return false;
         }
 
-        if(file.getOriginalFile().getVirtualFile().getPath().endsWith(SchemasV1.FilePathPatterns.WORKFLOW)) {
+        if(isWorkflowPath(file.getOriginalFile().getVirtualFile().getPath())) {
             return true;
         }
 
         final GlobalSearchScope scope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.allScope(file.getProject()), YAMLFileType.YML);
-        final PsiFile[] workflows = FilenameIndex.getFilesByName(file.getProject(), "workflow.yml", scope);
+        final Collection<PsiFile> workflows = new LinkedList<PsiFile>();
+        workflows.addAll(Arrays.asList(FilenameIndex.getFilesByName(file.getProject(), "workflow.yml", scope)));
+        workflows.addAll(Arrays.asList(FilenameIndex.getFilesByName(file.getProject(), "workflows.yml", scope)));
+
         final ImportIndex index = ImportIndex.instance(file.getProject());
 
         for (PsiFile workflow : workflows) {
-            if(filePath(workflow).endsWith(SchemasV1.FilePathPatterns.WORKFLOW)) {
+            if(isWorkflowPath(filePath(workflow))) {
                 if (isImported(index, file, workflow)) return true;
             }
         }
 
         return false;
+    }
+
+    private boolean isWorkflowPath(String path) {
+        return path.endsWith(SchemasV1.FilePathPatterns.WORKFLOW) || path.endsWith(SchemasV2.FilePathPatterns.WORKFLOW);
     }
 
     private static String filePath(PsiFile file) {

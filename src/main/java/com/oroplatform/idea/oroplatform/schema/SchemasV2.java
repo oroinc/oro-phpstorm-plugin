@@ -15,6 +15,7 @@ public class SchemasV2 {
         public final static String SYSTEM_CONFIGURATION = "Resources/config/oro/system_configuration.yml";
         public final static String DASHBOARD = "Resources/config/oro/dashboards.yml";
         public final static String NAVIGATION = "Resources/config/oro/navigation.yml";
+        public final static String ACTIONS = SchemasV1.FilePathPatterns.ACTIONS;
     }
 
     static final Collection<Schema> ALL = asList(workflow(), datagrid(), acl(), api(), search(), systemConfiguration(), dashboard(), navigation());

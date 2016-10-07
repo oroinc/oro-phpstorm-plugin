@@ -12,9 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.YAMLFileType;
 import org.jetbrains.yaml.psi.YAMLFile;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getMappingsFrom;
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getPropertyFrom;
@@ -23,13 +21,15 @@ class YamlPropertiesFileBasedIndex extends ScalarIndexExtension<String> {
 
     private final KeyDescriptor<String> keyDescriptor = new EnumeratorStringDescriptor();
     private final ID<String, Void> key;
-    private final String filepathSuffix;
-    private final PropertyPath propertyPath;
+    private final Collection<IndexBlueprint> indexBlueprints = new LinkedList<IndexBlueprint>();
 
     YamlPropertiesFileBasedIndex(ID<String, Void> key, String filepathSuffix, PropertyPath propertyPath) {
+        this(key, new IndexBlueprint(filepathSuffix, propertyPath));
+    }
+
+    YamlPropertiesFileBasedIndex(ID<String, Void> key, IndexBlueprint... indexBlueprints) {
         this.key = key;
-        this.filepathSuffix = filepathSuffix;
-        this.propertyPath = propertyPath;
+        this.indexBlueprints.addAll(Arrays.asList(indexBlueprints));
     }
 
     @NotNull
@@ -53,12 +53,18 @@ class YamlPropertiesFileBasedIndex extends ScalarIndexExtension<String> {
 
                 final YAMLFile file = (YAMLFile) inputData.getPsiFile();
 
-                final Collection<String> values =
-                    getPropertyFrom(propertyPath, getMappingsFrom(file), Collections.<PsiElement>emptySet());
+                for (IndexBlueprint indexBlueprint : indexBlueprints) {
+                    if(inputData.getFile().getPath().endsWith(indexBlueprint.filepathSuffix)) {
+                        final Collection<String> values =
+                            getPropertyFrom(indexBlueprint.propertyPath, getMappingsFrom(file), Collections.<PsiElement>emptySet());
 
-                for (String value : values) {
-                    index.put(value, null);
+                        for (String value : values) {
+                            index.put(value, null);
+                        }
+                    }
+
                 }
+
 
                 return index;
             }
@@ -77,7 +83,13 @@ class YamlPropertiesFileBasedIndex extends ScalarIndexExtension<String> {
         return new FileBasedIndex.InputFilter() {
             @Override
             public boolean acceptInput(@NotNull VirtualFile file) {
-                return file.getFileType().equals(YAMLFileType.YML) && file.getPath().endsWith(filepathSuffix);
+                if(!file.getFileType().equals(YAMLFileType.YML)) return false;
+
+                for (IndexBlueprint indexBlueprint : indexBlueprints) {
+                    if(file.getPath().endsWith(indexBlueprint.filepathSuffix)) return true;
+                }
+
+                return false;
             }
         };
     }
@@ -89,6 +101,16 @@ class YamlPropertiesFileBasedIndex extends ScalarIndexExtension<String> {
 
     @Override
     public int getVersion() {
-        return 0;
+        return 1;
+    }
+
+    static class IndexBlueprint {
+        private final String filepathSuffix;
+        private final PropertyPath propertyPath;
+
+        IndexBlueprint(String filepathSuffix, PropertyPath propertyPath) {
+            this.filepathSuffix = filepathSuffix;
+            this.propertyPath = propertyPath;
+        }
     }
 }

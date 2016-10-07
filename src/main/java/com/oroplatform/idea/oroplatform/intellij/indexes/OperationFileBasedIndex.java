@@ -9,6 +9,6 @@ public class OperationFileBasedIndex extends YamlPropertiesFileBasedIndex {
     public static final ID<String, Void> KEY = ID.create("com.oroplatform.idea.oroplatform.operations");
 
     public OperationFileBasedIndex() {
-        super(KEY, SchemasV1.FilePathPatterns.ACTIONS, new PropertyPath("operations"));
+        super(KEY, SchemasV1.FilePathPatterns.ACTIONS, new PropertyPath("operations").pointsToValue());
     }
 }

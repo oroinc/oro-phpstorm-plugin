@@ -19,4 +19,22 @@ class WorkflowCompletionTest extends CompletionTest {
             ["imports", "workflows"]
         )
     }
+
+    def void "test: support suggestions for imported file"() {
+        configureByText(SchemasV2.FilePathPatterns.WORKFLOW,
+            """
+            |imports:
+            |  - { resource: 'imported2.yml' }
+            """.stripMargin()
+        )
+
+        suggestions(
+            "Resources/config/oro/imported2.yml",
+            """
+            |<caret>
+            """.stripMargin(),
+
+            ["imports", "workflows"]
+        )
+    }
 }

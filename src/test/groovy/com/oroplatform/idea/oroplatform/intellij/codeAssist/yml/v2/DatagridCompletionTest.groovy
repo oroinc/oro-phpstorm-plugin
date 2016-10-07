@@ -30,4 +30,26 @@ class DatagridCompletionTest extends CompletionTest {
             ["extended_entity_name", "mixins", "source", "columns", "sorters", "filters", "properties", "actions", "action_configuration", "options", "mass_action", "totals", "inline_editing", "acl_resource"]
         )
     }
+
+    def void "test: suggest datagrids as mixins"() {
+        configureByText(
+            "some/"+SchemasV2.FilePathPatterns.DATAGRID,
+            """
+            |datagrids:
+            |  grid5: ~
+            |  grid6: ~
+            """.stripMargin()
+        )
+
+        suggestions(
+            """
+            |datagrids:
+            |  grid3:
+            |    mixins:
+            |      - <caret>
+            """.stripMargin(),
+
+            ["grid5", "grid6"]
+        )
+    }
 }

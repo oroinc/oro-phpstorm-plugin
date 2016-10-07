@@ -390,6 +390,10 @@ public class SchemasV1 {
                     Property.named("entity_attribute", Scalars.field(new PropertyPath("workflows", "$this", "entity").pointsToValue())),
                     Property.named("is_system", Scalars.bool),
                     Property.named("start_step", Scalars.any),
+                    Property.named("priority", Scalars.integer),
+                    Property.named("exclusive_active_groups", Sequence.of(Scalars.any)),
+                    Property.named("exclusive_record_groups", Sequence.of(Scalars.any)),
+                    Property.named("defaults", Container.any),
                     Property.named("steps_display_ordered", Scalars.bool),
                     Property.named("attributes", OneOf.from(
                         Container.with(attribute),
@@ -407,7 +411,7 @@ public class SchemasV1 {
                         Container.with(transitionDefinition),
                         Sequence.of(transitionDefinition.andWith(Property.named("name", Scalars.any)))
                     ))
-                )
+                ).allowExtraProperties()
             ))
         );
     }
