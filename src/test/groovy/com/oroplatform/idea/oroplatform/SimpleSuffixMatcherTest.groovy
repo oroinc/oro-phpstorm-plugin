@@ -26,5 +26,11 @@ class SimpleSuffixMatcherTest {
         assertFalse(matcher.matches("Resources/config/some.yml2"))
     }
 
+    @Test
+    def void "wildcard should not match to directory separator"() {
+        def matcher = new SimpleSuffixMatcher("Resources/config/*.yml")
+        assertFalse(matcher.matches("Resources/config/xxx/some.yml"))
+    }
+
 
 }

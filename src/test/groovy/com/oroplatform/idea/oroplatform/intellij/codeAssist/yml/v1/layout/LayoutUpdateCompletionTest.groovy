@@ -18,6 +18,17 @@ class LayoutUpdateCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: not suggest top level properties for no layout file"() {
+        suggestions(
+            "Resources/views/layouts/some_theme/this_is_not_layout/some.yml",
+            """
+            |<caret>
+            """.stripMargin(),
+            [],
+            ["layout"]
+        )
+    }
+
     def void "test: suggest layout properties"() {
         suggestions(
             """

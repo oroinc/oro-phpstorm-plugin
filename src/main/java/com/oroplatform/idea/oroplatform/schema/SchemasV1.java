@@ -25,7 +25,8 @@ public class SchemasV1 {
     }
 
     static final Collection<Schema> ALL = asList(
-        acl(), entity(), datagrid(), workflow(), systemConfiguration(), api(), actions(), dashboard(), navigation(), search(), layoutUpdate()
+        acl(), entity(), datagrid(), workflow(), systemConfiguration(), api(), actions(), dashboard(), navigation(), search(), layoutUpdate(),
+        theme()
     );
 
     private static Schema acl() {
@@ -1043,5 +1044,16 @@ public class SchemasV1 {
         return Container.with(
             Property.any(layoutUpdateTree(deep - 1)).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("layout", "actions", "$this", "$this", "items").pointsToValue()))
         );
+    }
+
+    private static Schema theme() {
+        return new Schema(new FilePathMatcher(FilePathPatterns.THEME), Container.with(
+            Property.named("label", Scalars.trans).required(),
+            Property.named("logo", Scalars.fileRelativeToAppIn("../web")),
+            Property.named("screenshot", Scalars.fileRelativeToAppIn("../web")),
+            Property.named("directory", Scalars.any),
+            Property.named("parent", Scalars.fileRelativeToElementIn("..", 1)),
+            Property.named("groups", OneOf.from(Scalars.any, Sequence.of(Scalars.any)))
+        ).allowExtraProperties());
     }
 }

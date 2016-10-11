@@ -7,7 +7,7 @@ public class SimpleSuffixMatcher {
     private final Pattern pattern;
 
     public SimpleSuffixMatcher(String pattern) {
-        this.pattern = Pattern.compile(pattern.replaceAll("\\.", "\\\\.").replaceAll("\\*", ".*")+"$");
+        this.pattern = Pattern.compile(pattern.replaceAll("\\.", "\\\\.").replaceAll("\\*", "[^/\\]*")+"$");
     }
 
     public boolean matches(String s) {
