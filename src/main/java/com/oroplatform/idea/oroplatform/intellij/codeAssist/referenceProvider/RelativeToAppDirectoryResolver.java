@@ -19,9 +19,7 @@ public class RelativeToAppDirectoryResolver implements RelativeDirectoryResolver
     @Override
     public PsiDirectory resolve(PsiElement element) {
         final Project project = element.getProject();
-        final VirtualFile dir = project.getBaseDir();
-        final VirtualFile appDir = OroPlatformSettings.getInstance(project).getAppDir().isEmpty() ?
-            dir : VfsUtil.findRelativeFile(dir, OroPlatformSettings.getInstance(project).getAppDir());
+        final VirtualFile appDir = OroPlatformSettings.getInstance(project).getAppVirtualDir();
 
         final VirtualFile rootDir = VfsUtil.findRelativeFile(relativeToAppDir, appDir);
         if(rootDir != null) {

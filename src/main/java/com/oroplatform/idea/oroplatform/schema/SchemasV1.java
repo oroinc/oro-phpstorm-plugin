@@ -22,11 +22,12 @@ public class SchemasV1 {
         public final static String LAYOUT_UPDATE = "Resources/views/layouts/*/*.yml";
         public final static String LAYOUT_UPDATE_IMPORT = "Resources/views/layouts/*/imports/*/layout.yml";
         public final static String THEME = "Resources/views/layouts/*/theme.yml";
+        public final static String ASSETS = "Resources/views/layouts/*/config/assets.yml";
     }
 
     static final Collection<Schema> ALL = asList(
         acl(), entity(), datagrid(), workflow(), systemConfiguration(), api(), actions(), dashboard(), navigation(), search(), layoutUpdate(),
-        theme()
+        theme(), assets()
     );
 
     private static Schema acl() {
@@ -1055,5 +1056,15 @@ public class SchemasV1 {
             Property.named("parent", Scalars.fileRelativeToElementIn("..", 1)),
             Property.named("groups", OneOf.from(Scalars.any, Sequence.of(Scalars.any)))
         ).allowExtraProperties());
+    }
+
+    private static Schema assets() {
+        return new Schema(new FilePathMatcher(FilePathPatterns.ASSETS), Container.with(
+            Property.named("styles", Container.with(
+                Property.named("inputs", Sequence.of(Scalars.fileRelativeToAppIn("../web"))),
+                Property.named("output", Scalars.fileRelativeToAppIn("../web")),
+                Property.named("filters", Sequence.of(Scalars.choices("cssrewrite", "lessphp", "cssmin")))
+            ))
+        ));
     }
 }
