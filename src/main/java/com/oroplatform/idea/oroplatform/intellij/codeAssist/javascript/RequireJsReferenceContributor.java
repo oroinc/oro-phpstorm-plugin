@@ -5,6 +5,8 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.WrappedFileReferenceProvider;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.WrappedFileReferenceProvider.StringWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
@@ -24,7 +26,7 @@ public class RequireJsReferenceContributor extends PsiReferenceContributor {
                     )
                 );
 
-        registrar.registerReferenceProvider(pattern, new RequireJsModuleReferenceProvider());
+        registrar.registerReferenceProvider(pattern, new WrappedFileReferenceProvider(new StringWrapper("oroui/js/", ".js"), new UIBundleJsRootDirFinder()));
     }
 
     private PsiElementPattern.Capture<JSCallExpression> functionCall(String name) {

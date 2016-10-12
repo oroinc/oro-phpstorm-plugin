@@ -6,7 +6,7 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.FileReferenceTest
 class AssetsCompletionTest extends FileReferenceTest {
     @Override
     String fileName() {
-        return "Resources/views/layouts/base/config/assets.yml"
+        return "src/Oro/AcmeBundle/Resources/views/layouts/base/config/assets.yml"
     }
 
     def void "test: suggest properties at top level"() {
@@ -29,8 +29,8 @@ class AssetsCompletionTest extends FileReferenceTest {
     }
 
     def void "test: suggest inputs"() {
-        configureByText("app/some-file.yml", "")
-        configureByText("web/bundles/css/some.css", "")
+        configureByText("src/Oro/AcmeBundle/Resources/public/some_theme/css/styles1.css", "")
+        configureByText("src/Oro/AcmeBundle/Resources/public/some_theme/css/styles2.css", "")
 
         suggestions(
             """
@@ -38,7 +38,7 @@ class AssetsCompletionTest extends FileReferenceTest {
             |  inputs:
             |    - <caret>
             """.stripMargin(),
-            ["bundles"]
+            ["bundles/oroacme/some_theme/css/styles1.css", "bundles/oroacme/some_theme/css/styles2.css"]
         )
     }
 
