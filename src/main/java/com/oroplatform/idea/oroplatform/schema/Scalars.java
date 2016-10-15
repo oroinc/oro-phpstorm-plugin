@@ -5,9 +5,7 @@ import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.PsiReferenceProvider;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionProviders;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceProviders;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.RootDirFinder;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.*;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeToAppDirectoryResolver;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeToElementResolver;
 import com.oroplatform.idea.oroplatform.schema.requirements.ChoicesRequirement;
@@ -24,20 +22,24 @@ final class Scalars {
     private Scalars() {}
 
     static Scalar strictChoices(final String... choices) {
-        return choices(Collections.singletonList(new ChoicesRequirement(Arrays.asList(choices))), choices);
+        return choices(Collections.singletonList(new ChoicesRequirement(Arrays.asList(choices))), new StaticChoicesProvider(choices));
     }
 
-    private static Scalar choices(Collection<? extends Requirement> requirements, final String[] choices) {
+    private static Scalar choices(Collection<? extends Requirement> requirements, final ChoicesProvider choicesProvider) {
         return new Scalar(requirements) {
             @Override
             public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return providers.choices(Arrays.asList(choices), insertHandler);
+                return providers.choices(choicesProvider, insertHandler);
             }
         };
     }
 
     static Scalar choices(final String... choices) {
-        return choices(Collections.<Requirement>emptyList(), choices);
+        return choices(Collections.<Requirement>emptyList(), new StaticChoicesProvider(choices));
+    }
+
+    static Scalar choices(final ChoicesProvider choicesProvider) {
+        return choices(Collections.<Requirement>emptyList(), choicesProvider);
     }
 
     static Scalar propertiesFromPath(final PropertyPath path, final String prefix) {

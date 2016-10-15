@@ -6,9 +6,10 @@ import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.ChoicesProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionProviders;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.StaticChoicesProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ChoiceCompletionProvider;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ChoiceCompletionProvider.Choice;
 import com.oroplatform.idea.oroplatform.schema.*;
 
 import java.util.LinkedList;
@@ -32,18 +33,18 @@ class CompletionSchemaVisitor extends YamlVisitor {
 
     @Override
     protected void handleContainer(Container container, ElementPattern<? extends PsiElement> captureElement) {
-        List<Choice> choices = new LinkedList<Choice>();
+        List<ChoicesProvider.Choice> choices = new LinkedList<ChoicesProvider.Choice>();
 
         for(Property property : container.getProperties()) {
             for (String name : property.nameExamples()) {
-                choices.add(new Choice(name, propertyDescriptionProvider.getDescription(property)));
+                choices.add(new ChoicesProvider.Choice(name, propertyDescriptionProvider.getDescription(property)));
             }
         }
 
         completion.extend(
             CompletionType.BASIC,
             captureElement,
-            new ChoiceCompletionProvider(choices, KeyInsertHandler.INSTANCE)
+            new ChoiceCompletionProvider(new StaticChoicesProvider(choices), KeyInsertHandler.INSTANCE)
         );
     }
 

@@ -17,7 +17,7 @@ public interface CompletionProviders {
     CompletionProvider<CompletionParameters> service(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> massActionProvider(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> propertiesFromPath(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler);
-    CompletionProvider<CompletionParameters> choices(List<String> choices, InsertHandler<LookupElement> insertHandler);
+    CompletionProvider<CompletionParameters> choices(ChoicesProvider choicesProvider, InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> operation(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> translation(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> translationDomain(InsertHandler<LookupElement> insertHandler);

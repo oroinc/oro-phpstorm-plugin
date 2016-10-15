@@ -4,6 +4,7 @@ import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.ChoicesProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.completionProvider.*;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ChoiceCompletionProvider;
@@ -55,8 +56,8 @@ class YamlCompletionProviders implements CompletionProviders {
     }
 
     @Override
-    public CompletionProvider<CompletionParameters> choices(List<String> choices, InsertHandler<LookupElement> insertHandler) {
-        return ChoiceCompletionProvider.fromChoiceNames(choices, insertHandler);
+    public CompletionProvider<CompletionParameters> choices(ChoicesProvider choicesProvider, InsertHandler<LookupElement> insertHandler) {
+        return new ChoiceCompletionProvider(choicesProvider, insertHandler);
     }
 
     @Override

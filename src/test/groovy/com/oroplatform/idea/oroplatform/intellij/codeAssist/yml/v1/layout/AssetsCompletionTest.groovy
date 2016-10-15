@@ -106,15 +106,12 @@ class AssetsCompletionTest extends FileReferenceTest {
     }
 
     def void "test: suggest output"() {
-        configureByText("app/some-file.yml", "")
-        configureByText("web/bundles/css/some.css", "")
-
         suggestions(
             """
             |styles:
             |  output: <caret>
             """.stripMargin(),
-            ["bundles"]
+            ["css/layout/base/styles.css"]
         )
     }
 

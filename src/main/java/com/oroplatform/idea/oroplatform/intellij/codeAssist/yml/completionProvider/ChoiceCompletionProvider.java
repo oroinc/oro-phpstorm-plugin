@@ -4,37 +4,22 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.util.ProcessingContext;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.ChoicesProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLMapping;
 
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 public class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> {
-
-    private final List<Choice> choices = new LinkedList<Choice>();
+    private final ChoicesProvider choicesProvider;
     private final InsertHandler<LookupElement> insertHandler;
 
-    public static ChoiceCompletionProvider fromChoiceNames(List<String> choices, InsertHandler<LookupElement> insertHandler) {
-        return new ChoiceCompletionProvider(toChoices(choices), insertHandler);
-    }
-
-    private static List<Choice> toChoices(List<String> names) {
-        List<Choice> choices = new LinkedList<Choice>();
-        for (String name : names) {
-            choices.add(new Choice(name, null));
-        }
-
-        return choices;
-    }
-
-    public ChoiceCompletionProvider(List<Choice> choices, InsertHandler<LookupElement> insertHandler) {
+    public ChoiceCompletionProvider(ChoicesProvider choicesProvider, InsertHandler<LookupElement> insertHandler) {
+        this.choicesProvider = choicesProvider;
         this.insertHandler = insertHandler;
-        this.choices.addAll(choices);
     }
 
     @Override
@@ -42,9 +27,14 @@ public class ChoiceCompletionProvider extends CompletionProvider<CompletionParam
         final Set<String> existingProperties = getExistingChoices(parameters);
         result = result.withPrefixMatcher(new PlainPrefixMatcher(result.getPrefixMatcher().getPrefix()));
 
-        for(Choice choice : choices) {
+        for(ChoicesProvider.Choice choice : choicesProvider.getChoices(parameters.getOriginalPosition())) {
             if(!existingProperties.contains(choice.getName())) {
-                result.addElement(LookupElementBuilder.create(choice.getName()).withInsertHandler(insertHandler).withTypeText(choice.getDescription(), true));
+                result.addElement(
+                    LookupElementBuilder.create(choice.getName())
+                        .withInsertHandler(insertHandler)
+                        .withTypeText(choice.getDescription(), true)
+                        .withIcon(choice.getIcon())
+                );
             }
         }
     }
@@ -62,21 +52,4 @@ public class ChoiceCompletionProvider extends CompletionProvider<CompletionParam
         return existingProperties;
     }
 
-    public static class Choice {
-        private final String name;
-        private final String description;
-
-        public Choice(String name, String description) {
-            this.name = name;
-            this.description = description;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        String getDescription() {
-            return description;
-        }
-    }
 }
