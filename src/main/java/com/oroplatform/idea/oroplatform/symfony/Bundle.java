@@ -24,6 +24,10 @@ public class Bundle {
         return name;
     }
 
+    public String getResourceName() {
+        return name.replace("Bundle", "").toLowerCase();
+    }
+
     public String getNamespaceName() {
         return namespaceName;
     }

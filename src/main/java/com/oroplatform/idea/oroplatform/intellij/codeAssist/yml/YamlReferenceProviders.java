@@ -2,10 +2,9 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.PsiReferenceProvider;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassProvider;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceProviders;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassProviders;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.*;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.FilePathReferenceProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeDirectoryResolver;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.php.YamlPhpClassProviders;
@@ -28,6 +27,11 @@ class YamlReferenceProviders implements ReferenceProviders {
     @Override
     public PsiReferenceProvider filePath(RelativeDirectoryResolver relativeDirectoryResolver, int allowedDepth, InsertHandler<LookupElement> insertHandler) {
         return new FilePathReferenceProvider(relativeDirectoryResolver, allowedDepth);
+    }
+
+    @Override
+    public PsiReferenceProvider file(RootDirFinder rootDirFinder, VirtualFileFilter virtualFileFilter, InsertHandler<LookupElement> insertHandler) {
+        return new WrappedFileReferenceProvider(new PublicResourceWrappedStringFactory(), rootDirFinder, virtualFileFilter);
     }
 
     @Override

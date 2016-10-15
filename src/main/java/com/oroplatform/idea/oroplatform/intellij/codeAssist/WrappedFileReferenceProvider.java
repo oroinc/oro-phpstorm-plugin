@@ -8,12 +8,14 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.util.ProcessingContext;
+import com.oroplatform.idea.oroplatform.StringWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -22,12 +24,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class WrappedFileReferenceProvider extends PsiReferenceProvider {
-    private final StringWrapper stringWrapper;
+    private final StringWrapperProvider stringWrapperProvider;
     private final RootDirFinder rootDirFinder;
+    private final VirtualFileFilter fileFilter;
 
-    public WrappedFileReferenceProvider(StringWrapper stringWrapper, RootDirFinder rootDirFinder) {
-        this.stringWrapper = stringWrapper;
+    public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirFinder rootDirFinder) {
+        this(stringWrapperProvider, rootDirFinder, VirtualFileFilter.ALL);
+    }
+
+    public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirFinder rootDirFinder, VirtualFileFilter fileFilter) {
+        this.stringWrapperProvider = stringWrapperProvider;
         this.rootDirFinder = rootDirFinder;
+        this.fileFilter = fileFilter;
     }
 
     @NotNull
@@ -47,18 +55,20 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
             return Collections.emptyList();
         }
 
+        final StringWrapper stringWrapper = stringWrapperProvider.getStringWrapperFor(element);
+
         if(!stringWrapper.startWith(text)) {
-            return emptyReferences(element, rootDir);
+            return emptyReferences(element, rootDir, stringWrapper);
         }
 
         final String referenceFilePath = rootDir.getPath() + "/" + stringWrapper.removePrefixAndAddSuffix(text);
-        final List<FileReference> references = getFileReferences(element, rootDir, referenceFilePath);
-        references.addAll(emptyReferences(element, rootDir));
+        final List<FileReference> references = getFileReferences(element, rootDir, referenceFilePath, stringWrapper);
+        references.addAll(emptyReferences(element, rootDir, stringWrapper));
 
         return references;
     }
 
-    private List<? extends FileReference> emptyReferences(final PsiElement element, VirtualFile rootDir) {
+    private List<? extends FileReference> emptyReferences(final PsiElement element, VirtualFile rootDir, StringWrapper stringWrapper) {
         final String relativePath = relativePathTo(rootDir, element.getOriginalElement().getContainingFile().getOriginalFile().getVirtualFile().getParent());
 
         if(!element.getText().contains(PsiElements.IN_PROGRESS_VALUE) || relativePath == null) {
@@ -67,7 +77,7 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
 
         final FileReferenceSet fileReferenceSet = new FileReferenceSet(relativePath, element, 0, this, true);
 
-        return Arrays.asList(new WrappedFileReference(stringWrapper, fileReferenceSet, element, "", rootDirFinder.getRootDir(element)));
+        return Arrays.asList(new WrappedFileReference(stringWrapper, fileReferenceSet, element, "", rootDirFinder.getRootDir(element), fileFilter));
     }
 
     /**
@@ -99,7 +109,7 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
     }
 
     @NotNull
-    private List<FileReference> getFileReferences(@NotNull final PsiElement element, final VirtualFile rootDir, final String referenceFilePath) {
+    private List<FileReference> getFileReferences(@NotNull final PsiElement element, final VirtualFile rootDir, final String referenceFilePath, final StringWrapper stringWrapper) {
         final String relativePath = relativePathTo(rootDir, element.getOriginalElement().getContainingFile().getOriginalFile().getVirtualFile().getParent());
 
         if(relativePath == null) {
@@ -113,7 +123,7 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
             @Override
             public boolean processFile(VirtualFile file) {
                 if(file.getPath().equals(referenceFilePath)) {
-                    references.add(new WrappedFileReference(stringWrapper, fileReferenceSet, element, relativePath + file.getPath().replace(rootDir.getPath()+"/", ""), rootDir));
+                    references.add(new WrappedFileReference(stringWrapper, fileReferenceSet, element, relativePath + file.getPath().replace(rootDir.getPath()+"/", ""), rootDir, fileFilter));
                 }
                 return true;
             }
@@ -121,41 +131,21 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
         return references;
     }
 
-    public static class StringWrapper {
-        private final String prefix;
-        private final String suffix;
-
-        public StringWrapper(String prefix, String suffix) {
-            this.prefix = prefix;
-            this.suffix = suffix;
-        }
-
-        boolean startWith(String s) {
-            return s.startsWith(prefix);
-        }
-
-        String addPrefixAndRemoveSuffix(String s) {
-            return prefix + s.replace(suffix, "");
-        }
-
-        String removePrefixAndAddSuffix(String s) {
-            return s.replace(prefix, "") + suffix;
-        }
-    }
-
-    public interface RootDirFinder {
-        VirtualFile getRootDir(PsiElement element);
-    }
-
     private static class WrappedFileReference extends FileReference {
 
         private final StringWrapper stringWrapper;
         private final VirtualFile rootDir;
+        private final VirtualFileFilter fileFilter;
 
-        WrappedFileReference(StringWrapper stringWrapper, FileReferenceSet fileReferenceSet, PsiElement element, String text, VirtualFile rootDir) {
-            super(fileReferenceSet, new TextRange(1, element.getTextLength() - 1), 0, text);
+        WrappedFileReference(StringWrapper stringWrapper, FileReferenceSet fileReferenceSet, PsiElement element, String text, VirtualFile rootDir, VirtualFileFilter fileFilter) {
+            super(fileReferenceSet, new TextRange(isQuotedAsInt(element), element.getTextLength() - isQuotedAsInt(element)), 0, text);
             this.stringWrapper = stringWrapper;
             this.rootDir = rootDir;
+            this.fileFilter = fileFilter;
+        }
+
+        private static int isQuotedAsInt(PsiElement element) {
+            return StringUtil.isQuotedString(element.getText()) ? 1 : 0;
         }
 
         @NotNull
@@ -170,7 +160,7 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
             VfsUtilCore.iterateChildrenRecursively(rootDir, null, new ContentIterator() {
                 @Override
                 public boolean processFile(VirtualFile file) {
-                    if(!file.isDirectory()) {
+                    if(!file.isDirectory() && fileFilter.accept(file)) {
                         final LookupElementBuilder lookupElement = LookupElementBuilder.create(getLookupString(file)).withIcon(file.getFileType().getIcon());
                         elements.add(lookupElement);
                     }

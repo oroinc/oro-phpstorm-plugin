@@ -6,12 +6,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.WrappedFileReferenceProvider;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.RootDirFinder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-class UIBundleJsRootDirFinder implements WrappedFileReferenceProvider.RootDirFinder {
+class UIBundleJsRootDirFinder implements RootDirFinder {
     @Nullable
     public VirtualFile getRootDir(PsiElement element) {
 

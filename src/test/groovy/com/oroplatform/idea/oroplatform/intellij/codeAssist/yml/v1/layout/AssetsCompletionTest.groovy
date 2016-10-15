@@ -9,6 +9,19 @@ class AssetsCompletionTest extends FileReferenceTest {
         return "src/Oro/AcmeBundle/Resources/views/layouts/base/config/assets.yml"
     }
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp()
+        configureByText("src/Oro/AcmeBundle/OroAcmeBundle.php",
+            """
+            |<?php
+            |namespace Oro\\AcmeBundle;
+            |
+            |class OroAcmeBundle {}
+            """
+        )
+    }
+
     def void "test: suggest properties at top level"() {
         suggestions(
             """
@@ -25,6 +38,56 @@ class AssetsCompletionTest extends FileReferenceTest {
             |  <caret>
             """.stripMargin(),
             ["inputs", "filters", "output"]
+        )
+    }
+
+    def void "test: suggest inputs in quotes"() {
+        configureByText("src/Oro/AcmeBundle/Resources/public/some_theme/css/styles1.css", "")
+        configureByText("src/Oro/AcmeBundle/Resources/public/some_theme/css/styles2.css", "")
+
+        suggestions(
+            """
+            |styles:
+            |  inputs:
+            |    - '<caret>'
+            """.stripMargin(),
+            ["bundles/oroacme/some_theme/css/styles1.css", "bundles/oroacme/some_theme/css/styles2.css"]
+        )
+    }
+
+    def void "test: not suggest js as inputs"() {
+        configureByText("src/Oro/AcmeBundle/Resources/public/some_theme/js/main.js", "")
+
+        suggestions(
+            """
+            |styles:
+            |  inputs:
+            |    - '<caret>'
+            """.stripMargin(),
+            [],
+            ["bundles/oroacme/some_theme/js/main.js"]
+        )
+    }
+
+    def void "test: not suggest inputs from other bundles"() {
+        configureByText("src/Oro/AcmeBundle123/Resources/public/some_theme/css/style.css", "")
+        configureByText("src/Oro/AcmeBundle123/OroAcmeBundle.php",
+            """
+            |<?php
+            |namespace Oro\\AcmeBundle;
+            |
+            |class OroAcmeBundle {}
+            """
+        )
+
+        suggestions(
+            """
+            |styles:
+            |  inputs:
+            |    - '<caret>'
+            """.stripMargin(),
+            [],
+            ["bundles/oroacme123/some_theme/css/style.css"]
         )
     }
 

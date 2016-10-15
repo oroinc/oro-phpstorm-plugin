@@ -7,6 +7,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.PsiReferenceProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceProviders;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.RootDirFinder;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeToAppDirectoryResolver;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeToElementResolver;
 import com.oroplatform.idea.oroplatform.schema.requirements.ChoicesRequirement;
@@ -122,14 +123,14 @@ final class Scalars {
         }
     };
 
-    final static Scalar file = new Scalar() {
+    final static Scalar filePath = new Scalar() {
         @Override
         public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
             return providers.filePath(new RelativeToElementResolver(), insertHandler);
         }
     };
 
-    static Scalar fileRelativeToElementIn(final String dir, final int allowedDepth) {
+    static Scalar filePathRelativeToElementIn(final String dir, final int allowedDepth) {
         return new Scalar() {
             @Override
             public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
@@ -138,11 +139,21 @@ final class Scalars {
         };
     }
 
-    static Scalar fileRelativeToAppIn(final String dir) {
+    static Scalar filePathRelativeToAppIn(final String dir) {
         return new Scalar() {
             @Override
             public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
                 return providers.filePath(new RelativeToAppDirectoryResolver(dir), insertHandler);
+            }
+        };
+    }
+
+    static Scalar file(final RootDirFinder rootDirFinder) {
+        return new Scalar() {
+            @Nullable
+            @Override
+            public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return providers.file(rootDirFinder, new ExtensionFileFilter("css", "less", "sass"), insertHandler);
             }
         };
     }
