@@ -104,6 +104,14 @@ final class Scalars {
         }
     };
 
+    final static Scalar assetsFilter = new Scalar() {
+        @Nullable
+        @Override
+        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return providers.assetsFilter(insertHandler);
+        }
+    };
+
     final static Scalar datagrid = new Scalar() {
         @Override
         public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {

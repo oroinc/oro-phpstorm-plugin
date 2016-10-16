@@ -116,12 +116,22 @@ class AssetsCompletionTest extends FileReferenceTest {
     }
 
     def void "test: suggest filters"() {
+        configureByText("app/config/config.yml",
+            """
+            |assetic:
+            |  filters:
+            |    filter1: ~
+            |    filter2: ~
+            |    filter3: ~
+            """.stripMargin()
+        )
+
         suggestions(
             """
             |styles:
             |  filters: [<caret>]
             """.stripMargin(),
-            ["cssrewrite", "lessphp", "cssmin"]
+            ["filter1", "filter2", "filter3"]
         )
     }
 }

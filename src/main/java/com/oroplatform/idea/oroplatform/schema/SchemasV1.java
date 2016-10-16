@@ -1065,8 +1065,7 @@ public class SchemasV1 {
             Property.named("styles", Container.with(
                 Property.named("inputs", Sequence.of(Scalars.file(new PublicResourcesRootDirFinder()))),
                 Property.named("output", Scalars.choices(new LayoutAssetsCssOutputChoicesProvider())),
-                //TODO: registered in app.yml - index
-                Property.named("filters", Sequence.of(Scalars.choices("cssrewrite", "lessphp", "cssmin")))
+                Property.named("filters", Sequence.of(Scalars.assetsFilter))
             ))
         ));
     }
