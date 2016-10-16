@@ -25,11 +25,12 @@ public class SchemasV1 {
         public final static String LAYOUT_UPDATE_IMPORT = "Resources/views/layouts/*/imports/*/layout.yml";
         public final static String THEME = "Resources/views/layouts/*/theme.yml";
         public final static String ASSETS = "Resources/views/layouts/*/config/assets.yml";
+        public final static String REQUIRE_JS = "Resources/views/layouts/*/config/requirejs.yml";
     }
 
     static final Collection<Schema> ALL = asList(
         acl(), entity(), datagrid(), workflow(), systemConfiguration(), api(), actions(), dashboard(), navigation(), search(), layoutUpdate(),
-        theme(), assets()
+        theme(), assets(), requirejs()
     );
 
     private static Schema acl() {
@@ -1063,9 +1064,27 @@ public class SchemasV1 {
     private static Schema assets() {
         return new Schema(new FilePathMatcher(FilePathPatterns.ASSETS), Container.with(
             Property.named("styles", Container.with(
-                Property.named("inputs", Sequence.of(Scalars.file(new PublicResourcesRootDirFinder()))),
+                Property.named("inputs", Sequence.of(Scalars.file(new PublicResourcesRootDirFinder(), "css", "less", "sass"))),
                 Property.named("output", Scalars.choices(new LayoutAssetsCssOutputChoicesProvider())),
                 Property.named("filters", Sequence.of(Scalars.assetsFilter))
+            ))
+        ));
+    }
+
+    private static Schema requirejs() {
+        return new Schema(new FilePathMatcher(FilePathPatterns.REQUIRE_JS), Container.with(
+            Property.named("config", Container.with(
+                Property.named("build_path", Scalars.any),
+                Property.named("shim", Container.with(
+                    Container.with(
+                        Property.named("deps", Sequence.of(Scalars.any)),
+                        Property.named("exports", Sequence.of(Scalars.any))
+                    )
+                )),
+                Property.named("map", Container.with()),
+                Property.named("paths", Container.with(
+                    Property.any(Scalars.file(new PublicResourcesRootDirFinder(), "js"))
+                ))
             ))
         ));
     }

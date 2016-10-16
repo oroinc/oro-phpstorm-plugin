@@ -4,6 +4,7 @@ import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.PsiReferenceProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.*;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeToAppDirectoryResolver;
@@ -158,12 +159,13 @@ final class Scalars {
         };
     }
 
-    static Scalar file(final RootDirFinder rootDirFinder) {
+    static Scalar file(final RootDirFinder rootDirFinder, final String... extensions) {
         return new Scalar() {
             @Nullable
             @Override
             public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return providers.file(rootDirFinder, new ExtensionFileFilter("css", "less", "sass"), insertHandler);
+                final VirtualFileFilter fileFilter = extensions.length > 0 ? new ExtensionFileFilter(extensions) : VirtualFileFilter.ALL;
+                return providers.file(rootDirFinder, fileFilter, insertHandler);
             }
         };
     }
