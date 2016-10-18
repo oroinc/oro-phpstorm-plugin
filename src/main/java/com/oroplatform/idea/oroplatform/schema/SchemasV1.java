@@ -26,11 +26,12 @@ public class SchemasV1 {
         public final static String THEME = "Resources/views/layouts/*/theme.yml";
         public final static String ASSETS = "Resources/views/layouts/*/config/assets.yml";
         public final static String REQUIRE_JS = "Resources/views/layouts/*/config/requirejs.yml";
+        public final static String IMAGES = "Resources/views/layouts/*/config/images.yml";
     }
 
     static final Collection<Schema> ALL = asList(
         acl(), entity(), datagrid(), workflow(), systemConfiguration(), api(), actions(), dashboard(), navigation(), search(), layoutUpdate(),
-        theme(), assets(), requirejs()
+        theme(), assets(), requirejs(), images()
     );
 
     private static Schema acl() {
@@ -1031,7 +1032,7 @@ public class SchemasV1 {
                         )
                     )),
                     Property.named("@clear", Container.any)
-                ))),
+                ).allowExtraProperties())),
                 Property.named("conditions", Container.any),
                 Property.named("imports", Sequence.of(OneOf.from(importId, Container.with(
                     Property.named("id", importId),
@@ -1093,6 +1094,18 @@ public class SchemasV1 {
                 Property.named("paths", Container.with(
                     Property.any(Scalars.any)
                 ))
+            ))
+        ));
+    }
+
+    private static Schema images() {
+        return new Schema(new FilePathMatcher(FilePathPatterns.IMAGES), Container.with(
+            Property.named("types", Container.with(
+                Container.with(
+                    Property.named("label", Scalars.trans),
+                    Property.named("dimensions", Sequence.of(Scalars.any)),
+                    Property.named("max_number", Scalars.integer)
+                )
             ))
         ));
     }
