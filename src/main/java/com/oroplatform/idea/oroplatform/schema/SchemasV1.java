@@ -1076,14 +1076,22 @@ public class SchemasV1 {
             Property.named("config", Container.with(
                 Property.named("build_path", Scalars.any),
                 Property.named("shim", Container.with(
-                    Container.with(
-                        Property.named("deps", Sequence.of(Scalars.any)),
-                        Property.named("exports", Sequence.of(Scalars.any))
-                    )
+                    Property.any(
+                        Container.with(
+                            Property.named("deps", Sequence.of(Scalars.any)),
+                            Property.named("exports", Sequence.of(Scalars.any))
+                        )
+                    ).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("config", "paths").pointsToValue()))
                 )),
-                Property.named("map", Container.with()),
+                Property.named("map", Container.with(Container.any)),
                 Property.named("paths", Container.with(
                     Property.any(Scalars.file(new PublicResourcesRootDirFinder(), "js"))
+                )),
+                Property.named("appmodules", Sequence.of(Scalars.any))
+            )),
+            Property.named("build", Container.with(
+                Property.named("paths", Container.with(
+                    Property.any(Scalars.any)
                 ))
             ))
         ));

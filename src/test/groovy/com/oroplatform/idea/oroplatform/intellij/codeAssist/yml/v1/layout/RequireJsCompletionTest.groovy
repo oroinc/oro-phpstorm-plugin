@@ -27,7 +27,7 @@ class RequireJsCompletionTest extends CompletionTest {
             """
             |<caret>
             """.stripMargin(),
-            ["config"]
+            ["config", "build"]
         )
     }
 
@@ -37,7 +37,7 @@ class RequireJsCompletionTest extends CompletionTest {
             |config:
             |  <caret>
             """.stripMargin(),
-            ["shim", "map", "paths", "build_path"]
+            ["shim", "map", "paths", "build_path", "appmodules"]
         )
     }
 
@@ -50,6 +50,20 @@ class RequireJsCompletionTest extends CompletionTest {
             |      <caret>
             """.stripMargin(),
             ["deps", "exports"]
+        )
+    }
+
+    def void "test: suggest modules from paths as shim properties"() {
+        suggestions(
+            """
+            |config:
+            |  shim:
+            |    <caret>
+            |  paths:
+            |    module1: ~
+            |    module2: ~
+            """.stripMargin(),
+            ["module1", "module2"]
         )
     }
 
@@ -78,6 +92,16 @@ class RequireJsCompletionTest extends CompletionTest {
             """.stripMargin(),
             [],
             ["bundles/oroacme/css/style1.css"]
+        )
+    }
+
+    def void "test: suggest properties for build"() {
+        suggestions(
+            """
+            |build:
+            |  <caret>
+            """.stripMargin(),
+            ["paths"]
         )
     }
 }
