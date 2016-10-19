@@ -24,7 +24,7 @@ Features
 - Autocomplete for the *dashboards.yml*
 - Autocomplete for the *navigation.yml*
 - Autocomplete for the *search.yml*
-- Autocomplete for layouts yaml files
+- Autocomplete for layouts yaml files: *layout.yml*, *theme.yml*, *assets.yml*, *requirejs.yml*, *images.yml*
 - Autocomplete for entity methods added dynamically during application execution
 - Possibility to navigate via RequireJS modules
 - ...
