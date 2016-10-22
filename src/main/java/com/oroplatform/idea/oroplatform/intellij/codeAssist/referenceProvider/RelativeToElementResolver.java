@@ -4,6 +4,8 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 
+import java.util.Optional;
+
 public class RelativeToElementResolver implements RelativeDirectoryResolver {
 
     private final String relativePath;
@@ -17,17 +19,17 @@ public class RelativeToElementResolver implements RelativeDirectoryResolver {
     }
 
     @Override
-    public PsiDirectory resolve(PsiElement element) {
+    public Optional<PsiDirectory> resolve(PsiElement element) {
         final PsiFile file = element.getContainingFile();
 
-        return relativePath == null ? file.getParent() : getRelative(file.getOriginalFile(), relativePath);
+        return relativePath == null ? Optional.ofNullable(file.getParent()) : getRelative(file.getOriginalFile(), relativePath);
     }
 
-    private static PsiDirectory getRelative(PsiFile file, String relativePath) {
+    private static Optional<PsiDirectory> getRelative(PsiFile file, String relativePath) {
         final VirtualFile relativeFile = VfsUtil.findRelativeFile(relativePath, file.getVirtualFile());
-        if(relativeFile == null) return null;
+        if(relativeFile == null) return Optional.empty();
 
-        return PsiManager.getInstance(file.getProject()).findDirectory(relativeFile);
+        return Optional.ofNullable(PsiManager.getInstance(file.getProject()).findDirectory(relativeFile));
     }
 
 }

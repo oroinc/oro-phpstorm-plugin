@@ -32,7 +32,7 @@ class PhpMethodLookupElement extends PhpLookupElement {
     public void renderElement(LookupElementPresentation presentation) {
         super.renderElement(presentation);
 
-        final Collection<String> parameters = new LinkedList<String>();
+        final Collection<String> parameters = new LinkedList<>();
         for (Parameter parameter : method.getParameters()) {
             parameters.add(parameter.getType().toStringResolved());
         }

@@ -37,7 +37,7 @@ public class TwigTemplateReference extends PsiPolyVariantReferenceBase<PsiElemen
         final String simpleTemplateName = getSimpleTemplateName();
         final PsiFile[] files = FilenameIndex.getFilesByName(getElement().getProject(), simpleTemplateName, GlobalSearchScope.allScope(getElement().getProject()));
 
-        final List<ResolveResult> results = new LinkedList<ResolveResult>();
+        final List<ResolveResult> results = new LinkedList<>();
 
         final PrefixMatcher matcher = new StrictCamelHumpMatcher(templateName.replace(simpleTemplateName, "").replace(":", "").replace("/", ""));
 
@@ -64,7 +64,7 @@ public class TwigTemplateReference extends PsiPolyVariantReferenceBase<PsiElemen
     @NotNull
     @Override
     public Object[] getVariants() {
-        final List<LookupElement> results = new LinkedList<LookupElement>();
+        final List<LookupElement> results = new LinkedList<>();
 
         for (Bundle bundle : bundles.findAll()) {
             for (PhpNamespace phpNamespace : phpIndex.getNamespacesByName(bundle.getNamespaceName())) {
@@ -85,7 +85,7 @@ public class TwigTemplateReference extends PsiPolyVariantReferenceBase<PsiElemen
     private Collection<TwigTemplate> findTwigTemplates(Bundle bundle, String topDirectory, String prefixPath, VirtualFile dir) {
         if(dir == null) return Collections.emptyList();
 
-        final Collection<TwigTemplate> twigFiles = new LinkedList<TwigTemplate>();
+        final Collection<TwigTemplate> twigFiles = new LinkedList<>();
 
         for (VirtualFile file : dir.getChildren()) {
             if("twig".equals(file.getExtension())) {

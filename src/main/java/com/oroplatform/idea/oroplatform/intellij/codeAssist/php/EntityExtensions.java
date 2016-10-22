@@ -9,19 +9,19 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import com.oroplatform.idea.oroplatform.symfony.Entity;
 import gnu.trove.THashMap;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 class EntityExtensions {
 
     static final String EXTENSIONS_DIR_RELATIVE_PATH = "cache/dev/oro_entities/Extend/Entity";
 
     private static final Key<CachedValue<Map<String, Collection<String>>>> CACHE_KEY =
-        new Key<CachedValue<Map<String, Collection<String>>>>("com.oroplatform.idea.oroplatform.cache.entity_extensions");
+        new Key<>("com.oroplatform.idea.oroplatform.cache.entity_extensions");
 
     private final Project project;
     private static final Pattern METHOD_PATTERN = Pattern.compile("public function ([a-z-A-Z0-9][a-z-A-Z0-9_]*)");
@@ -41,49 +41,39 @@ class EntityExtensions {
 
         if(methodNames == null) return Collections.emptyList();
 
-        final Collection<ExtensionMethod> methods = new LinkedList<ExtensionMethod>();
-
-        for (String name : methodNames) {
-            methods.add(new ExtensionMethod(name));
-        }
-
-        return methods;
+        return methodNames.stream().map(ExtensionMethod::new).collect(Collectors.toList());
     }
 
     private Map<String, Collection<String>> getEntityExtensions() {
         CachedValue<Map<String, Collection<String>>> cachedExtensions = project.getUserData(CACHE_KEY);
 
         if(cachedExtensions == null) {
-            cachedExtensions = CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<Map<String, Collection<String>>>() {
-                @Nullable
-                @Override
-                public Result<Map<String, Collection<String>>> compute() {
-                    final OroPlatformSettings settings = OroPlatformSettings.getInstance(project);
-                    final VirtualFile appDir = settings.getAppVirtualDir();
+            cachedExtensions = CachedValuesManager.getManager(project).createCachedValue(() -> {
+                final OroPlatformSettings settings = OroPlatformSettings.getInstance(project);
+                final VirtualFile appDir = settings.getAppVirtualDir();
 
-                    if(appDir == null) return null;
-                    final VirtualFile extensionsDir = appDir.findFileByRelativePath(EXTENSIONS_DIR_RELATIVE_PATH);
-                    if(extensionsDir == null) return null;
+                if(appDir == null) return null;
+                final VirtualFile extensionsDir = appDir.findFileByRelativePath(EXTENSIONS_DIR_RELATIVE_PATH);
+                if(extensionsDir == null) return null;
 
-                    final Map<String, Collection<String>> extensions = loadEntityExtensions(extensionsDir);
-                    final Collection<Object> dependencies = new LinkedList<Object>();
-                    dependencies.add(settings);
-                    dependencies.add(extensionsDir);
-                    dependencies.addAll(Arrays.asList(extensionsDir.getChildren()));
+                final Map<String, Collection<String>> extensions = loadEntityExtensions(extensionsDir);
+                final Collection<Object> dependencies = new LinkedList<>();
+                dependencies.add(settings);
+                dependencies.add(extensionsDir);
+                dependencies.addAll(Arrays.asList(extensionsDir.getChildren()));
 
-                    return CachedValueProvider.Result.create(extensions, dependencies);
-                }
+                return CachedValueProvider.Result.create(extensions, dependencies);
             }, false);
 
             project.putUserData(CACHE_KEY, cachedExtensions);
         }
 
         final Map<String, Collection<String>> value = cachedExtensions.getValue();
-        return value == null ? Collections.<String, Collection<String>>emptyMap() : value;
+        return value == null ? Collections.emptyMap() : value;
     }
 
     private Map<String, Collection<String>> loadEntityExtensions(VirtualFile extensionsDir) {
-        final Map<String, Collection<String>> extensions = new THashMap<String, Collection<String>>();
+        final Map<String, Collection<String>> extensions = new THashMap<>();
         for (VirtualFile file : extensionsDir.getChildren()) {
             extensions.put(file.getName(), getExtensionMethodsFromFile(file));
         }
@@ -94,7 +84,7 @@ class EntityExtensions {
     private Collection<String> getExtensionMethodsFromFile(VirtualFile classFile) {
         try {
             final String contents = new String(classFile.contentsToByteArray(), classFile.getCharset());
-            final Collection<String> methods = new LinkedList<String>();
+            final Collection<String> methods = new LinkedList<>();
             final Matcher matcher = METHOD_PATTERN.matcher(contents);
             while(matcher.find()) {
                 methods.add(matcher.group(1));

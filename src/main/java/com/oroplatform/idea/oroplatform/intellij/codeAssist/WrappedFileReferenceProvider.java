@@ -2,7 +2,6 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -49,23 +48,20 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
     }
 
     private List<? extends FileReference> getReferences(PsiElement element, String text) {
-        final VirtualFile rootDir = rootDirFinder.getRootDir(element);
+       return rootDirFinder.getRootDir(element)
+            .map(rootDir -> {
+                final StringWrapper stringWrapper = stringWrapperProvider.getStringWrapperFor(element);
 
-        if(rootDir == null) {
-            return Collections.emptyList();
-        }
+                if(!stringWrapper.startWith(text)) {
+                    return emptyReferences(element, rootDir, stringWrapper);
+                }
 
-        final StringWrapper stringWrapper = stringWrapperProvider.getStringWrapperFor(element);
+                final String referenceFilePath = rootDir.getPath() + "/" + stringWrapper.removePrefixAndAddSuffix(text);
+                final List<FileReference> references = getFileReferences(element, rootDir, referenceFilePath, stringWrapper);
+                references.addAll(emptyReferences(element, rootDir, stringWrapper));
 
-        if(!stringWrapper.startWith(text)) {
-            return emptyReferences(element, rootDir, stringWrapper);
-        }
-
-        final String referenceFilePath = rootDir.getPath() + "/" + stringWrapper.removePrefixAndAddSuffix(text);
-        final List<FileReference> references = getFileReferences(element, rootDir, referenceFilePath, stringWrapper);
-        references.addAll(emptyReferences(element, rootDir, stringWrapper));
-
-        return references;
+                return references;
+            }).orElseGet(Collections::emptyList);
     }
 
     private List<? extends FileReference> emptyReferences(final PsiElement element, VirtualFile rootDir, StringWrapper stringWrapper) {
@@ -77,7 +73,7 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
 
         final FileReferenceSet fileReferenceSet = new FileReferenceSet(relativePath, element, 0, this, true);
 
-        return Arrays.asList(new WrappedFileReference(stringWrapper, fileReferenceSet, element, "", rootDirFinder.getRootDir(element), fileFilter));
+        return Arrays.asList(new WrappedFileReference(stringWrapper, fileReferenceSet, element, "", rootDirFinder.getRootDir(element).orElse(null), fileFilter));
     }
 
     /**
@@ -117,16 +113,13 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
         }
 
         final FileReferenceSet fileReferenceSet = new FileReferenceSet(relativePath, element, 0, this, true);
-        final List<FileReference> references = new LinkedList<FileReference>();
+        final List<FileReference> references = new LinkedList<>();
 
-        VfsUtilCore.iterateChildrenRecursively(rootDir, null, new ContentIterator() {
-            @Override
-            public boolean processFile(VirtualFile file) {
-                if(file.getPath().equals(referenceFilePath)) {
-                    references.add(new WrappedFileReference(stringWrapper, fileReferenceSet, element, relativePath + file.getPath().replace(rootDir.getPath()+"/", ""), rootDir, fileFilter));
-                }
-                return true;
+        VfsUtilCore.iterateChildrenRecursively(rootDir, null, file -> {
+            if(file.getPath().equals(referenceFilePath)) {
+                references.add(new WrappedFileReference(stringWrapper, fileReferenceSet, element, relativePath + file.getPath().replace(rootDir.getPath()+"/", ""), rootDir, fileFilter));
             }
+            return true;
         });
         return references;
     }
@@ -155,17 +148,14 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
                 return new Object[0];
             }
 
-            final List<LookupElement> elements = new LinkedList<LookupElement>();
+            final List<LookupElement> elements = new LinkedList<>();
 
-            VfsUtilCore.iterateChildrenRecursively(rootDir, null, new ContentIterator() {
-                @Override
-                public boolean processFile(VirtualFile file) {
-                    if(!file.isDirectory() && fileFilter.accept(file)) {
-                        final LookupElementBuilder lookupElement = LookupElementBuilder.create(getLookupString(file)).withIcon(file.getFileType().getIcon());
-                        elements.add(lookupElement);
-                    }
-                    return true;
+            VfsUtilCore.iterateChildrenRecursively(rootDir, null, file -> {
+                if(!file.isDirectory() && fileFilter.accept(file)) {
+                    final LookupElementBuilder lookupElement = LookupElementBuilder.create(getLookupString(file)).withIcon(file.getFileType().getIcon());
+                    elements.add(lookupElement);
                 }
+                return true;
             });
 
             return elements.toArray();

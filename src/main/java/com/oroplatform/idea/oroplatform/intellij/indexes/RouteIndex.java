@@ -5,10 +5,10 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.oroplatform.idea.oroplatform.symfony.Route;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public class RouteIndex {
     private final Project project;
@@ -28,10 +28,9 @@ public class RouteIndex {
         return FileBasedIndex.getInstance().getAllKeys(RouteFileBasedIndex.KEY, project);
     }
 
-    @Nullable
-    public Route findRoute(@NotNull String name) {
+    public Optional<Route> findRoute(@NotNull String name) {
         final List<Route> values = FileBasedIndex.getInstance().getValues(RouteFileBasedIndex.KEY, name, searchScope);
 
-        return values.isEmpty() ? null : values.get(0);
+        return values.stream().findFirst();
     }
 }

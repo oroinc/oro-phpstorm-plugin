@@ -13,8 +13,10 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 
 def phpPluginVersion = "php-162.1121.34"
+def javaVersion = 1.8
 
-sourceCompatibility = 1.6
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
 
 intellij {
     version project.hasProperty('ideaVersion') ? ideaVersion : 'IU-2016.2'

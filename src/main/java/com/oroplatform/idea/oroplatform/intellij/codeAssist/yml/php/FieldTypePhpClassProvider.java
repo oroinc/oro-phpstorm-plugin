@@ -7,7 +7,6 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.Field;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassProvider;
@@ -17,9 +16,12 @@ import gnu.trove.THashSet;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLMapping;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getAncestors;
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getPropertyFrom;
@@ -40,23 +42,16 @@ class FieldTypePhpClassProvider implements PhpClassProvider {
         final Collection<String> fields = getPropertyFrom(propertyPath, elements, ancestors);
         final Collection<String> fieldClassNames = getPropertyFrom(classPropertyPath, elements, ancestors);
 
-        final List<String> classNames = new LinkedList<String>();
-
-        for (String className : fieldClassNames) {
-            for (PhpClass phpClass : phpIndex.getClassesByFQN(className)) {
-                for (Field field : phpClass.getFields()) {
-                    if(fields.contains(field.getName())) {
-                        classNames.addAll(getFieldTypes(field));
-                    }
-                }
-            }
-        }
-
-        return classNames;
+        return fieldClassNames.stream()
+            .flatMap(className -> phpIndex.getClassesByFQN(className).stream())
+            .flatMap(phpClass -> phpClass.getFields().stream())
+            .filter(field -> fields.contains(field.getName()))
+            .flatMap(field -> getFieldTypes(field).stream())
+            .collect(Collectors.toList());
     }
 
     private Collection<String> getFieldTypes(Field field) {
-        final Collection<String> classNames = new THashSet<String>();
+        final Collection<String> classNames = new THashSet<>();
         final PhpDocComment docComment = field.getDocComment();
 
         if(docComment == null) return classNames;

@@ -35,12 +35,7 @@ public class OroPlatformForm implements Configurable {
 
     public OroPlatformForm(@NotNull Project project) {
         this.project = project;
-        appDirDefault.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                appDir.setText(OroPlatformSettings.DEFAULT_APP_DIRECTORY);
-            }
-        });
+        appDirDefault.addActionListener(e -> appDir.setText(OroPlatformSettings.DEFAULT_APP_DIRECTORY));
         appDir.getButton().addMouseListener(listener(appDir));
     }
 

@@ -7,7 +7,10 @@ import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementResolveResult;
+import com.intellij.psi.PsiPolyVariantReferenceBase;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
@@ -15,7 +18,6 @@ import com.jetbrains.php.lang.psi.elements.PhpNamespace;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.oroplatform.idea.oroplatform.Icons;
 import com.oroplatform.idea.oroplatform.PhpClassUtil;
-import com.oroplatform.idea.oroplatform.symfony.Bundle;
 import com.oroplatform.idea.oroplatform.symfony.BundleNamespace;
 import com.oroplatform.idea.oroplatform.symfony.Bundles;
 import com.oroplatform.idea.oroplatform.symfony.Entity;
@@ -23,7 +25,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static com.oroplatform.idea.oroplatform.Functions.toStream;
 import static java.util.Arrays.asList;
 
 public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
@@ -31,7 +36,7 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final InsertHandler<LookupElement> insertHandler;
     private final String rootBundlePath;
     private final com.oroplatform.idea.oroplatform.schema.PhpClass phpClass;
-    private final Set<String> skippedClassNames = new HashSet<String>();
+    private final Set<String> skippedClassNames = new HashSet<>();
     private final PhpIndex phpIndex;
     private final PhpClass repositoryInterface;
 
@@ -49,19 +54,14 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     @NotNull
     @Override
     public ResolveResult[] multiResolve(boolean incompleteCode) {
-        final List<ResolveResult> results = new LinkedList<ResolveResult>();
-
-        for(String className : resolveClassNames(text)) {
-            for(PhpClass phpClass : phpIndex.getClassesByFQN(className)) {
-                results.add(new PsiElementResolveResult(phpClass));
-            }
-        }
-
-        return results.toArray(new ResolveResult[results.size()]);
+        return resolveClassNames(text).stream()
+            .flatMap(className -> phpIndex.getClassesByFQN(className).stream())
+            .map(PsiElementResolveResult::new)
+            .toArray(ResolveResult[]::new);
     }
 
     private Collection<String> resolveClassNames(String text) {
-        final Set<String> names = new HashSet<String>();
+        final Set<String> names = new HashSet<>();
         names.add(text);
 
         if(text.contains(":")) {
@@ -93,36 +93,30 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     @NotNull
     private Object[] getVariantsFromBundles() {
-        final List<LookupElement> results = new LinkedList<LookupElement>();
-
-        for (PhpClass phpClass : getPhpClassesFrom(getBundlesNamespaces())) {
-            final int priority = getPriorityFor(phpClass);
-            if(this.phpClass.allowDoctrineShortcutNotation()) {
-                addEntitiesShortcutsLookups(results, phpClass, priority);
-            } else {
-                results.add(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, getPhpClassInsertHandler()), priority));
-            }
-        }
-
-        return results.toArray();
+        return getPhpClassesFrom(getBundlesNamespaces()).stream()
+            .flatMap(phpClass -> {
+                final int priority = getPriorityFor(phpClass);
+                if(this.phpClass.allowDoctrineShortcutNotation()) {
+                    return toStream(Entity.fromFqn(phpClass.getPresentableFQN()))
+                        .map(entity -> getLookupElement(phpClass, priority, entity));
+                } else {
+                    return Stream.of(PrioritizedLookupElement.withPriority(new PhpClassLookupElement(phpClass, true, getPhpClassInsertHandler()), priority));
+                }
+            }).toArray();
     }
 
     private Collection<PhpClass> getPhpClassesFrom(Collection<BundleNamespace> bundleNamespaces) {
-        final Set<PhpClass> phpClasses = new HashSet<PhpClass>();
+        return bundleNamespaces.stream()
+            .flatMap(name -> phpIndex.getNamespacesByName(name.getName()).stream())
+            .flatMap(this::getPhpClassesFrom)
+            .filter(this::isClassFromBundle)
+            .collect(Collectors.toSet());
+    }
 
-        for (BundleNamespace bundleNamespace : bundleNamespaces) {
-            for (PhpNamespace phpNamespace : phpIndex.getNamespacesByName(bundleNamespace.getName())) {
-                for (PhpClass phpClass : getPhpClassesFrom(phpNamespace)) {
-                    final boolean isClass = !phpClass.isInterface() && !phpClass.isTrait();
-                    if(isClass && !skippedClassNames.contains(phpClass.getFQN()) &&
-                        (!this.phpClass.getNamespacePart().equals("Entity") || isEntity(phpClass))) {
-                        phpClasses.add(phpClass);
-                    }
-                }
-            }
-        }
-
-        return phpClasses;
+    private boolean isClassFromBundle(PhpClass phpClass) {
+        final boolean isClass = !phpClass.isInterface() && !phpClass.isTrait();
+        return isClass && !skippedClassNames.contains(phpClass.getFQN()) &&
+            (!this.phpClass.getNamespacePart().equals("Entity") || isEntity(phpClass));
     }
 
     @Nullable
@@ -139,28 +133,22 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
         return new PhpType().add(expectedClass).isConvertibleFrom(new PhpType().add(subjectClass), phpIndex);
     }
 
-    private Collection<PhpClass> getPhpClassesFrom(PhpNamespace phpNamespace) {
-        final List<PhpClass> phpClasses = PsiTreeUtil.getChildrenOfTypeAsList(phpNamespace.getStatements(), PhpClass.class);
-
+    private Stream<PhpClass> getPhpClassesFrom(PhpNamespace phpNamespace) {
+        final Stream<PhpClass> phpClasses = PsiTreeUtil.getChildrenOfTypeAsList(phpNamespace.getStatements(), PhpClass.class).stream();
         final String namespaceName = phpNamespace.getFQN().toLowerCase() + "\\";
-        for (String parentNamespaceName : phpIndex.getChildNamespacesByParentName(namespaceName)) {
-            for (PhpNamespace parentNamespace : phpIndex.getNamespacesByName(namespaceName + parentNamespaceName)) {
-                phpClasses.addAll(getPhpClassesFrom(parentNamespace));
-            }
-        }
 
-        return phpClasses;
+        return Stream.concat(
+            phpClasses,
+            phpIndex.getChildNamespacesByParentName(namespaceName).stream()
+                .flatMap(childNamespaceName -> phpIndex.getNamespacesByName(namespaceName + childNamespaceName).stream())
+                .flatMap(this::getPhpClassesFrom)
+        );
     }
 
     private Collection<BundleNamespace> getBundlesNamespaces() {
-        final Collection<Bundle> bundles = new Bundles(phpIndex).findAll();
-        final Collection<BundleNamespace> namespaces = new LinkedList<BundleNamespace>();
-
-        for (Bundle bundle : bundles) {
-            namespaces.add(new BundleNamespace(bundle, this.phpClass.getNamespacePart()));
-        }
-
-        return namespaces;
+        return new Bundles(phpIndex).findAll().stream()
+            .map(bundle -> new BundleNamespace(bundle, this.phpClass.getNamespacePart()))
+            .collect(Collectors.toList());
     }
 
     private int getPriorityFor(PhpClass phpClass) {
@@ -186,32 +174,30 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
     }
 
     private void addEntitiesShortcutsLookups(List<LookupElement> results, PhpClass phpClass, int priority) {
-        final Entity entity = Entity.fromFqn(phpClass.getPresentableFQN());
-        if(entity != null) {
-            results.add(PrioritizedLookupElement.withPriority(
-                LookupElementBuilder.create(entity.getShortcutName())
-                    .withIcon(Icons.DOCTRINE)
-                    .withTypeText(phpClass.getPresentableFQN())
-                    .withInsertHandler(insertHandler)
-                    .withLookupString(StringUtil.trimLeading(phpClass.getFQN(), '\\')),
-                priority
-            ));
-        }
+        Entity.fromFqn(phpClass.getPresentableFQN())
+            .map(entity -> getLookupElement(phpClass, priority, entity))
+            .ifPresent(results::add);
+    }
+
+    @NotNull
+    private LookupElement getLookupElement(PhpClass phpClass, int priority, Entity entity) {
+        return PrioritizedLookupElement.withPriority(
+            LookupElementBuilder.create(entity.getShortcutName())
+                .withIcon(Icons.DOCTRINE)
+                .withTypeText(phpClass.getPresentableFQN())
+                .withInsertHandler(insertHandler)
+                .withLookupString(StringUtil.trimLeading(phpClass.getFQN(), '\\')),
+            priority
+        );
     }
 
     @NotNull
     private Object[] getVariantsFromAnyNamespace() {
-        final List<LookupElement> results = new LinkedList<LookupElement>();
-
-        for (String className : getAllPhpClassNames()) {
-            for (PhpClass phpClass : phpIndex.getClassesByName(className)) {
-                if(!PhpClassUtil.isTestOrGeneratedClass(phpClass.getPresentableFQN())) {
-                    results.add(new PhpClassLookupElement(phpClass, true, getPhpClassInsertHandler()));
-                }
-            }
-        }
-
-        return results.toArray(new LookupElement[results.size()]);
+        return getAllPhpClassNames()
+            .flatMap(className -> phpIndex.getClassesByName(className).stream())
+            .filter(phpClass -> !PhpClassUtil.isTestOrGeneratedClass(phpClass.getPresentableFQN()))
+            .map(phpClass -> new PhpClassLookupElement(phpClass, true, getPhpClassInsertHandler()))
+            .toArray();
     }
 
     private InsertHandler<LookupElement> getPhpClassInsertHandler() {
@@ -219,9 +205,9 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
                     new ComposedInsertHandler(asList(PhpClassInsertHandler.INSTANCE, insertHandler)) : PhpClassInsertHandler.INSTANCE;
     }
 
-    private Collection<String> getAllPhpClassNames() {
+    private Stream<String> getAllPhpClassNames() {
         final PrefixMatcher classMatcher = new CamelHumpMatcher(text);
-        return phpIndex.getAllClassNames(classMatcher);
+        return phpIndex.getAllClassNames(classMatcher).stream();
     }
 
 }

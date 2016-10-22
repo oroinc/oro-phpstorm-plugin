@@ -10,38 +10,36 @@ import com.oroplatform.idea.oroplatform.StringWrapper;
 import com.oroplatform.idea.oroplatform.symfony.Bundle;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+import java.util.stream.Stream;
+
 public class PublicResourceWrappedStringFactory implements StringWrapperProvider {
     @Override
     public StringWrapper getStringWrapperFor(PsiElement element) {
-        final VirtualFile publicDir = new PublicResourcesRootDirFinder().getRootDir(element);
+        return new PublicResourcesRootDirFinder().getRootDir(element)
+            .map(publicDir -> publicDir.getParent().getParent())
+            .flatMap(this::findFirstPhpFile)
+            .flatMap(phpFile -> getPsiFile(element, phpFile))
+            .flatMap(psiFile ->
+                Stream.of(psiFile.getChildren())
+                    .flatMap(childFile -> PsiTreeUtil.getChildrenOfTypeAsList(childFile, PhpNamespace.class).stream())
+                    .map(phpNamespace -> new Bundle(phpNamespace.getFQN()))
+                    .map(bundle -> new StringWrapper("bundles/"+bundle.getResourceName()+"/", ""))
+                    .findFirst()
+            ).orElseGet(() -> new StringWrapper("", ""));
+    }
 
-        if(publicDir == null) return new StringWrapper("", "");
-
-        final VirtualFile bundleDir = publicDir.getParent().getParent();
-        final VirtualFile phpFile = getPhpFile(bundleDir);
-        if (phpFile == null) return new StringWrapper("", "");
-
-        final PsiFile file = PsiManager.getInstance(element.getProject()).findFile(phpFile);
-
-        if(file == null) return new StringWrapper("", "");
-
-        for (PsiElement e : file.getChildren()) {
-            for (PhpNamespace phpNamespace : PsiTreeUtil.getChildrenOfTypeAsList(e, PhpNamespace.class)) {
-                final Bundle bundle = new Bundle(phpNamespace.getFQN());
-                return new StringWrapper("bundles/"+bundle.getResourceName()+"/", "");
-            }
-        }
-
-        return new StringWrapper("", "");
+    private Optional<PsiFile> getPsiFile(PsiElement element, VirtualFile phpFile) {
+        return Optional.ofNullable(PsiManager.getInstance(element.getProject()).findFile(phpFile));
     }
 
     @Nullable
-    private VirtualFile getPhpFile(VirtualFile bundleDir) {
+    private Optional<VirtualFile> findFirstPhpFile(VirtualFile bundleDir) {
         for (VirtualFile virtualFile : bundleDir.getChildren()) {
             if(virtualFile.getName().endsWith(".php")) {
-                return virtualFile;
+                return Optional.of(virtualFile);
             }
         }
-        return null;
+        return Optional.empty();
     }
 }

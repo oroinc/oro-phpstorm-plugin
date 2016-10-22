@@ -3,126 +3,94 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.*;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.oroplatform.idea.oroplatform.Functions.toStream;
 
 public class YamlPsiElements {
 
-    public static Collection<YAMLKeyValue> getKeyValuesFrom(PsiElement element) {
-        return filterKeyValues(Arrays.asList(element.getChildren()));
+    static Collection<YAMLKeyValue> getKeyValuesFrom(PsiElement element) {
+        return Stream.of(element.getChildren())
+            .flatMap(filterElement(YAMLKeyValue.class))
+            .collect(Collectors.toList());
     }
 
-    public static Collection<YAMLKeyValue> getKeyValuesFrom(Collection<? extends PsiElement> elements) {
-        final Collection<PsiElement> children = new LinkedList<PsiElement>();
-        for (PsiElement element : elements) {
-            children.addAll(Arrays.asList(element.getChildren()));
-        }
-        return filterKeyValues(children);
+    private static Collection<YAMLKeyValue> getKeyValuesFrom(Collection<? extends PsiElement> elements) {
+        return elements.stream()
+            .flatMap(element -> Stream.of(element.getChildren()))
+            .flatMap(filterElement(YAMLKeyValue.class))
+            .collect(Collectors.toList());
     }
 
-    private static Collection<YAMLKeyValue> filterKeyValues(Collection<? extends PsiElement> elements) {
-        List<YAMLKeyValue> out = new LinkedList<YAMLKeyValue>();
-        for(PsiElement element : elements) {
-            if(element instanceof YAMLKeyValue) {
-                out.add((YAMLKeyValue) element);
-            }
-        }
-
-        return out;
+    private static <T extends PsiElement> Function<PsiElement, Stream<T>> filterElement(Class<T> cls) {
+        return element -> Stream.of(element)
+            .filter(e -> cls.isAssignableFrom(e.getClass()))
+            .map(cls::cast);
     }
 
     static Collection<YAMLScalar> filterScalars(Collection<? extends PsiElement> elements) {
-        List<YAMLScalar> children = new LinkedList<YAMLScalar>();
-        for(PsiElement element : elements) {
-            if(element instanceof YAMLScalar) {
-                children.add((YAMLScalar) element);
-            }
-        }
-
-        return children;
+        return elements.stream()
+            .flatMap(filterElement(YAMLScalar.class))
+            .collect(Collectors.toList());
     }
 
-    public static Collection<YAMLMapping> filterMappings(Collection<? extends PsiElement> elements) {
-        List<YAMLMapping> out = new LinkedList<YAMLMapping>();
-        for(PsiElement element : elements) {
-            if(element instanceof YAMLMapping) {
-                out.add((YAMLMapping) element);
-            }
-        }
-
-        return out;
+    static Collection<YAMLMapping> filterMappings(Collection<? extends PsiElement> elements) {
+        return elements.stream()
+            .flatMap(filterElement(YAMLMapping.class))
+            .collect(Collectors.toList());
     }
 
     private static Collection<YAMLSequence> filterSequences(Collection<? extends PsiElement> elements) {
-        List<YAMLSequence> out = new LinkedList<YAMLSequence>();
-        for(PsiElement element : elements) {
-            if(element instanceof YAMLSequence) {
-                out.add((YAMLSequence) element);
-            }
-        }
-
-        return out;
+        return elements.stream()
+            .flatMap(filterElement(YAMLSequence.class))
+            .collect(Collectors.toList());
     }
 
     public static List<YAMLMapping> getMappingsFrom(@NotNull PsiFile file) {
-        List<YAMLMapping> elements = new LinkedList<YAMLMapping>();
-        for(PsiElement element : file.getChildren()) {
-            if(element instanceof YAMLDocument) {
-                elements.addAll(filterMappings(Arrays.asList(element.getChildren())));
-            }
-        }
-        return elements;
+        return Stream.of(file.getChildren())
+            .flatMap(filterElement(YAMLDocument.class))
+            .flatMap(doc -> Stream.of(doc.getChildren()))
+            .flatMap(filterElement(YAMLMapping.class))
+            .collect(Collectors.toList());
     }
 
     public static List<YAMLPsiElement> getSequenceItems(Collection<? extends PsiElement> elements) {
-        List<YAMLPsiElement> items = new LinkedList<YAMLPsiElement>();
-        for(PsiElement element : elements) {
-            if(element instanceof YAMLSequence) {
-                for(YAMLSequenceItem item : ((YAMLSequence) element).getItems()) {
-                    if(item.getValue() != null) {
-                        items.add(item.getValue());
-                    }
-                }
-            }
-        }
-
-        return items;
+        return elements.stream()
+            .flatMap(filterElement(YAMLSequence.class))
+            .flatMap(seq -> seq.getItems().stream())
+            .flatMap(item -> toStream(item::getValue))
+            .collect(Collectors.toList());
     }
 
-
-    @Nullable
-    public static YAMLKeyValue getYamlKeyValueSiblingWithName(YAMLKeyValue keyValue, String name) {
-        for(PsiElement element : keyValue.getParent().getChildren()) {
-            if(element instanceof YAMLKeyValue && name.equals(((YAMLKeyValue) element).getKeyText())) {
-                return ((YAMLKeyValue) element);
-            }
-        }
-
-        return null;
+    public static Optional<YAMLKeyValue> getYamlKeyValueSiblingWithName(YAMLKeyValue keyValue, String name) {
+        return Stream.of(keyValue.getParent().getChildren())
+            .flatMap(filterElement(YAMLKeyValue.class))
+            .filter(element -> name.equals(element.getKeyText()))
+            .findFirst();
     }
 
-    @Nullable
-    public static YAMLMapping getFirstMapping(PsiElement element) {
+    public static Optional<YAMLMapping> getFirstMapping(PsiElement element) {
         return getFirstMapping(element, Integer.MAX_VALUE);
     }
 
-    @Nullable
-    public static YAMLMapping getFirstMapping(PsiElement element, int maxDepth) {
-        if(maxDepth == 0) return null;
+    public static Optional<YAMLMapping> getFirstMapping(PsiElement element, int maxDepth) {
+        if(maxDepth == 0) return Optional.empty();
 
         if(element instanceof YAMLMapping) {
-            return (YAMLMapping) element;
+            return Optional.of((YAMLMapping) element);
         }
 
-        return element == null ? null : getFirstMapping(element.getParent(), --maxDepth);
+        return element == null ? Optional.empty() : getFirstMapping(element.getParent(), --maxDepth);
     }
 
     public static Set<PsiElement> getAncestors(PsiElement element) {
-        return getAncestors(element, new HashSet<PsiElement>());
+        return getAncestors(element, new HashSet<>());
     }
 
     private static Set<PsiElement> getAncestors(PsiElement element, Set<PsiElement> ancestors) {
@@ -163,61 +131,42 @@ public class YamlPsiElements {
 
     @NotNull
     private static Collection<YAMLPsiElement> getElementsForProperty(PropertyPath.Property property, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
-        final Collection<YAMLPsiElement> newElements = new LinkedList<YAMLPsiElement>();
-
         if(property.isThis()) {
-            for (YAMLKeyValue keyValue : getKeyValuesFrom(elements)) {
-                if(keyValue.getValue() != null && ancestors.contains(keyValue.getValue())) {
-                    newElements.add(keyValue.getValue());
-                }
-            }
-
-            for (YAMLPsiElement item : getSequenceItems(elements)) {
-                if(ancestors.contains(item)) {
-                    newElements.add(item);
-                }
-            }
+            return Stream.concat(
+                getKeyValuesFrom(elements).stream()
+                    .filter(keyValue -> keyValue.getValue() != null && ancestors.contains(keyValue.getValue()))
+                    .map(YAMLKeyValue::getValue),
+                getSequenceItems(elements).stream()
+                    .filter(ancestors::contains)
+            ).collect(Collectors.toList());
         } else {
-            for (YAMLMapping mapping : filterMappings(elements)) {
-                final YAMLKeyValue keyValue = mapping.getKeyValueByKey(property.getName());
-                if(keyValue != null && keyValue.getValue() != null) {
-                    newElements.add(keyValue.getValue());
-                }
-            }
-
-            for (YAMLSequence sequence : filterSequences(elements)) {
-                newElements.add(sequence);
-            }
+            return Stream.concat(
+                filterMappings(elements).stream()
+                    .flatMap(mapping -> toStream(() -> mapping.getKeyValueByKey(property.getName())))
+                    .flatMap(keyValue -> toStream(keyValue::getValue)),
+                filterSequences(elements).stream()
+            ).collect(Collectors.toList());
         }
-        return newElements;
     }
 
     private static Collection<String> getParentKeysFrom(Collection<? extends YAMLPsiElement> elements) {
-        final Collection<String> keys = new THashSet<String>();
-        for (YAMLPsiElement element : elements) {
-            final PsiElement parent = element.getParent();
-
-            if(parent instanceof YAMLKeyValue) {
-                keys.add(((YAMLKeyValue) parent).getKeyText());
-            }
-        }
-
-        return keys;
+        return elements.stream()
+            .flatMap(element -> toStream(() -> element.getParent()))
+            .flatMap(filterElement(YAMLKeyValue.class))
+            .map(YAMLKeyValue::getKeyText)
+            .collect(Collectors.toList());
     }
 
     private static Collection<String> getPropertyValuesFrom(Collection<? extends YAMLPsiElement> elements) {
-        final Collection<String> values = new THashSet<String>();
-        for (YAMLScalar element : filterScalars(elements)) {
-            values.add(element.getTextValue());
-        }
-
-        for(YAMLMapping element : filterMappings(elements)) {
-            for (YAMLKeyValue keyValue : element.getKeyValues()) {
-                values.add(keyValue.getKeyText());
-            }
-        }
-
-        return values;
+        return Stream.concat(
+            elements.stream()
+                .flatMap(filterElement(YAMLScalar.class))
+                .map(YAMLScalar::getTextValue),
+            elements.stream()
+                .flatMap(filterElement(YAMLMapping.class))
+                .flatMap(element -> element.getKeyValues().stream())
+                .map(YAMLKeyValue::getKeyText)
+        ).collect(Collectors.toList());
     }
 
 }

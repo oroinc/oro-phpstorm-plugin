@@ -11,7 +11,7 @@ import java.util.Collection;
 
 public class ImportIndex {
     private static final Key<CachedValue<Collection<String>>> IMPORT_CACHE_KEY =
-        new Key<CachedValue<Collection<String>>>("com.oroplatform.idea.oroplatform.cache.import_index");
+        new Key<>("com.oroplatform.idea.oroplatform.cache.import_index");
 
     private final Project project;
     private final GlobalSearchScope scope;

@@ -7,7 +7,7 @@ public class Schemas {
     public static final Collection<Schema> ALL;
 
     static {
-        ALL = new LinkedList<Schema>();
+        ALL = new LinkedList<>();
         ALL.addAll(SchemasV1.ALL);
         ALL.addAll(SchemasV2.ALL);
     }

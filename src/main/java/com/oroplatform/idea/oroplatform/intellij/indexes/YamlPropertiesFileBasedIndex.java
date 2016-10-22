@@ -1,7 +1,5 @@
 package com.oroplatform.idea.oroplatform.intellij.indexes;
 
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
@@ -21,7 +19,7 @@ class YamlPropertiesFileBasedIndex extends ScalarIndexExtension<String> {
 
     private final KeyDescriptor<String> keyDescriptor = new EnumeratorStringDescriptor();
     private final ID<String, Void> key;
-    private final Collection<IndexBlueprint> indexBlueprints = new LinkedList<IndexBlueprint>();
+    private final Collection<IndexBlueprint> indexBlueprints = new LinkedList<>();
 
     YamlPropertiesFileBasedIndex(ID<String, Void> key, String filepathSuffix, PropertyPath propertyPath) {
         this(key, new IndexBlueprint(filepathSuffix, propertyPath));
@@ -41,33 +39,29 @@ class YamlPropertiesFileBasedIndex extends ScalarIndexExtension<String> {
     @NotNull
     @Override
     public DataIndexer<String, Void, FileContent> getIndexer() {
-        return new DataIndexer<String, Void, FileContent>() {
-            @NotNull
-            @Override
-            public Map<String, Void> map(@NotNull FileContent inputData) {
-                final Map<String, Void> index = new THashMap<String, Void>();
+        return inputData -> {
+            final Map<String, Void> index = new THashMap<>();
 
-                if(!OroPlatformSettings.getInstance(inputData.getProject()).isPluginEnabled()) {
-                    return index;
-                }
-
-                final YAMLFile file = (YAMLFile) inputData.getPsiFile();
-
-                for (IndexBlueprint indexBlueprint : indexBlueprints) {
-                    if(inputData.getFile().getPath().endsWith(indexBlueprint.filepathSuffix)) {
-                        final Collection<String> values =
-                            getPropertyFrom(indexBlueprint.propertyPath, getMappingsFrom(file), Collections.<PsiElement>emptySet());
-
-                        for (String value : values) {
-                            index.put(value, null);
-                        }
-                    }
-
-                }
-
-
+            if(!OroPlatformSettings.getInstance(inputData.getProject()).isPluginEnabled()) {
                 return index;
             }
+
+            final YAMLFile file = (YAMLFile) inputData.getPsiFile();
+
+            for (IndexBlueprint indexBlueprint : indexBlueprints) {
+                if(inputData.getFile().getPath().endsWith(indexBlueprint.filepathSuffix)) {
+                    final Collection<String> values =
+                        getPropertyFrom(indexBlueprint.propertyPath, getMappingsFrom(file), Collections.emptySet());
+
+                    for (String value : values) {
+                        index.put(value, null);
+                    }
+                }
+
+            }
+
+
+            return index;
         };
     }
 
@@ -80,17 +74,14 @@ class YamlPropertiesFileBasedIndex extends ScalarIndexExtension<String> {
     @NotNull
     @Override
     public FileBasedIndex.InputFilter getInputFilter() {
-        return new FileBasedIndex.InputFilter() {
-            @Override
-            public boolean acceptInput(@NotNull VirtualFile file) {
-                if(!file.getFileType().equals(YAMLFileType.YML)) return false;
+        return file -> {
+            if(!file.getFileType().equals(YAMLFileType.YML)) return false;
 
-                for (IndexBlueprint indexBlueprint : indexBlueprints) {
-                    if(file.getPath().endsWith(indexBlueprint.filepathSuffix)) return true;
-                }
-
-                return false;
+            for (IndexBlueprint indexBlueprint : indexBlueprints) {
+                if(file.getPath().endsWith(indexBlueprint.filepathSuffix)) return true;
             }
+
+            return false;
         };
     }
 

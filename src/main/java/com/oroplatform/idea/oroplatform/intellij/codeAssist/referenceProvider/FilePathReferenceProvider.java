@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 public class FilePathReferenceProvider extends PsiReferenceProvider {
     private final RelativeDirectoryResolver relativeToAppDir;
@@ -41,15 +42,16 @@ public class FilePathReferenceProvider extends PsiReferenceProvider {
         @Nullable
         @Override
         protected PsiFile getContainingFile() {
-            final PsiDirectory dir = dirResolver.resolve(getElement());
-
-            if(dir != null && dir.getFiles().length > 0) {
-                return dir.getFiles()[0];
-            } else if(dir != null && dir.getSubdirectories().length > 0) {
-                return new FakePsiFile(dir.getSubdirectories()[0]);
-            }
-
-            return super.getContainingFile();
+            return dirResolver.resolve(getElement())
+                .flatMap(dir -> {
+                    if(dir.getFiles().length > 0) {
+                        return Optional.of(dir.getFiles()[0]);
+                    } else if(dir.getSubdirectories().length > 0) {
+                        return Optional.of(new FakePsiFile(dir.getSubdirectories()[0]));
+                    } else {
+                        return Optional.empty();
+                    }
+                }).orElseGet(() -> super.getContainingFile());
         }
 
         @Override

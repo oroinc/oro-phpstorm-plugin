@@ -5,9 +5,7 @@ import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiFile;
-import com.oroplatform.idea.oroplatform.schema.Schema;
 import com.oroplatform.idea.oroplatform.schema.Schemas;
-import com.oroplatform.idea.oroplatform.schema.Visitor;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,17 +20,13 @@ public class SchemaInspection extends LocalInspectionTool {
             return new ProblemDescriptor[0];
         }
 
-        ProblemsHolder problems = new ProblemsHolder(manager, file, isOnTheFly);
+        final ProblemsHolder problems = new ProblemsHolder(manager, file, isOnTheFly);
+        final InspectionSchemaVisitor visitor = new InspectionSchemaVisitor(problems, getMappingsFrom(file));
 
-        for(Schema schema : Schemas.ALL) {
-            if(schema.fileMatcher.matches(file)) {
-                Visitor visitor = new InspectionSchemaVisitor(problems, getMappingsFrom(file));
-                schema.rootElement.accept(visitor);
-            }
-        }
+        Schemas.ALL.stream()
+            .filter(schema -> schema.fileMatcher.matches(file))
+            .forEach(schema -> schema.rootElement.accept(visitor));
 
         return problems.getResultsArray();
     }
-
-
 }

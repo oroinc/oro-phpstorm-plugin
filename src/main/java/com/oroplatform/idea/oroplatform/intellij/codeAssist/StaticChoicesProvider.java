@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 public class StaticChoicesProvider implements ChoicesProvider {
-    private final Collection<Choice> choices = new LinkedList<Choice>();
+    private final Collection<Choice> choices = new LinkedList<>();
 
     public StaticChoicesProvider(String... choices) {
         for (String choice : choices) {

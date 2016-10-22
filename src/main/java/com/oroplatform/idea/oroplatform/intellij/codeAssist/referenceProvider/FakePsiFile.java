@@ -350,7 +350,7 @@ class FakePsiFile implements PsiFile {
 
     @Override
     public FileASTNode getNode() {
-        return null; //TODO
+        return null;
     }
 
     @Override

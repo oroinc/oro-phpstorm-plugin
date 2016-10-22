@@ -6,15 +6,11 @@ import com.intellij.psi.PsiPolyVariantReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.completion.PhpLookupElement;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpModifier;
 import com.oroplatform.idea.oroplatform.schema.PhpMethod;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import static com.oroplatform.idea.oroplatform.Functions.toStream;
 
 public class PhpMethodReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final String className;
@@ -31,38 +27,23 @@ public class PhpMethodReference extends PsiPolyVariantReferenceBase<PsiElement> 
     @NotNull
     @Override
     public ResolveResult[] multiResolve(boolean incompleteCode) {
-        PhpIndex phpIndex = PhpIndex.getInstance(myElement.getProject());
+        final PhpIndex phpIndex = PhpIndex.getInstance(myElement.getProject());
 
-        Collection<PhpClass> phpClasses = phpIndex.getClassesByFQN(className);
-
-        List<ResolveResult> result = new LinkedList<ResolveResult>();
-
-        for(PhpClass phpClass : phpClasses) {
-            Method method = phpClass.findMethodByName(methodName);
-            if(method != null) {
-                result.add(new PsiElementResolveResult(method));
-            }
-        }
-
-        return result.toArray(new ResolveResult[result.size()]);
+        return phpIndex.getClassesByFQN(className).stream()
+            .flatMap(phpClass -> toStream(() -> phpClass.findMethodByName(methodName)))
+            .map(PsiElementResolveResult::new)
+            .toArray(ResolveResult[]::new);
     }
 
     @NotNull
     @Override
     public Object[] getVariants() {
-        PhpIndex phpIndex = PhpIndex.getInstance(myElement.getProject());
-        Collection<PhpClass> phpClasses = phpIndex.getClassesByFQN(className);
+        final PhpIndex phpIndex = PhpIndex.getInstance(myElement.getProject());
 
-        List<PhpLookupElement> methods = new LinkedList<PhpLookupElement>();
-
-        for(PhpClass phpClass : phpClasses) {
-            for(Method method : phpClass.getMethods()) {
-                if(method.getAccess() == PhpModifier.Access.PUBLIC && phpMethod.matches(method)) {
-                    methods.add(new PhpLookupElement(method));
-                }
-            }
-        }
-
-        return methods.toArray();
+        return phpIndex.getClassesByFQN(className).stream()
+            .flatMap(phpClass -> phpClass.getMethods().stream())
+            .filter(method -> method.getAccess() == PhpModifier.Access.PUBLIC && phpMethod.matches(method))
+            .map(PhpLookupElement::new)
+            .toArray();
     }
 }

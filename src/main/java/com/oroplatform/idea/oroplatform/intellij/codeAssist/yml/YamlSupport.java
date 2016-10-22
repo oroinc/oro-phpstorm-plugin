@@ -13,11 +13,9 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 public class YamlSupport implements ApplicationComponent {
-
-    @SuppressWarnings("unchecked")
     private final List<? extends ManipulatorItem<? extends PsiElement>> manipulators = asList(
-        new ManipulatorItem<YAMLKeyValue>(YAMLKeyValue.class, new YamlKeyValueManipulator()),
-        new ManipulatorItem<LeafPsiElement>(LeafPsiElement.class, new LeafPsiElementManipulator())
+        new ManipulatorItem<>(YAMLKeyValue.class, new YamlKeyValueManipulator()),
+        new ManipulatorItem<>(LeafPsiElement.class, new LeafPsiElementManipulator())
     );
 
     @Override

@@ -12,8 +12,8 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.StaticChoicesProvide
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ChoiceCompletionProvider;
 import com.oroplatform.idea.oroplatform.schema.*;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class CompletionSchemaVisitor extends YamlVisitor {
     private final CompletionProviders completionProviders;
@@ -33,13 +33,9 @@ class CompletionSchemaVisitor extends YamlVisitor {
 
     @Override
     protected void handleContainer(Container container, ElementPattern<? extends PsiElement> captureElement) {
-        List<ChoicesProvider.Choice> choices = new LinkedList<ChoicesProvider.Choice>();
-
-        for(Property property : container.getProperties()) {
-            for (String name : property.nameExamples()) {
-                choices.add(new ChoicesProvider.Choice(name, propertyDescriptionProvider.getDescription(property)));
-            }
-        }
+        final List<ChoicesProvider.Choice> choices = container.getProperties().stream()
+            .flatMap(property -> property.nameExamples().stream().map(name -> new ChoicesProvider.Choice(name, propertyDescriptionProvider.getDescription(property))))
+            .collect(Collectors.toList());
 
         completion.extend(
             CompletionType.BASIC,

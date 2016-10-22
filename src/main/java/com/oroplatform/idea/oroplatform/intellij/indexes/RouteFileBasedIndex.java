@@ -53,7 +53,7 @@ public class RouteFileBasedIndex extends FileBasedIndexExtension<String, Route> 
             @NotNull
             @Override
             public Map<String, Route> map(@NotNull FileContent inputData) {
-                final THashMap<String, Route> index = new THashMap<String, Route>();
+                final THashMap<String, Route> index = new THashMap<>();
 
                 if(!OroPlatformSettings.getInstance(inputData.getProject()).isPluginEnabled()) {
                     return index;

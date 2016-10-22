@@ -1,7 +1,6 @@
 package com.oroplatform.idea.oroplatform;
 
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
 import com.jetbrains.php.PhpIcons;
 

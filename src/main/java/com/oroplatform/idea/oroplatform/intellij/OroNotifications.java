@@ -1,12 +1,13 @@
 package com.oroplatform.idea.oroplatform.intellij;
 
-import com.intellij.notification.*;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 import com.oroplatform.idea.oroplatform.OroPlatformBundle;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.event.HyperlinkEvent;
 
 class OroNotifications {
     private final static NotificationGroup GROUP = NotificationGroup.balloonGroup(OroPlatformBundle.message("notifications.group"));
@@ -16,19 +17,16 @@ class OroNotifications {
             OroPlatformBundle.message("notifications.enablePluginTitle"),
             OroPlatformBundle.message("notifications.enablePlugin"),
             NotificationType.INFORMATION,
-            new NotificationListener() {
-                @Override
-                public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-                    notification.expire();
+            (thisNotification, event) -> {
+                thisNotification.expire();
 
-                    final OroPlatformSettings settings = OroPlatformSettings.getInstance(project);
+                final OroPlatformSettings settings = OroPlatformSettings.getInstance(project);
 
-                    if("enable".equals(event.getDescription())) {
-                        settings.setPluginEnabled(true);
-                        showPluginEnabledNotification(project);
-                    } else if("dismiss".equals(event.getDescription())) {
-                        settings.setPluginEnableDismissed(true);
-                    }
+                if("enable".equals(event.getDescription())) {
+                    settings.setPluginEnabled(true);
+                    showPluginEnabledNotification(project);
+                } else if("dismiss".equals(event.getDescription())) {
+                    settings.setPluginEnableDismissed(true);
                 }
             });
 

@@ -22,8 +22,10 @@ public class PhpMethodReferenceProvider extends PsiReferenceProvider {
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         if(element instanceof YAMLKeyValue) {
-            YAMLKeyValue classKeyValue = getYamlKeyValueSiblingWithName((YAMLKeyValue) element, "class");
-            String className = classKeyValue == null ? "" : classKeyValue.getValueText();
+            final String className = getYamlKeyValueSiblingWithName((YAMLKeyValue) element, "class")
+                .map(YAMLKeyValue::getValueText)
+                .orElseGet(() -> "");
+
             return new PsiReference[]{new PhpMethodReference(element, phpMethod, className, ((YAMLKeyValue) element).getValueText())};
         }
         return new PsiReference[0];

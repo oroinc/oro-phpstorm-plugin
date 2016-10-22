@@ -8,7 +8,7 @@ import java.util.Queue;
 
 public class PropertyPath {
 
-    private final List<Property> properties = new LinkedList<Property>();
+    private final List<Property> properties = new LinkedList<>();
     private final boolean pointsToValue;
 
     public PropertyPath(String... properties) {
@@ -17,7 +17,7 @@ public class PropertyPath {
 
     @NotNull
     private static List<Property> getProperties(String[] properties) {
-        final List<Property> newProperties = new LinkedList<Property>();
+        final List<Property> newProperties = new LinkedList<>();
         for (String property : properties) {
             newProperties.add("$this".equals(property) ? new Property(null, true) : new Property(property, false));
         }
@@ -30,7 +30,7 @@ public class PropertyPath {
     }
 
     PropertyPath add(String... properties) {
-        final List<Property> newProperties = new LinkedList<Property>();
+        final List<Property> newProperties = new LinkedList<>();
         newProperties.addAll(this.properties);
         newProperties.addAll(getProperties(properties));
 
@@ -38,11 +38,11 @@ public class PropertyPath {
     }
 
     public Queue<Property> getProperties() {
-        return new LinkedList<Property>(properties);
+        return new LinkedList<>(properties);
     }
 
     public PropertyPath dropHead() {
-        LinkedList<Property> newProperties = new LinkedList<Property>(properties);
+        LinkedList<Property> newProperties = new LinkedList<>(properties);
         newProperties.poll();
         return new PropertyPath(newProperties, pointsToValue);
     }

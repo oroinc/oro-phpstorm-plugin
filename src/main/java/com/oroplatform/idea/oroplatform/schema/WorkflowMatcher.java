@@ -11,9 +11,7 @@ import com.oroplatform.idea.oroplatform.intellij.indexes.ImportIndex;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import org.jetbrains.yaml.YAMLFileType;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.stream.Stream;
 
 class WorkflowMatcher implements FileMatcher {
 
@@ -35,19 +33,11 @@ class WorkflowMatcher implements FileMatcher {
         }
 
         final GlobalSearchScope scope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.allScope(file.getProject()), YAMLFileType.YML);
-        final Collection<PsiFile> workflows = new LinkedList<PsiFile>();
-        workflows.addAll(Arrays.asList(FilenameIndex.getFilesByName(file.getProject(), "workflow.yml", scope)));
-        workflows.addAll(Arrays.asList(FilenameIndex.getFilesByName(file.getProject(), "workflows.yml", scope)));
-
         final ImportIndex index = ImportIndex.instance(file.getProject());
 
-        for (PsiFile workflow : workflows) {
-            if(isWorkflowPath(filePath(workflow))) {
-                if (isImported(index, file, workflow)) return true;
-            }
-        }
-
-        return false;
+        return Stream.of("workflow.yml", "workflows.yml")
+            .flatMap(filename -> Stream.of(FilenameIndex.getFilesByName(file.getProject(), filename, scope)))
+            .anyMatch(workflowFile -> isWorkflowPath(filePath(workflowFile)) && isImported(index, file, workflowFile));
     }
 
     private boolean isWorkflowPath(String path) {

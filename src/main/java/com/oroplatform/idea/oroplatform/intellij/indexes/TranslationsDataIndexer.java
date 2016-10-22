@@ -15,7 +15,7 @@ abstract class TranslationsDataIndexer implements DataIndexer<String, Void, File
     @NotNull
     @Override
     public Map<String, Void> map(@NotNull FileContent inputData) {
-        final Map<String, Void> index = new THashMap<String, Void>();
+        final Map<String, Void> index = new THashMap<>();
 
         if(!OroPlatformSettings.getInstance(inputData.getProject()).isPluginEnabled()) {
             return index;

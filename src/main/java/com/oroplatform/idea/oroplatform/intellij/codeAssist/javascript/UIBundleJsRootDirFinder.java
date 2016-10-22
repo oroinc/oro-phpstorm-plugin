@@ -7,30 +7,21 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.RootDirFinder;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
+import java.util.Optional;
 
 class UIBundleJsRootDirFinder implements RootDirFinder {
-    @Nullable
-    public VirtualFile getRootDir(PsiElement element) {
 
-        final PhpClass uiClass = getOroUIBundleClass(element.getProject());
-
-        if(uiClass == null) {
-            return null;
-        }
-
-        final VirtualFile file = uiClass.getContainingFile().getVirtualFile().getParent();
-
-        return VfsUtil.findRelativeFile(file, "Resources", "public", "js");
+    public Optional<VirtualFile> getRootDir(PsiElement element) {
+        return getOroUIBundleClass(element.getProject())
+            .flatMap(uiClass -> Optional.ofNullable(uiClass.getContainingFile().getVirtualFile().getParent()))
+            .flatMap(file -> Optional.ofNullable(VfsUtil.findRelativeFile(file, "Resources", "public", "js")));
     }
 
-    private PhpClass getOroUIBundleClass(Project project) {
+    private Optional<PhpClass> getOroUIBundleClass(Project project) {
         final PhpIndex phpIndex = PhpIndex.getInstance(project);
 
-        final Collection<PhpClass> classes = phpIndex.getClassesByFQN("\\Oro\\Bundle\\UIBundle\\OroUIBundle");
-
-        return classes.isEmpty() ? null : classes.iterator().next();
+        return phpIndex.getClassesByFQN("\\Oro\\Bundle\\UIBundle\\OroUIBundle").stream()
+            .findFirst();
     }
 }

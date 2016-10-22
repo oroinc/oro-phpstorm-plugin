@@ -9,10 +9,7 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.completionProvider.*;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ChoiceCompletionProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ChoicesFromPathCompletionProvider;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.completionProvider.OperationCompletionProvider;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
-
-import java.util.List;
 
 class YamlCompletionProviders implements CompletionProviders {
     @Override

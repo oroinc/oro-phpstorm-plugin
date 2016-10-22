@@ -11,16 +11,15 @@ import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class XmlIndexer implements DataIndexer<Service, Void, XmlFile> {
 
     @NotNull
     @Override
     public Map<Service, Void> map(@NotNull XmlFile file) {
-        final Map<Service, Void> index = new THashMap<Service, Void>();
+        final Map<Service, Void> index = new THashMap<>();
         final Collection<XmlTag> roots = PsiTreeUtil.findChildrenOfType(file.getDocument(), XmlTag.class);
 
         for (XmlTag root : ofName(roots, "container")) {
@@ -39,26 +38,17 @@ public class XmlIndexer implements DataIndexer<Service, Void, XmlFile> {
     }
 
     private static Collection<XmlTag> ofName(Collection<XmlTag> tags, String name) {
-        Collection<XmlTag> tagsWithName = new LinkedList<XmlTag>();
-        for (XmlTag tag : tags) {
-            if(tag.getName().equals(name)) {
-                tagsWithName.add(tag);
-            }
-        }
-
-        return tagsWithName;
+        return tags.stream()
+            .filter(tag -> tag.getName().equals(name))
+            .collect(Collectors.toList());
     }
 
     @NotNull
     private static Collection<Tag> getServiceTags(XmlTag serviceTag) {
-        final Collection<Tag> serviceTags = new HashSet<Tag>();
-
-        for (XmlTag tag : PsiTreeUtil.findChildrenOfType(serviceTag, XmlTag.class)) {
-            if(tag.getName().equals("tag")) {
-                serviceTags.add(new Tag(getXmlAttribute(tag, "name"), getXmlAttribute(tag, "alias")));
-            }
-        }
-        return serviceTags;
+        return PsiTreeUtil.findChildrenOfType(serviceTag, XmlTag.class).stream()
+            .filter(tag -> tag.getName().equals("tag"))
+            .map(tag -> new Tag(getXmlAttribute(tag, "name"), getXmlAttribute(tag, "alias")))
+            .collect(Collectors.toList());
     }
 
     private static String getXmlAttribute(XmlTag tag, String attributeName) {

@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 class PhpClassLookupElement extends com.jetbrains.php.completion.PhpClassLookupElement {
-    private final Set<String> lookupStrings = new HashSet<String>();
+    private final Set<String> lookupStrings = new HashSet<>();
 
     PhpClassLookupElement(@NotNull PhpClass phpClass, boolean showNamespace, @Nullable InsertHandler<LookupElement> insertHandler) {
         super(phpClass, showNamespace, insertHandler);

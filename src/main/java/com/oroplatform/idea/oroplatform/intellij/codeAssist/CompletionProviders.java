@@ -6,8 +6,6 @@ import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 
-import java.util.List;
-
 public interface CompletionProviders {
     CompletionProvider<CompletionParameters> action(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> condition(InsertHandler<LookupElement> insertHandler);

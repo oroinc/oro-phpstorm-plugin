@@ -17,14 +17,14 @@ import java.util.LinkedList;
 
 public class Scalar implements Element {
 
-    private final Collection<Requirement> requirements = new LinkedList<Requirement>();
+    private final Collection<Requirement> requirements = new LinkedList<>();
 
     Scalar(Collection<? extends Requirement> requirements) {
         this.requirements.addAll(requirements);
     }
 
     Scalar() {
-        this(Collections.<Requirement>emptyList());
+        this(Collections.emptyList());
     }
 
     @NotNull

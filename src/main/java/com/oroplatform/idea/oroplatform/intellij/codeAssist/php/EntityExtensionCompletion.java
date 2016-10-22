@@ -2,7 +2,6 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.php;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -15,9 +14,10 @@ import com.jetbrains.php.lang.psi.elements.MemberReference;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.oroplatform.idea.oroplatform.Icons;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
-import com.oroplatform.idea.oroplatform.symfony.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
@@ -45,22 +45,18 @@ public class EntityExtensionCompletion extends CompletionContributor {
                 final EntityExtensions extensions = EntityExtensions.instance(project);
                 final Entities entities = Entities.instance(project);
 
-                for (String t : type.getTypes()) {
-                    for (Entity entity : entities.findEntities(t)) {
-                        for (EntityExtensions.ExtensionMethod extensionMethod : extensions.getMethods(entity)) {
-                            result.addElement(LookupElementBuilder.create(extensionMethod.name+"()").withIcon(Icons.PUBLIC_METHOD));
-                        }
-                    }
-                }
+                type.getTypes().stream()
+                    .flatMap(t -> entities.findEntities(t).stream())
+                    .flatMap(entity -> extensions.getMethods(entity).stream())
+                    .map(method -> LookupElementBuilder.create(method.name+"()").withIcon(Icons.PUBLIC_METHOD))
+                    .forEach(result::addElement);
             }
 
             private boolean excluded(Project project, String path) {
-                for (Module module : ModuleManager.getInstance(project).getModules()) {
-                    for (String url : ModuleRootManager.getInstance(module).getExcludeRootUrls()) {
-                        if(path.startsWith(url.replaceAll(".+://", ""))) return true;
-                    }
-                }
-                return false;
+                return Arrays.stream(ModuleManager.getInstance(project).getModules())
+                    .flatMap(module -> Arrays.stream(ModuleRootManager.getInstance(module).getExcludeRootUrls()))
+                    .map(url -> url.replaceAll(".+://", ""))
+                    .anyMatch(path::startsWith);
             }
 
             @Nullable

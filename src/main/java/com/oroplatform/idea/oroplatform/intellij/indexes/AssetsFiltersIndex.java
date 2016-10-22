@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValue;
@@ -12,7 +11,6 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -22,7 +20,7 @@ import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiEl
 
 public class AssetsFiltersIndex {
     private static final Key<CachedValue<Collection<String>>> CACHE_KEY =
-        new Key<CachedValue<Collection<String>>>("com.oroplatform.idea.oroplatform.cache.assets_filter");
+        new Key<>("com.oroplatform.idea.oroplatform.cache.assets_filter");
 
     private final Project project;
 
@@ -43,14 +41,10 @@ public class AssetsFiltersIndex {
         CachedValue<Collection<String>> cachedValue = project.getUserData(CACHE_KEY);
 
         if(cachedValue == null) {
-            cachedValue = CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<Collection<String>>() {
-                @Nullable
-                @Override
-                public Result<Collection<String>> compute() {
-                    final VirtualFile appDir = settings.getAppVirtualDir(); // up to date appDir
-                    final VirtualFile configFile = VfsUtil.findRelativeFile(appDir, "config", "config.yml");
-                    return CachedValueProvider.Result.create(getFiltersFrom(configFile), settings, configFile);
-                }
+            cachedValue = CachedValuesManager.getManager(project).createCachedValue(() -> {
+                final VirtualFile appDir1 = settings.getAppVirtualDir(); // up to date appDir
+                final VirtualFile configFile = VfsUtil.findRelativeFile(appDir1, "config", "config.yml");
+                return CachedValueProvider.Result.create(getFiltersFrom(configFile), settings, configFile);
             }, false);
 
             project.putUserData(CACHE_KEY, cachedValue);
@@ -66,6 +60,6 @@ public class AssetsFiltersIndex {
 
         if(file == null) return Collections.emptyList();
 
-        return getPropertyFrom(new PropertyPath("assetic", "filters").pointsToValue(), getMappingsFrom(file), Collections.<PsiElement>emptySet());
+        return getPropertyFrom(new PropertyPath("assetic", "filters").pointsToValue(), getMappingsFrom(file), Collections.emptySet());
     }
 }

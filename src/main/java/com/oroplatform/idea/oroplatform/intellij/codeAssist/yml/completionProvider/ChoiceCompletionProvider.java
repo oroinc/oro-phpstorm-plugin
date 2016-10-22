@@ -8,10 +8,11 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.ChoicesProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLMapping;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.oroplatform.idea.oroplatform.Functions.toStream;
 
 public class ChoiceCompletionProvider extends CompletionProvider<CompletionParameters> {
     private final ChoicesProvider choicesProvider;
@@ -27,29 +28,22 @@ public class ChoiceCompletionProvider extends CompletionProvider<CompletionParam
         final Set<String> existingProperties = getExistingChoices(parameters);
         result = result.withPrefixMatcher(new PlainPrefixMatcher(result.getPrefixMatcher().getPrefix()));
 
-        for(ChoicesProvider.Choice choice : choicesProvider.getChoices(parameters.getOriginalPosition())) {
-            if(!existingProperties.contains(choice.getName())) {
-                result.addElement(
-                    LookupElementBuilder.create(choice.getName())
-                        .withInsertHandler(insertHandler)
-                        .withTypeText(choice.getDescription(), true)
-                        .withIcon(choice.getIcon())
-                );
-            }
-        }
+        choicesProvider.getChoices(parameters.getOriginalPosition()).stream()
+            .filter(choice -> !existingProperties.contains(choice.getName()))
+            .map(choice -> LookupElementBuilder.create(choice.getName())
+                .withInsertHandler(insertHandler)
+                .withTypeText(choice.getDescription(), true)
+                .withIcon(choice.getIcon())
+            )
+            .forEach(result::addElement);
     }
 
     @NotNull
     private Set<String> getExistingChoices(@NotNull CompletionParameters parameters) {
-        final YAMLMapping mapping = YamlPsiElements.getFirstMapping(parameters.getPosition(), /* set max depth in order to skip mapping if property is not followed by colon */ 3);
-        final Set<String> existingProperties = new HashSet<String>();
-
-        if (mapping != null) {
-            for (YAMLKeyValue keyValue : mapping.getKeyValues()) {
-                existingProperties.add(keyValue.getKeyText());
-            }
-        }
-        return existingProperties;
+        return toStream(YamlPsiElements.getFirstMapping(parameters.getPosition(), /* set max depth in order to skip mapping if property is not followed by colon */ 3))
+            .flatMap(mapping -> mapping.getKeyValues().stream())
+            .map(YAMLKeyValue::getKeyText)
+            .collect(Collectors.toSet());
     }
 
 }

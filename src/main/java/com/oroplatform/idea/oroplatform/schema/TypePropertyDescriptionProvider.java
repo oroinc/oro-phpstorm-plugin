@@ -28,7 +28,7 @@ public class TypePropertyDescriptionProvider implements PropertyDescriptionProvi
                 return "string";
             }
         } else if(element instanceof OneOf) {
-            final Set<String> types = new LinkedHashSet<String>();
+            final Set<String> types = new LinkedHashSet<>();
             for (Element e : ((OneOf) element).getElements()) {
                 String type = getType(e);
                 if(type != null) {

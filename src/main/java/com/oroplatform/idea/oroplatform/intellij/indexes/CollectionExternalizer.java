@@ -26,7 +26,7 @@ class CollectionExternalizer<T> implements DataExternalizer<Collection<T>> {
     }
 
     public Collection<T> read(@NotNull DataInput in) throws IOException {
-        final Collection<T> result = new THashSet<T>();
+        final Collection<T> result = new THashSet<>();
         final DataInputStream stream = (DataInputStream)in;
         while (stream.available() > 0) {
             final T value = dataExternalizer.read(stream);

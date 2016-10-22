@@ -30,7 +30,7 @@ class ActionsDicCompletionTest extends CompletionTest {
             |      <tag name="oro_workflow.condition" alias="condition1"/>
             |    </service>
             |    <service id="service8">
-            |      <tag name="oro_workflow.action" alias="action2"/>
+            |      <tag name="oro_workflow.action" alias="action1"/>
             |    </service>
             |  </services>
             |</container>

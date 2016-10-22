@@ -39,7 +39,7 @@ public class ImportFileBasedIndex extends FileBasedIndexExtension<String, Collec
             @NotNull
             @Override
             public Map<String, Collection<String>> map(@NotNull FileContent inputData) {
-                final Map<String, Collection<String>> index = new THashMap<String, Collection<String>>();
+                final Map<String, Collection<String>> index = new THashMap<>();
 
                 if(!OroPlatformSettings.getInstance(inputData.getProject()).isPluginEnabled()) {
                     return index;
@@ -54,7 +54,7 @@ public class ImportFileBasedIndex extends FileBasedIndexExtension<String, Collec
             }
 
             private Set<String> getImportedFilePaths(VirtualFile parent, YAMLFile file) {
-                final Set<String> paths = new HashSet<String>();
+                final Set<String> paths = new HashSet<>();
 
                 for (YAMLMapping mapping : YamlPsiElements.getMappingsFrom(file)) {
                     final YAMLKeyValue imports = mapping.getKeyValueByKey("imports");
@@ -85,7 +85,7 @@ public class ImportFileBasedIndex extends FileBasedIndexExtension<String, Collec
     @NotNull
     @Override
     public DataExternalizer<Collection<String>> getValueExternalizer() {
-        return new CollectionExternalizer<String>(keyDescriptor);
+        return new CollectionExternalizer<>(keyDescriptor);
     }
 
     @NotNull

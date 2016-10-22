@@ -42,7 +42,7 @@ public class PhpCallbackReference extends PsiPolyVariantReferenceBase<PsiElement
     public ResolveResult[] multiResolve(boolean incompleteCode) {
         final Collection<PhpClass> phpClasses = phpIndex.getClassesByFQN(className);
 
-        final Collection<ResolveResult> results = new LinkedList<ResolveResult>();
+        final Collection<ResolveResult> results = new LinkedList<>();
 
         for (PhpClass phpClass : phpClasses) {
             results.add(new PsiElementResolveResult(phpClass));
@@ -76,7 +76,7 @@ public class PhpCallbackReference extends PsiPolyVariantReferenceBase<PsiElement
 
         final Collection<PhpClass> phpClasses = phpIndex.getClassesByFQN(className);
 
-        final Collection<Object> results = new LinkedList<Object>();
+        final Collection<Object> results = new LinkedList<>();
 
         for (PhpClass phpClass : phpClasses) {
             for (Method phpMethod : phpClass.getMethods()) {
@@ -91,7 +91,7 @@ public class PhpCallbackReference extends PsiPolyVariantReferenceBase<PsiElement
 
     @NotNull
     private Object[] getClassVariants() {
-        final List<LookupElement> results = new LinkedList<LookupElement>();
+        final List<LookupElement> results = new LinkedList<>();
         final PrefixMatcher classMatcher = new CamelHumpMatcher(className);
 
         for (String className : phpIndex.getAllClassNames(classMatcher)) {

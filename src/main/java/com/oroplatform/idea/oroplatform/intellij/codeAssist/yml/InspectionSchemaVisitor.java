@@ -17,7 +17,7 @@ import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiEl
 
 class InspectionSchemaVisitor implements Visitor {
     private final ProblemsHolder problems;
-    private final List<PsiElement> elements = new LinkedList<PsiElement>();
+    private final List<PsiElement> elements = new LinkedList<>();
 
     InspectionSchemaVisitor(ProblemsHolder problems, List<? extends PsiElement> elements) {
         this.problems = problems;
@@ -70,7 +70,7 @@ class InspectionSchemaVisitor implements Visitor {
 
     @Override
     public void visitOneOf(OneOf oneOf) {
-        final List<ProblemsHolder> problemsHolders = new LinkedList<ProblemsHolder>();
+        final List<ProblemsHolder> problemsHolders = new LinkedList<>();
         for(Element element : oneOf.getElements()) {
             ProblemsHolder newProblems = new ProblemsHolder(problems.getManager(), problems.getFile(), problems.isOnTheFly());
             Visitor visitor = new InspectionSchemaVisitor(newProblems, elements);
@@ -82,15 +82,13 @@ class InspectionSchemaVisitor implements Visitor {
 
         if(sortedProblemsHolders.size() > 0) {
             ProblemsHolder theShortestProblemsHolder = sortedProblemsHolders.first();
-            for(ProblemDescriptor problemDescriptor : theShortestProblemsHolder.getResults()) {
-                problems.registerProblem(problemDescriptor);
-            }
+            theShortestProblemsHolder.getResults().forEach(problems::registerProblem);
         }
     }
 
     @NotNull
     private NavigableSet<ProblemsHolder> getSortedProblemHolders(List<ProblemsHolder> problemsHolders) {
-        NavigableSet<ProblemsHolder> sortedProblemsHolders = new TreeSet<ProblemsHolder>(new ProblemsHolderComparator());
+        NavigableSet<ProblemsHolder> sortedProblemsHolders = new TreeSet<>(new ProblemsHolderComparator());
         sortedProblemsHolders.addAll(problemsHolders);
         return sortedProblemsHolders;
     }

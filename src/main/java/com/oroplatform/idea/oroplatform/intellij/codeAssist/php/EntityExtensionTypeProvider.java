@@ -86,9 +86,7 @@ public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
 
             final String extensionClassName = "\\Extend\\Entity\\EX_" + bundleName + "_" + entity.getSimpleName();
 
-            for (PhpClass extensionClass : phpIndex.getClassesByFQN(extensionClassName)) {
-                outputType.add(extensionClass);
-            }
+            phpIndex.getClassesByFQN(extensionClassName).forEach(outputType::add);
         }
 
         return outputType;

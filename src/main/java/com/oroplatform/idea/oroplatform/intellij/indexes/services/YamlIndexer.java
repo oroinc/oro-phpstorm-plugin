@@ -23,7 +23,7 @@ public class YamlIndexer implements DataIndexer<Service, Void, YAMLFile> {
     @NotNull
     @Override
     public Map<Service, Void> map(@NotNull YAMLFile file) {
-        Map<Service, Void> index = new THashMap<Service, Void>();
+        Map<Service, Void> index = new THashMap<>();
 
         final YAMLKeyValue services = YAMLUtil.getQualifiedKeyInFile(file, "services");
 
@@ -33,7 +33,7 @@ public class YamlIndexer implements DataIndexer<Service, Void, YAMLFile> {
                     YAMLMapping serviceMapping = (YAMLMapping) serviceElement.getValue();
                     final YAMLKeyValue tagElements = serviceMapping.getKeyValueByKey("tags");
 
-                    Collection<Tag> tags = new THashSet<Tag>();
+                    Collection<Tag> tags = new THashSet<>();
 
                     if(tagElements != null) {
                         for (PsiElement tag : getSequenceItems(Arrays.asList(tagElements.getChildren()))) {

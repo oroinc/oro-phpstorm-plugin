@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class Service {
 
-    private final Set<Tag> tags = new HashSet<Tag>();
+    private final Set<Tag> tags = new HashSet<>();
     private final String id;
 
     public Service(String id, Collection<Tag> tags) {

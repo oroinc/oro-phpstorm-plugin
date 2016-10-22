@@ -9,6 +9,8 @@ import com.intellij.psi.PsiManager;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 public class RelativeToAppDirectoryResolver implements RelativeDirectoryResolver {
     private final String relativeToAppDir;
 
@@ -17,15 +19,11 @@ public class RelativeToAppDirectoryResolver implements RelativeDirectoryResolver
     }
 
     @Override
-    public PsiDirectory resolve(PsiElement element) {
+    public Optional<PsiDirectory> resolve(PsiElement element) {
         final Project project = element.getProject();
         final VirtualFile appDir = OroPlatformSettings.getInstance(project).getAppVirtualDir();
 
-        final VirtualFile rootDir = VfsUtil.findRelativeFile(relativeToAppDir, appDir);
-        if(rootDir != null) {
-            return PsiManager.getInstance(project).findDirectory(rootDir);
-        }
-
-        return null;
+        return Optional.ofNullable(VfsUtil.findRelativeFile(relativeToAppDir, appDir))
+            .flatMap(rootDir -> Optional.ofNullable(PsiManager.getInstance(project).findDirectory(rootDir)));
     }
 }

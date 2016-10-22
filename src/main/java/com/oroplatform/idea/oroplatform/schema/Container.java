@@ -1,12 +1,13 @@
 package com.oroplatform.idea.oroplatform.schema;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Container implements Element {
 
     final static Container any = with().allowExtraProperties();
 
-    private final List<Property> properties = new LinkedList<Property>();
+    private final List<Property> properties = new LinkedList<>();
     private final boolean allowExtraProperties;
 
     private Container(List<Property> properties, boolean allowExtraProperties) {
@@ -27,10 +28,10 @@ public class Container implements Element {
     }
 
     Container andWith(Property... properties) {
-        List<Property> allProperties = new LinkedList<Property>();
-        allProperties.addAll(this.properties);
-        allProperties.addAll(Arrays.asList(properties));
-        return new Container(allProperties.toArray(new Property[allProperties.size()]));
+        return new Container(Stream.concat(
+            this.properties.stream(),
+            Stream.of(properties)
+        ).toArray(Property[]::new));
     }
 
     public List<Property> getProperties() {
