@@ -1,14 +1,18 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
 
-class ActionsTranslationsCompletionTest extends CompletionTest {
+class ActionsTranslationsCompletionTest extends CompletionTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV1.FilePathPatterns.ACTIONS
     }
+
+    def trans1 = randomIdentifier("trans1")
+    def trans2 = randomIdentifier("trans2")
 
     @Override
     protected void setUp() throws Exception {
@@ -21,8 +25,8 @@ class ActionsTranslationsCompletionTest extends CompletionTest {
             |use Symfony\\Component\\Translation\\MessageCatalogue;
             |\$catalogue = new MessageCatalogue('en', array (
             |   'some_domain' => array(
-            |       'trans1' => 'en trans1',
-            |       'trans2' => 'en trans2',
+            |       '$trans1' => 'en trans1',
+            |       '$trans2' => 'en trans2',
             |   ),
             |));
             """.stripMargin()
@@ -37,7 +41,7 @@ class ActionsTranslationsCompletionTest extends CompletionTest {
             |    frontend_options:
             |      confirmation: <caret>
             """.stripMargin(),
-            ["trans1", "trans2"]
+            [trans1, trans2]
         )
     }
 }

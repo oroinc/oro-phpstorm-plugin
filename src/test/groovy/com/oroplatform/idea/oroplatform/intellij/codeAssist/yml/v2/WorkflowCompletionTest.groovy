@@ -1,15 +1,15 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v2
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV2
 
-class WorkflowCompletionTest extends CompletionTest {
+class WorkflowCompletionTest extends CompletionTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV2.FilePathPatterns.WORKFLOW
     }
 
-    //the rest is tested for v1 version
     def void "test: suggest properties at top level"() {
         suggestions(
             """
@@ -21,15 +21,17 @@ class WorkflowCompletionTest extends CompletionTest {
     }
 
     def void "test: support suggestions for imported file"() {
+        def imported1 = randomIdentifier("imported1")
+
         configureByText(SchemasV2.FilePathPatterns.WORKFLOW,
             """
             |imports:
-            |  - { resource: 'imported2.yml' }
+            |  - { resource: '${imported1}.yml' }
             """.stripMargin()
         )
 
         suggestions(
-            "Resources/config/oro/imported2.yml",
+            "Resources/config/oro/${imported1}.yml",
             """
             |<caret>
             """.stripMargin(),

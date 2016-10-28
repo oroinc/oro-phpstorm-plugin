@@ -1,14 +1,19 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceTest
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
 
-class ActionsRouteReferenceTest extends ReferenceTest {
+class ActionsRouteReferenceTest extends ReferenceTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV1.FilePathPatterns.ACTIONS
     }
+
+    def createRoute = randomIdentifier("create")
+    def viewRoute = randomIdentifier("view")
+    def listRoute = randomIdentifier("list")
 
     @Override
     protected void setUp() throws Exception {
@@ -21,8 +26,8 @@ class ActionsRouteReferenceTest extends ReferenceTest {
             |
             |class appDevUrlGenerator extends Symfony\\Component\\Routing\\Generator\\UrlGenerator {
             |   private static \$declaredRoutes = array(
-            |       'oro_business_unit_create' => array(1 => array('_controller' => 'Oro\\\\Controller::createAction')),
-            |       'oro_business_unit_view' => array(1 => array('_controller' => 'Oro\\\\Controller::viewAction')),
+            |       '$createRoute' => array(1 => array('_controller' => 'Oro\\\\Controller::createAction')),
+            |       '$viewRoute' => array(1 => array('_controller' => 'Oro\\\\Controller::viewAction')),
             |   };
             |}
             """.stripMargin()
@@ -39,7 +44,7 @@ class ActionsRouteReferenceTest extends ReferenceTest {
             |       \$this->logger = \$logger;
             |       if (null === self::\$declaredRoutes) {
             |           self::\$declaredRoutes = array(
-            |               'oro_business_unit_list' => array(1 => array('_controller' => 'Oro\\\\Controller::listAction')),
+            |               '$listRoute' => array(1 => array('_controller' => 'Oro\\\\Controller::listAction')),
             |           };
             |       }
             |   }
@@ -69,7 +74,7 @@ class ActionsRouteReferenceTest extends ReferenceTest {
             |    routes:
             |      - <caret>
             """.stripMargin(),
-            ["oro_business_unit_create", "oro_business_unit_view"]
+            [createRoute, viewRoute]
         )
     }
 
@@ -79,7 +84,7 @@ class ActionsRouteReferenceTest extends ReferenceTest {
 `           |operations:
             |  op1:
             |    routes:
-            |      - oro_business_unit<caret>_create
+            |      - ${insertSomewhere(createRoute, "<caret>")}
             """.stripMargin(),
             ["createAction"]
         )
@@ -93,7 +98,7 @@ class ActionsRouteReferenceTest extends ReferenceTest {
             |    routes:
             |      - <caret>
             """.stripMargin(),
-            ["oro_business_unit_list"]
+            [listRoute]
         )
     }
 }

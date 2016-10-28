@@ -1,13 +1,21 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
-class ActionsDicCompletionTest extends CompletionTest {
+class ActionsDicCompletionTest extends CompletionTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV1.FilePathPatterns.ACTIONS
     }
+
+    def form1 = randomIdentifier("form1")
+    def massActionProvider1 = randomIdentifier("massActionProvider1")
+    def massActionProvider2 = randomIdentifier("massActionProvider2")
+    def unknownService = randomIdentifier("unknown")
+    def condition1 = randomIdentifier("condition1")
+    def action1 = randomIdentifier("action1")
 
     @Override
     protected void setUp() throws Exception {
@@ -18,19 +26,19 @@ class ActionsDicCompletionTest extends CompletionTest {
             |<container>
             |  <services>
             |    <service id="service1">
-            |      <tag name="oro_action.datagrid.mass_action_provider" alias="mass_action_provider1"/>
+            |      <tag name="oro_action.datagrid.mass_action_provider" alias="$massActionProvider1"/>
             |    </service>
             |    <service id="service2">
-            |      <tag name="xxx" alias="some"/>
+            |      <tag name="xxx" alias="$unknownService"/>
             |    </service>
             |    <service id="service6">
-            |      <tag name="form.type" alias="form1"/>
+            |      <tag name="form.type" alias="$form1"/>
             |    </service>
             |    <service id="service7">
-            |      <tag name="oro_workflow.condition" alias="condition1"/>
+            |      <tag name="oro_workflow.condition" alias="$condition1"/>
             |    </service>
             |    <service id="service8">
-            |      <tag name="oro_workflow.action" alias="action1"/>
+            |      <tag name="oro_workflow.action" alias="$action1"/>
             |    </service>
             |  </services>
             |</container>
@@ -42,7 +50,7 @@ class ActionsDicCompletionTest extends CompletionTest {
             |services:
             |  service3:
             |    tags:
-            |      - { name: oro_action.datagrid.mass_action_provider, alias: mass_action_provider2 }
+            |      - { name: oro_action.datagrid.mass_action_provider, alias: $massActionProvider2 }
             """.stripMargin()
         )
     }
@@ -57,8 +65,8 @@ class ActionsDicCompletionTest extends CompletionTest {
             |
             """.stripMargin(),
 
-            ["mass_action_provider1", "mass_action_provider2"],
-            ["some", "form1"]
+            [massActionProvider1, massActionProvider2],
+            [unknownService, form1]
         )
     }
 
@@ -74,7 +82,7 @@ class ActionsDicCompletionTest extends CompletionTest {
             |
             """.stripMargin(),
 
-            ["form1"]
+            [form1]
         )
     }
 
@@ -88,8 +96,8 @@ class ActionsDicCompletionTest extends CompletionTest {
             |
             """.stripMargin(),
 
-            ["@condition1"],
-            ["@action1"]
+            ["@$condition1"],
+            ["@$action1"]
         )
     }
 
@@ -103,8 +111,8 @@ class ActionsDicCompletionTest extends CompletionTest {
             |
             """.stripMargin(),
 
-            ["@condition1"],
-            ["@action1"]
+            ["@$condition1"],
+            ["@$action1"]
         )
     }
 
@@ -118,8 +126,8 @@ class ActionsDicCompletionTest extends CompletionTest {
             |
             """.stripMargin(),
 
-            ["@action1"],
-            ["@condition1"]
+            ["@$action1"],
+            ["@$condition1"]
         )
     }
 }

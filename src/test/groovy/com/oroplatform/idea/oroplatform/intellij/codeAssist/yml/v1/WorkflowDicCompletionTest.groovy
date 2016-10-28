@@ -1,13 +1,24 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
-class WorkflowDicCompletionTest extends CompletionTest {
+class WorkflowDicCompletionTest extends CompletionTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV1.FilePathPatterns.WORKFLOW
     }
+
+    def condition1 = randomIdentifier("condition1")
+    def condition2a = randomIdentifier("condition2a")
+    def condition2b = randomIdentifier("condition2b")
+    def condition3 = randomIdentifier("condition3")
+    def unknown = randomIdentifier("unknown")
+    def action1 = randomIdentifier("action1")
+    def action2a = randomIdentifier("action2a")
+    def action2b = randomIdentifier("action2b")
+    def action3 = randomIdentifier("action3")
 
     @Override
     protected void setUp() throws Exception {
@@ -18,19 +29,22 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |<container>
             |  <services>
             |    <service id="condition1_id">
-            |      <tag name="oro_workflow.condition" alias="condition1"/>
+            |      <tag name="oro_workflow.condition" alias="$condition1"/>
             |    </service>
             |    <service id="condition2_id">
-            |      <tag name="oro_workflow.condition" alias="condition2|condition2b"/>
+            |      <tag name="oro_workflow.condition" alias="$condition2a|$condition2b"/>
+            |    </service>
+            |    <service id="condition4_id">
+            |      <tag name="oro_workflow.condition" alias="condition4"/>
             |    </service>
             |    <service id="some_service">
-            |      <tag name="xxx" alias="some"/>
+            |      <tag name="xxx" alias="$unknown"/>
             |    </service>
             |    <service id="action1_id">
-            |      <tag name="oro_workflow.action" alias="action1"/>
+            |      <tag name="oro_workflow.action" alias="$action1"/>
             |    </service>
             |    <service id="action2_id">
-            |      <tag name="oro_workflow.action" alias="action2|action2b"/>
+            |      <tag name="oro_workflow.action" alias="$action2a|$action2b"/>
             |    </service>
             |  </services>
             |</container>
@@ -42,10 +56,10 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |services:
             |  condition3_id:
             |    tags:
-            |      - { name: oro_workflow.condition, alias: condition3 }
+            |      - { name: oro_workflow.condition, alias: $condition3 }
             |  action3_id:
             |    tags:
-            |      - { name: oro_workflow.action, alias: action3 }
+            |      - { name: oro_workflow.action, alias: $action3 }
             """.stripMargin()
         )
     }
@@ -60,8 +74,8 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |        conditions:
             |          <caret>
             """.stripMargin(),
-            ["@condition1", "@condition2", "@condition2b"],
-            ["@some"]
+            ["@$condition1", "@$condition2a", "@$condition2b"],
+            ["@$unknown"]
         )
     }
 
@@ -75,7 +89,7 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |        conditions:
             |          <caret>
             """.stripMargin(),
-            ["@condition3"]
+            ["@$condition3"]
         )
     }
 
@@ -90,7 +104,7 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |          @not: <caret>
             """.stripMargin(),
             [],
-            ["@condition1", "@condition2", "@condition2b"]
+            ["@$condition1", "@$condition2a", "@$condition2b"]
         )
     }
 
@@ -105,8 +119,8 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |          -
             |            <caret>
             """.stripMargin(),
-            ["@action1", "@action2", "@action2b"],
-            ["@some"]
+            ["@$action1", "@$action2a", "@$action2b"],
+            ["@$unknown"]
         )
     }
 
@@ -120,8 +134,8 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |        init_actions:
             |          - <caret>
             """.stripMargin(),
-            ["@action1", "@action2", "@action2b"],
-            ["@some"]
+            ["@$action1", "@$action2a", "@$action2b"],
+            ["@$unknown"]
         )
     }
 
@@ -136,7 +150,7 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |          -
             |            <caret>
             """.stripMargin(),
-            ["@action3"]
+            ["@$action3"]
         )
     }
 
@@ -148,7 +162,7 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |    transition_definitions:
             |      some_transition:
             |        conditions:
-            |          2b<caret>
+            |          ondition4<caret>
             """.stripMargin(),
             """
             |workflows:
@@ -156,7 +170,7 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |    transition_definitions:
             |      some_transition:
             |        conditions:
-            |          @condition2b: <caret>
+            |          @condition4: <caret>
             """.stripMargin(),
         )
     }
@@ -169,7 +183,7 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |    transition_definitions:
             |      some_transition:
             |        conditions:
-            |          '2b<caret>'
+            |          'ondition4<caret>'
             """.stripMargin(),
             """
             |workflows:
@@ -177,7 +191,7 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |    transition_definitions:
             |      some_transition:
             |        conditions:
-            |          '@condition2b': <caret>
+            |          '@condition4': <caret>
             """.stripMargin(),
         )
     }
@@ -190,7 +204,7 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |    transition_definitions:
             |      some_transition:
             |        conditions:
-            |          '2b<caret>
+            |          'ondition4<caret>
             """.stripMargin(),
             """
             |workflows:
@@ -198,7 +212,7 @@ class WorkflowDicCompletionTest extends CompletionTest {
             |    transition_definitions:
             |      some_transition:
             |        conditions:
-            |          '@condition2b': <caret>
+            |          '@condition4': <caret>
             """.stripMargin(),
         )
     }

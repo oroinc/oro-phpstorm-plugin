@@ -1,13 +1,17 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceTest
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
-class NavigationRouteReferenceTest extends ReferenceTest {
+class NavigationRouteReferenceTest extends ReferenceTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV1.FilePathPatterns.NAVIGATION
     }
+
+    def route1 = randomIdentifier("route1")
+    def route2 = randomIdentifier("route2")
 
     @Override
     protected void setUp() throws Exception {
@@ -20,8 +24,8 @@ class NavigationRouteReferenceTest extends ReferenceTest {
             |
             |class appDevUrlGenerator extends Symfony\\Component\\Routing\\Generator\\UrlGenerator {
             |   private static \$declaredRoutes = array(
-            |       'oro_route1' => array(1 => array('_controller' => 'Oro\\\\Controller::createAction')),
-            |       'oro_route2' => array(1 => array('_controller' => 'Oro\\\\Controller::viewAction')),
+            |       '$route1' => array(1 => array('_controller' => 'Oro\\\\Controller::createAction')),
+            |       '$route2' => array(1 => array('_controller' => 'Oro\\\\Controller::viewAction')),
             |   };
             |}
             """.stripMargin()
@@ -47,7 +51,7 @@ class NavigationRouteReferenceTest extends ReferenceTest {
             |  <caret>
             """.stripMargin(),
 
-            ["oro_route1", "oro_route2"]
+            [route1, route2]
         )
     }
 
@@ -58,7 +62,7 @@ class NavigationRouteReferenceTest extends ReferenceTest {
             |  '<caret>'
             """.stripMargin(),
 
-            ["oro_route1", "oro_route2"]
+            [route1, route2]
         )
     }
 
@@ -66,7 +70,7 @@ class NavigationRouteReferenceTest extends ReferenceTest {
         checkReference(
             """
             |oro_titles:
-            |  oro_rou<caret>te1: ~
+            |  ${insertSomewhere(route1, "<caret>")}: ~
             """.stripMargin(),
 
             ["createAction"]
@@ -77,7 +81,7 @@ class NavigationRouteReferenceTest extends ReferenceTest {
         checkReference(
             """
             |oro_titles:
-            |  "oro_rou<caret>te1": ~
+            |  "${insertSomewhere(route1, "<caret>")}": ~
             """.stripMargin(),
 
             ["createAction"]
@@ -93,7 +97,7 @@ class NavigationRouteReferenceTest extends ReferenceTest {
             |      <caret>
             """.stripMargin(),
 
-            ["oro_route1", "oro_route2"]
+            [route1, route2]
         )
     }
 }

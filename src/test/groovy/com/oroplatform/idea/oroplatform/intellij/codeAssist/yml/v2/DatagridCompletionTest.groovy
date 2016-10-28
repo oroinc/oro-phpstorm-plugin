@@ -1,9 +1,10 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v2
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV2
 
-class DatagridCompletionTest extends CompletionTest {
+class DatagridCompletionTest extends CompletionTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV2.FilePathPatterns.DATAGRID
@@ -32,12 +33,15 @@ class DatagridCompletionTest extends CompletionTest {
     }
 
     def void "test: suggest datagrids as mixins"() {
+        def grid1 = randomIdentifier("grid1")
+        def grid2 = randomIdentifier("grid2")
+
         configureByText(
             "some/"+SchemasV2.FilePathPatterns.DATAGRID,
             """
             |datagrids:
-            |  grid5: ~
-            |  grid6: ~
+            |  $grid1: ~
+            |  $grid2: ~
             """.stripMargin()
         )
 
@@ -49,7 +53,7 @@ class DatagridCompletionTest extends CompletionTest {
             |      - <caret>
             """.stripMargin(),
 
-            ["grid5", "grid6"]
+            [grid1, grid2]
         )
     }
 }

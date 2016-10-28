@@ -50,7 +50,7 @@ public abstract class CompletionTest extends LightPlatformCodeInsightFixtureTest
         def lookupElements = myFixture.getLookupElementStrings()
 
         assertNotNull(lookupElements)
-        assertContainsElements(lookupElements, expectedSuggestions)
-        assertDoesntContain(lookupElements, unexpectedSuggestions)
+        assertContainsElements(lookupElements, expectedSuggestions.collect { it.toString() })
+        assertDoesntContain(lookupElements, unexpectedSuggestions.collect { it.toString() })
     }
 }

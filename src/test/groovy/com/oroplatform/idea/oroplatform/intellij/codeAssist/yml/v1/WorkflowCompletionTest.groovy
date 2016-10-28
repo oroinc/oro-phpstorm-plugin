@@ -1,13 +1,18 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
-public class WorkflowCompletionTest extends CompletionTest {
+public class WorkflowCompletionTest extends CompletionTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV1.FilePathPatterns.WORKFLOW
     }
+
+    def imported1 = randomIdentifier("imported1")
+    def imported2 = randomIdentifier("imported2")
+    def imported3 = randomIdentifier("imported3")
 
     def void "test: suggest properties at top level"() {
         suggestions(
@@ -19,16 +24,17 @@ public class WorkflowCompletionTest extends CompletionTest {
         )
     }
 
+    //TODO: refactor tests
     def void "test: support suggestions for imported file"() {
         configureByText(SchemasV1.FilePathPatterns.WORKFLOW,
             """
             |imports:
-            |  - { resource: 'imported.yml' }
+            |  - { resource: '${imported1}.yml' }
             """.stripMargin()
         )
 
         suggestions(
-            "Resources/config/imported.yml",
+            "Resources/config/${imported1}.yml",
             """
             |<caret>
             """.stripMargin(),
@@ -41,7 +47,7 @@ public class WorkflowCompletionTest extends CompletionTest {
         configureByText(SchemasV1.FilePathPatterns.WORKFLOW,
             """
             |imports:
-            |  - { resource: 'imported.yml' }
+            |  - { resource: '${imported1}.yml' }
             """.stripMargin()
         )
 
@@ -60,19 +66,19 @@ public class WorkflowCompletionTest extends CompletionTest {
         configureByText(SchemasV1.FilePathPatterns.WORKFLOW,
             """
             |imports:
-            |  - { resource: 'imported1.yml' }
+            |  - { resource: '${imported2}.yml' }
             """.stripMargin()
         )
 
-        configureByText("Resources/config/imported1.yml",
+        configureByText("Resources/config/${imported2}.yml",
             """
             |imports:
-            |  - { resource: 'imported2.yml' }
+            |  - { resource: '${imported3}.yml' }
             """.stripMargin()
         )
 
         suggestions(
-            "Resources/config/imported2.yml",
+            "Resources/config/${imported3}.yml",
             """
             |<caret>
             """.stripMargin(),
