@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 class ComposedInsertHandler implements InsertHandler<LookupElement> {
-    private List<InsertHandler<LookupElement>> handlers = new LinkedList<>();
+    private final List<InsertHandler<LookupElement>> handlers = new LinkedList<>();
 
     ComposedInsertHandler(List<InsertHandler<LookupElement>> handlers) {
         this.handlers.addAll(handlers);

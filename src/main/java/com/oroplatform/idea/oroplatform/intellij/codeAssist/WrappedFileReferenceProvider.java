@@ -17,7 +17,6 @@ import com.intellij.util.ProcessingContext;
 import com.oroplatform.idea.oroplatform.StringWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,7 +72,7 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
 
         final FileReferenceSet fileReferenceSet = new FileReferenceSet(relativePath, element, 0, this, true);
 
-        return Arrays.asList(new WrappedFileReference(stringWrapper, fileReferenceSet, element, "", rootDirFinder.getRootDir(element).orElse(null), fileFilter));
+        return Collections.singletonList(new WrappedFileReference(stringWrapper, fileReferenceSet, element, "", rootDirFinder.getRootDir(element).orElse(null), fileFilter));
     }
 
     /**

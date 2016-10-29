@@ -7,62 +7,62 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.*;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.oroplatform.idea.oroplatform.Functions.toStream;
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.PsiElements.elementFilter;
 
 public class YamlPsiElements {
 
     static Collection<YAMLKeyValue> getKeyValuesFrom(PsiElement element) {
         return Stream.of(element.getChildren())
-            .flatMap(filterElement(YAMLKeyValue.class))
+            .flatMap(elementFilter(YAMLKeyValue.class))
             .collect(Collectors.toList());
     }
 
     private static Collection<YAMLKeyValue> getKeyValuesFrom(Collection<? extends PsiElement> elements) {
         return elements.stream()
             .flatMap(element -> Stream.of(element.getChildren()))
-            .flatMap(filterElement(YAMLKeyValue.class))
+            .flatMap(elementFilter(YAMLKeyValue.class))
             .collect(Collectors.toList());
-    }
-
-    private static <T extends PsiElement> Function<PsiElement, Stream<T>> filterElement(Class<T> cls) {
-        return element -> Stream.of(element)
-            .filter(e -> cls.isAssignableFrom(e.getClass()))
-            .map(cls::cast);
     }
 
     static Collection<YAMLScalar> filterScalars(Collection<? extends PsiElement> elements) {
         return elements.stream()
-            .flatMap(filterElement(YAMLScalar.class))
+            .flatMap(elementFilter(YAMLScalar.class))
             .collect(Collectors.toList());
     }
 
     static Collection<YAMLMapping> filterMappings(Collection<? extends PsiElement> elements) {
         return elements.stream()
-            .flatMap(filterElement(YAMLMapping.class))
+            .flatMap(elementFilter(YAMLMapping.class))
             .collect(Collectors.toList());
     }
 
     private static Collection<YAMLSequence> filterSequences(Collection<? extends PsiElement> elements) {
         return elements.stream()
-            .flatMap(filterElement(YAMLSequence.class))
+            .flatMap(elementFilter(YAMLSequence.class))
             .collect(Collectors.toList());
     }
 
     public static List<YAMLMapping> getMappingsFrom(@NotNull PsiFile file) {
         return Stream.of(file.getChildren())
-            .flatMap(filterElement(YAMLDocument.class))
+            .flatMap(elementFilter(YAMLDocument.class))
             .flatMap(doc -> Stream.of(doc.getChildren()))
-            .flatMap(filterElement(YAMLMapping.class))
+            .flatMap(elementFilter(YAMLMapping.class))
+            .collect(Collectors.toList());
+    }
+
+    public static List<YAMLMapping> getMappingsFrom(YAMLKeyValue keyValue) {
+        return toStream(keyValue::getValue)
+            .flatMap(elementFilter(YAMLMapping.class))
             .collect(Collectors.toList());
     }
 
     public static List<YAMLPsiElement> getSequenceItems(Collection<? extends PsiElement> elements) {
         return elements.stream()
-            .flatMap(filterElement(YAMLSequence.class))
+            .flatMap(elementFilter(YAMLSequence.class))
             .flatMap(seq -> seq.getItems().stream())
             .flatMap(item -> toStream(item::getValue))
             .collect(Collectors.toList());
@@ -70,7 +70,7 @@ public class YamlPsiElements {
 
     public static Optional<YAMLKeyValue> getYamlKeyValueSiblingWithName(YAMLKeyValue keyValue, String name) {
         return Stream.of(keyValue.getParent().getChildren())
-            .flatMap(filterElement(YAMLKeyValue.class))
+            .flatMap(elementFilter(YAMLKeyValue.class))
             .filter(element -> name.equals(element.getKeyText()))
             .findFirst();
     }
@@ -142,7 +142,7 @@ public class YamlPsiElements {
         } else {
             return Stream.concat(
                 filterMappings(elements).stream()
-                    .flatMap(mapping -> toStream(() -> mapping.getKeyValueByKey(property.getName())))
+                    .flatMap(mapping -> toStream(mapping.getKeyValueByKey(property.getName())))
                     .flatMap(keyValue -> toStream(keyValue::getValue)),
                 filterSequences(elements).stream()
             ).collect(Collectors.toList());
@@ -151,8 +151,8 @@ public class YamlPsiElements {
 
     private static Collection<String> getParentKeysFrom(Collection<? extends YAMLPsiElement> elements) {
         return elements.stream()
-            .flatMap(element -> toStream(() -> element.getParent()))
-            .flatMap(filterElement(YAMLKeyValue.class))
+            .flatMap(element -> toStream(element.getParent()))
+            .flatMap(elementFilter(YAMLKeyValue.class))
             .map(YAMLKeyValue::getKeyText)
             .collect(Collectors.toList());
     }
@@ -160,10 +160,10 @@ public class YamlPsiElements {
     private static Collection<String> getPropertyValuesFrom(Collection<? extends YAMLPsiElement> elements) {
         return Stream.concat(
             elements.stream()
-                .flatMap(filterElement(YAMLScalar.class))
+                .flatMap(elementFilter(YAMLScalar.class))
                 .map(YAMLScalar::getTextValue),
             elements.stream()
-                .flatMap(filterElement(YAMLMapping.class))
+                .flatMap(elementFilter(YAMLMapping.class))
                 .flatMap(element -> element.getKeyValues().stream())
                 .map(YAMLKeyValue::getKeyText)
         ).collect(Collectors.toList());

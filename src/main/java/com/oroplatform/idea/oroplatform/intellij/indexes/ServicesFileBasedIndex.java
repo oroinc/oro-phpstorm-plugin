@@ -22,10 +22,8 @@ public class ServicesFileBasedIndex extends BaseServicesFileBasedIndex {
 
     @Override
     protected void index(Set<Service> services, Map<String, Void> index) {
-        for (Service service : services) {
-            if(service.getId() != null) {
-                index.put(service.getId(), null);
-            }
-        }
+        services.stream()
+            .filter(service -> service.getId() != null)
+            .forEach(service -> index.put(service.getId(), null));
     }
 }

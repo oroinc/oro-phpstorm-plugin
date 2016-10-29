@@ -10,7 +10,6 @@ public class Entity {
     private final String shortcutName;
     private final Bundle bundle;
     private final String simpleName;
-    private final String fqn;
 
     public static Optional<Entity> fromFqn(String fqn) {
         final String fixedFQN = StringUtil.trimStart(fqn, "\\");
@@ -21,12 +20,11 @@ public class Entity {
 
         final Bundle bundle = new Bundle(parts.subList(0, entityIndex));
 
-        return Optional.of(new Entity(bundle.getName()+":"+StringUtil.join(parts.subList(entityIndex + 1, parts.size()), "\\"), fqn, bundle, parts.get(parts.size() - 1)));
+        return Optional.of(new Entity(bundle.getName()+":"+StringUtil.join(parts.subList(entityIndex + 1, parts.size()), "\\"), bundle, parts.get(parts.size() - 1)));
     }
 
-    private Entity(String shortcutName, String fqn, Bundle bundle, String simpleName) {
+    private Entity(String shortcutName, Bundle bundle, String simpleName) {
         this.shortcutName = shortcutName;
-        this.fqn = fqn;
         this.bundle = bundle;
         this.simpleName = simpleName;
     }

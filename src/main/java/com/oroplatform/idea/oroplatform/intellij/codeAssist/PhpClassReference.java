@@ -173,12 +173,6 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
                 phpClass.getContainingFile().getVirtualFile().getCanonicalPath().contains("/vendor/");
     }
 
-    private void addEntitiesShortcutsLookups(List<LookupElement> results, PhpClass phpClass, int priority) {
-        Entity.fromFqn(phpClass.getPresentableFQN())
-            .map(entity -> getLookupElement(phpClass, priority, entity))
-            .ifPresent(results::add);
-    }
-
     @NotNull
     private LookupElement getLookupElement(PhpClass phpClass, int priority, Entity entity) {
         return PrioritizedLookupElement.withPriority(

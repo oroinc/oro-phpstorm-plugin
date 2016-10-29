@@ -1,7 +1,6 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
 import com.intellij.codeInsight.completion.PrefixMatcher;
-import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -16,7 +15,10 @@ import com.oroplatform.idea.oroplatform.symfony.Bundles;
 import com.oroplatform.idea.oroplatform.symfony.TwigTemplate;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.stream.Stream;
 
 public class TwigTemplateReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
@@ -35,19 +37,13 @@ public class TwigTemplateReference extends PsiPolyVariantReferenceBase<PsiElemen
     @Override
     public ResolveResult[] multiResolve(boolean incompleteCode) {
         final String simpleTemplateName = getSimpleTemplateName();
+        final PrefixMatcher matcher = new StrictCamelHumpMatcher(templateName.replace(simpleTemplateName, "").replace(":", "").replace("/", ""));
         final PsiFile[] files = FilenameIndex.getFilesByName(getElement().getProject(), simpleTemplateName, GlobalSearchScope.allScope(getElement().getProject()));
 
-        final List<ResolveResult> results = new LinkedList<>();
-
-        final PrefixMatcher matcher = new StrictCamelHumpMatcher(templateName.replace(simpleTemplateName, "").replace(":", "").replace("/", ""));
-
-        for (PsiFile file : files) {
-            if(file.getVirtualFile() != null && matches(matcher, file.getVirtualFile().getPath())) {
-                results.add(new PsiElementResolveResult(file));
-            }
-        }
-
-        return results.toArray(new ResolveResult[results.size()]);
+        return Stream.of(files)
+            .filter(file -> file.getVirtualFile() != null && matches(matcher, file.getVirtualFile().getPath()))
+            .map(PsiElementResolveResult::new)
+            .toArray(ResolveResult[]::new);
     }
 
     private boolean matches(PrefixMatcher matcher, String path) {
@@ -64,22 +60,17 @@ public class TwigTemplateReference extends PsiPolyVariantReferenceBase<PsiElemen
     @NotNull
     @Override
     public Object[] getVariants() {
-        final List<LookupElement> results = new LinkedList<>();
+        return bundles.findAll().stream()
+            .flatMap(bundle ->
+                phpIndex.getNamespacesByName(bundle.getNamespaceName()).stream()
+                    .flatMap(phpNamespace -> findTwigTemplates(bundle, "", "", getViewsDirForBundleNamespace(phpNamespace)).stream())
+                    .map(twigTemplate -> LookupElementBuilder.create(twigTemplate.getName()).withIcon(Icons.TWIG))
+            ).toArray();
+    }
 
-        for (Bundle bundle : bundles.findAll()) {
-            for (PhpNamespace phpNamespace : phpIndex.getNamespacesByName(bundle.getNamespaceName())) {
-                final PsiDirectory dir = phpNamespace.getContainingFile().getContainingDirectory();
-                final VirtualFile views = VfsUtil.findRelativeFile(dir.getVirtualFile(), "Resources", "views");
-
-                final Collection<TwigTemplate> twigTemplates = findTwigTemplates(bundle, "", "", views);
-
-                for (TwigTemplate twigTemplate : twigTemplates) {
-                    results.add(LookupElementBuilder.create(twigTemplate.getName()).withIcon(Icons.TWIG));
-                }
-            }
-        }
-
-        return results.toArray();
+    private VirtualFile getViewsDirForBundleNamespace(PhpNamespace phpNamespace) {
+        final PsiDirectory dir = phpNamespace.getContainingFile().getContainingDirectory();
+        return VfsUtil.findRelativeFile(dir.getVirtualFile(), "Resources", "views");
     }
 
     private Collection<TwigTemplate> findTwigTemplates(Bundle bundle, String topDirectory, String prefixPath, VirtualFile dir) {

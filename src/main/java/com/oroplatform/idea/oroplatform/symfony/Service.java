@@ -38,12 +38,4 @@ public class Service {
         return Objects.hashCode(id, tags);
     }
 
-    public boolean hasTag(String name) {
-        for (Tag tag : tags) {
-            if(name.equals(tag.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

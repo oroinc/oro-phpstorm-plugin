@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 class PhpMethodLookupElement extends PhpLookupElement {
-    private static StubIndexKey<String, Method> INDEX_KEY = StubIndexKey.createIndexKey("com.oroplatform.idea.oroplatform.phpMethod");
+    private static final StubIndexKey<String, Method> INDEX_KEY = StubIndexKey.createIndexKey("com.oroplatform.idea.oroplatform.phpMethod");
 
     @NotNull
     private final Method method;

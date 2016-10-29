@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.oroplatform.idea.oroplatform.Functions.toStream;
 
@@ -38,27 +39,20 @@ public class PhpFieldReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     @NotNull
     private Collection<PhpClass> getClasses(PhpIndex phpIndex) {
-        //TODO: remove accumulating var - refactoring
-        final Collection<PhpClass> result = new LinkedList<>();
+        return classNames.stream()
+            .flatMap(className -> {
+                if(className.contains(":") && className.length() > className.indexOf(":") + 1) {
+                    final PrefixMatcher matcher = new CamelHumpMatcher(className.replace(":", ""));
+                    final String classSimpleName = className.split(":")[1];
+                    final Collection<PhpClass> phpClasses = phpIndex.getClassesByName(classSimpleName);
 
-        for (String className : classNames) {
-            if(className.contains(":") && className.length() > className.indexOf(":") + 1) {
-                final PrefixMatcher matcher = new CamelHumpMatcher(className.replace(":", ""));
-                final String classSimpleName = className.split(":")[1];
-                final Collection<PhpClass> phpClasses = phpIndex.getClassesByName(classSimpleName);
-
-                for(PhpClass phpClass : phpClasses) {
-                    if(matcher.isStartMatch(phpClass.getFQN().replace("\\", ""))) {
-                        result.add(phpClass);
-                    }
+                    return phpClasses.stream()
+                        .filter(phpClass -> matcher.isStartMatch(phpClass.getFQN().replace("\\", "")));
+                } else {
+                    return phpIndex.getClassesByFQN(className).stream();
                 }
-
-            } else {
-                result.addAll(phpIndex.getClassesByFQN(className));
-            }
-        }
-
-        return result;
+            })
+            .collect(Collectors.toList());
     }
 
     @NotNull

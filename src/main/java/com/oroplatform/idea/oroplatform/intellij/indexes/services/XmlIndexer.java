@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class XmlIndexer implements DataIndexer<Service, Void, XmlFile> {
 
@@ -22,25 +23,18 @@ public class XmlIndexer implements DataIndexer<Service, Void, XmlFile> {
         final Map<Service, Void> index = new THashMap<>();
         final Collection<XmlTag> roots = PsiTreeUtil.findChildrenOfType(file.getDocument(), XmlTag.class);
 
-        for (XmlTag root : ofName(roots, "container")) {
-            for (XmlTag servicesTag : ofName(PsiTreeUtil.findChildrenOfType(root, XmlTag.class), "services")) {
-                for (XmlTag serviceTag : ofName(PsiTreeUtil.findChildrenOfType(servicesTag, XmlTag.class), "service")) {
-                    final Collection<Tag> serviceTags = getServiceTags(serviceTag);
-                    final String id = serviceTag.getAttributeValue("id");
-                    final Service service = new Service(id, serviceTags);
-
-                    index.put(service, null);
-                }
-            }
-        }
+        ofName(roots, "container")
+            .flatMap(root -> ofName(PsiTreeUtil.findChildrenOfType(root, XmlTag.class), "services"))
+            .flatMap(servicesTag -> ofName(PsiTreeUtil.findChildrenOfType(servicesTag, XmlTag.class), "service"))
+            .map(serviceTag -> new Service(serviceTag.getAttributeValue("id"), getServiceTags(serviceTag)))
+            .forEach(service -> index.put(service, null));
 
         return index;
     }
 
-    private static Collection<XmlTag> ofName(Collection<XmlTag> tags, String name) {
+    private static Stream<XmlTag> ofName(Collection<XmlTag> tags, String name) {
         return tags.stream()
-            .filter(tag -> tag.getName().equals(name))
-            .collect(Collectors.toList());
+            .filter(tag -> tag.getName().equals(name));
     }
 
     @NotNull

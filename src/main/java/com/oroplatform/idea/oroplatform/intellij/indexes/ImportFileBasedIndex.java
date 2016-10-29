@@ -1,25 +1,26 @@
 package com.oroplatform.idea.oroplatform.intellij.indexes;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.HashSet;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PsiElements;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.YAMLFileType;
 import org.jetbrains.yaml.psi.YAMLFile;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLMapping;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.oroplatform.idea.oroplatform.Functions.toStream;
 
 public class ImportFileBasedIndex extends FileBasedIndexExtension<String, Collection<String>> {
 
@@ -54,23 +55,14 @@ public class ImportFileBasedIndex extends FileBasedIndexExtension<String, Collec
             }
 
             private Set<String> getImportedFilePaths(VirtualFile parent, YAMLFile file) {
-                final Set<String> paths = new HashSet<>();
-
-                for (YAMLMapping mapping : YamlPsiElements.getMappingsFrom(file)) {
-                    final YAMLKeyValue imports = mapping.getKeyValueByKey("imports");
-                    if(imports != null && imports.getValue() != null) {
-                        for (PsiElement sequenceItem : YamlPsiElements.getSequenceItems(Collections.singletonList(imports.getValue()))) {
-                            if(sequenceItem instanceof YAMLMapping) {
-                                final YAMLKeyValue resource = ((YAMLMapping) sequenceItem).getKeyValueByKey("resource");
-                                if(resource != null) {
-                                    paths.add(parent.getPath() + "/" + resource.getValueText());
-                                }
-                            }
-                        }
-                    }
-                }
-
-                return paths;
+                return YamlPsiElements.getMappingsFrom(file).stream()
+                    .flatMap(mapping -> toStream(mapping.getKeyValueByKey("imports")))
+                    .flatMap(importsMapping -> toStream(importsMapping::getValue))
+                    .flatMap(importsValue -> YamlPsiElements.getSequenceItems(Collections.singletonList(importsValue)).stream())
+                    .flatMap(PsiElements.elementFilter(YAMLMapping.class))
+                    .flatMap(sequenceItem -> toStream(sequenceItem.getKeyValueByKey("resource")))
+                    .map(resource -> parent.getPath() + "/" + resource.getValueText())
+                    .collect(Collectors.toSet());
             }
 
         };
