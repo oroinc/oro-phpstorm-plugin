@@ -1,3 +1,8 @@
+sudo: false
+
 language: java
 
-script: echo 1
+jdk:
+  - oraclejdk8
+
+script: ./gradlew test
