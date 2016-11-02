@@ -1,5 +1,5 @@
-Oro PHPStorm Plugin
-========================
+Oro PHPStorm Plugin [![Build Status](https://travis-ci.org/orocrm/oro-phpstorm-plugin.svg?branch=master)](https://travis-ci.org/orocrm/oro-phpstorm-plugin)
+===================
 Plugin for the PHPStorm that will help to increase the development speed on the projects based on the OroPlatform
 
 Requirements
