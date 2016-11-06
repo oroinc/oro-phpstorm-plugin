@@ -12,14 +12,16 @@ apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
 apply plugin: 'groovy'
 
-def phpPluginVersion = "php-162.1121.34"
+def phpPluginUrl = System.getProperty("phpPluginUrl", "https://plugins.jetbrains.com/files/6610/27859/php-162.1628.23.zip")
+def ideaVersion = System.getProperty("ideaVersion", "IU-2016.2.5")
+def phpPluginVersion = phpPluginUrl.find(/[a-z0-9\.\-]+\.zip/).replace(".zip", "")
 def javaVersion = 1.8
 
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 
 intellij {
-    version project.hasProperty('ideaVersion') ? ideaVersion : 'IU-2016.2'
+    version ideaVersion
     type 'IU'
     pluginName 'idea-oroplatform-plugin'
     plugins = ['php', 'yaml', 'java-i18n', 'properties', 'CSS', 'JavaScriptLanguage']
@@ -44,7 +46,7 @@ afterEvaluate {
     project.tasks.create(name: "downloadPhpPlugin", type: Download) {
         def output = new File("${project.intellij.ideaDirectory}/plugins/${phpPluginVersion}.zip")
 
-        src "https://plugins.jetbrains.com/files/6610/27035/${phpPluginVersion}.zip"
+        src phpPluginUrl
         dest output
         overwrite false
     }

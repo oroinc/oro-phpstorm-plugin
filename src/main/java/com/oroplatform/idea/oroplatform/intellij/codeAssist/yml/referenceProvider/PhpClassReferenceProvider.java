@@ -2,6 +2,7 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.referenceProvid
 
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
@@ -45,7 +46,7 @@ public class PhpClassReferenceProvider extends PsiReferenceProvider {
                 .map(this::getClassNames)
                 .orElseGet(Collections::emptySet);
 
-            return new PsiReference[]{new PhpClassReference(element, phpClass, ((YAMLScalar) element).getTextValue(), insertHandler, skippedClassNames)};
+            return new PsiReference[]{new PhpClassReference(element, phpClass, StringUtil.stripQuotesAroundValue(element.getText()), insertHandler, skippedClassNames)};
         }
 
         return new PsiReference[0];

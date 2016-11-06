@@ -8,9 +8,17 @@ class EntityExtensionReferenceTest extends PhpReferenceTest {
         return "test.php"
     }
 
+    def boolean ignored = false
+
     @Override
     protected void setUp() throws Exception {
         super.setUp()
+
+        try {
+            Class.forName("com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider3")
+        } catch (ClassNotFoundException ex) {
+            ignored = true
+        }
 
         configureByText(
             "classes.php",
@@ -37,6 +45,8 @@ class EntityExtensionReferenceTest extends PhpReferenceTest {
     }
 
     def void "test: suggest extension method for variable"() {
+        if(ignored) return;
+
         suggestions(
             """
             |<?php
@@ -48,6 +58,8 @@ class EntityExtensionReferenceTest extends PhpReferenceTest {
     }
 
     def void "test: suggest extension method for property with defined value"() {
+        if(ignored) return;
+
         suggestions(
             """
             |<?php
@@ -65,6 +77,8 @@ class EntityExtensionReferenceTest extends PhpReferenceTest {
     }
 
     def void "test: suggest extension method for variable with @var phpDoc"() {
+        if(ignored) return;
+
         suggestions(
             """
             |<?php
@@ -77,6 +91,8 @@ class EntityExtensionReferenceTest extends PhpReferenceTest {
     }
 
     def void "test: suggest extension method for method return type"() {
+        if(ignored) return;
+
         suggestions(
             """
             |<?php
@@ -90,6 +106,8 @@ class EntityExtensionReferenceTest extends PhpReferenceTest {
     }
 
     def void "test: suggest extension method for method with @return phpDoc"() {
+        if(ignored) return;
+
         suggestions(
             """
             |<?php
@@ -104,6 +122,8 @@ class EntityExtensionReferenceTest extends PhpReferenceTest {
     }
 
     def void "test: suggest extension method for property with @var phpDoc"() {
+        if(ignored) return;
+
         suggestions(
             """
             |<?php
