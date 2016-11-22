@@ -10,6 +10,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.0-alpha22</h2>
+<ul>
+  <li>Support for PhpStorm 2016.3+</li>
+</ul>
+
 <h2>1.0.0-alpha21</h2>
 <ul>
   <li>Autocomplete for more layouts yaml files: <b>theme.yml</b>, <b>assets.yml</b>, <b>requirejs.yml</b>, <b>images.yml</b></li>
