@@ -12,8 +12,8 @@ apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
 apply plugin: 'groovy'
 
-def phpPluginUrl = System.getProperty("phpPluginUrl", "https://plugins.jetbrains.com/files/6610/27859/php-162.1628.23.zip")
-def ideaVersion = System.getProperty("ideaVersion", "IU-2016.2.5")
+def phpPluginUrl = System.getProperty("phpPluginUrl", "https://plugins.jetbrains.com/files/6610/30133/php-163.7743.20.zip")
+def ideaVersion = System.getProperty("ideaVersion", "2016.3")
 def phpPluginVersion = phpPluginUrl.find(/[a-z0-9\.\-]+\.zip/).replace(".zip", "")
 def javaVersion = 1.8
 

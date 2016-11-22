@@ -14,6 +14,7 @@ import com.oroplatform.idea.oroplatform.symfony.Entity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Set;
 
 public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
     @Override
@@ -92,9 +93,14 @@ public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
         return outputType;
     }
 
+    @SuppressWarnings("unused")
+    public Collection<? extends PhpNamedElement> getBySignature(String s, Project project) {
+        return null;
+    }
+
     //TODO: should be it defined correctly if PhpIndex.getBySignature is not used?
     @Override
-    public Collection<? extends PhpNamedElement> getBySignature(String s, Project project) {
+    public Collection<? extends PhpNamedElement> getBySignature(String expression, Set<String> visited, int depth, Project project) {
         return null;
     }
 }
