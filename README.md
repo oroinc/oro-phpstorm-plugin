@@ -8,7 +8,7 @@ Plugin requires PHPStorm 2016.1+
 
 Version
 -----------------------------
-This plugin supports all versions of the OroPlatform
+This plugin supports applications based on the 2.0.0 version of the OroPlatform
 
 Install and upgrade
 -----------------------------
@@ -16,19 +16,23 @@ Install and upgrade
 
 Features
 -----------------------------
-- Autocomplete for the *acls.yml*
-- Autocomplete for the *entity.yml*
-- Autocomplete for the *datagrids.yml*
-- Autocomplete for the *workflows.yml*
-- Autocomplete for the *actions.yml*
-- Autocomplete for the *dashboards.yml*
-- Autocomplete for the *navigation.yml*
-- Autocomplete for the *search.yml*
-- Autocomplete for layouts yaml files: *layout.yml*, *theme.yml*, *assets.yml*, *requirejs.yml*, *images.yml*
-- Autocomplete for entity methods added dynamically during application execution
-- Possibility to navigate via RequireJS modules
-- ...
+- Autocomplete and high level validation for the following YAML configs:
+  + *acls.yml*
+  + *actions.yml*
+  + *api.yml*
+  + *assets.yml*, 
+  + *dashboards.yml*
+  + *datagrids.yml*
+  + *entity.yml*
+  + *images.yml*
+  + *layout.yml*, 
+  + *navigation.yml*
+  + *requirejs.yml*, 
+  + *search.yml*
+  + *system_configuration.yml*
+  + *theme.yml*, 
+  + *workflows.yml*
+- Autocomplete for an entity methods added dynamically during application execution
+- Possibility to navigate via a RequireJS modules
 
 Note: plugin is under heavy development, so the full list of the features will be provided when stable version is released.
-
-
