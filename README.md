@@ -34,5 +34,3 @@ Features
   + *workflows.yml*
 - Autocomplete for an entity methods added dynamically during application execution
 - Possibility to navigate via a RequireJS modules
-
-Note: plugin is under heavy development, so the full list of the features will be provided when stable version is released.
