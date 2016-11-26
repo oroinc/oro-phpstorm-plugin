@@ -63,7 +63,7 @@ class SearchCompletionTest extends CompletionTest {
             |    -
             |      target_type: <caret>
             """.stripMargin(),
-            ["text", "integer", "double", "datetime"]
+            ["text", "integer", "decimal", "datetime"]
         )
     }
 

@@ -894,7 +894,7 @@ public class SchemasV1 {
 
     @NotNull
     static Container searchElementProperties(final PropertyPath pathToRoot) {
-        final Element targetType = Scalars.strictChoices("text", "integer", "double", "datetime");
+        final Element targetType = Scalars.strictChoices("text", "integer", "decimal", "datetime");
         final PropertyPath classPropertyPath = pathToRoot.add("$this");
         final Element field = Scalars.field(classPropertyPath);
         final Element targetFields = Sequence.of(field);
