@@ -1,21 +1,21 @@
-Oro PhpStorm Plug-in [![Build Status](https://travis-ci.org/orocrm/oro-phpstorm-plugin.svg?branch=master)](https://travis-ci.org/orocrm/oro-phpstorm-plugin)
+Oro PhpStorm Plugin [![Build Status](https://travis-ci.org/orocrm/oro-phpstorm-plugin.svg?branch=master)](https://travis-ci.org/orocrm/oro-phpstorm-plugin)
 ==========================================================================================================================================================================
 
 [![Version](http://phpstorm.espend.de/badge/8449/version)](https://plugins.jetbrains.com/plugin/8449)
 [![Downloads](http://phpstorm.espend.de/badge/8449/downloads)](https://plugins.jetbrains.com/plugin/8449)
 [![Downloads last month](http://phpstorm.espend.de/badge/8449/last-month)](https://plugins.jetbrains.com/plugin/8449)
 
-This plug-in for PhpStorm helps increase the development speed for the OroPlatform-based projects.
+This plugin for PhpStorm helps increase the development speed for the OroPlatform-based projects.
 
 Requirements
 -------------
 
-The plug-in requires PhpStorm 2016.1+.
+The plugin requires PhpStorm 2016.1+.
 
 Version
 -------
 
-The plug-in supports applications based on the 2.0.0 version of the OroPlatform.
+The plugin supports applications based on the 2.0.0 version of the OroPlatform.
 
 Install and Upgrade
 --------------------
