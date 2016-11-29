@@ -14,6 +14,8 @@ public class RequirejsReference extends PsiPolyVariantReferenceBase<PsiElement> 
         this.text = text;
     }
 
+    //TODO: use configuration from RequireJsComponent
+
     @NotNull
     @Override
     public ResolveResult[] multiResolve(boolean incompleteCode) {

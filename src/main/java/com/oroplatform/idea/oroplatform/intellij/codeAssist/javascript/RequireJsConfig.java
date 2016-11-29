@@ -14,6 +14,10 @@ public class RequireJsConfig {
         this.mappings.putAll(mappings);
     }
 
+    RequireJsConfig() {
+        this(new HashMap<>(), new HashMap<>());
+    }
+
     public Optional<String> getPathAliasFor(String path) {
         return Optional.ofNullable(pathAliases.get(path));
     }

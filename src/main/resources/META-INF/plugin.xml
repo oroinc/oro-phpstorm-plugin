@@ -174,6 +174,9 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
         <component>
             <implementation-class>com.oroplatform.idea.oroplatform.intellij.ProjectConfigurator</implementation-class>
         </component>
+        <component>
+            <implementation-class>com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsComponent</implementation-class>
+        </component>
     </project-components>
 
     <application-components>
