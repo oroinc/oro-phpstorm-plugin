@@ -627,7 +627,8 @@ public class SchemasV1 {
                                     Property.named("update_relationship", action),
                                     Property.named("delete_relationship", action)
                                 )),
-                                Property.named("filters", apiFilters(new PropertyPath(rootElementName, "entity", "$this")))
+                                Property.named("filters", apiFilters(new PropertyPath(rootElementName, "entity", "$this"))),
+                                Property.named("acl_resource", Scalars.acl)
                             ))
                         ))
                     )).withKeyElement(Scalars.fullEntity)

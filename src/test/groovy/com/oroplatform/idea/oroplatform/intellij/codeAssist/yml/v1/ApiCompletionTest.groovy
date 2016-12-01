@@ -254,7 +254,7 @@ class ApiCompletionTest extends CompletionTest {
             |          <caret>
             """.stripMargin(),
 
-            ["exclude", "target_class", "target_type", "actions", "filters"]
+            ["exclude", "target_class", "target_type", "actions", "filters", "acl_resource"]
         )
     }
 }
