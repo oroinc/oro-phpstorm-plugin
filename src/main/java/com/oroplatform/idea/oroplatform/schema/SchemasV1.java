@@ -439,7 +439,8 @@ public class SchemasV1 {
                     Property.named("priority", Scalars.integer),
                     Property.named("description", Scalars.any),
                     Property.named("tooltip", Scalars.any),
-                    Property.named("configurator", Scalars.phpCallback)
+                    Property.named("configurator", Scalars.phpCallback),
+                    Property.named("handler", Scalars.any)
                 )
             )),
             Property.named("fields", Container.with(
@@ -450,7 +451,8 @@ public class SchemasV1 {
                     Property.named("priority", Scalars.integer),
                     Property.named("ui_only", Scalars.bool),
                     Property.named("data_type", dataType()),
-                    Property.named("tooltip", Scalars.any)
+                    Property.named("tooltip", Scalars.any),
+                    Property.named("page_reload", Scalars.bool)
                 )
             )),
             Property.named("tree", Container.with(

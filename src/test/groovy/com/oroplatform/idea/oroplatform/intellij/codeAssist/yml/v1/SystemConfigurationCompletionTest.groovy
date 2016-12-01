@@ -40,7 +40,7 @@ class SystemConfigurationCompletionTest extends CompletionTest {
             |      <caret>
             """.stripMargin(),
 
-            ["title", "icon", "priority", "description", "tooltip", "configurator", "page_reload"]
+            ["title", "icon", "priority", "description", "tooltip", "configurator", "page_reload", "handler"]
         )
     }
 
@@ -53,7 +53,7 @@ class SystemConfigurationCompletionTest extends CompletionTest {
             |      <caret>
             """.stripMargin(),
 
-            ["type", "data_type", "tooltip", "acl_resource", "priority", "ui_only", "options"]
+            ["type", "data_type", "tooltip", "acl_resource", "priority", "ui_only", "options", "page_reload"]
         )
     }
 
