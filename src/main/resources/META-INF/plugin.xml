@@ -10,6 +10,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.0-alpha23</h2>
+<ul>
+  <li>Small fixes for system_configuration.yml and api.yml</li>
+</ul>
+
 <h2>1.0.0-alpha22</h2>
 <ul>
   <li>Support for PhpStorm 2016.3+</li>
