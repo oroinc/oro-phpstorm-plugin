@@ -595,7 +595,6 @@ public class SchemasV1 {
                             ))
                         )),
                         Property.named("identifier_field_names", Sequence.of(Scalars.field(new PropertyPath(rootElementName, "entities", "$this")))),
-                        Property.named("post_serialize", Sequence.of(Scalars.callable)),
                         Property.named("delete_handler", Scalars.service),
                         Property.named("form_type", Scalars.formType),
                         Property.named("form_options", formOptions),

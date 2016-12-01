@@ -41,8 +41,22 @@ class ApiCompletionTest extends CompletionTest {
             """.stripMargin(),
 
             ["exclude", "inherit", "exclusion_policy", "max_results", "order_by", "disable_inclusion", "disable_fieldset",
-             "hints", "identifier_field_names", "post_serialize", "delete_handler", "form_type", "form_options", "fields",
+             "hints", "identifier_field_names", "delete_handler", "form_type", "form_options", "fields",
              "filters", "sorters", "actions", "subresources"]
+        )
+    }
+
+    def void "test: not suggest not supported entities properties"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    stdClass:
+            |      <caret>
+            """.stripMargin(),
+
+            [],
+            ["post_serialize"]
         )
     }
 
