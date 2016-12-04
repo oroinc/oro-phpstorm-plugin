@@ -34,7 +34,9 @@ class CompletionSchemaVisitor extends YamlVisitor {
     @Override
     protected void handleContainer(Container container, ElementPattern<? extends PsiElement> captureElement) {
         final List<ChoicesProvider.Choice> choices = container.getProperties().stream()
-            .flatMap(property -> property.nameExamples().stream().map(name -> new ChoicesProvider.Choice(name, propertyDescriptionProvider.getDescription(property))))
+            .flatMap(property -> property.nameExamples().stream()
+                .map(name -> new ChoicesProvider.Choice(name, propertyDescriptionProvider.getDescription(property), property.getKeyElement().getDefaultValueDescriptor()))
+            )
             .collect(Collectors.toList());
 
         completion.extend(

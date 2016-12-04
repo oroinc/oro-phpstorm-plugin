@@ -1,10 +1,13 @@
 package com.oroplatform.idea.oroplatform.schema;
 
+import com.oroplatform.idea.oroplatform.Functions;
+import com.oroplatform.idea.oroplatform.PhpClassUtil;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.LayoutAssetsCssOutputChoicesProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PublicResourcesRootDirFinder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 import static java.util.Arrays.asList;
 
@@ -385,6 +388,8 @@ public class SchemasV1 {
             Property.named("init_actions", actions)
         );
 
+        final Function<String, String> getSimpleClassName = PhpClassUtil::getSimpleName;
+
         return Container.with(
             Property.named("imports", Sequence.of(Container.with(
                 Property.named("resource", Scalars.filePath)
@@ -393,7 +398,8 @@ public class SchemasV1 {
                 Container.with(
                     Property.named("label", Scalars.any),
                     Property.named("entity", Scalars.fullEntity),
-                    Property.named("entity_attribute", Scalars.field(new PropertyPath("workflows", "$this", "entity").pointsToValue())),
+                    Property.named("entity_attribute", Scalars.any)
+                        .withKeyElement(Scalars.any(new DefaultValueDescriptor(new PropertyPath("workflows", "$this", "entity").pointsToValue(), getSimpleClassName.andThen(Functions::snakeCase)))),
                     Property.named("is_system", Scalars.bool),
                     Property.named("start_step", Scalars.any),
                     Property.named("priority", Scalars.integer),

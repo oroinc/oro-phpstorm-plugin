@@ -352,4 +352,36 @@ public class WorkflowCompletionTest extends CompletionTest implements RandomIden
             ["\$someAttribute"]
         )
     }
+
+    def void "test: complete entity_attribute default value"() {
+        completion(
+            """
+            |workflows:
+            |  some:
+            |    entity: Some\\MyCustomEntity
+            |    entity_attribu<caret>
+            """.stripMargin(),
+            """
+            |workflows:
+            |  some:
+            |    entity: Some\\MyCustomEntity
+            |    entity_attribute: my_custom_entity<caret>
+            """.stripMargin()
+        )
+    }
+
+    def void "test: complete entity_attribute default value when entity is not yet defined"() {
+        completion(
+            """
+            |workflows:
+            |  some:
+            |    entity_attribu<caret>
+            """.stripMargin(),
+            """
+            |workflows:
+            |  some:
+            |    entity_attribute: <caret>
+            """.stripMargin()
+        )
+    }
 }

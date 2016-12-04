@@ -5,6 +5,12 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.oroplatform.idea.oroplatform.schema.DefaultValueDescriptor;
+import org.jetbrains.yaml.psi.YAMLFile;
+
+import java.util.Collection;
+
+import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getAncestors;
 
 class KeyInsertHandler implements InsertHandler<LookupElement> {
     static final InsertHandler<LookupElement> INSTANCE = new KeyInsertHandler();
@@ -26,6 +32,20 @@ class KeyInsertHandler implements InsertHandler<LookupElement> {
             editor.getCaretModel().moveToOffset(tailPos + padText.length());
         } else {
             editor.getCaretModel().moveToOffset(lastCharPositionIgnoringSpace(document, lastCharPos + 1));
+        }
+
+        final DefaultValueDescriptor defaultValueDescriptor = item.getUserData(DefaultValueDescriptor.KEY);
+
+        if(defaultValueDescriptor != null && item.getPsiElement() != null) {
+            final YAMLFile file = (YAMLFile) context.getFile();
+            final Collection<String> properties = YamlPsiElements.getPropertyFrom(defaultValueDescriptor.valueFrom, YamlPsiElements.getMappingsFrom(file), getAncestors(item.getPsiElement()));
+            final String defaultValue = properties.stream()
+                .map(defaultValueDescriptor.transformValue)
+                .findAny()
+                .orElse("");
+
+            document.insertString(editor.getCaretModel().getOffset(), defaultValue);
+            editor.getCaretModel().moveToOffset(editor.getCaretModel().getOffset() + defaultValue.length());
         }
 
 //        TODO: turn off because more sophisticated logic here is needed. AutoPopup should be shown only for choices and references

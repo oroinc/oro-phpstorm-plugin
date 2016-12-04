@@ -202,7 +202,11 @@ final class Scalars {
         }
     };
 
-    final static Scalar any = new Scalar();
+    final static Scalar any = any(null);
+
+    static Scalar any(@Nullable DefaultValueDescriptor defaultValueDescriptor) {
+        return new Scalar(Collections.emptyList(), defaultValueDescriptor);
+    }
 
     final static Scalar fullEntity = phpClass(PhpClass.entity(false));
 

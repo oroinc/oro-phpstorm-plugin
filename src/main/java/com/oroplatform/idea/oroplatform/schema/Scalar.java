@@ -18,9 +18,15 @@ import java.util.LinkedList;
 public class Scalar implements Element {
 
     private final Collection<Requirement> requirements = new LinkedList<>();
+    private final DefaultValueDescriptor defaultValueDescriptor;
+
+    Scalar(Collection<? extends Requirement> requirements, @Nullable DefaultValueDescriptor defaultValueDescriptor) {
+        this.requirements.addAll(requirements);
+        this.defaultValueDescriptor = defaultValueDescriptor;
+    }
 
     Scalar(Collection<? extends Requirement> requirements) {
-        this.requirements.addAll(requirements);
+        this(requirements, null);
     }
 
     Scalar() {
@@ -35,6 +41,10 @@ public class Scalar implements Element {
     @Nullable
     public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
         return null;
+    }
+
+    public DefaultValueDescriptor getDefaultValueDescriptor() {
+        return defaultValueDescriptor;
     }
 
     @Nullable
