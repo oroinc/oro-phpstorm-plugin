@@ -357,7 +357,12 @@ public class SchemasV1 {
             Property.named("order", Scalars.integer),
             Property.named("is_final", Scalars.bool),
             Property.named("entity_acl", entityAcl),
-            Property.named("allowed_transitions", Sequence.of(Scalars.any))
+            Property.named("allowed_transitions", Sequence.of(
+                OneOf.from(
+                    Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "transitions").pointsToValue()),
+                    Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "transitions", "*", "name").pointsToValue())
+                )
+            ))
         );
 
         final Container transition = Container.with(
@@ -401,7 +406,10 @@ public class SchemasV1 {
                     Property.named("entity_attribute", Scalars.any)
                         .withKeyElement(Scalars.any(new DefaultValueDescriptor(new PropertyPath("workflows", "$this", "entity").pointsToValue(), getSimpleClassName.andThen(Functions::snakeCase)))),
                     Property.named("is_system", Scalars.bool),
-                    Property.named("start_step", Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "steps").pointsToValue())),
+                    Property.named("start_step", OneOf.from(
+                        Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "steps").pointsToValue()),
+                        Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "steps", "*", "name").pointsToValue()))
+                    ),
                     Property.named("priority", Scalars.integer),
                     Property.named("exclusive_active_groups", Sequence.of(Scalars.any)),
                     Property.named("exclusive_record_groups", Sequence.of(Scalars.any)),

@@ -144,7 +144,7 @@ public class YamlPsiElements {
                 filterMappings(elements).stream()
                     .flatMap(mapping -> toStream(mapping.getKeyValueByKey(property.getName())))
                     .flatMap(keyValue -> toStream(keyValue::getValue)),
-                filterSequences(elements).stream()
+                "*".equals(property.getName()) ? getSequenceItems(elements).stream() : filterSequences(elements).stream()
             ).collect(Collectors.toList());
         }
     }

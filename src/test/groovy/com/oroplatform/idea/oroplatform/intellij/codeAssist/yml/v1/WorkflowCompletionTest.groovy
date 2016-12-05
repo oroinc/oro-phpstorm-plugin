@@ -129,6 +129,69 @@ public class WorkflowCompletionTest extends CompletionTest implements RandomIden
         )
     }
 
+    def void "test: suggest steps in 'start_step' when steps are defined as sequence"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    steps:
+            |      - name: step1
+            |      - name: step2
+            |    start_step: <caret>
+            |  some2:
+            |    steps:
+            |      - name: step3
+            """.stripMargin(),
+
+            ["step1", "step2"],
+            ["step3"]
+        )
+    }
+
+    def void "test: suggest transitions in 'allowed_transitions'"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    steps:
+            |      step1:
+            |        allowed_transitions:
+            |          - <caret>
+            |    transitions:
+            |      transition1: ~
+            |      transition2: ~
+            |  some2:
+            |    transitions:
+            |      transition3: ~
+            """.stripMargin(),
+
+            ["transition1", "transition2"],
+            ["transition3"]
+        )
+    }
+
+    def void "test: suggest transitions in 'allowed_transitions' when transitions are defined as sequence"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    steps:
+            |      step1:
+            |        allowed_transitions:
+            |          - <caret>
+            |    transitions:
+            |      - name: transition1
+            |      - name: transition2
+            |  some2:
+            |    transitions:
+            |      - name: transition3
+            """.stripMargin(),
+
+            ["transition1", "transition2"],
+            ["transition3"]
+        )
+    }
+
     def void "test: suggest properties in 'attributes'"() {
         suggestions(
             """
