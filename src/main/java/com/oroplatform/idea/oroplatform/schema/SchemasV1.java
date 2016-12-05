@@ -401,7 +401,7 @@ public class SchemasV1 {
                     Property.named("entity_attribute", Scalars.any)
                         .withKeyElement(Scalars.any(new DefaultValueDescriptor(new PropertyPath("workflows", "$this", "entity").pointsToValue(), getSimpleClassName.andThen(Functions::snakeCase)))),
                     Property.named("is_system", Scalars.bool),
-                    Property.named("start_step", Scalars.any),
+                    Property.named("start_step", Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "steps").pointsToValue())),
                     Property.named("priority", Scalars.integer),
                     Property.named("exclusive_active_groups", Sequence.of(Scalars.any)),
                     Property.named("exclusive_record_groups", Sequence.of(Scalars.any)),

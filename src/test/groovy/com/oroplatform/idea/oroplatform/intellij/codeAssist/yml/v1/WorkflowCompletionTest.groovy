@@ -110,6 +110,25 @@ public class WorkflowCompletionTest extends CompletionTest implements RandomIden
         )
     }
 
+    def void "test: suggest steps in 'start_step'"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    steps:
+            |      step1: ~
+            |      step2: ~
+            |    start_step: <caret>
+            |  some2:
+            |    steps:
+            |      step3: ~
+            """.stripMargin(),
+
+            ["step1", "step2"],
+            ["step3"]
+        )
+    }
+
     def void "test: suggest properties in 'attributes'"() {
         suggestions(
             """
