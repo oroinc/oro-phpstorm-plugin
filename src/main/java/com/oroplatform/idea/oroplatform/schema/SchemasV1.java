@@ -413,7 +413,9 @@ public class SchemasV1 {
                     Property.named("priority", Scalars.integer),
                     Property.named("exclusive_active_groups", Sequence.of(Scalars.any)),
                     Property.named("exclusive_record_groups", Sequence.of(Scalars.any)),
-                    Property.named("defaults", Container.any),
+                    Property.named("defaults", Container.with(
+                        Property.named("active", Scalars.bool)
+                    ).allowExtraProperties()),
                     Property.named("steps_display_ordered", Scalars.bool),
                     Property.named("attributes", OneOf.from(
                         Container.with(attribute),

@@ -106,7 +106,20 @@ public class WorkflowCompletionTest extends CompletionTest implements RandomIden
             |    <caret>
             """.stripMargin(),
 
-            ["label", "entity", "entity_attribute", "is_system", "start_step", "steps_display_ordered", "attributes", "steps", "transitions", "transition_definitions"]
+            ["label", "entity", "entity_attribute", "is_system", "start_step", "steps_display_ordered", "attributes", "steps", "transitions", "transition_definitions", "defaults"]
+        )
+    }
+
+    def void "test: suggest properties in 'defaults'"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    defaults:
+            |      <caret>
+            """.stripMargin(),
+
+            ["active"]
         )
     }
 
