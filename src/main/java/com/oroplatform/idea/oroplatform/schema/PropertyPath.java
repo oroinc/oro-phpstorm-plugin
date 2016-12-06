@@ -4,15 +4,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Queue;
 
 public class PropertyPath {
 
     private final List<Property> properties = new LinkedList<>();
     private final boolean pointsToValue;
+    private final Condition condition;
 
     public PropertyPath(String... properties) {
-        this(getProperties(properties), false);
+        this(getProperties(properties), false, null);
     }
 
     @NotNull
@@ -24,9 +26,10 @@ public class PropertyPath {
         return newProperties;
     }
 
-    private PropertyPath(List<Property> properties, boolean pointsToValue) {
+    private PropertyPath(List<Property> properties, boolean pointsToValue, Condition condition) {
         this.pointsToValue = pointsToValue;
         this.properties.addAll(properties);
+        this.condition = condition;
     }
 
     PropertyPath add(String... properties) {
@@ -34,7 +37,7 @@ public class PropertyPath {
         newProperties.addAll(this.properties);
         newProperties.addAll(getProperties(properties));
 
-        return new PropertyPath(newProperties, pointsToValue);
+        return new PropertyPath(newProperties, pointsToValue, condition);
     }
 
     public Queue<Property> getProperties() {
@@ -44,7 +47,23 @@ public class PropertyPath {
     public PropertyPath dropHead() {
         LinkedList<Property> newProperties = new LinkedList<>(properties);
         newProperties.poll();
-        return new PropertyPath(newProperties, pointsToValue);
+        return new PropertyPath(newProperties, pointsToValue, condition);
+    }
+
+    public PropertyPath pointsToValue() {
+        return new PropertyPath(this.properties, true, condition);
+    }
+
+    public boolean doesPointToValue() {
+        return pointsToValue;
+    }
+
+    public PropertyPath withCondition(Condition condition) {
+        return new PropertyPath(properties, pointsToValue, condition);
+    }
+
+    public Optional<Condition> getCondition() {
+        return Optional.ofNullable(condition);
     }
 
     public final static class Property {
@@ -60,16 +79,30 @@ public class PropertyPath {
             return name;
         }
 
+        public boolean isWildcard() {
+            return "*".equals(name);
+        }
+
         public boolean isThis() {
             return isThis;
         }
     }
 
-    public PropertyPath pointsToValue() {
-        return new PropertyPath(this.properties, true);
-    }
+    public final static class Condition {
+        private final PropertyPath relativePropertyPath;
+        private final String expectedValue;
 
-    public boolean doesPointToValue() {
-        return pointsToValue;
+        public Condition(PropertyPath relativePropertyPath, String expectedValue) {
+            this.relativePropertyPath = relativePropertyPath;
+            this.expectedValue = expectedValue;
+        }
+
+        public PropertyPath getRelativePropertyPath() {
+            return relativePropertyPath;
+        }
+
+        public String getExpectedValue() {
+            return expectedValue;
+        }
     }
 }

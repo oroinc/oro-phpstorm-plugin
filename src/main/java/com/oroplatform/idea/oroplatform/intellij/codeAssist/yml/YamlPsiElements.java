@@ -121,12 +121,21 @@ public class YamlPsiElements {
 
     private static Collection<String> getPropertyValuesFrom(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
         if(path.getProperties().isEmpty()) {
-            return getPropertyValuesFrom(elements);
+            return getPropertyValuesFrom(elements.stream()
+                .filter(element -> path.getCondition().map(condition -> meetsCondition(elements, condition)).orElse(true))
+                .collect(Collectors.<YAMLPsiElement>toList()));
         }
 
         final PropertyPath.Property property = path.getProperties().element();
 
         return getPropertyValuesFrom(path.dropHead(), getElementsForProperty(property, elements, ancestors), ancestors);
+    }
+
+    @NotNull
+    private static Boolean meetsCondition(Collection<? extends YAMLPsiElement> elements, PropertyPath.Condition condition) {
+        final PropertyPath relativePropertyPath = condition.getRelativePropertyPath();
+        final String expectedValue = condition.getExpectedValue();
+        return getPropertyValuesFrom(relativePropertyPath, elements, Collections.emptySet()).contains(expectedValue);
     }
 
     @NotNull
@@ -140,11 +149,17 @@ public class YamlPsiElements {
                     .filter(ancestors::contains)
             ).collect(Collectors.toList());
         } else {
+            //TODO: refactor this mess. varargs Stream.concat?
             return Stream.concat(
                 filterMappings(elements).stream()
-                    .flatMap(mapping -> toStream(mapping.getKeyValueByKey(property.getName())))
+                    .flatMap(mapping -> property.isWildcard() ? mapping.getKeyValues().stream() : toStream(mapping.getKeyValueByKey(property.getName())))
                     .flatMap(keyValue -> toStream(keyValue::getValue)),
-                "*".equals(property.getName()) ? getSequenceItems(elements).stream() : filterSequences(elements).stream()
+                Stream.concat(
+                    property.isWildcard() ? getSequenceItems(elements).stream() : filterSequences(elements).stream(),
+                    "..".equals(property.getName()) ?
+                        elements.stream().flatMap(YamlPsiElements::parentOf).flatMap(YamlPsiElements::parentOf).flatMap(elementFilter(YAMLPsiElement.class)) :
+                        Stream.empty()
+                )
             ).collect(Collectors.toList());
         }
     }
@@ -155,6 +170,10 @@ public class YamlPsiElements {
             .flatMap(elementFilter(YAMLKeyValue.class))
             .map(YAMLKeyValue::getKeyText)
             .collect(Collectors.toList());
+    }
+
+    private static Stream<PsiElement> parentOf(PsiElement element) {
+        return toStream(element.getParent());
     }
 
     private static Collection<String> getPropertyValuesFrom(Collection<? extends YAMLPsiElement> elements) {

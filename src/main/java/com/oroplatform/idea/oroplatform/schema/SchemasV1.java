@@ -395,6 +395,11 @@ public class SchemasV1 {
 
         final Function<String, String> getSimpleClassName = PhpClassUtil::getSimpleName;
 
+        final Element stepReference = OneOf.from(
+            Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "steps").pointsToValue()),
+            Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "steps", "*", "name").pointsToValue())
+        );
+
         return Container.with(
             Property.named("imports", Sequence.of(Container.with(
                 Property.named("resource", Scalars.filePath)
@@ -406,10 +411,7 @@ public class SchemasV1 {
                     Property.named("entity_attribute", Scalars.any)
                         .withKeyElement(Scalars.any(new DefaultValueDescriptor(new PropertyPath("workflows", "$this", "entity").pointsToValue(), getSimpleClassName.andThen(Functions::snakeCase)))),
                     Property.named("is_system", Scalars.bool),
-                    Property.named("start_step", OneOf.from(
-                        Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "steps").pointsToValue()),
-                        Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "steps", "*", "name").pointsToValue()))
-                    ),
+                    Property.named("start_step", stepReference),
                     Property.named("priority", Scalars.integer),
                     Property.named("exclusive_active_groups", Sequence.of(Scalars.any)),
                     Property.named("exclusive_record_groups", Sequence.of(Scalars.any)),
@@ -432,7 +434,25 @@ public class SchemasV1 {
                     Property.named("transition_definitions", OneOf.from(
                         Container.with(transitionDefinition),
                         Sequence.of(transitionDefinition.andWith(Property.named("name", Scalars.any)))
-                    ))
+                    )),
+                    Property.named("entity_restrictions", Container.with(
+                        Container.with(
+                            Property.named("attribute", OneOf.from(
+                                Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "attributes")
+                                    .pointsToValue().withCondition(new PropertyPath.Condition(new PropertyPath("*", "type").pointsToValue(), "entity"))
+                                ),
+                                //TODO: improve "condition" syntax
+                                Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "attributes", "*", "name")
+                                    .pointsToValue().withCondition(new PropertyPath.Condition(new PropertyPath("..", "type").pointsToValue(), "entity"))
+                                )
+                            )),
+                            Property.named("field", Scalars.any),
+                            Property.named("mode", Scalars.strictChoices("full", "disallow", "allow")),
+                            Property.named("values", Sequence.of(Scalars.any)),
+                            Property.named("step", stepReference)
+                        )
+                    )),
+                    Property.named("scopes", Sequence.of(Container.any))
                 ).allowExtraProperties()
             ))
         );

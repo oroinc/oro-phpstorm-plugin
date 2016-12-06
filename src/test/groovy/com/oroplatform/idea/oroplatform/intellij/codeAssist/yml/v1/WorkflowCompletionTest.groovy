@@ -106,7 +106,132 @@ public class WorkflowCompletionTest extends CompletionTest implements RandomIden
             |    <caret>
             """.stripMargin(),
 
-            ["label", "entity", "entity_attribute", "is_system", "start_step", "steps_display_ordered", "attributes", "steps", "transitions", "transition_definitions", "defaults"]
+            ["label", "entity", "entity_attribute", "is_system", "start_step", "steps_display_ordered", "attributes",
+             "steps", "transitions", "transition_definitions", "defaults", "entity_restrictions", "scopes"]
+        )
+    }
+
+    def void "test: suggest properties in 'entity_restrictions'"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    entity_restrictions:
+            |      someRestriction:
+            |        <caret>
+            """.stripMargin(),
+
+            ["attribute", "field", "mode", "values", "step"]
+        )
+    }
+
+
+    def void "test: suggest 'mode' values in 'entity_restrictions'"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    entity_restrictions:
+            |      someRestriction:
+            |        mode: <caret>
+            """.stripMargin(),
+
+            ["full", "disallow", "allow"]
+        )
+    }
+
+    def void "test: suggest attributes for 'attribute' in 'entity_restrictions'"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    attributes:
+            |      attr1:
+            |        type: entity
+            |      attr2:
+            |        type: entity
+            |    entity_restrictions:
+            |      someRestriction:
+            |        attribute: <caret>
+            """.stripMargin(),
+
+            ["attr1", "attr2"]
+        )
+    }
+
+    def void "test: not suggest attributes for 'attribute' in 'entity_restrictions' when type is different than 'entity'"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    attributes:
+            |      attr1:
+            |        type: bool
+            |      attr2:
+            |        type: bool
+            |    entity_restrictions:
+            |      someRestriction:
+            |        attribute: <caret>
+            """.stripMargin(),
+
+            [],
+            ["attr1", "attr2"]
+        )
+    }
+
+    def void "test: suggest attributes for 'attribute' in 'entity_restrictions' when are defined as sequence"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    attributes:
+            |      - name: attr1
+            |        type: entity
+            |      - name: attr2
+            |        type: entity
+            |    entity_restrictions:
+            |      someRestriction:
+            |        attribute: <caret>
+            """.stripMargin(),
+
+            ["attr1", "attr2"]
+        )
+    }
+
+    def void "test: not suggest attributes for 'attribute' in 'entity_restrictions' when are defined as sequence and type is different than 'entity'"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    attributes:
+            |      - name: attr1
+            |        type: bool
+            |      - name: attr2
+            |        type: bool
+            |    entity_restrictions:
+            |      someRestriction:
+            |        attribute: <caret>
+            """.stripMargin(),
+
+            [],
+            ["attr1", "attr2"]
+        )
+    }
+
+    def void "test: suggest steps for 'step' in 'entity_restrictions'"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    steps:
+            |      step1: ~
+            |      step2: ~
+            |    entity_restrictions:
+            |      someRestriction:
+            |        step: <caret>
+            """.stripMargin(),
+
+            ["step1", "step2"]
         )
     }
 
