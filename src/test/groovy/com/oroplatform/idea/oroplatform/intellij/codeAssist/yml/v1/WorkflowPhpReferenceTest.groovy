@@ -30,7 +30,9 @@ class WorkflowPhpReferenceTest extends PhpReferenceTest {
             |}
             |
             |namespace Oro\\Bundle\\AcmeBundle\\Entity {
-            |  class Address extends AbstractEntity {}
+            |  class Address extends AbstractEntity {
+            |    private \$name;
+            |  }
             |  abstract class AbstractEntity {}
             |}
             |
@@ -65,6 +67,22 @@ class WorkflowPhpReferenceTest extends PhpReferenceTest {
             """.stripMargin(),
 
             ["SomeClass", "Address"]
+        )
+    }
+
+    def void "test: suggest entity field in trigger"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transitions:
+            |      some:
+            |        triggers:
+            |          - entity_class: Oro\\Bundle\\AcmeBundle\\Entity\\Address
+            |            field: <caret>
+            """.stripMargin(),
+
+            ["name"]
         )
     }
 }

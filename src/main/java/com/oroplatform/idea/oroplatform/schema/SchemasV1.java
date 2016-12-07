@@ -384,6 +384,14 @@ public class SchemasV1 {
                     )).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "attributes").pointsToValue()))
                 ))
             )),
+            Property.named("triggers", Sequence.of(Container.with(
+                Property.named("entity_class", Scalars.fullEntity),
+                Property.named("event", Scalars.strictChoices("create", "update", "delete")),
+                Property.named("field", Scalars.field(new PropertyPath("workflows", "$this", "transitions", "$this", "triggers", "$this", "entity_class").pointsToValue())),
+                Property.named("queue", Scalars.bool),
+                Property.named("require", Scalars.any),
+                Property.named("relation", Scalars.field(new PropertyPath("workflows", "$this", "transitions", "$this", "triggers", "$this", "entity_class").pointsToValue()))
+            ))),
             Property.named("label", Scalars.any)
         );
 

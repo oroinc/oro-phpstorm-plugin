@@ -429,7 +429,7 @@ public class WorkflowCompletionTest extends CompletionTest implements RandomIden
             """.stripMargin(),
 
             ["step_to", "transition_definition", "is_start", "is_hidden", "is_unavailable_hidden", "acl_resource", "acl_message", "message",
-            "display_type", "page_template", "dialog_template", "frontend_options", "form_options"]
+            "display_type", "page_template", "dialog_template", "frontend_options", "form_options", "triggers"]
         )
     }
 
@@ -479,6 +479,21 @@ public class WorkflowCompletionTest extends CompletionTest implements RandomIden
             """.stripMargin(),
 
             ["class", "icon"]
+        )
+    }
+
+    def void "test: suggest properties in 'transitions.triggers'"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transitions:
+            |      some:
+            |        triggers:
+            |          - <caret>
+            """.stripMargin(),
+
+            ["entity_class", "event", "field", "queue", "require", "relation"]
         )
     }
 
