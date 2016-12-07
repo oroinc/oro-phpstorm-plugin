@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.function.Function;
 
 public class PropertyPath {
 
@@ -36,6 +37,14 @@ public class PropertyPath {
         final List<Property> newProperties = new LinkedList<>();
         newProperties.addAll(this.properties);
         newProperties.addAll(getProperties(properties));
+
+        return new PropertyPath(newProperties, pointsToValue, condition);
+    }
+
+    PropertyPath prepend(String... properties) {
+        final List<Property> newProperties = new LinkedList<>();
+        newProperties.addAll(getProperties(properties));
+        newProperties.addAll(this.properties);
 
         return new PropertyPath(newProperties, pointsToValue, condition);
     }
@@ -103,6 +112,10 @@ public class PropertyPath {
 
         public String getExpectedValue() {
             return expectedValue;
+        }
+
+        public Condition updatePath(Function<PropertyPath, PropertyPath> update) {
+            return new Condition(update.apply(relativePropertyPath), expectedValue);
         }
     }
 }

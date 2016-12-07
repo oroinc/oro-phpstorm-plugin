@@ -433,6 +433,40 @@ public class WorkflowCompletionTest extends CompletionTest implements RandomIden
         )
     }
 
+    def void "test: suggest properties in 'transitions.form_options'"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transitions:
+            |      some:
+            |        form_options:
+            |          <caret>
+            """.stripMargin(),
+
+            ["attribute_fields"]
+        )
+    }
+
+    def void "test: suggest attributes for in 'transitions.form_options.attribute_fields'"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    attributes:
+            |      attr1: ~
+            |      attr2: ~
+            |    transitions:
+            |      some:
+            |        form_options:
+            |          attribute_fields:
+            |            <caret>
+            """.stripMargin(),
+
+            ["attr1", "attr2"]
+        )
+    }
+
     def void "test: suggest properties in 'transitions.frontend_options'"() {
         suggestions(
             """

@@ -357,12 +357,7 @@ public class SchemasV1 {
             Property.named("order", Scalars.integer),
             Property.named("is_final", Scalars.bool),
             Property.named("entity_acl", entityAcl),
-            Property.named("allowed_transitions", Sequence.of(
-                OneOf.from(
-                    Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "transitions").pointsToValue()),
-                    Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "transitions", "*", "name").pointsToValue())
-                )
-            ))
+            Property.named("allowed_transitions", Sequence.of(choicesFromPropertyPath(new PropertyPath("workflows", "$this", "transitions"))))
         );
 
         final Container transition = Container.with(
@@ -381,7 +376,14 @@ public class SchemasV1 {
                 Property.named("class", Scalars.any),
                 Property.named("icon", Scalars.any)
             )),
-            Property.named("form_options", Container.any),
+            Property.named("form_options", Container.with(
+                Property.named("attribute_fields", Container.with(
+                    Property.any(Container.with(
+                        Property.named("form_type", Scalars.formType),
+                        Property.named("options", Container.any)
+                    )).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "attributes").pointsToValue()))
+                ))
+            )),
             Property.named("label", Scalars.any)
         );
 
@@ -395,10 +397,7 @@ public class SchemasV1 {
 
         final Function<String, String> getSimpleClassName = PhpClassUtil::getSimpleName;
 
-        final Element stepReference = OneOf.from(
-            Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "steps").pointsToValue()),
-            Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "steps", "*", "name").pointsToValue())
-        );
+        final Element stepReference = choicesFromPropertyPath(new PropertyPath("workflows", "$this", "steps"));
 
         return Container.with(
             Property.named("imports", Sequence.of(Container.with(
@@ -437,15 +436,13 @@ public class SchemasV1 {
                     )),
                     Property.named("entity_restrictions", Container.with(
                         Container.with(
-                            Property.named("attribute", OneOf.from(
-                                Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "attributes")
-                                    .pointsToValue().withCondition(new PropertyPath.Condition(new PropertyPath("*", "type").pointsToValue(), "entity"))
-                                ),
-                                //TODO: improve "condition" syntax
-                                Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "attributes", "*", "name")
-                                    .pointsToValue().withCondition(new PropertyPath.Condition(new PropertyPath("..", "type").pointsToValue(), "entity"))
+                            Property.named(
+                                "attribute",
+                                choicesFromPropertyPath(
+                                    new PropertyPath("workflows", "$this", "attributes"),
+                                    new PropertyPath.Condition(new PropertyPath("type").pointsToValue(), "entity")
                                 )
-                            )),
+                            ),
                             Property.named("field", Scalars.any),
                             Property.named("mode", Scalars.strictChoices("full", "disallow", "allow")),
                             Property.named("values", Sequence.of(Scalars.any)),
@@ -455,6 +452,17 @@ public class SchemasV1 {
                     Property.named("scopes", Sequence.of(Container.any))
                 ).allowExtraProperties()
             ))
+        );
+    }
+
+    private static Element choicesFromPropertyPath(PropertyPath propertyPath) {
+        return choicesFromPropertyPath(propertyPath, null);
+    }
+
+    private static Element choicesFromPropertyPath(PropertyPath propertyPath, PropertyPath.Condition condition) {
+        return OneOf.from(
+            Scalars.propertiesFromPath(propertyPath.pointsToValue().withCondition(condition != null ? condition.updatePath(path -> path.prepend("*")) : null)),
+            Scalars.propertiesFromPath(propertyPath.add("*", "name").pointsToValue().withCondition(condition != null ? condition.updatePath(path -> path.prepend("..")) : null))
         );
     }
 
