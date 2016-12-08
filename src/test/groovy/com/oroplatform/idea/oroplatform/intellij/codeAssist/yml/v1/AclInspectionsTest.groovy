@@ -148,4 +148,14 @@ class AclInspectionsTest extends InspectionTest {
             """.stripMargin()
         )
     }
+
+    def void "test: should detect invalid scalar type"() {
+        checkInspection(
+            """
+            |some_id:
+            |  $actionRequiredProperties
+            |  type: <weak_warning>["action"]</weak_warning>
+            """.stripMargin()
+        )
+    }
 }

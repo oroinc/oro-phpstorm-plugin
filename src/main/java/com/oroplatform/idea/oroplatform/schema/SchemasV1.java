@@ -318,7 +318,7 @@ public class SchemasV1 {
     }
 
     private static Schema workflow() {
-        return new Schema(new WorkflowMatcher(), workflowElement());
+        return new Schema(new WorkflowMatcher("workflow.yml"), workflowElement());
     }
 
     @NotNull

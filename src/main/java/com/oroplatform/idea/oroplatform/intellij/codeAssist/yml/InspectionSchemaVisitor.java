@@ -12,6 +12,7 @@ import org.jetbrains.yaml.psi.YAMLMapping;
 import org.jetbrains.yaml.psi.YAMLScalar;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.*;
 
@@ -21,7 +22,7 @@ class InspectionSchemaVisitor implements Visitor {
 
     InspectionSchemaVisitor(ProblemsHolder problems, List<? extends PsiElement> elements) {
         this.problems = problems;
-        this.elements.addAll(elements);
+        this.elements.addAll(elements.stream().filter(Objects::nonNull).collect(Collectors.toList()));
     }
 
     @Override
@@ -100,11 +101,18 @@ class InspectionSchemaVisitor implements Visitor {
 
     @Override
     public void visitScalar(Scalar scalar) {
+        final Collection<YAMLScalar> scalarElements = filterScalars(elements);
         for (Requirement requirement : scalar.getRequirements()) {
-            for(YAMLScalar element : filterScalars(elements)) {
+            for(YAMLScalar element : scalarElements) {
                 for (String error : requirement.getErrors(element.getTextValue())) {
                     problems.registerProblem(element, error);
                 }
+            }
+        }
+
+        if(scalarElements.isEmpty() && !elements.isEmpty()) {
+            for (PsiElement element : elements) {
+                problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.invalidType", "scalar"));
             }
         }
     }

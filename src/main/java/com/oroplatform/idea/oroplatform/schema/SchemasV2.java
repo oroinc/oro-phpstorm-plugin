@@ -21,7 +21,7 @@ public class SchemasV2 {
     static final Collection<Schema> ALL = asList(workflow(), datagrid(), acl(), api(), search(), systemConfiguration(), dashboard(), navigation());
 
     private static Schema workflow() {
-        return new Schema(new FilePathMatcher(FilePathPatterns.WORKFLOW), SchemasV1.workflowElement());
+        return new Schema(new WorkflowMatcher("workflows.yml"), SchemasV1.workflowElement());
     }
 
     private static Schema datagrid() {

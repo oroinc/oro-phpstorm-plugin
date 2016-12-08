@@ -15,6 +15,12 @@ import java.util.stream.Stream;
 
 class WorkflowMatcher implements FileMatcher {
 
+    private final String rootFileName;
+
+    WorkflowMatcher(String rootFileName) {
+        this.rootFileName = rootFileName;
+    }
+
     @Override
     public boolean matches(PsiFile file) {
         if(!OroPlatformSettings.getInstance(file.getProject()).isPluginEnabled()) {
@@ -35,13 +41,13 @@ class WorkflowMatcher implements FileMatcher {
         final GlobalSearchScope scope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.allScope(file.getProject()), YAMLFileType.YML);
         final ImportIndex index = ImportIndex.instance(file.getProject());
 
-        return Stream.of("workflow.yml", "workflows.yml")
+        return Stream.of(rootFileName)
             .flatMap(filename -> Stream.of(FilenameIndex.getFilesByName(file.getProject(), filename, scope)))
             .anyMatch(workflowFile -> isWorkflowPath(filePath(workflowFile)) && isImported(index, file, workflowFile));
     }
 
     private boolean isWorkflowPath(String path) {
-        return path.endsWith(SchemasV1.FilePathPatterns.WORKFLOW) || path.endsWith(SchemasV2.FilePathPatterns.WORKFLOW);
+        return (path.endsWith(SchemasV1.FilePathPatterns.WORKFLOW) || path.endsWith(SchemasV2.FilePathPatterns.WORKFLOW)) && path.endsWith(rootFileName);
     }
 
     private static String filePath(PsiFile file) {
