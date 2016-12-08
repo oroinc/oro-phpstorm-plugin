@@ -14,24 +14,26 @@ public interface ChoicesProvider {
         private final DefaultValueDescriptor defaultValueDescriptor;
         private final String description;
         private final Icon icon;
+        private final boolean deprecated;
 
-        public Choice(String name, String description) {
-            this(name, description, null, null);
+        Choice(String name, String description) {
+            this(name, description, null, null, false);
         }
 
-        public Choice(String name, String description, DefaultValueDescriptor defaultValueDescriptor) {
-            this(name, description, null, defaultValueDescriptor);
+        public Choice(String name, String description, DefaultValueDescriptor defaultValueDescriptor, boolean deprecated) {
+            this(name, description, null, defaultValueDescriptor, deprecated);
         }
 
-        public Choice(String name, String description, Icon icon) {
-            this(name, description, icon, null);
+        Choice(String name, String description, Icon icon) {
+            this(name, description, icon, null, false);
         }
 
-        public Choice(String name, String description, Icon icon, DefaultValueDescriptor defaultValueDescriptor) {
+        private Choice(String name, String description, Icon icon, DefaultValueDescriptor defaultValueDescriptor, boolean deprecated) {
             this.name = name;
             this.description = description;
             this.icon = icon;
             this.defaultValueDescriptor = defaultValueDescriptor;
+            this.deprecated = deprecated;
         }
 
         public String getName() {
@@ -44,6 +46,10 @@ public interface ChoicesProvider {
 
         public Icon getIcon() {
             return icon;
+        }
+
+        public boolean isDeprecated() {
+            return deprecated;
         }
 
         public DefaultValueDescriptor getDefaultValueDescriptor() {

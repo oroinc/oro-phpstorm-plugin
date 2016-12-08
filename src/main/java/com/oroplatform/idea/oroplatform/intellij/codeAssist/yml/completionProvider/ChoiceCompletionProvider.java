@@ -38,6 +38,7 @@ public class ChoiceCompletionProvider extends CompletionProvider<CompletionParam
                 final LookupElementBuilder lookupElement = LookupElementBuilder.create(element, choice.getName())
                         .withInsertHandler(insertHandler)
                         .withTypeText(choice.getDescription(), true)
+                        .withStrikeoutness(choice.isDeprecated())
                         .withIcon(choice.getIcon());
                 lookupElement.putUserData(DefaultValueDescriptor.KEY, choice.getDefaultValueDescriptor());
                 return lookupElement;

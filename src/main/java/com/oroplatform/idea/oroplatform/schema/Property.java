@@ -8,17 +8,19 @@ public class Property {
     private final Pattern name;
     private final Element valueElement;
     private final boolean required;
+    private final boolean deprecated;
     private final Scalar keyElement;
 
-    private Property(Pattern name, Element valueElement, boolean required, Scalar keyElement) {
+    private Property(Pattern name, Element valueElement, boolean required, Scalar keyElement, boolean deprecated) {
         this.name = name;
         this.valueElement = valueElement;
         this.required = required;
         this.keyElement = keyElement;
+        this.deprecated = deprecated;
     }
 
     private Property(Pattern name, Element valueElement, boolean required) {
-        this(name, valueElement, required, Scalars.any);
+        this(name, valueElement, required, Scalars.any, false);
     }
 
     Property(String name, Element valueElement) {
@@ -73,7 +75,15 @@ public class Property {
     }
 
     Property withKeyElement(Scalar key) {
-        return new Property(name, valueElement, required, key);
+        return new Property(name, valueElement, required, key, deprecated);
+    }
+
+    Property deprecated() {
+        return new Property(name, valueElement, required, keyElement, true);
+    }
+
+    public boolean isDeprecated() {
+        return deprecated;
     }
 
     public Scalar getKeyElement() {

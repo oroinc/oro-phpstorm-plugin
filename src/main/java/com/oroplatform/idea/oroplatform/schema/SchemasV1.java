@@ -395,11 +395,13 @@ public class SchemasV1 {
             Property.named("label", Scalars.any)
         );
 
-
         final Container transitionDefinition = Container.with(
-            Property.named("pre_conditions", conditions),
+            Property.named("pre_conditions", conditions).deprecated(),
+            Property.named("preconditions", conditions),
             Property.named("conditions", conditions),
-            Property.named("post_actions", actions),
+            Property.named("post_actions", actions).deprecated(),
+            Property.named("preactions", actions),
+            Property.named("actions", actions),
             Property.named("init_actions", actions)
         );
 
@@ -744,7 +746,7 @@ public class SchemasV1 {
                                 Property.named("message_parameters", Container.any)
                             ))),
                             Property.named("show_dialog", Scalars.bool)
-                        )),
+                        ).allowExtraProperties()),
                         Property.named("preactions", actions),
                         Property.named("preconditions", conditions),
                         Property.named("attributes", Container.with(

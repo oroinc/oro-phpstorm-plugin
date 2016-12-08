@@ -507,7 +507,7 @@ public class WorkflowCompletionTest extends CompletionTest implements RandomIden
             |        <caret>
             """.stripMargin(),
 
-            ["pre_conditions", "conditions", "post_actions", "init_actions"]
+            ["pre_conditions", "preconditions", "conditions", "post_actions", "preactions", "init_actions"]
         )
     }
 
