@@ -1,0 +1,21 @@
+dashboards:
+    widgets_configuration:
+        title:
+            type: oro_type_widget_title
+            options:
+               label: oro.dashboard.title.label
+               required: false
+
+    widgets:
+        quick_launchpad:
+            items:
+                settings:
+                    label:      oro.dashboard.widgets.quick_launchpad.title
+                    icon:       cogs
+                    class:      mobile-hide
+                    route:      oro_config_configuration_system
+                    acl:        oro_config_system
+                    position:   50
+    dashboards:
+        main:
+            twig: OroDashboardBundle:Index:default.html.twig

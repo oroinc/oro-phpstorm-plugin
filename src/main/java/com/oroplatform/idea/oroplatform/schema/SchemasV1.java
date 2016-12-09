@@ -108,8 +108,8 @@ public class SchemasV1 {
         final Element queryJoin = Container.with(
             Property.named("join", Scalars.any).required(),
             Property.named("alias", Scalars.any).required(),
-            Property.named("conditionType", Scalars.any),
-            Property.named("condition", Scalars.strictChoices("ON", "WITH"))
+            Property.named("conditionType", Scalars.strictChoices("ON", "WITH")),
+            Property.named("condition", Scalars.any)
         );
 
         return Container.with(
@@ -149,7 +149,7 @@ public class SchemasV1 {
                         Property.named("translatable", Scalars.bool),
                         Property.named("data_name", Scalars.any),
                         Property.named("frontend_type", Scalars.choices("string", "html", "date", "time", "datetime", "integer", "number", "decimal", "percent", "currency", "boolean", "array", "simple_array", "row_array", "select", "multi-select", "phone", "relation")),
-                        Property.named("choices", Scalars.any),
+                        Property.named("choices", OneOf.from(Sequence.of(Scalars.any), Container.with(Property.any(Scalars.any)))),
                         Property.named("template", Scalars.any),
                         Property.named("type", Scalars.choices("field", "url", "link", "twig", "translatable", "callback", "localized_number")),
                         Property.named("renderable", Scalars.bool),
@@ -258,7 +258,7 @@ public class SchemasV1 {
                         Property.named("query_parameter_names", Sequence.of(Scalars.any))
                     ))
                 )),
-                Property.named("action_configuration", Scalars.any),
+                Property.named("action_configuration", OneOf.from(Scalars.any, Sequence.of(Scalars.any))),
                 Property.named("options", Container.with(
                     Property.named("entityHint", Scalars.any),
                     Property.named("entity_pagination", Scalars.bool),
@@ -372,6 +372,9 @@ public class SchemasV1 {
             Property.named("display_type", Scalars.any),
             Property.named("page_template", Scalars.any),
             Property.named("dialog_template", Scalars.any),
+            Property.named("init_entities", Sequence.of(Scalars.fullEntity)),
+            Property.named("init_routes", Sequence.of(Scalars.route)),
+            Property.named("init_context_attribute", Scalars.any),
             Property.named("frontend_options", Container.with(
                 Property.named("class", Scalars.any),
                 Property.named("icon", Scalars.any)
@@ -392,7 +395,10 @@ public class SchemasV1 {
                 Property.named("field", Scalars.field(new PropertyPath("workflows", "$this", "transitions", "$this", "triggers", "$this", "entity_class").pointsToValue())),
                 Property.named("queue", Scalars.bool),
                 Property.named("require", Scalars.any),
-                Property.named("relation", Scalars.field(new PropertyPath("workflows", "$this", "transitions", "$this", "triggers", "$this", "entity_class").pointsToValue()))
+                Property.named("relation", Scalars.field(new PropertyPath("workflows", "$this", "transitions", "$this", "triggers", "$this", "entity_class").pointsToValue())),
+                Property.named("queued", Scalars.bool),
+                Property.named("cron", Scalars.any),
+                Property.named("filter", Scalars.any)
             ))),
             Property.named("label", Scalars.any)
         );
@@ -502,7 +508,7 @@ public class SchemasV1 {
             Property.named("fields", Container.with(
                 Container.with(
                     Property.named("type", Scalars.formType),
-                    Property.named("options", Scalars.any),
+                    Property.named("options", Container.any),
                     Property.named("acl_resource", Scalars.any),
                     Property.named("priority", Scalars.integer),
                     Property.named("ui_only", Scalars.bool),
@@ -657,14 +663,16 @@ public class SchemasV1 {
                         Property.named("fields", apiFields(new PropertyPath(rootElementName, "entities", "$this"))),
                         Property.named("filters", apiFilters(new PropertyPath(rootElementName, "entities", "$this"))),
                         Property.named("sorters", apiSorters(new PropertyPath(rootElementName, "entities", "$this"))),
-                        Property.named("actions", Container.with(
+                        Property.named("actions", OneOf.from(Scalars.bool, Container.with(
                             Property.named("get", action),
                             Property.named("get_list", action),
                             Property.named("create", action),
                             Property.named("update", action),
                             Property.named("delete", action),
-                            Property.named("delete_list", action)
-                        )),
+                            Property.named("delete_list", action),
+                            Property.named("get_subresource", action),
+                            Property.named("get_relationship", action)
+                        ))),
                         Property.named("subresources", Container.with(
                             Property.any(Container.with(
                                 Property.named("exclude", Scalars.bool),
@@ -708,7 +716,7 @@ public class SchemasV1 {
             Property.any(Container.any).withKeyElement(Scalars.action)
         ));
         final Element operations = OneOf.from(Scalars.choices("UPDATE", "DELETE"), Scalars.operation);
-        final Scalar acl = Scalars.acl;
+        final Element acl = OneOf.from(Scalars.acl, Sequence.of(Scalars.acl));
 
         return new Schema(new FilePathMatcher(FilePathPatterns.ACTIONS), Container.with(
             Property.named("operations", Container.with(
@@ -780,7 +788,7 @@ public class SchemasV1 {
                         Property.named("form_init", actions),
                         Property.named("conditions", conditions),
                         Property.named("actions", actions),
-                        Property.named("replace", Scalars.any),
+                        Property.named("replace", OneOf.from(Scalars.any, Sequence.of(Scalars.any))),
                         Property.named("applications", Sequence.of(Scalars.any))
                     )
                 ).withKeyElement(Scalars.choices("UPDATE", "DELETE"))
@@ -838,7 +846,8 @@ public class SchemasV1 {
                                 Property.named("acl", Scalars.acl),
                                 Property.named("route", Scalars.route),
                                 Property.named("position", Scalars.integer),
-                                Property.named("icon", Scalars.any)
+                                Property.named("icon", Scalars.any),
+                                Property.named("class", Scalars.any)
                             )
                         )),
                         Property.named("configuration", configuration)
@@ -1111,7 +1120,7 @@ public class SchemasV1 {
 
     private static Schema theme() {
         return new Schema(new FilePathMatcher(FilePathPatterns.THEME), Container.with(
-            Property.named("label", Scalars.trans).required(),
+            Property.named("label", Scalars.trans),
             Property.named("logo", Scalars.filePathRelativeToAppIn("../web")),
             Property.named("screenshot", Scalars.filePathRelativeToAppIn("../web")),
             Property.named("directory", Scalars.any),

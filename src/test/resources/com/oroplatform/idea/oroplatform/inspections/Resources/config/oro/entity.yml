@@ -1,0 +1,38 @@
+oro_entity:
+    exclusions:
+        - { entity: Test\Entity\Address, field: regionText }
+
+    virtual_fields:
+        Test\Entity\Address:
+            region_name:
+                query:
+                    select:
+                        expr: COALESCE(entity.regionText, region.name)
+                        return_type: string
+                    join:
+                        left:
+                            - { join: entity.region, alias: region }
+        Test\Entity\Product:
+            category:
+                query:
+                    select:
+                        expr: target.name
+                        return_type: enum
+                        filter_by_id: true
+                        label: test.product.category.label
+                    join:
+                        left:
+                            - { join: entity.category, alias: target }
+
+    entity_aliases:
+        Test\Entity\Product:
+            alias:        testproduct
+            plural_alias: testproducts
+
+    entity_alias_exclusions:
+        - Test\Entity\Address
+
+    entity_name_formats:
+        long:
+            fallback: short
+        short: ~

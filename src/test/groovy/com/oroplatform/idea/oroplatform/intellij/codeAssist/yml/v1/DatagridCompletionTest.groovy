@@ -266,7 +266,7 @@ public class DatagridCompletionTest extends CompletionTest {
             |      query:
             |        join:
             |          left:
-            |            - { condition: <caret> }
+            |            - { conditionType: <caret> }
             """.stripMargin(),
 
             ["ON", "WITH"]

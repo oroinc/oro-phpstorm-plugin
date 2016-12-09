@@ -1,0 +1,165 @@
+operations:
+    CRUD_ACTION:
+        label: CRUD_ACTION
+        button_options:
+            template: OroActionBundle:Operation:crud-button.html.twig
+        preconditions:
+            '@and':
+                - '@not_blank': $.data
+                - '@or':
+                    - '@blank': $.gridName # that operation should be displayed on single page, not on grid
+                    - '@blank': $.requestRoute # for operation execute route
+                    - '@and':
+                        - '@not_blank': $.routes[name]
+                        - '@eq':
+                            - $.routes[name]
+                            - $.requestRoute
+        preactions:
+            - '@tree':
+                conditions:
+                    '@not_blank': $.data
+                actions:
+                    - '@call_service_method':
+                        service: oro_action.helper.default_operation_request
+                        method: getRequestRoute
+                        attribute: $.requestRoute
+                    - '@call_service_method':
+                        service: oro_entity_config.helper.entity_config
+                        method: getRoutes
+                        method_parameters: [$.data, ['name', 'update']]
+                        attribute: $.routes
+                    - '@call_service_method':
+                        service: oro_entity_config.helper.entity_config
+                        method: getConfigValue
+                        method_parameters: [$.data, 'label', false]
+                        attribute: $.entityLabel
+                    - '@trans':
+                        id: $.entityLabel
+                        attribute: $.entityLabel
+
+    UPDATE:
+        extends: CRUD_ACTION
+        acl_resource: [EDIT, $.data]
+        order: 10
+        for_all_entities: true
+        for_all_datagrids: true
+        groups:
+            - view_navButtons
+            - datagridRowAction
+        preconditions:
+            '@and':
+                - '@not_blank': $.routes[update]
+        label: oro.action.edit
+        frontend_options:
+            title: oro.action.edit_entity
+        button_options:
+            icon: icon-edit
+        actions:
+            - '@redirect':
+                route: $.routes[update]
+                route_parameters: {id: $id}
+
+    DELETE:
+        extends: CRUD_ACTION
+        acl_resource: [DELETE, $.data]
+        order: 20
+        for_all_entities: true
+        for_all_datagrids: true
+        groups:
+            - view_navButtons
+            - update_navButtons
+            - datagridRowAction
+        preconditions:
+            '@and':
+                - '@or':
+                    - '@not_blank': $.routes[name]
+                    - '@not_blank': $.gridName
+        label: oro.action.delete
+        frontend_options:
+            title: oro.action.delete_entity
+            confirmation:
+                title: oro.action.delete_entity
+                message: oro.action.delete_confirm
+                message_parameters:
+                    entityLabel: $.entityLabel
+        button_options:
+            icon: icon-trash
+        actions:
+            - '@run_action_group':
+                action_group: DELETE
+                parameters_mapping:
+                    data: $.data
+            - '@flash_message':
+                message: oro.action.delete_message
+                type: 'success'
+                message_parameters:
+                    entityLabel: $.entityLabel
+            - '@redirect':
+                conditions:
+                    '@and':
+                        - '@empty': $.gridName
+                        - '@not_empty': $.routes[name]
+                parameters:
+                    route: $.routes[name]
+            - '@refresh_grid':
+                conditions:
+                    '@and':
+                        - '@empty': $.routes[name]
+                        - '@not_empty': $.gridName
+                parameters: [$.gridName]
+
+    CLONE:
+        extends: CRUD_ACTION
+        replace:
+            - preconditions
+        order: 30
+        groups:
+            - view_navButtons
+            - update_navButtons
+            - datagridRowAction
+        preactions:
+            - '@call_service_method':
+                service: oro_action.helper.default_operation_request
+                method: isExecutionRouteRequest
+                attribute: $.isExecutionRequest
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@not_blank': $.data
+                        - '@eq': [$.requestRoute, 'oro_action_widget_form'] # display a form template ot dialog
+                actions:
+                    - '@clone_object':
+                        target: $.data
+                        attribute: $.clone
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@not_blank': $.data
+                        - '@eq': [$.isExecutionRequest, true] # no form or dialogue
+                        - '@empty': $.clone
+                actions:
+                    - '@clone_entity':
+                        target: $.data
+                        attribute: $.clone
+                        flush: true
+        preconditions:
+            '@and':
+                - '@not_blank': $.data
+                - '@or':
+                    - '@not_blank': $.routes[name]
+                    - '@not_blank': $.gridName
+        label: oro.action.clone
+        frontend_options:
+            title: oro.action.clone_entity
+        button_options:
+            icon: icon-copy
+action_groups:
+    DELETE:
+        parameters:
+            data: ~
+        acl_resource: [DELETE, $.data]
+        actions:
+            - '@call_service_method':
+                service: oro_action.handler.delete
+                method: handleDelete
+                method_parameters: [$.data]

@@ -1,0 +1,132 @@
+workflows:
+    first_workflow:
+        is_system: true
+        entity: First\Entity
+        start_step: first_step
+        entity_attribute: my_entity
+        steps_display_ordered: true
+        priority: 1
+        scopes:
+            -
+                scope1: value1
+                scope2: value2
+            -
+                scope1: value3
+        defaults:
+            active: true
+        exclusive_active_groups:
+            - 'active_group1'
+        exclusive_record_groups:
+            - 'record_group1'
+        steps:
+            first_step:
+                order: 1
+                is_final: true
+                entity_acl:
+                    first_attribute:
+                        update: false
+                allowed_transitions:
+                    - first_transition
+        attributes:
+            first_attribute:
+                type: object
+                options:
+                    class: DateTime
+            second_attribute:
+                type: entity
+                property_path: first_attribute.test
+                entity_acl:
+                    delete: false
+                options:
+                    class: DateTime
+        disable_operations:
+            operation1: [entity1, entity2]
+        transitions:
+            first_transition:
+                step_to: first_step
+                is_start: true
+                is_hidden: true
+                is_unavailable_hidden: true
+                acl_resource: some_acl
+                acl_message: "Test ACL message"
+                transition_definition: first_transition_definition
+                frontend_options:
+                    class: foo
+                form_type: custom_workflow_transition
+                display_type: page
+                page_template: Workflow:Test:pageTemplate.html.twig
+                dialog_template: Workflow:Test:dialogTemplate.html.twig
+                init_entities:
+                    - entity1
+                init_routes:
+                    - route1
+                init_context_attribute: test_init_context
+                form_options:
+                    attribute_fields:
+                        first_attribute:
+                            form_type: text
+                            label: 'First Attribute'
+                            options:
+                                required: true
+                triggers:
+                    -
+                        event: create
+                        entity_class: Other\Entity
+                        relation: 'firstEntity'
+                        require: 'entity.firstEntity.id === main_entity.id'
+                        queued: true
+                    -
+                        event: update
+                        field: description
+                        require: 'entity === main_entity'
+                    -
+                        event: delete
+                        entity_class: Other\Entity
+                        relation: 'firstEntity'
+                        require: 'not empty(entity.firstEntity) && attributes["first_attribute"] == "ok"'
+                    -
+                        cron: 1 * * * *
+                        filter: e.text = "string"
+
+        transition_definitions:
+            first_transition_definition:
+                preactions:
+                    - '@custom_action': ~
+                preconditions:
+                    '@true': ~
+                conditions:
+                    '@and':
+                        '@true': ~
+                        '@or':
+                            parameters:
+                                '@true': ~
+                                '@equals':
+                                    parameters: [1, 1]
+                                    message: "Not equals"
+                        message: "Fail upper level"
+                actions:
+                    - '@custom_action2': ~
+                pre_conditions:
+                    '@condition1': ~
+                post_actions:
+                    - '@custom_action': ~
+    second_workflow:
+        entity: Second\Entity
+        start_step: second_step
+        steps:
+            -
+                name: second_step
+                order: 1
+                is_final: false
+                allowed_transitions: []
+        attributes: []
+        transitions:
+            -
+                name: second_transition
+                step_to: second_step
+                transition_definition: second_transition_definition
+                frontend_options:
+                    icon: bar
+        transition_definitions:
+            -
+                name: second_transition_definition
