@@ -1,7 +1,5 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.oroplatform.idea.oroplatform.OroPlatformBundle;
 import com.oroplatform.idea.oroplatform.schema.*;
@@ -10,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLMapping;
 import org.jetbrains.yaml.psi.YAMLScalar;
+import org.jetbrains.yaml.psi.YAMLSequence;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,23 +16,34 @@ import java.util.stream.Collectors;
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.*;
 
 class InspectionSchemaVisitor implements Visitor {
-    private final ProblemsHolder problems;
+    private final SchemaInspection.Errors errors;
+    private final int currentDepth;
     private final List<PsiElement> elements = new LinkedList<>();
 
-    InspectionSchemaVisitor(ProblemsHolder problems, List<? extends PsiElement> elements) {
-        this.problems = problems;
-        this.elements.addAll(elements.stream().filter(Objects::nonNull).collect(Collectors.toList()));
+    InspectionSchemaVisitor(SchemaInspection.Errors errors, List<? extends PsiElement> elements) {
+        this(errors, elements, 0);
+    }
+
+    private InspectionSchemaVisitor(SchemaInspection.Errors errors, List<? extends PsiElement> elements, int currentDepth) {
+        this.errors = errors;
+        this.currentDepth = currentDepth;
+        this.elements.addAll(elements.stream().filter(Objects::nonNull).collect(Collectors.<PsiElement>toList()));
     }
 
     @Override
     public void visitSequence(Sequence sequence) {
-        Visitor visitor = new InspectionSchemaVisitor(problems, getSequenceItems(elements));
+        Visitor visitor = new InspectionSchemaVisitor(errors, getSequenceItems(elements), currentDepth + 1);
         sequence.getType().accept(visitor);
+
+        final Collection<YAMLSequence> sequences = filterSequences(elements);
+
+        checkType(sequences, "sequence");
     }
 
     @Override
     public void visitContainer(Container container) {
-        for(YAMLMapping element : filterMappings(elements)) {
+        final Collection<YAMLMapping> mappings = filterMappings(elements);
+        for(YAMLMapping element : mappings) {
             Collection<YAMLKeyValue> keyValues = getKeyValuesFrom(element);
 
             for(Property property : container.getProperties()) {
@@ -41,22 +51,38 @@ class InspectionSchemaVisitor implements Visitor {
                 for(YAMLKeyValue keyValue : keyValues) {
                     if(property.nameMatches(keyValue.getName())) {
                         found = true;
-                        Visitor visitor = new InspectionSchemaVisitor(problems, Collections.<PsiElement>singletonList(keyValue.getValue()));
+                        Visitor visitor = new InspectionSchemaVisitor(errors, Collections.<PsiElement>singletonList(keyValue.getValue()), currentDepth + 1);
                         property.getValueElement().accept(visitor);
                     }
                 }
 
                 if(!found && property.isRequired()) {
-                    problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.required", property.getName()));
+                    errors.add(element, OroPlatformBundle.message("inspection.schema.required", property.getName()), currentDepth);
                 }
             }
 
             for(YAMLKeyValue keyValue : keyValues) {
                 if(!container.areExtraPropertiesAllowed() && !existsPropertyMatchingTo(container.getProperties(), keyValue.getKeyText())) {
-                    problems.registerProblem(keyValue, OroPlatformBundle.message("inspection.schema.notAllowedProperty", keyValue.getKeyText()));
+                    errors.add(keyValue, OroPlatformBundle.message("inspection.schema.notAllowedProperty", keyValue.getKeyText()), currentDepth);
                 }
             }
         }
+
+        checkType(mappings, "object");
+    }
+
+    private <T extends PsiElement> void checkType(Collection<T> correctTypeElements, String typeName) {
+        if(correctTypeElements.isEmpty() && !elements.isEmpty()) {
+            for (PsiElement element : elements) {
+                if(!isDefaultValue(element)) {
+                    errors.add(element, OroPlatformBundle.message("inspection.schema.invalidType", typeName), currentDepth);
+                }
+            }
+        }
+    }
+
+    private boolean isDefaultValue(PsiElement element) {
+        return element instanceof YAMLScalar && "~".equals(((YAMLScalar) element).getTextValue());
     }
 
     private boolean existsPropertyMatchingTo(List<Property> properties, String name) {
@@ -71,26 +97,26 @@ class InspectionSchemaVisitor implements Visitor {
 
     @Override
     public void visitOneOf(OneOf oneOf) {
-        final List<ProblemsHolder> problemsHolders = new LinkedList<>();
+        final List<SchemaInspection.Errors> allErrors = new LinkedList<>();
         for(Element element : oneOf.getElements()) {
-            ProblemsHolder newProblems = new ProblemsHolder(problems.getManager(), problems.getFile(), problems.isOnTheFly());
-            Visitor visitor = new InspectionSchemaVisitor(newProblems, elements);
+            SchemaInspection.Errors newErrors = new SchemaInspection.Errors();
+            Visitor visitor = new InspectionSchemaVisitor(newErrors, elements, currentDepth + 1);
             element.accept(visitor);
-            problemsHolders.add(newProblems);
+            allErrors.add(newErrors);
         }
 
-        final NavigableSet<ProblemsHolder> sortedProblemsHolders = getSortedProblemHolders(problemsHolders);
+        final NavigableSet<SchemaInspection.Errors> sortedProblemsHolders = getSortedErrors(allErrors);
 
         if(sortedProblemsHolders.size() > 0) {
-            ProblemsHolder theShortestProblemsHolder = sortedProblemsHolders.first();
-            theShortestProblemsHolder.getResults().forEach(problems::registerProblem);
+            SchemaInspection.Errors theShortestProblemsHolder = sortedProblemsHolders.first();
+            theShortestProblemsHolder.getErrors().forEach(errors::add);
         }
     }
 
     @NotNull
-    private NavigableSet<ProblemsHolder> getSortedProblemHolders(List<ProblemsHolder> problemsHolders) {
-        NavigableSet<ProblemsHolder> sortedProblemsHolders = new TreeSet<>(new ProblemsHolderComparator());
-        sortedProblemsHolders.addAll(problemsHolders);
+    private NavigableSet<SchemaInspection.Errors> getSortedErrors(List<SchemaInspection.Errors> errorsList) {
+        NavigableSet<SchemaInspection.Errors> sortedProblemsHolders = new TreeSet<>(new ProblemsHolderComparator());
+        sortedProblemsHolders.addAll(errorsList);
         return sortedProblemsHolders;
     }
 
@@ -105,44 +131,42 @@ class InspectionSchemaVisitor implements Visitor {
         for (Requirement requirement : scalar.getRequirements()) {
             for(YAMLScalar element : scalarElements) {
                 for (String error : requirement.getErrors(element.getTextValue())) {
-                    problems.registerProblem(element, error);
+                    errors.add(element, error, currentDepth);
                 }
             }
         }
 
-        if(scalarElements.isEmpty() && !elements.isEmpty()) {
-            for (PsiElement element : elements) {
-                problems.registerProblem(element, OroPlatformBundle.message("inspection.schema.invalidType", "scalar"));
-            }
-        }
+        checkType(scalarElements, "scalar");
     }
 
-    private static class ProblemsHolderComparator implements Comparator<ProblemsHolder> {
+    private static class ProblemsHolderComparator implements Comparator<SchemaInspection.Errors> {
 
         private final String pattern = OroPlatformBundle.message("inspection.schema.notAllowedPropertyValue", "PLACEHOLDER", "PLACEHOLDER").replace(".", "\\.").replace("PLACEHOLDER", ".*");
 
         @Override
-        public int compare(ProblemsHolder o1, ProblemsHolder o2) {
-            boolean choiceInO1 = containsNotAllowedPropertyValueProblem(o1);
-            boolean choiceInO2 = containsNotAllowedPropertyValueProblem(o2);
+        public int compare(SchemaInspection.Errors o1, SchemaInspection.Errors o2) {
+            final boolean choiceInO1 = containsNotAllowedPropertyValueProblem(o1);
+            final boolean choiceInO2 = containsNotAllowedPropertyValueProblem(o2);
+            final int depth1 = o1.getErrors().stream().map(error -> error.depth).min(Integer::compareTo).orElse(Integer.MAX_VALUE);
+            final int depth2 = o2.getErrors().stream().map(error -> error.depth).min(Integer::compareTo).orElse(Integer.MAX_VALUE);
 
-            if(choiceInO2 == choiceInO1) {
-                return o1.getResultCount() - o2.getResultCount();
+            if(choiceInO1 == choiceInO2) {
+                if(depth2 == depth1) {
+                    return o1.getErrors().size() - o2.getErrors().size();
+                } else {
+                    return depth2 - depth1;
+                }
             } else {
-                // prefer problems that does not match to not allowed property value - because that
-                // kind problem could define the type of element inside "OneOf" element and is not natural to show problems
-                // for schema, that has correct value in "choice" element type
-                return choiceInO1 ? 1 : -1;
+                if(depth2 == depth1) {
+                    return choiceInO1 ? 1 : -1;
+                } else {
+                    return depth2 - depth1;
+                }
             }
         }
 
-        private boolean containsNotAllowedPropertyValueProblem(ProblemsHolder o1) {
-            for(ProblemDescriptor descriptor : o1.getResults()) {
-                if(descriptor.getDescriptionTemplate().matches(pattern)) {
-                    return true;
-                }
-            }
-            return false;
+        private boolean containsNotAllowedPropertyValueProblem(SchemaInspection.Errors o1) {
+            return o1.getErrors().stream().anyMatch(error -> error.message.matches(pattern));
         }
     }
 }

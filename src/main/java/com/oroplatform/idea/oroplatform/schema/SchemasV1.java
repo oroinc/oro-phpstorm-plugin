@@ -380,10 +380,12 @@ public class SchemasV1 {
                 Property.named("attribute_fields", Container.with(
                     Property.any(Container.with(
                         Property.named("form_type", Scalars.formType),
-                        Property.named("options", Container.any)
+                        Property.named("options", Container.any),
+                        Property.named("label", Scalars.trans)
                     )).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "attributes").pointsToValue()))
                 ))
             )),
+            Property.named("form_type", Scalars.formType),
             Property.named("triggers", Sequence.of(Container.with(
                 Property.named("entity_class", Scalars.fullEntity),
                 Property.named("event", Scalars.strictChoices("create", "update", "delete")),

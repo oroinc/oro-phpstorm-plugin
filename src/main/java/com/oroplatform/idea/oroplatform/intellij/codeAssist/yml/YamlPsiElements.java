@@ -40,7 +40,7 @@ public class YamlPsiElements {
             .collect(Collectors.toList());
     }
 
-    private static Collection<YAMLSequence> filterSequences(Collection<? extends PsiElement> elements) {
+    public static Collection<YAMLSequence> filterSequences(Collection<? extends PsiElement> elements) {
         return elements.stream()
             .flatMap(elementFilter(YAMLSequence.class))
             .collect(Collectors.toList());
