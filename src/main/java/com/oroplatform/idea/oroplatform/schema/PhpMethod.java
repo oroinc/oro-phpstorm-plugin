@@ -45,4 +45,11 @@ public class PhpMethod {
             return method.isStatic();
         }
     }
+
+    public static class PhpMethodNonStaticMatcher implements PhpMethodMatcher {
+        @Override
+        public boolean matches(Method method) {
+            return !method.isStatic();
+        }
+    }
 }

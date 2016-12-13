@@ -26,7 +26,7 @@ public class XmlIndexer implements DataIndexer<Service, Void, XmlFile> {
         ofName(roots, "container")
             .flatMap(root -> ofName(PsiTreeUtil.findChildrenOfType(root, XmlTag.class), "services"))
             .flatMap(servicesTag -> ofName(PsiTreeUtil.findChildrenOfType(servicesTag, XmlTag.class), "service"))
-            .map(serviceTag -> new Service(serviceTag.getAttributeValue("id"), getServiceTags(serviceTag)))
+            .map(serviceTag -> new Service(serviceTag.getAttributeValue("id"), getServiceTags(serviceTag), serviceTag.getAttributeValue("class")))
             .forEach(service -> index.put(service, null));
 
         return index;

@@ -2,16 +2,19 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
 import com.intellij.testFramework.LoggedErrorProcessor
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 import org.apache.log4j.Logger
 import org.jetbrains.annotations.NotNull
 
 
-class ApiPhpReferenceTest extends PhpReferenceTest {
+class ApiPhpReferenceTest extends PhpReferenceTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV1.FilePathPatterns.API
     }
+
+    def service1 = randomIdentifier("service1")
 
     @Override
     protected void setUp() throws Exception {
@@ -32,6 +35,7 @@ class ApiPhpReferenceTest extends PhpReferenceTest {
             |  class AcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
             |  class PostSerializeHandler {
             |    public static function someFunc() {}
+            |    public function someFuncInstance() {}
             |  }
             |}
             |
@@ -42,6 +46,16 @@ class ApiPhpReferenceTest extends PhpReferenceTest {
             |  }
             |}
             |
+          """.stripMargin()
+        )
+
+        configureByText("Resources/config/services.xml",
+            """
+            |<container>
+            |  <services>
+            |    <service id="$service1" class="Oro\\Bundle\\AcmeBundle\\PostSerializeHandler"></service>
+            |  </services>
+            |</container>
           """.stripMargin()
         )
     }
@@ -207,6 +221,35 @@ class ApiPhpReferenceTest extends PhpReferenceTest {
             |          data_transformer: ["<caret>"]
             """.stripMargin(),
             ["PostSerializeHandler"]
+        )
+    }
+
+    def void "test: suggest service id in data_transformer as callback"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      fields:
+            |        field1:
+            |          data_transformer: [<caret>]
+            """.stripMargin(),
+            ["$service1"]
+        )
+    }
+
+    def void "test: suggest service method in data_transformer as callback"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      fields:
+            |        field1:
+            |          data_transformer: [$service1, <caret>]
+            """.stripMargin(),
+            ["someFuncInstance"],
+            ["someFunc"]
         )
     }
 

@@ -40,14 +40,20 @@ public class YamlIndexer implements DataIndexer<Service, Void, YAMLFile> {
 
     @NotNull
     private Service serviceElementToService(YAMLKeyValue serviceElement) {
-        final List<Tag> tags = YamlPsiElements.getMappingsFrom(serviceElement).stream()
+        final List<YAMLMapping> serviceElements = YamlPsiElements.getMappingsFrom(serviceElement);
+        final List<Tag> tags = serviceElements.stream()
             .flatMap(serviceMapping -> toStream(() -> serviceMapping.getKeyValueByKey("tags")))
             .flatMap(tagElements -> getSequenceItems(Arrays.asList(tagElements.getChildren())).stream())
             .flatMap(elementFilter(YAMLMapping.class))
             .map(tag -> new Tag(getValue(tag, "name"), getValue(tag, "alias")))
             .collect(Collectors.toList());
 
-        return new Service(serviceElement.getKeyText(), tags);
+        final String className = serviceElements.stream()
+            .flatMap(element -> toStream(element.getKeyValueByKey("class")))
+            .flatMap(keyValue -> toStream(keyValue.getValueText()))
+            .findFirst().orElse(null);
+
+        return new Service(serviceElement.getKeyText(), tags, className);
     }
 
     private static String getValue(YAMLMapping mapping, String key) {

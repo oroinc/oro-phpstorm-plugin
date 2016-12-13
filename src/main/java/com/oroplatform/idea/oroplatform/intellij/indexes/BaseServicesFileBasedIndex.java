@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-abstract class BaseServicesFileBasedIndex extends ScalarIndexExtension<String> {
+abstract class BaseServicesFileBasedIndex<V> extends FileBasedIndexExtension<String, V> {
     private final KeyDescriptor<String> keyDescriptor = new EnumeratorStringDescriptor();
     private final DataIndexer<Service, Void, XmlFile> xmlIndexer = new XmlIndexer();
     private final DataIndexer<Service, Void, YAMLFile> yamlIndexer = new YamlIndexer();
@@ -31,9 +31,9 @@ abstract class BaseServicesFileBasedIndex extends ScalarIndexExtension<String> {
 
     @NotNull
     @Override
-    public DataIndexer<String, Void, FileContent> getIndexer() {
+    public DataIndexer<String, V, FileContent> getIndexer() {
         return inputData -> {
-            final Map<String, Void> index = new THashMap<>();
+            final Map<String, V> index = new THashMap<>();
 
             if(!OroPlatformSettings.getInstance(inputData.getProject()).isPluginEnabled()) {
                 return index;
@@ -51,7 +51,7 @@ abstract class BaseServicesFileBasedIndex extends ScalarIndexExtension<String> {
         };
     }
 
-    protected void index(Set<Service> services, Map<String, Void> index) {
+    protected void index(Set<Service> services, Map<String, V> index) {
         services.stream()
             .flatMap(service -> service.getTags().stream())
             .filter(tag -> indexTag.equals(tag.getName()) && tag.getAlias() != null)
