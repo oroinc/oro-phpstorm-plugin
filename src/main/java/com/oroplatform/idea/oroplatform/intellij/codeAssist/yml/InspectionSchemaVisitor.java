@@ -61,10 +61,15 @@ class InspectionSchemaVisitor implements Visitor {
                 }
             }
 
+            final Set<String> alreadyProcessedPropertyNames = new HashSet<>();
             for(YAMLKeyValue keyValue : keyValues) {
                 if(!container.areExtraPropertiesAllowed() && !existsPropertyMatchingTo(container.getProperties(), keyValue.getKeyText())) {
                     errors.add(keyValue, OroPlatformBundle.message("inspection.schema.notAllowedProperty", keyValue.getKeyText()), currentDepth);
+                } else if(alreadyProcessedPropertyNames.contains(keyValue.getName())) {
+                    errors.add(keyValue, OroPlatformBundle.message("inspection.schema.propertyAlreadyDefined", keyValue.getName()), currentDepth);
                 }
+
+                alreadyProcessedPropertyNames.add(keyValue.getName());
             }
         }
 

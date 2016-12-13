@@ -158,4 +158,15 @@ class AclInspectionsTest extends InspectionTest {
             """.stripMargin()
         )
     }
+
+    def void "test: should detect duplicated properties"() {
+        checkInspection(
+            """
+            |some_id:
+            |  $actionRequiredProperties
+            |  type: "action"
+            |  <weak_warning>type: "action"</weak_warning>
+            """.stripMargin()
+        )
+    }
 }
