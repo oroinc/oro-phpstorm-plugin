@@ -1,12 +1,9 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.InspectionTest
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase
 
-class ValidConfigFilesInspectionsTest extends InspectionTest {
-    @Override
-    String fileName() {
-        return null
-    }
+class ValidConfigFilesInspectionsTest extends CodeInsightFixtureTestCase {
 
     @Override
     def void setUp() {
@@ -55,11 +52,17 @@ class ValidConfigFilesInspectionsTest extends InspectionTest {
     }
 
     private def void checkFile(String filepath) {
-        myFixture.copyDirectoryToProject("inspections/"+filepath, filepath.split("/").dropRight(1).join("/"))
-        myFixture.testHighlighting(true, false, true, "/inspections/"+filepath)
+        myFixture.addFileToProject("oroplatformTests/"+filepath, new File(getTestResourcesPath()+"/inspections/"+filepath).getText("UTF-8"))
+        myFixture.testHighlighting(true, false, true, "oroplatformTests/"+filepath)
     }
 
-    def String getTestDataPath() {
+    @Override
+    protected void tearDown() throws Exception {
+        FileUtil.delete(new File(getTestDataPath()+"/oroplatformTests"))
+        super.tearDown()
+    }
+
+    private static def String getTestResourcesPath() {
         new File("src/test/resources/com/oroplatform/idea/oroplatform/").getAbsolutePath()
     }
 }
