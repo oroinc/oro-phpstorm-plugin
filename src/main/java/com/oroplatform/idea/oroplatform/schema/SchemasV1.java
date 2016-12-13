@@ -569,7 +569,7 @@ public class SchemasV1 {
                 Property.named("exclude", Scalars.bool),
                 Property.named("description", Scalars.any),
                 Property.named("property_path", Scalars.any),
-                Property.named("data_transformer", OneOf.from(Scalars.service, Scalars.phpClass)),
+                Property.named("data_transformer", OneOf.from(Scalars.service, Scalars.phpClass, Sequence.of(Scalars.callable))),
                 Property.named("collapse", Scalars.bool),
                 Property.named("form_type", Scalars.formType),
                 Property.named("form_options", Scalars.any),
@@ -671,7 +671,10 @@ public class SchemasV1 {
                             Property.named("delete", action),
                             Property.named("delete_list", action),
                             Property.named("get_subresource", action),
-                            Property.named("get_relationship", action)
+                            Property.named("get_relationship", action),
+                            Property.named("update_relationship", action),
+                            Property.named("add_relationship", action),
+                            Property.named("delete_relationship", action)
                         ))),
                         Property.named("subresources", Container.with(
                             Property.any(Container.with(
@@ -695,7 +698,7 @@ public class SchemasV1 {
                                 Property.named("acl_resource", Scalars.acl)
                             ))
                         ))
-                    )).withKeyElement(Scalars.fullEntity)
+                    ).allowExtraProperties()).withKeyElement(Scalars.fullEntity)
                 )),
                 Property.named("relations", Container.with(
                     Property.any(Container.with(

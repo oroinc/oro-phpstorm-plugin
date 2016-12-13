@@ -140,6 +140,76 @@ class ApiPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
+    def void "test: suggest php class in data_transformer as callback"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      fields:
+            |        field1:
+            |          data_transformer: [<caret>]
+            """.stripMargin(),
+            ["PostSerializeHandler"]
+        )
+    }
+
+    def void "test: suggest php class method in data_transformer as callback"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      fields:
+            |        field1:
+            |          data_transformer: [Oro\\Bundle\\AcmeBundle\\PostSerializeHandler, <caret>]
+            """.stripMargin(),
+            ["someFunc"]
+        )
+    }
+
+    def void "test: detect php class in data_transformer as callback"() {
+        checkPhpReference(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      fields:
+            |        field1:
+            |          data_transformer: [Oro\\Bundle\\AcmeB<caret>undle\\PostSerializeHandler]
+            """.stripMargin(),
+            ["Oro\\Bundle\\AcmeBundle\\PostSerializeHandler"]
+        )
+    }
+
+    def void "test: detect php class method in data_transformer as callback"() {
+        checkPhpReference(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      fields:
+            |        field1:
+            |          data_transformer: [Oro\\Bundle\\AcmeBundle\\PostSerializeHandler, someF<caret>unc]
+            """.stripMargin(),
+            ["Oro\\Bundle\\AcmeBundle\\PostSerializeHandler.someFunc"]
+        )
+    }
+
+    def void "test: suggest quoted php class in data_transformer as callback"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      fields:
+            |        field1:
+            |          data_transformer: ["<caret>"]
+            """.stripMargin(),
+            ["PostSerializeHandler"]
+        )
+    }
+
     @Override
     protected void tearDown() throws Exception {
         super.tearDown()
