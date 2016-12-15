@@ -15,6 +15,9 @@ class ApiPhpReferenceTest extends PhpReferenceTest implements RandomIdentifiers 
     }
 
     def service1 = randomIdentifier("service1")
+    def service2 = randomIdentifier("service2")
+    def parameter1 = randomIdentifier("parameter1")
+    def parameter2 = randomIdentifier("parameter2")
 
     @Override
     protected void setUp() throws Exception {
@@ -52,10 +55,21 @@ class ApiPhpReferenceTest extends PhpReferenceTest implements RandomIdentifiers 
         configureByText("Resources/config/services.xml",
             """
             |<container>
+            |  <parameters>
+            |    <parameter key="$parameter1">Oro\\Bundle\\AcmeBundle\\PostSerializeHandler</parameter>
+            |  </parameters>
             |  <services>
             |    <service id="$service1" class="Oro\\Bundle\\AcmeBundle\\PostSerializeHandler"></service>
+            |    <service id="$service2" class="%$parameter1%"></service>
             |  </services>
             |</container>
+          """.stripMargin()
+        )
+
+        configureByText("Resources/config/services.yml",
+            """
+            |parameters:
+            |  $parameter2: Oro\\Bundle\\AcmeBundle\\PostSerializeHandler
           """.stripMargin()
         )
     }
@@ -234,7 +248,35 @@ class ApiPhpReferenceTest extends PhpReferenceTest implements RandomIdentifiers 
             |        field1:
             |          data_transformer: [<caret>]
             """.stripMargin(),
-            ["$service1"]
+            ["$service1", "$service2"]
+        )
+    }
+
+    def void "test: detect service id in data_transformer as reference"() {
+        checkPhpReference(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      fields:
+            |        field1:
+            |          data_transformer: [${insertSomewhere(service1, "<caret>")}]
+            """.stripMargin(),
+            ["Oro\\Bundle\\AcmeBundle\\PostSerializeHandler"]
+        )
+    }
+
+    def void "test: detect service id in data_transformer as reference when service class is parametrized"() {
+        checkPhpReference(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      fields:
+            |        field1:
+            |          data_transformer: [${insertSomewhere(service2, "<caret>")}]
+            """.stripMargin(),
+            ["Oro\\Bundle\\AcmeBundle\\PostSerializeHandler"]
         )
     }
 
@@ -247,6 +289,21 @@ class ApiPhpReferenceTest extends PhpReferenceTest implements RandomIdentifiers 
             |      fields:
             |        field1:
             |          data_transformer: [$service1, <caret>]
+            """.stripMargin(),
+            ["someFuncInstance"],
+            ["someFunc"]
+        )
+    }
+
+    def void "test: suggest service method in data_transformer as callback when service class is parametrized"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      fields:
+            |        field1:
+            |          data_transformer: [$service2, <caret>]
             """.stripMargin(),
             ["someFuncInstance"],
             ["someFunc"]

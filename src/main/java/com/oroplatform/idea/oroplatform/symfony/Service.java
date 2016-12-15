@@ -24,8 +24,8 @@ public class Service {
         return id;
     }
 
-    public Optional<String> getClassName() {
-        return Optional.ofNullable(className);
+    public Optional<ServiceClassName> getClassName() {
+        return Optional.ofNullable(className).map(ServiceClassName::new);
     }
 
     @Override

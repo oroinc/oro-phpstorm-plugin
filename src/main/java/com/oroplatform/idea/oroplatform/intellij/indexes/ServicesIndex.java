@@ -44,4 +44,9 @@ public class ServicesIndex {
     public Collection<String> findMassActionProviders() {
         return FileBasedIndex.getInstance().getAllKeys(MassActionProviderFileBasedIndex.KEY, project);
     }
+
+    public Optional<String> findParameterValue(String name) {
+        return FileBasedIndex.getInstance().getValues(ServiceParametersFileBasedIndex.KEY, name, GlobalSearchScope.allScope(project)).stream()
+            .findFirst();
+    }
 }

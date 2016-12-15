@@ -21,7 +21,7 @@ import static com.oroplatform.idea.oroplatform.Functions.toStream;
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.PsiElements.elementFilter;
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getSequenceItems;
 
-public class YamlIndexer implements DataIndexer<Service, Void, YAMLFile> {
+public class ServiceYamlIndexer implements DataIndexer<Service, Void, YAMLFile> {
 
     @NotNull
     @Override

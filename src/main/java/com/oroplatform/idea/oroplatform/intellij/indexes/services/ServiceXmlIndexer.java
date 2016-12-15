@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class XmlIndexer implements DataIndexer<Service, Void, XmlFile> {
+public class ServiceXmlIndexer implements DataIndexer<Service, Void, XmlFile> {
 
     @NotNull
     @Override
