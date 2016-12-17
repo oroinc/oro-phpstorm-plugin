@@ -10,6 +10,12 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.0-beta2</h2>
+<ul>
+  <li>inspection for duplicate properties</li>
+  <li>improve "data_transformer" suggestions in api.yml</li>
+</ul>
+
 <h2>1.0.0-beta1</h2>
 <ul>
   <li>improve workflows.yml support</li>
