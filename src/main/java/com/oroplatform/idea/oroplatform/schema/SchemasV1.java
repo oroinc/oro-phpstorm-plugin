@@ -145,7 +145,7 @@ public class SchemasV1 {
                 ).allowExtraProperties()),
                 Property.named("columns", Container.with(
                     Container.with(
-                        Property.named("label", Scalars.any),
+                        Property.named("label", Scalars.trans),
                         Property.named("translatable", Scalars.bool),
                         Property.named("data_name", Scalars.any),
                         Property.named("frontend_type", Scalars.choices("string", "html", "date", "time", "datetime", "integer", "number", "decimal", "percent", "currency", "boolean", "array", "simple_array", "row_array", "select", "multi-select", "phone", "relation")),
@@ -212,7 +212,7 @@ public class SchemasV1 {
                 )),
                 Property.named("actions", Container.with(
                     Container.with(
-                        Property.named("label", Scalars.any),
+                        Property.named("label", Scalars.trans),
                         Property.named("type", Scalars.choices("navigate", "ajax", "delete", "ajaxdelete", "frontend")),
                         Property.named("acl_resource", Scalars.any),
                         Property.named("icon", Scalars.any),
@@ -231,7 +231,7 @@ public class SchemasV1 {
                         Property.named("extends", Scalars.any),
                         Property.named("columns", Container.with(
                             Container.with(
-                                Property.named("label", Scalars.any),
+                                Property.named("label", Scalars.trans),
                                 Property.named("expr", Scalars.any),
                                 Property.named("formatter", Scalars.strictChoices(
                                     "date", "datetime", "time", "decimal", "integer", "percent", "currency"
@@ -288,7 +288,7 @@ public class SchemasV1 {
                     Property.named("export", OneOf.from(
                         Scalars.bool,
                         Container.with(
-                            Container.with(Property.named("label", Scalars.any))
+                            Container.with(Property.named("label", Scalars.trans))
                         )
                     )),
                     Property.named("rowSelection", Container.with(
@@ -305,7 +305,7 @@ public class SchemasV1 {
 
     private static Element massAction() {
         return Container.with(
-            Property.named("label", Scalars.any),
+            Property.named("label", Scalars.trans),
             Property.named("type", Scalars.choices("frontend", "merge")),
             Property.named("data_identifier", Scalars.any),
             Property.named("icon", Scalars.any),
