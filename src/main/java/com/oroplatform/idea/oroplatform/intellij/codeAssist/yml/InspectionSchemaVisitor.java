@@ -53,6 +53,10 @@ class InspectionSchemaVisitor implements Visitor {
                         found = true;
                         Visitor visitor = new InspectionSchemaVisitor(errors, Collections.<PsiElement>singletonList(keyValue.getValue()), currentDepth + 1);
                         property.getValueElement().accept(visitor);
+
+                        if(keyValue.getValue() == null) {
+                            errors.add(keyValue, OroPlatformBundle.message("inspection.schema.emptyValue", keyValue.getName()), currentDepth);
+                        }
                     }
                 }
 

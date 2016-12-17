@@ -169,4 +169,14 @@ class AclInspectionsTest extends InspectionTest {
             """.stripMargin()
         )
     }
+
+    def void "test: should detect lack of the value"() {
+        checkInspection(
+            """
+            |some_id:
+            |  $actionRequiredProperties
+            |  <weak_warning>type:</weak_warning>
+            """.stripMargin()
+        )
+    }
 }
