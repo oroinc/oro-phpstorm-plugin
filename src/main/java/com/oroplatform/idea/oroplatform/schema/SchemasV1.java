@@ -573,7 +573,7 @@ public class SchemasV1 {
                 Property.named("collapse", Scalars.bool),
                 Property.named("form_type", Scalars.formType),
                 Property.named("form_options", Scalars.any),
-                Property.named("data_type", dataType()),
+                Property.named("data_type", OneOf.from(dataType(), Scalars.choices("association:manyToOne", "association:manyToMany", "association:multipleManyToOne"))),
                 Property.named("meta_property", Scalars.bool),
                 Property.named("target_class", Scalars.fullEntity),
                 Property.named("target_type", Scalars.choices("to-one", "to-many", "collection"))

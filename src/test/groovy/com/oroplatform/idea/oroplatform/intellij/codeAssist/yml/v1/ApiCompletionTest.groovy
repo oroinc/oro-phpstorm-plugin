@@ -76,6 +76,36 @@ class ApiCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: suggest values of fields.data_type"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    stdClass:
+            |      fields:
+            |        xxx:
+            |          data_type: <caret>
+            """.stripMargin(),
+
+            ["boolean", "integer", "string"]
+        )
+    }
+
+    def void "test: suggest association values of fields.data_type"() {
+        suggestions(
+            """
+            |oro_api:
+            |  entities:
+            |    stdClass:
+            |      fields:
+            |        xxx:
+            |          data_type: <caret>
+            """.stripMargin(),
+
+            ["association:manyToOne", "association:manyToMany", "association:multipleManyToOne"]
+        )
+    }
+
     def void "test: suggest filters properties"() {
         suggestions(
             """
