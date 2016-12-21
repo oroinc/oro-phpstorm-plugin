@@ -14,7 +14,7 @@ public interface ReferenceProviders {
 
     PsiReferenceProvider filePath(RelativeDirectoryResolver relativeDirectoryResolver, InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider filePath(RelativeDirectoryResolver relativeDirectoryResolver, int allowedDepth, InsertHandler<LookupElement> insertHandler);
-    PsiReferenceProvider file(RootDirFinder rootDirFinder, VirtualFileFilter virtualFileFilter, InsertHandler<LookupElement> insertHandler);
+    PsiReferenceProvider file(RootDirFinder rootDirFinder, StringWrapperProvider stringWrapperProvider, VirtualFileFilter virtualFileFilter, InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider phpCallback(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider phpCallable(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider phpClass(PhpClass phpClass, InsertHandler<LookupElement> insertHandler);

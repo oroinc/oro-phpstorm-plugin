@@ -836,7 +836,7 @@ public class SchemasV1 {
             Property.named(rootElement, Container.with(
                 Property.named("widgets", Container.with(
                     Container.with(
-                        Property.named("icon", Scalars.filePathRelativeToAppIn("../web")),
+                        Property.named("icon", Scalars.fileRelativeToAppIn("../web", "png", "jpg", "jpeg")),
                         Property.named("label", Scalars.trans),
                         Property.named("description", Scalars.trans),
                         Property.named("acl", Scalars.acl),

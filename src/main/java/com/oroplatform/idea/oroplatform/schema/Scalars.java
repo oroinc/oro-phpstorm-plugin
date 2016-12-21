@@ -6,6 +6,7 @@ import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.PsiReferenceProvider;
+import com.oroplatform.idea.oroplatform.StringWrapper;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.*;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeToAppDirectoryResolver;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeToElementResolver;
@@ -159,13 +160,21 @@ final class Scalars {
         };
     }
 
+    static Scalar fileRelativeToAppIn(final String dir, String... extensions) {
+        return file(new AppRelativeRootDirFinder(dir), new StaticStringWrapperProvider(new StringWrapper("", "")), extensions);
+    }
+
     static Scalar file(final RootDirFinder rootDirFinder, final String... extensions) {
+        return file(rootDirFinder, new PublicResourceWrappedStringFactory(), extensions);
+    }
+
+    private static Scalar file(final RootDirFinder rootDirFinder, final StringWrapperProvider stringWrapperProvider, final String... extensions) {
         return new Scalar() {
             @Nullable
             @Override
             public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
                 final VirtualFileFilter fileFilter = extensions.length > 0 ? new ExtensionFileFilter(extensions) : VirtualFileFilter.ALL;
-                return providers.file(rootDirFinder, fileFilter, insertHandler);
+                return providers.file(rootDirFinder, stringWrapperProvider, fileFilter, insertHandler);
             }
         };
     }
