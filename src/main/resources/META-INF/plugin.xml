@@ -10,6 +10,13 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.0-beta3</h2>
+<ul>
+  <li>inspection for lack of value</li>
+  <li>autocomplete for "label" properties in datagrids.yml</li>
+  <li>improve autocomplete for "data_type" property in api.yml</li>
+</ul>
+
 <h2>1.0.0-beta2</h2>
 <ul>
   <li>inspection for duplicate properties</li>
