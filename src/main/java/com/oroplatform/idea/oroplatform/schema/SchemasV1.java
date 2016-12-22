@@ -828,8 +828,22 @@ public class SchemasV1 {
                     Property.named("required", Scalars.bool),
                     Property.named("label", Scalars.trans)
                 ).allowExtraProperties()),
-                Property.named("show_on_widget", Scalars.bool)
+                Property.named("show_on_widget", Scalars.bool),
+                Property.named("converter_attributes", OneOf.from(Container.any, Sequence.of(Scalars.any))),
+                Property.named("aclClass", Scalars.phpClass),
+                Property.named("aclPermission", Scalars.choices("VIEW", "EDIT", "CREATE", "DELETE", "ASSIGN", "SHARE"))
             )
+        );
+
+        final Container dataItem = Container.with(
+            Property.named("label", Scalars.trans).required(),
+            //TODO: what to suggest as data_provider?
+            Property.named("data_provider", Scalars.any).required(),
+            Property.named("template", Scalars.twig).required(),
+            Property.named("acl", Scalars.acl),
+            Property.named("enabled", Scalars.bool),
+            Property.named("applicable", Scalars.any),
+            Property.named("position", Scalars.integer)
         );
 
         return Container.with(
@@ -850,10 +864,25 @@ public class SchemasV1 {
                                 Property.named("route", Scalars.route),
                                 Property.named("position", Scalars.integer),
                                 Property.named("icon", Scalars.any),
-                                Property.named("class", Scalars.any)
+                                Property.named("class", Scalars.any),
+                                Property.named("applicable", Scalars.any),
+                                Property.named("enabled", Scalars.bool),
+                                Property.named("route_parameters", Container.any)
                             )
                         )),
-                        Property.named("configuration", configuration)
+                        Property.named("configuration", configuration),
+                        Property.named("enabled", Scalars.bool),
+                        Property.named("applicable", Scalars.any),
+                        Property.named("configuration_dialog_options", Container.with(
+                            Property.named("resizable", Scalars.bool),
+                            Property.named("minWidth", Scalars.integer),
+                            Property.named("minHeight", Scalars.integer),
+                            Property.named("title", Scalars.any)
+                        )),
+                        Property.named("data_items", OneOf.from(
+                            Container.with(dataItem),
+                            Sequence.of(dataItem.andWith(Property.named("name", Scalars.any)))
+                        ))
                     )
                 )),
                 Property.named("widgets_configuration", configuration),
