@@ -15,11 +15,11 @@ import java.util.stream.Stream;
 
 public class PublicResourceWrappedStringFactory implements StringWrapperProvider {
     @Override
-    public StringWrapper getStringWrapperFor(PsiElement element) {
-        return new PublicResourcesRootDirFinder().getRootDir(element)
+    public StringWrapper getStringWrapperFor(PsiElement elementRequest, VirtualFile sourceDirectory) {
+        return new PublicResourcesRootDirsFinder().getRootDirs(elementRequest).stream().findFirst()
             .map(publicDir -> publicDir.getParent().getParent())
             .flatMap(this::findFirstPhpFile)
-            .flatMap(phpFile -> getPsiFile(element, phpFile))
+            .flatMap(phpFile -> getPsiFile(elementRequest, phpFile))
             .flatMap(psiFile ->
                 Stream.of(psiFile.getChildren())
                     .flatMap(childFile -> PsiTreeUtil.getChildrenOfTypeAsList(childFile, PhpNamespace.class).stream())

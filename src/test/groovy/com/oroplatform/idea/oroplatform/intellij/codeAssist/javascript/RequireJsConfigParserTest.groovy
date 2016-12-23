@@ -1,10 +1,9 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript
 
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.TestCase
 import org.jetbrains.yaml.psi.YAMLFile
 
-//TODO: refactor testing base classes
-class RequireJsConfigParserTest extends CompletionTest {
+class RequireJsConfigParserTest extends TestCase {
     @Override
     String fileName() {
         return "some/requirejs.yml"

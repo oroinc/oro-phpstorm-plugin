@@ -1,19 +1,8 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist;
+package com.oroplatform.idea.oroplatform.intellij.codeAssist
 
-import com.intellij.codeInsight.lookup.Lookup;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
+import com.intellij.codeInsight.lookup.Lookup
 
-public abstract class CompletionTest extends LightPlatformCodeInsightFixtureTestCase {
-
-    abstract def String fileName()
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp()
-
-        OroPlatformSettings.getInstance(myFixture.project).setPluginEnabled(true)
-    }
+abstract class CompletionTest extends TestCase {
 
     def completion(String contents, String expected) {
         completion(fileName(), contents, expected)
@@ -28,15 +17,6 @@ public abstract class CompletionTest extends LightPlatformCodeInsightFixtureTest
         }
 
         myFixture.checkResult(expected.replace("\r", ""))
-    }
-
-    protected def configureByText(String contents) {
-        configureByText(fileName(), contents)
-    }
-
-    protected def configureByText(String fileName, String contents) {
-        def file = myFixture.addFileToProject(fileName, contents)
-        myFixture.configureFromExistingVirtualFile(file.getVirtualFile())
     }
 
     def suggestions(String contents, Collection<String> expectedSuggestions, Collection<String> unexpectedSuggestions= []) {

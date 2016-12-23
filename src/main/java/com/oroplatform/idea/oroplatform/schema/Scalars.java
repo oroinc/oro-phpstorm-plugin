@@ -161,20 +161,20 @@ final class Scalars {
     }
 
     static Scalar fileRelativeToAppIn(final String dir, String... extensions) {
-        return file(new AppRelativeRootDirFinder(dir), new StaticStringWrapperProvider(new StringWrapper("", "")), extensions);
+        return file(new AppRelativeRootDirsFinder(dir), new StaticStringWrapperProvider(new StringWrapper("", "")), extensions);
     }
 
-    static Scalar file(final RootDirFinder rootDirFinder, final String... extensions) {
-        return file(rootDirFinder, new PublicResourceWrappedStringFactory(), extensions);
+    static Scalar file(final RootDirsFinder rootDirsFinder, final String... extensions) {
+        return file(rootDirsFinder, new PublicResourceWrappedStringFactory(), extensions);
     }
 
-    private static Scalar file(final RootDirFinder rootDirFinder, final StringWrapperProvider stringWrapperProvider, final String... extensions) {
+    private static Scalar file(final RootDirsFinder rootDirsFinder, final StringWrapperProvider stringWrapperProvider, final String... extensions) {
         return new Scalar() {
             @Nullable
             @Override
             public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
                 final VirtualFileFilter fileFilter = extensions.length > 0 ? new ExtensionFileFilter(extensions) : VirtualFileFilter.ALL;
-                return providers.file(rootDirFinder, stringWrapperProvider, fileFilter, insertHandler);
+                return providers.file(rootDirsFinder, stringWrapperProvider, fileFilter, insertHandler);
             }
         };
     }

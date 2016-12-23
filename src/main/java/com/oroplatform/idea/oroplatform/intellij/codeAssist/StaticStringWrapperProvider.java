@@ -1,5 +1,6 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.oroplatform.idea.oroplatform.StringWrapper;
 
@@ -11,7 +12,7 @@ public class StaticStringWrapperProvider implements StringWrapperProvider {
     }
 
     @Override
-    public StringWrapper getStringWrapperFor(PsiElement element) {
+    public StringWrapper getStringWrapperFor(PsiElement requestElement, VirtualFile sourceDir) {
         return stringWrapper;
     }
 }

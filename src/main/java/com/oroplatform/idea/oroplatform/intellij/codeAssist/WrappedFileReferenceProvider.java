@@ -20,19 +20,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class WrappedFileReferenceProvider extends PsiReferenceProvider {
     private final StringWrapperProvider stringWrapperProvider;
-    private final RootDirFinder rootDirFinder;
+    private final RootDirsFinder rootDirsFinder;
     private final VirtualFileFilter fileFilter;
 
-    public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirFinder rootDirFinder) {
-        this(stringWrapperProvider, rootDirFinder, VirtualFileFilter.ALL);
+    public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirsFinder rootDirsFinder) {
+        this(stringWrapperProvider, rootDirsFinder, VirtualFileFilter.ALL);
     }
 
-    public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirFinder rootDirFinder, VirtualFileFilter fileFilter) {
+    public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirsFinder rootDirsFinder, VirtualFileFilter fileFilter) {
         this.stringWrapperProvider = stringWrapperProvider;
-        this.rootDirFinder = rootDirFinder;
+        this.rootDirsFinder = rootDirsFinder;
         this.fileFilter = fileFilter;
     }
 
@@ -47,32 +49,38 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
     }
 
     private List<? extends FileReference> getReferences(PsiElement element, String text) {
-       return rootDirFinder.getRootDir(element)
+        final List<StringWrapperAndSourceDir> wrappersAndDirs = rootDirsFinder.getRootDirs(element).stream()
             .map(rootDir -> {
-                final StringWrapper stringWrapper = stringWrapperProvider.getStringWrapperFor(element);
+                final StringWrapper stringWrapper = stringWrapperProvider.getStringWrapperFor(element, rootDir);
+                return new StringWrapperAndSourceDir(rootDir, stringWrapper);
+            }).collect(Collectors.toList());
 
-                if(!stringWrapper.startWith(text)) {
-                    return emptyReferences(element, rootDir, stringWrapper);
-                }
+        final Stream<FileReference> references = wrappersAndDirs.stream()
+            .filter(wrapperAndDir -> wrapperAndDir.stringWrapper.startWith(text))
+            .flatMap(wrapperAndDir -> {
+                final String referenceFilePath = wrapperAndDir.sourceDir.getPath() + "/" + wrapperAndDir.stringWrapper.removePrefixAndAddSuffix(text);
+                return getFileReferences(element, wrapperAndDir.sourceDir, referenceFilePath, wrapperAndDir.stringWrapper).stream();
+            });
 
-                final String referenceFilePath = rootDir.getPath() + "/" + stringWrapper.removePrefixAndAddSuffix(text);
-                final List<FileReference> references = getFileReferences(element, rootDir, referenceFilePath, stringWrapper);
-                references.addAll(emptyReferences(element, rootDir, stringWrapper));
-
-                return references;
-            }).orElseGet(Collections::emptyList);
+        return Stream.concat(references, emptyReferences(element, wrappersAndDirs).stream())
+            .collect(Collectors.toList());
     }
 
-    private List<? extends FileReference> emptyReferences(final PsiElement element, VirtualFile rootDir, StringWrapper stringWrapper) {
-        final String relativePath = relativePathTo(rootDir, element.getOriginalElement().getContainingFile().getOriginalFile().getVirtualFile().getParent());
+    private List<? extends FileReference> emptyReferences(final PsiElement element, List<StringWrapperAndSourceDir> wrappersAndDirs) {
+        return wrappersAndDirs.stream()
+            .flatMap(wrapperAndDir -> {
+                final String relativePath = relativePathTo(wrapperAndDir.sourceDir, element.getOriginalElement().getContainingFile().getOriginalFile().getVirtualFile().getParent());
 
-        if(!element.getText().contains(PsiElements.IN_PROGRESS_VALUE) || relativePath == null) {
-            return Collections.emptyList();
-        }
+                if(!element.getText().contains(PsiElements.IN_PROGRESS_VALUE) || relativePath == null) {
+                    return Stream.empty();
+                }
 
-        final FileReferenceSet fileReferenceSet = new FileReferenceSet(relativePath, element, 0, this, true);
+                final FileReferenceSet fileReferenceSet = new FileReferenceSet(relativePath, element, 0, this, true);
 
-        return Collections.singletonList(new WrappedFileReference(stringWrapper, fileReferenceSet, element, "", rootDirFinder.getRootDir(element).orElse(null), fileFilter));
+                return Stream.of(new WrappedFileReference(wrapperAndDir.stringWrapper, fileReferenceSet, element, "", wrapperAndDir.sourceDir, fileFilter));
+            })
+            .collect(Collectors.toList());
+
     }
 
     /**
@@ -163,6 +171,16 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
         @NotNull
         private String getLookupString(VirtualFile file) {
             return stringWrapper.addPrefixAndRemoveSuffix(file.getPath().replace(rootDir.getPath() + "/", ""));
+        }
+    }
+
+    private static class StringWrapperAndSourceDir {
+        private final VirtualFile sourceDir;
+        private final StringWrapper stringWrapper;
+
+        private StringWrapperAndSourceDir(VirtualFile sourceDir, StringWrapper stringWrapper) {
+            this.sourceDir = sourceDir;
+            this.stringWrapper = stringWrapper;
         }
     }
 }

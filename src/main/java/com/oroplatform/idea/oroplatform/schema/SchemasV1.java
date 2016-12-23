@@ -3,7 +3,7 @@ package com.oroplatform.idea.oroplatform.schema;
 import com.oroplatform.idea.oroplatform.Functions;
 import com.oroplatform.idea.oroplatform.PhpClassUtil;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.LayoutAssetsCssOutputChoicesProvider;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.PublicResourcesRootDirFinder;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PublicResourcesRootDirsFinder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -1164,7 +1164,7 @@ public class SchemasV1 {
     private static Schema assets() {
         return new Schema(new FilePathMatcher(FilePathPatterns.ASSETS), Container.with(
             Property.named("styles", Container.with(
-                Property.named("inputs", Sequence.of(Scalars.file(new PublicResourcesRootDirFinder(), "css", "less", "sass"))),
+                Property.named("inputs", Sequence.of(Scalars.file(new PublicResourcesRootDirsFinder(), "css", "less", "sass"))),
                 Property.named("output", Scalars.choices(new LayoutAssetsCssOutputChoicesProvider())),
                 Property.named("filters", Sequence.of(Scalars.assetsFilter))
             ))
@@ -1185,7 +1185,7 @@ public class SchemasV1 {
                 )),
                 Property.named("map", Container.with(Container.any)),
                 Property.named("paths", Container.with(
-                    Property.any(Scalars.file(new PublicResourcesRootDirFinder(), "js"))
+                    Property.any(Scalars.file(new PublicResourcesRootDirsFinder(), "js"))
                 )),
                 Property.named("appmodules", Sequence.of(Scalars.any))
             )),

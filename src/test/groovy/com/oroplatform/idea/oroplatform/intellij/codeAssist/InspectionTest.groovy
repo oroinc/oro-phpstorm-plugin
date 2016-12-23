@@ -1,31 +1,14 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings
-
-abstract class InspectionTest extends LightPlatformCodeInsightFixtureTestCase {
+abstract class InspectionTest extends TestCase {
     @Override
     def boolean isWriteActionRequired() {
         return false
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp()
-
-        OroPlatformSettings.getInstance(myFixture.project).setPluginEnabled(true)
-    }
-
-    abstract def String fileName()
-
     def checkInspection(String s, String filePath = fileName()) {
         configureByText(filePath, s.replace("\r", ""))
         myFixture.checkHighlighting()
-    }
-
-    private def configureByText(String filePath, String contents) {
-        def file = myFixture.addFileToProject(filePath, contents)
-        myFixture.configureFromExistingVirtualFile(file.getVirtualFile())
     }
 
     def runQuickFix(String quickFix, String actual) {

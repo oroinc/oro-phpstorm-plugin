@@ -4,6 +4,7 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.FileReferenceTest
 
 class RequireJsReferenceTest extends FileReferenceTest {
     private String oroUIPath = "vendor/Oro/Bundle/UIBundle/Resources/public/js/"
+    private String oroDashboardPath = "vendor/Oro/Bundle/DashboardBundle/Resources/public/js/"
 
     @Override
     String fileName() {
@@ -19,7 +20,16 @@ class RequireJsReferenceTest extends FileReferenceTest {
             |<?php
             |namespace Oro\\Bundle\\UIBundle;
             |
-            |class OroUIBundle {}
+            |class OroUIBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+          """.stripMargin()
+        )
+
+        configureByText("vendor/Oro/Bundle/DashboardBundle/OroDashboardBundle.php",
+            """
+            |<?php
+            |namespace Oro\\Bundle\\DashboardBundle;
+            |
+            |class OroDashboardBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
           """.stripMargin()
         )
 
@@ -28,6 +38,10 @@ class RequireJsReferenceTest extends FileReferenceTest {
         configureByText(oroUIPath + "layout/layout3.js", "")
         configureByText(oroUIPath + "app.js", "")
         configureByText(oroUIPath + "some/func.js", "")
+
+        configureByText(oroDashboardPath + "dashboard1.js", "")
+        configureByText(oroDashboardPath + "some/dashboard2.js", "")
+        configureByText(oroDashboardPath + "some/dashboard3.js", "")
     }
 
     def void "test: detect oro js file as reference"() {
@@ -112,6 +126,15 @@ class RequireJsReferenceTest extends FileReferenceTest {
             |require('oroui/js/l<caret>ayout')
             """.stripMargin(),
             ["layout.js"]
+        )
+    }
+
+    def void "test: detect oro dashboard js file as reference"() {
+        checkFileReferences(
+            """
+            |require('orodashboard/js/dash<caret>board1')
+            """.stripMargin(),
+            ["dashboard1.js"]
         )
     }
 }

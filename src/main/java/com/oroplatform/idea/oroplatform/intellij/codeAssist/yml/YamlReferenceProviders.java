@@ -30,8 +30,8 @@ class YamlReferenceProviders implements ReferenceProviders {
     }
 
     @Override
-    public PsiReferenceProvider file(RootDirFinder rootDirFinder, StringWrapperProvider stringWrapperProvider, VirtualFileFilter virtualFileFilter, InsertHandler<LookupElement> insertHandler) {
-        return new WrappedFileReferenceProvider(stringWrapperProvider, rootDirFinder, virtualFileFilter);
+    public PsiReferenceProvider file(RootDirsFinder rootDirsFinder, StringWrapperProvider stringWrapperProvider, VirtualFileFilter virtualFileFilter, InsertHandler<LookupElement> insertHandler) {
+        return new WrappedFileReferenceProvider(stringWrapperProvider, rootDirsFinder, virtualFileFilter);
     }
 
     @Override
