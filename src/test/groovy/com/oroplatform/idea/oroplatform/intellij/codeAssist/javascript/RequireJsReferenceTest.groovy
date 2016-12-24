@@ -42,6 +42,16 @@ class RequireJsReferenceTest extends FileReferenceTest {
         configureByText(oroDashboardPath + "dashboard1.js", "")
         configureByText(oroDashboardPath + "some/dashboard2.js", "")
         configureByText(oroDashboardPath + "some/dashboard3.js", "")
+        configureByText(oroDashboardPath + "some/aliased.js", "")
+
+        configureByText(
+            "vendor/Oro/Bundle/DashboardBundle/Resources/config/requirejs.yml",
+            """
+            |config:
+            |  paths:
+            |    someAlias: bundles/orodashboard/js/some/aliased.js
+            """.stripMargin()
+        )
     }
 
     def void "test: detect oro js file as reference"() {
@@ -135,6 +145,24 @@ class RequireJsReferenceTest extends FileReferenceTest {
             |require('orodashboard/js/dash<caret>board1')
             """.stripMargin(),
             ["dashboard1.js"]
+        )
+    }
+
+    def void "test: detect reference for path alias"() {
+        checkFileReferences(
+            """
+            |require('some<caret>Alias')
+            """.stripMargin(),
+            ["aliased.js"]
+        )
+    }
+
+    def void "test: suggest aliases for files"() {
+        suggestions(
+            """
+            |require('<caret>')
+            """.stripMargin(),
+            ["someAlias"]
         )
     }
 }

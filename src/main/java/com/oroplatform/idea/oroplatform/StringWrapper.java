@@ -1,5 +1,7 @@
 package com.oroplatform.idea.oroplatform;
 
+import com.intellij.openapi.util.text.StringUtil;
+
 import java.util.function.Function;
 
 public class StringWrapper {
@@ -16,11 +18,11 @@ public class StringWrapper {
     }
 
     public String addPrefixAndRemoveSuffix(String s) {
-        return prefix + s.replace(suffix, "");
+        return prefix + StringUtil.trimEnd(s, suffix);
     }
 
     public String removePrefixAndAddSuffix(String s) {
-        return s.replace(prefix, "") + suffix;
+        return StringUtil.trimStart(s, prefix) + suffix;
     }
 
     public StringWrapper mapPrefix(Function<String, String> f) {

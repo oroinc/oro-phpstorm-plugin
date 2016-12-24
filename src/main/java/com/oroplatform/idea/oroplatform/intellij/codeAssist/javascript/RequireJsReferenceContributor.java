@@ -2,6 +2,8 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript;
 
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
@@ -35,7 +37,8 @@ public class RequireJsReferenceContributor extends PsiReferenceContributor {
 
         registrar.registerReferenceProvider(pattern, new WrappedFileReferenceProvider(
             new BundleJsModuleWrappedStringFactory(),
-            new BundleJsRootDirsFinder())
+            new BundleJsRootDirsFinder(),
+            new RequireJsFilePathTransformer())
         );
     }
 
@@ -56,6 +59,24 @@ public class RequireJsReferenceContributor extends PsiReferenceContributor {
                     .mapPrefix(prefix -> prefix.replace("bundles/", "")+"js/")
                     .mapSuffix(suffix -> ".js")
                 ).orElse(new StringWrapper("", ""));
+        }
+    }
+
+    private static class RequireJsFilePathTransformer implements WrappedFileReferenceProvider.FilePathTransformer {
+        @Override
+        public String referenceFilePath(PsiElement element, String text) {
+            final Project project = element.getProject();
+            final RequireJsConfig config = project.getComponent(RequireJsComponent.class).getRequireJsConfig();
+
+            return config.getPathForAlias(text).map(t -> StringUtil.trimEnd(StringUtil.trimStart(t, "bundles/"), ".js")).orElse(text);
+        }
+
+        @Override
+        public String variantLookupString(PsiElement element, String text) {
+            final Project project = element.getProject();
+            final RequireJsConfig config = project.getComponent(RequireJsComponent.class).getRequireJsConfig();
+
+            return config.getAliasForPath("bundles/"+text+".js").orElse(text);
         }
     }
 }

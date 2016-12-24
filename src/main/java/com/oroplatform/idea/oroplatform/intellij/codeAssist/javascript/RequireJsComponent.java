@@ -54,13 +54,21 @@ public class RequireJsComponent implements ProjectComponent {
 
     @Override
     public void initComponent() {
-        StartupManager.getInstance(project).registerPostStartupActivity(() -> {
-            if(OroPlatformSettings.getInstance(project).isPluginEnabled()) {
-                ApplicationManager.getApplication().runReadAction(() -> {
-                    VirtualFileManager.getInstance().addVirtualFileListener(vfsListener, project);
-                    initConfigs();
-                });
-            }
+        if(ApplicationManager.getApplication().isUnitTestMode()) {
+            init();
+        } else {
+            StartupManager.getInstance(project).registerPostStartupActivity(() -> {
+                if(OroPlatformSettings.getInstance(project).isPluginEnabled()) {
+                    init();
+                }
+            });
+        }
+    }
+
+    private void init() {
+        ApplicationManager.getApplication().runReadAction(() -> {
+            VirtualFileManager.getInstance().addVirtualFileListener(vfsListener, project);
+            initConfigs();
         });
     }
 

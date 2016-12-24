@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public class RequireJsConfig {
     private final Map<String, String> pathAliases = new HashMap<>();
+    private Map<String, String> reversedPathAliases;
     private final Map<String, Map<String, String>> mappings = new HashMap<>();
 
     public RequireJsConfig(Map<String, String> pathAliases, Map<String, Map<String, String>> mappings) {
@@ -18,8 +19,19 @@ public class RequireJsConfig {
         this(new HashMap<>(), new HashMap<>());
     }
 
-    public Optional<String> getPathAliasFor(String path) {
-        return Optional.ofNullable(pathAliases.get(path));
+    public Optional<String> getPathForAlias(String alias) {
+        return Optional.ofNullable(pathAliases.get(alias));
+    }
+
+    public Optional<String> getAliasForPath(String path) {
+        synchronized (this) {
+            if(reversedPathAliases == null) {
+                reversedPathAliases = new HashMap<>();
+                pathAliases.forEach((key, value) -> reversedPathAliases.put(value, key));
+            }
+        }
+
+        return Optional.ofNullable(reversedPathAliases.get(path));
     }
 
     public RequireJsConfig merge(RequireJsConfig config) {

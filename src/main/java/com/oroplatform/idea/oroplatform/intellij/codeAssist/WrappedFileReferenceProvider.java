@@ -27,15 +27,21 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
     private final StringWrapperProvider stringWrapperProvider;
     private final RootDirsFinder rootDirsFinder;
     private final VirtualFileFilter fileFilter;
+    private final FilePathTransformer filePathTransformer;
 
-    public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirsFinder rootDirsFinder) {
-        this(stringWrapperProvider, rootDirsFinder, VirtualFileFilter.ALL);
+    public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirsFinder rootDirsFinder, FilePathTransformer filePathTransformer) {
+        this(stringWrapperProvider, rootDirsFinder, VirtualFileFilter.ALL, filePathTransformer);
     }
 
     public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirsFinder rootDirsFinder, VirtualFileFilter fileFilter) {
+        this(stringWrapperProvider, rootDirsFinder, fileFilter, new NullFilePathTransformer());
+    }
+
+    private WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirsFinder rootDirsFinder, VirtualFileFilter fileFilter, FilePathTransformer filePathTransformer) {
         this.stringWrapperProvider = stringWrapperProvider;
         this.rootDirsFinder = rootDirsFinder;
         this.fileFilter = fileFilter;
+        this.filePathTransformer = filePathTransformer;
     }
 
     @NotNull
@@ -55,10 +61,12 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
                 return new StringWrapperAndSourceDir(rootDir, stringWrapper);
             }).collect(Collectors.toList());
 
+        final String transformedText = filePathTransformer.referenceFilePath(element, text);
+
         final Stream<FileReference> references = wrappersAndDirs.stream()
-            .filter(wrapperAndDir -> wrapperAndDir.stringWrapper.startWith(text))
+            .filter(wrapperAndDir -> wrapperAndDir.stringWrapper.startWith(transformedText))
             .flatMap(wrapperAndDir -> {
-                final String referenceFilePath = wrapperAndDir.sourceDir.getPath() + "/" + wrapperAndDir.stringWrapper.removePrefixAndAddSuffix(text);
+                final String referenceFilePath = wrapperAndDir.sourceDir.getPath() + "/" + wrapperAndDir.stringWrapper.removePrefixAndAddSuffix(transformedText);
                 return getFileReferences(element, wrapperAndDir.sourceDir, referenceFilePath, wrapperAndDir.stringWrapper).stream();
             });
 
@@ -77,7 +85,7 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
 
                 final FileReferenceSet fileReferenceSet = new FileReferenceSet(relativePath, element, 0, this, true);
 
-                return Stream.of(new WrappedFileReference(wrapperAndDir.stringWrapper, fileReferenceSet, element, "", wrapperAndDir.sourceDir, fileFilter));
+                return Stream.of(new WrappedFileReference(wrapperAndDir.stringWrapper, fileReferenceSet, element, "", wrapperAndDir.sourceDir, fileFilter, filePathTransformer));
             })
             .collect(Collectors.toList());
 
@@ -124,7 +132,7 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
 
         VfsUtilCore.iterateChildrenRecursively(rootDir, null, file -> {
             if(file.getPath().equals(referenceFilePath)) {
-                references.add(new WrappedFileReference(stringWrapper, fileReferenceSet, element, relativePath + file.getPath().replace(rootDir.getPath()+"/", ""), rootDir, fileFilter));
+                references.add(new WrappedFileReference(stringWrapper, fileReferenceSet, element, relativePath + file.getPath().replace(rootDir.getPath()+"/", ""), rootDir, fileFilter, filePathTransformer));
             }
             return true;
         });
@@ -136,12 +144,14 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
         private final StringWrapper stringWrapper;
         private final VirtualFile rootDir;
         private final VirtualFileFilter fileFilter;
+        private final FilePathTransformer filePathTransformer;
 
-        WrappedFileReference(StringWrapper stringWrapper, FileReferenceSet fileReferenceSet, PsiElement element, String text, VirtualFile rootDir, VirtualFileFilter fileFilter) {
+        WrappedFileReference(StringWrapper stringWrapper, FileReferenceSet fileReferenceSet, PsiElement element, String text, VirtualFile rootDir, VirtualFileFilter fileFilter, FilePathTransformer filePathTransformer) {
             super(fileReferenceSet, new TextRange(isQuotedAsInt(element), element.getTextLength() - isQuotedAsInt(element)), 0, text);
             this.stringWrapper = stringWrapper;
             this.rootDir = rootDir;
             this.fileFilter = fileFilter;
+            this.filePathTransformer = filePathTransformer;
         }
 
         private static int isQuotedAsInt(PsiElement element) {
@@ -170,7 +180,7 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
 
         @NotNull
         private String getLookupString(VirtualFile file) {
-            return stringWrapper.addPrefixAndRemoveSuffix(file.getPath().replace(rootDir.getPath() + "/", ""));
+            return filePathTransformer.variantLookupString(getElement(), stringWrapper.addPrefixAndRemoveSuffix(file.getPath().replace(rootDir.getPath() + "/", "")));
         }
     }
 
@@ -183,4 +193,22 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
             this.stringWrapper = stringWrapper;
         }
     }
+
+    public interface FilePathTransformer {
+        String referenceFilePath(PsiElement element, String text);
+        String variantLookupString(PsiElement element, String text);
+    }
+
+    public static class NullFilePathTransformer implements FilePathTransformer {
+        @Override
+        public String referenceFilePath(PsiElement element, String text) {
+            return text;
+        }
+
+        @Override
+        public String variantLookupString(PsiElement element, String text) {
+            return text;
+        }
+    }
+
 }

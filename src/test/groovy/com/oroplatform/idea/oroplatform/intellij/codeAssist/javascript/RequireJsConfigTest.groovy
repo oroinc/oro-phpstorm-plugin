@@ -11,8 +11,8 @@ class RequireJsConfigTest {
 
         def actual = config1.merge(config2)
 
-        assertEquals(Optional.of("path1"), actual.getPathAliasFor("alias1"))
-        assertEquals(Optional.of("path2"), actual.getPathAliasFor("alias2"))
+        assertEquals(Optional.of("path1"), actual.getPathForAlias("alias1"))
+        assertEquals(Optional.of("path2"), actual.getPathForAlias("alias2"))
     }
 
     @Test
@@ -22,7 +22,7 @@ class RequireJsConfigTest {
 
         def actual = config1.merge(config2)
 
-        assertEquals(Optional.of("path2"), actual.getPathAliasFor("alias1"))
+        assertEquals(Optional.of("path2"), actual.getPathForAlias("alias1"))
     }
 
     @Test

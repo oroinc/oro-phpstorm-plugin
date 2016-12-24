@@ -21,9 +21,9 @@ class RequireJsConfigParserTest extends TestCase {
 
         def config = new RequireJsConfigParser().parse((YAMLFile)myFixture.getFile())
 
-        assertEquals(Optional.of("some/path/to/somewhere1"), config.getPathAliasFor("someAlias1"))
-        assertEquals(Optional.of("some/path/to/somewhere2"), config.getPathAliasFor("someAlias2"))
-        assertEquals(Optional.empty(), config.getPathAliasFor("unexisting"))
+        assertEquals(Optional.of("some/path/to/somewhere1"), config.getPathForAlias("someAlias1"))
+        assertEquals(Optional.of("some/path/to/somewhere2"), config.getPathForAlias("someAlias2"))
+        assertEquals(Optional.empty(), config.getPathForAlias("unexisting"))
     }
 
     void "test: parse config paths in quotes"() {
@@ -37,7 +37,7 @@ class RequireJsConfigParserTest extends TestCase {
 
         def config = new RequireJsConfigParser().parse((YAMLFile)myFixture.getFile())
 
-        assertEquals(Optional.of("some/path/to/somewhere1"), config.getPathAliasFor("someAlias1"))
+        assertEquals(Optional.of("some/path/to/somewhere1"), config.getPathForAlias("someAlias1"))
     }
 
     void "test: parse config map"() {
