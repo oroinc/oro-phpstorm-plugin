@@ -23,7 +23,7 @@ public class RequireJsConfigParser {
 
             for (YAMLKeyValue yamlKeyValue : pathsMapping.getKeyValues()) {
                 if(yamlKeyValue.getValue() instanceof YAMLMapping) {
-                    map.put(yamlKeyValue.getKeyText(), extractMap((YAMLMapping)yamlKeyValue.getValue()));
+                    map.put(yamlKeyValue.getKeyText(), extractReversedMap((YAMLMapping)yamlKeyValue.getValue()));
                 }
             }
 
@@ -45,5 +45,10 @@ public class RequireJsConfigParser {
     private static Map<String, String> extractMap(YAMLMapping pathsMapping) {
         return pathsMapping.getKeyValues().stream()
             .collect(Collectors.toMap(YAMLKeyValue::getKeyText, YAMLKeyValue::getValueText, (v1, v2) -> v2));
+    }
+
+    private static Map<String, String> extractReversedMap(YAMLMapping pathsMapping) {
+        return pathsMapping.getKeyValues().stream()
+            .collect(Collectors.toMap(YAMLKeyValue::getValueText, YAMLKeyValue::getKeyText, (v1, v2) -> v2));
     }
 }

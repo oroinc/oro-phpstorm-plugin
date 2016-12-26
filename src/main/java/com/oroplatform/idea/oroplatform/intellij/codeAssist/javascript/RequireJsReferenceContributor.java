@@ -10,10 +10,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.PublicResourceWrappedStringFactory;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.StringWrapperProvider;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.WrappedFileReferenceProvider;
 import com.oroplatform.idea.oroplatform.StringWrapper;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -63,6 +61,10 @@ public class RequireJsReferenceContributor extends PsiReferenceContributor {
     }
 
     private static class RequireJsFilePathTransformer implements WrappedFileReferenceProvider.FilePathTransformer {
+
+        private final StringWrapperProvider stringWrapperProvider = new BundleJsModuleWrappedStringFactory();
+        private final RootDirsFinder rootDirsFinder = new PublicResourcesRootDirsFinder();
+
         @Override
         public String referenceFilePath(PsiElement element, String text) {
             final Project project = element.getProject();
@@ -76,7 +78,18 @@ public class RequireJsReferenceContributor extends PsiReferenceContributor {
             final Project project = element.getProject();
             final RequireJsConfig config = project.getComponent(RequireJsComponent.class).getRequireJsConfig();
 
-            return config.getAliasForPath("bundles/"+text+".js").orElse(text);
+            final String moduleName = getModuleName(element).flatMap(name -> config.getPackageAliasFor(name, text)).orElse(text);
+
+            return config.getAliasForPath("bundles/"+moduleName+".js").orElse(moduleName);
+        }
+
+        private Optional<String> getModuleName(PsiElement element) {
+            final VirtualFile sourceDir = element.getContainingFile().getOriginalFile().getVirtualFile().getParent();
+            final StringWrapper stringWrapper = stringWrapperProvider.getStringWrapperFor(element, sourceDir);
+            final Optional<VirtualFile> rootDirs = rootDirsFinder.getRootDirs(element).stream().findFirst().flatMap(dir -> Optional.ofNullable(dir.findChild("js")));
+
+            return rootDirs.map(dir -> element.getContainingFile().getOriginalFile().getVirtualFile().getPath().replace(dir.getPath() + "/", ""))
+                .map(stringWrapper::addPrefixAndRemoveSuffix);
         }
     }
 }

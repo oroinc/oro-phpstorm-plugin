@@ -44,8 +44,10 @@ public class RequireJsConfig {
         return new RequireJsConfig(mergedPaths, mergedMappings);
     }
 
-    public Map<String, String> getPackageAliasesFor(String pkg) {
-        return new HashMap<>(mappings.getOrDefault(pkg, Collections.emptyMap()));
+    public Optional<String> getPackageAliasFor(String pkg, String pkgForAlias) {
+        return Optional.ofNullable(mappings.getOrDefault(pkg, Collections.emptyMap()).get(pkgForAlias))
+            .map(Optional::of)
+            .orElseGet(() -> Optional.ofNullable(mappings.getOrDefault("*", Collections.emptyMap()).get(pkgForAlias)));
     }
 
     private static <K,V> Map<K, V> merge(Map<K, V> map1, Map<K, V> map2) {

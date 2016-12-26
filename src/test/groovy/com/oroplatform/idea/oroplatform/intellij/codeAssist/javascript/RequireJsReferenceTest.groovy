@@ -8,7 +8,7 @@ class RequireJsReferenceTest extends FileReferenceTest {
 
     @Override
     String fileName() {
-        return "some.js"
+        return "vendor/Oro/Bundle/SomeBundle/Resources/public/js/some.js"
     }
 
     @Override
@@ -33,6 +33,15 @@ class RequireJsReferenceTest extends FileReferenceTest {
           """.stripMargin()
         )
 
+        configureByText("vendor/Oro/Bundle/SomeBundle/OroSomeBundle.php",
+            """
+            |<?php
+            |namespace Oro\\Bundle\\SomeBundle;
+            |
+            |class OroSomeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+          """.stripMargin()
+        )
+
         configureByText(oroUIPath + "layout.js", "")
         configureByText(oroUIPath + "layout/layout2.js", "")
         configureByText(oroUIPath + "layout/layout3.js", "")
@@ -43,6 +52,8 @@ class RequireJsReferenceTest extends FileReferenceTest {
         configureByText(oroDashboardPath + "some/dashboard2.js", "")
         configureByText(oroDashboardPath + "some/dashboard3.js", "")
         configureByText(oroDashboardPath + "some/aliased.js", "")
+        configureByText(oroDashboardPath + "some/mapped.js", "")
+        configureByText(oroDashboardPath + "some/mappedForAllFiles.js", "")
 
         configureByText(
             "vendor/Oro/Bundle/DashboardBundle/Resources/config/requirejs.yml",
@@ -50,6 +61,11 @@ class RequireJsReferenceTest extends FileReferenceTest {
             |config:
             |  paths:
             |    someAlias: bundles/orodashboard/js/some/aliased.js
+            |  map:
+            |    orosome/js/some:
+            |       mapped: orodashboard/js/some/mapped
+            |    '*':
+            |       mappedForAllFiles: orodashboard/js/some/mappedForAllFiles
             """.stripMargin()
         )
     }
@@ -163,6 +179,37 @@ class RequireJsReferenceTest extends FileReferenceTest {
             |require('<caret>')
             """.stripMargin(),
             ["someAlias"]
+        )
+    }
+
+    def void "test: suggest mapped packages"() {
+        suggestions(
+            """
+            |require('<caret>')
+            """.stripMargin(),
+            ["mapped"],
+            ["orodashboard/js/some/mapped"]
+        )
+    }
+
+    def void "test: not suggest mapped packages for different file"() {
+        suggestions(
+            "vendor/Oro/Bundle/SomeBundle/Resources/public/js/some2.js",
+            """
+            |require('<caret>')
+            """.stripMargin(),
+            ["orodashboard/js/some/mapped"],
+            ["mapped"]
+        )
+    }
+
+    def void "test: suggest mapped packages for all files"() {
+        suggestions(
+            """
+            |require('<caret>')
+            """.stripMargin(),
+            ["mappedForAllFiles"],
+            ["orodashboard/js/some/mappedForAllFiles"]
         )
     }
 }

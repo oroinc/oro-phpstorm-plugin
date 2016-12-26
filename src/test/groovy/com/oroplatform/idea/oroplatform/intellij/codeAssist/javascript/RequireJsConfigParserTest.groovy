@@ -53,7 +53,8 @@ class RequireJsConfigParserTest extends TestCase {
 
         def config = new RequireJsConfigParser().parse((YAMLFile)myFixture.getFile())
 
-        assertEquals([alias1: "pkg1", alias2: "pkg2"], config.getPackageAliasesFor("somePkg"))
+        assertEquals(Optional.of("alias1"), config.getPackageAliasFor("somePkg", "pkg1"))
+        assertEquals(Optional.of("alias2"), config.getPackageAliasFor("somePkg", "pkg2"))
     }
 
     void "test: aliases for a package for not defined package should be empty"() {
@@ -66,6 +67,6 @@ class RequireJsConfigParserTest extends TestCase {
 
         def config = new RequireJsConfigParser().parse((YAMLFile)myFixture.getFile())
 
-        assertEquals(new HashMap<String, String>(), config.getPackageAliasesFor("somePkg"))
+        assertEquals(Optional.empty(), config.getPackageAliasFor("somePkg", "undefined"))
     }
 }
