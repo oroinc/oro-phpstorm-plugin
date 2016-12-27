@@ -10,6 +10,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.0-beta5</h2>
+<ul>
+  <li>Full support for requirejs modules</li>
+</ul>
+
 <h2>1.0.0-beta4</h2>
 <ul>
   <li>update autocomplete for dashboards.yml</li>
