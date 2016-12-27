@@ -12,6 +12,7 @@ import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.oroplatform.idea.oroplatform.StringWrapper;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.*;
+import com.oroplatform.idea.oroplatform.intellij.ExtensionFileFilter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -36,6 +37,7 @@ public class RequireJsReferenceContributor extends PsiReferenceContributor {
         registrar.registerReferenceProvider(pattern, new WrappedFileReferenceProvider(
             new BundleJsModuleWrappedStringFactory(),
             new BundleJsRootDirsFinder(),
+            new ExtensionFileFilter("js"),
             new RequireJsFilePathTransformer())
         );
     }
@@ -70,7 +72,10 @@ public class RequireJsReferenceContributor extends PsiReferenceContributor {
             final Project project = element.getProject();
             final RequireJsConfig config = project.getComponent(RequireJsComponent.class).getRequireJsConfig();
 
-            return config.getPathForAlias(text).map(t -> StringUtil.trimEnd(StringUtil.trimStart(t, "bundles/"), ".js")).orElse(text);
+            return config.getPathForAlias(text).map(t -> StringUtil.trimEnd(StringUtil.trimStart(t, "bundles/"), ".js"))
+                .map(Optional::of)
+                .orElseGet(() -> getModuleName(element).flatMap(name -> config.getPackageForAlias(name, text)))
+                .orElse(text);
         }
 
         @Override
@@ -78,9 +83,10 @@ public class RequireJsReferenceContributor extends PsiReferenceContributor {
             final Project project = element.getProject();
             final RequireJsConfig config = project.getComponent(RequireJsComponent.class).getRequireJsConfig();
 
-            final String moduleName = getModuleName(element).flatMap(name -> config.getPackageAliasFor(name, text)).orElse(text);
-
-            return config.getAliasForPath("bundles/"+moduleName+".js").orElse(moduleName);
+            return config.getAliasForPath("bundles/"+text+".js")
+                .map(Optional::of)
+                .orElseGet(() -> getModuleName(element).flatMap(name -> config.getPackageAliasFor(name, text)))
+                .orElse(text);
         }
 
         private Optional<String> getModuleName(PsiElement element) {

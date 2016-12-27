@@ -1,4 +1,4 @@
-package com.oroplatform.idea.oroplatform.schema;
+package com.oroplatform.idea.oroplatform.intellij;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileFilter;
@@ -7,10 +7,10 @@ import gnu.trove.THashSet;
 import java.util.Arrays;
 import java.util.Set;
 
-class ExtensionFileFilter implements VirtualFileFilter {
+public class ExtensionFileFilter implements VirtualFileFilter {
     private final Set<String> extensions = new THashSet<>();
 
-    ExtensionFileFilter(String... extensions) {
+    public ExtensionFileFilter(String... extensions) {
         this.extensions.addAll(Arrays.asList(extensions));
     }
 

@@ -52,6 +52,7 @@ class RequireJsReferenceTest extends FileReferenceTest {
         configureByText(oroDashboardPath + "some/dashboard2.js", "")
         configureByText(oroDashboardPath + "some/dashboard3.js", "")
         configureByText(oroDashboardPath + "some/aliased.js", "")
+        configureByText(oroDashboardPath + "some/index.html", "")
         configureByText(oroDashboardPath + "some/mapped.js", "")
         configureByText(oroDashboardPath + "some/mappedForAllFiles.js", "")
 
@@ -210,6 +211,25 @@ class RequireJsReferenceTest extends FileReferenceTest {
             """.stripMargin(),
             ["mappedForAllFiles"],
             ["orodashboard/js/some/mappedForAllFiles"]
+        )
+    }
+
+    def void "test: detect mapped packages as reference"() {
+        checkFileReferences(
+            """
+            |require('map<caret>ped')
+            """.stripMargin(),
+            ["mapped.js"]
+        )
+    }
+
+    def void "test: not suggest html file"() {
+        suggestions(
+            """
+            |require('<caret>')
+            """.stripMargin(),
+            [],
+            ["orodashboard/js/some/index.html"]
         )
     }
 }

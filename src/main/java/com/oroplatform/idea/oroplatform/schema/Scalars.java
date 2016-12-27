@@ -7,6 +7,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.PsiReferenceProvider;
 import com.oroplatform.idea.oroplatform.StringWrapper;
+import com.oroplatform.idea.oroplatform.intellij.ExtensionFileFilter;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.*;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeToAppDirectoryResolver;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeToElementResolver;

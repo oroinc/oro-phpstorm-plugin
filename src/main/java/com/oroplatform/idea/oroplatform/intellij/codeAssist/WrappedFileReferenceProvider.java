@@ -29,15 +29,11 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
     private final VirtualFileFilter fileFilter;
     private final FilePathTransformer filePathTransformer;
 
-    public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirsFinder rootDirsFinder, FilePathTransformer filePathTransformer) {
-        this(stringWrapperProvider, rootDirsFinder, VirtualFileFilter.ALL, filePathTransformer);
-    }
-
     public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirsFinder rootDirsFinder, VirtualFileFilter fileFilter) {
         this(stringWrapperProvider, rootDirsFinder, fileFilter, new NullFilePathTransformer());
     }
 
-    private WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirsFinder rootDirsFinder, VirtualFileFilter fileFilter, FilePathTransformer filePathTransformer) {
+    public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirsFinder rootDirsFinder, VirtualFileFilter fileFilter, FilePathTransformer filePathTransformer) {
         this.stringWrapperProvider = stringWrapperProvider;
         this.rootDirsFinder = rootDirsFinder;
         this.fileFilter = fileFilter;
