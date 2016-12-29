@@ -14,7 +14,6 @@ import org.jetbrains.yaml.YAMLFileType;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLMapping;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -22,34 +21,32 @@ import java.util.stream.Collectors;
 
 import static com.oroplatform.idea.oroplatform.Functions.toStream;
 
-public class ImportFileBasedIndex extends FileBasedIndexExtension<String, Collection<String>> {
+public class ImportFileBasedIndex extends FileBasedIndexExtension<String, Void> {
 
-    public static final ID<String, Collection<String>> KEY = ID.create("com.oroplatform.idea.oroplatform.import");
+    public static final ID<String, Void> KEY = ID.create("com.oroplatform.idea.oroplatform.import");
     private final KeyDescriptor<String> keyDescriptor = new EnumeratorStringDescriptor();
 
     @NotNull
     @Override
-    public ID<String, Collection<String>> getName() {
+    public ID<String, Void> getName() {
         return KEY;
     }
 
     @NotNull
     @Override
-    public DataIndexer<String, Collection<String>, FileContent> getIndexer() {
-        return new DataIndexer<String, Collection<String>, FileContent>() {
+    public DataIndexer<String, Void, FileContent> getIndexer() {
+        return new DataIndexer<String, Void, FileContent>() {
             @NotNull
             @Override
-            public Map<String, Collection<String>> map(@NotNull FileContent inputData) {
-                final Map<String, Collection<String>> index = new THashMap<>();
+            public Map<String, Void> map(@NotNull FileContent inputData) {
+                final Map<String, Void> index = new THashMap<>();
 
                 if(!OroPlatformSettings.getInstance(inputData.getProject()).isPluginEnabled()) {
                     return index;
                 }
 
                 final Set<String> importedFilePaths = getImportedFilePaths(inputData.getFile().getParent(), (YAMLFile) inputData.getPsiFile());
-                if(!importedFilePaths.isEmpty()) {
-                    index.put(inputData.getFile().getPath(), importedFilePaths);
-                }
+                importedFilePaths.forEach(filePath -> index.put(filePath, null));
 
                 return index;
             }
@@ -76,8 +73,8 @@ public class ImportFileBasedIndex extends FileBasedIndexExtension<String, Collec
 
     @NotNull
     @Override
-    public DataExternalizer<Collection<String>> getValueExternalizer() {
-        return new CollectionExternalizer<>(keyDescriptor);
+    public DataExternalizer<Void> getValueExternalizer() {
+        return ScalarIndexExtension.VOID_DATA_EXTERNALIZER;
     }
 
     @NotNull
@@ -98,6 +95,6 @@ public class ImportFileBasedIndex extends FileBasedIndexExtension<String, Collec
 
     @Override
     public int getVersion() {
-        return 1;
+        return 2;
     }
 }

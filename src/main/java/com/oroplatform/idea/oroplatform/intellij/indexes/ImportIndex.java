@@ -1,17 +1,15 @@
 package com.oroplatform.idea.oroplatform.intellij.indexes;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.CachedValue;
+import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.yaml.YAMLFileType;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class ImportIndex {
-    private static final Key<CachedValue<Collection<String>>> IMPORT_CACHE_KEY =
-        new Key<>("com.oroplatform.idea.oroplatform.cache.import_index");
 
     private final Project project;
     private final GlobalSearchScope scope;
@@ -26,6 +24,11 @@ public class ImportIndex {
     }
 
     public Collection<String> getImportedFilePathsFor(PsiFile file) {
-        return Cache.getSet(project, file, IMPORT_CACHE_KEY, ImportFileBasedIndex.KEY, file.getOriginalFile().getVirtualFile().getPath(), scope);
+        final FileBasedIndex index = FileBasedIndex.getInstance();
+        final Collection<String> importedFiles = index.getAllKeys(ImportFileBasedIndex.KEY, project);
+
+        return importedFiles.stream()
+            .filter(filePath -> index.getContainingFiles(ImportFileBasedIndex.KEY, filePath, scope).contains(file.getVirtualFile()))
+            .collect(Collectors.toList());
     }
 }
