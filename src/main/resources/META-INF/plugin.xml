@@ -10,6 +10,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.0-beta6</h2>
+<ul>
+  <li>Improve performance by reducing number of reindexing.</li>
+</ul>
+
 <h2>1.0.0-beta5</h2>
 <ul>
   <li>Full support for requirejs modules</li>
