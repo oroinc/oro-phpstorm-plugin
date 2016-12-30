@@ -6,17 +6,12 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.yaml.psi.YAMLFile;
 
 import java.util.Collection;
-import java.util.Set;
 
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getAncestors;
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getPropertyFrom;
 
 public class ChoicesFromPathCompletionProvider extends CompletionProvider<CompletionParameters> {
@@ -32,9 +27,7 @@ public class ChoicesFromPathCompletionProvider extends CompletionProvider<Comple
 
     @Override
     protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
-        final YAMLFile file = (YAMLFile) parameters.getPosition().getContainingFile();
-        final Set<PsiElement> ancestors = getAncestors(parameters.getPosition());
-        final Collection<String> properties = getPropertyFrom(path, YamlPsiElements.getMappingsFrom(file), ancestors);
+        final Collection<String> properties = getPropertyFrom(path, parameters.getPosition());
 
         for (String property : properties) {
             result.addElement(LookupElementBuilder.create(prefix+property).withInsertHandler(insertHandler));

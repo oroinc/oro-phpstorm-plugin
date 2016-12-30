@@ -37,8 +37,7 @@ class KeyInsertHandler implements InsertHandler<LookupElement> {
         final DefaultValueDescriptor defaultValueDescriptor = item.getUserData(DefaultValueDescriptor.KEY);
 
         if(defaultValueDescriptor != null && item.getPsiElement() != null) {
-            final YAMLFile file = (YAMLFile) context.getFile();
-            final Collection<String> properties = YamlPsiElements.getPropertyFrom(defaultValueDescriptor.valueFrom, YamlPsiElements.getMappingsFrom(file), getAncestors(item.getPsiElement()));
+            final Collection<String> properties = YamlPsiElements.getPropertyFrom(defaultValueDescriptor.valueFrom, item.getPsiElement());
             final String defaultValue = properties.stream()
                 .map(defaultValueDescriptor.transformValue)
                 .findAny()

@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 final class Scalars {
@@ -31,8 +32,8 @@ final class Scalars {
     private static Scalar choices(Collection<? extends Requirement> requirements, final ChoicesProvider choicesProvider) {
         return new Scalar(requirements) {
             @Override
-            public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return providers.choices(choicesProvider, insertHandler);
+            public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return Optional.of(providers.choices(choicesProvider, insertHandler));
             }
         };
     }
@@ -48,8 +49,8 @@ final class Scalars {
     static Scalar propertiesFromPath(final PropertyPath path, final String prefix) {
         return new Scalar() {
             @Override
-            public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return providers.propertiesFromPath(path, prefix, insertHandler);
+            public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return Optional.of(providers.propertiesFromPath(path, prefix, insertHandler));
             }
         };
     }
@@ -61,8 +62,8 @@ final class Scalars {
     static Scalar phpMethod(final String pattern) {
         return new Scalar() {
             @Override
-            public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return providers.phpMethod(pattern, insertHandler);
+            public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return Optional.of(providers.phpMethod(pattern, insertHandler));
             }
         };
     }
@@ -73,81 +74,80 @@ final class Scalars {
 
     final static Scalar condition = new Scalar() {
         @Override
-        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.condition(insertHandler);
+        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.condition(insertHandler));
         }
     };
 
     final static Scalar action = new Scalar() {
         @Override
-        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.action(insertHandler);
+        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.action(insertHandler));
         }
     };
 
     final static Scalar service = new Scalar() {
         @Override
-        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.service(insertHandler);
+        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.service(insertHandler));
         }
     };
 
     final static Scalar massActionProvider = new Scalar() {
         @Nullable
         @Override
-        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.massActionProvider(insertHandler);
+        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.massActionProvider(insertHandler));
         }
     };
 
     final static Scalar formType = new Scalar() {
         @Override
-        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.formType(insertHandler);
+        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.formType(insertHandler));
         }
     };
 
     final static Scalar assetsFilter = new Scalar() {
-        @Nullable
         @Override
-        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.assetsFilter(insertHandler);
+        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.assetsFilter(insertHandler));
         }
     };
 
     final static Scalar datagrid = new Scalar() {
         @Override
-        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.datagrid(insertHandler);
+        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.datagrid(insertHandler));
         }
     };
 
     final static Scalar operation = new Scalar() {
         @Override
-        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.operation(insertHandler);
+        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.operation(insertHandler));
         }
     };
 
     final static Scalar acl = new Scalar() {
         @Override
-        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.acl(insertHandler);
+        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.acl(insertHandler));
         }
     };
 
     final static Scalar filePath = new Scalar() {
         @Override
-        public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.filePath(new RelativeToElementResolver(), insertHandler);
+        public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.filePath(new RelativeToElementResolver(), insertHandler));
         }
     };
 
     static Scalar filePathRelativeToElementIn(final String dir, final int allowedDepth) {
         return new Scalar() {
             @Override
-            public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return providers.filePath(new RelativeToElementResolver(dir), allowedDepth, insertHandler);
+            public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return Optional.of(providers.filePath(new RelativeToElementResolver(dir), allowedDepth, insertHandler));
             }
         };
     }
@@ -155,8 +155,8 @@ final class Scalars {
     static Scalar filePathRelativeToAppIn(final String dir) {
         return new Scalar() {
             @Override
-            public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return providers.filePath(new RelativeToAppDirectoryResolver(dir), insertHandler);
+            public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return Optional.of(providers.filePath(new RelativeToAppDirectoryResolver(dir), insertHandler));
             }
         };
     }
@@ -173,9 +173,9 @@ final class Scalars {
         return new Scalar() {
             @Nullable
             @Override
-            public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
                 final VirtualFileFilter fileFilter = extensions.length > 0 ? new ExtensionFileFilter(extensions) : VirtualFileFilter.ALL;
-                return providers.file(rootDirsFinder, stringWrapperProvider, fileFilter, insertHandler);
+                return Optional.of(providers.file(rootDirsFinder, stringWrapperProvider, fileFilter, insertHandler));
             }
         };
     }
@@ -183,32 +183,32 @@ final class Scalars {
     final static Scalar twig = new Scalar() {
         @Nullable
         @Override
-        public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.twigTemplate(insertHandler);
+        public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.twigTemplate(insertHandler));
         }
     };
 
     final static Scalar route = new Scalar() {
         @Nullable
         @Override
-        public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.route(insertHandler);
+        public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.route(insertHandler));
         }
     };
 
     final static Scalar trans = new Scalar() {
         @Nullable
         @Override
-        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.translation(insertHandler);
+        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.translation(insertHandler));
         }
     };
 
     final static Element transDomain = new Scalar() {
         @Nullable
         @Override
-        public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.translationDomain(insertHandler);
+        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.translationDomain(insertHandler));
         }
     };
 
@@ -220,6 +220,10 @@ final class Scalars {
 
     final static Scalar fullEntity = phpClass(PhpClass.entity(false));
 
+    static Scalar fullEntity(PropertyPath excludedClassesPath) {
+        return phpClass(PhpClass.entity(false).withExcludedClassesPath(excludedClassesPath));
+    }
+
     final static Scalar entity = phpClass(PhpClass.entity(true));
 
     final static Scalar controller = phpClass(PhpClass.controller());
@@ -229,32 +233,32 @@ final class Scalars {
     final static Scalar callable = new Scalar() {
         @Nullable
         @Override
-        public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.phpCallable(insertHandler);
+        public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.phpCallable(insertHandler));
         }
     };
 
     private static Scalar phpClass(final PhpClass clazz) {
         return new Scalar() {
             @Override
-            public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return providers.phpClass(clazz, insertHandler);
+            public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return Optional.of(providers.phpClass(clazz, insertHandler));
             }
         };
     }
 
     final static Scalar phpCallback = new Scalar() {
         @Override
-        public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return providers.phpCallback(insertHandler);
+        public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.phpCallback(insertHandler));
         }
     };
 
     static Scalar field(final PropertyPath classPropertyPath) {
         return new Scalar() {
             @Override
-            public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return providers.phpField(classPropertyPath, providers.phpClassProviders().directProvider(), insertHandler);
+            public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return Optional.of(providers.phpField(classPropertyPath, providers.phpClassProviders().directProvider(), insertHandler));
             }
         };
     }
@@ -262,8 +266,8 @@ final class Scalars {
     static Scalar fieldOfFieldTypeClass(final PropertyPath classPropertyPath, final PropertyPath fieldPropertyPath) {
         return new Scalar() {
             @Override
-            public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return providers.phpField(fieldPropertyPath, providers.phpClassProviders().fieldTypeProvider(classPropertyPath), insertHandler);
+            public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return Optional.of(providers.phpField(fieldPropertyPath, providers.phpClassProviders().fieldTypeProvider(classPropertyPath), insertHandler));
             }
         };
     }

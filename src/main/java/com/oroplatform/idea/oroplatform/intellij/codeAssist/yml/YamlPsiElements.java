@@ -105,6 +105,12 @@ public class YamlPsiElements {
         return getAncestors(parent, ancestors);
     }
 
+    public static Collection<String> getPropertyFrom(PropertyPath path, PsiElement element) {
+        final List<YAMLMapping> elements = getMappingsFrom(element.getContainingFile());
+        final Set<PsiElement> ancestors = getAncestors(element);
+        return path.doesPointToValue() ? getPropertyValuesFrom(path, elements, ancestors) : getPropertyKeysFrom(path, elements, ancestors);
+    }
+
     public static Collection<String> getPropertyFrom(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
         return path.doesPointToValue() ? getPropertyValuesFrom(path, elements, ancestors) : getPropertyKeysFrom(path, elements, ancestors);
     }

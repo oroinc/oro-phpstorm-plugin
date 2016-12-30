@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Optional;
 
 public class Scalar implements Element {
 
@@ -38,18 +39,16 @@ public class Scalar implements Element {
         return Collections.unmodifiableCollection(requirements);
     }
 
-    @Nullable
-    public CompletionProvider<CompletionParameters> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-        return null;
+    public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+        return Optional.empty();
     }
 
     public DefaultValueDescriptor getDefaultValueDescriptor() {
         return defaultValueDescriptor;
     }
 
-    @Nullable
-    public PsiReferenceProvider getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-        return null;
+    public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+        return Optional.empty();
     }
 
     @Override

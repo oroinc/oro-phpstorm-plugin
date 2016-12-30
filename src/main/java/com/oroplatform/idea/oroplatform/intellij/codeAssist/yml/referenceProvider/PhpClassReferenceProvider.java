@@ -15,8 +15,7 @@ import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLMapping;
 import org.jetbrains.yaml.psi.YAMLScalar;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PhpClassReferenceProvider extends PsiReferenceProvider {
@@ -34,7 +33,7 @@ public class PhpClassReferenceProvider extends PsiReferenceProvider {
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         if(element instanceof YAMLKeyValue) {
             final YAMLKeyValue keyValue = (YAMLKeyValue) element;
-            final Set<String> skippedClassNames = getClassNamesFromSiblings(keyValue);
+            final Set<String> skippedClassNames = concat(getClassNamesFromSiblings(keyValue), getExcludedClassNames(element));
 
             return new PsiReference[] {
                 new PhpClassReference(keyValue.getKey(), phpClass, keyValue.getKeyText(), insertHandler, skippedClassNames)
@@ -42,14 +41,30 @@ public class PhpClassReferenceProvider extends PsiReferenceProvider {
 
         // skip scalar element in key context
         } else if(element instanceof YAMLScalar && context.get("key") == null) {
-            final Set<String> skippedClassNames = YamlPsiElements.getFirstMapping(element)
+            final Set<String> classNamesFromParentSiblings = YamlPsiElements.getFirstMapping(element)
                 .map(this::getClassNames)
                 .orElseGet(Collections::emptySet);
+
+            final Set<String> skippedClassNames = concat(classNamesFromParentSiblings, getExcludedClassNames(element));
 
             return new PsiReference[]{new PhpClassReference(element, phpClass, StringUtil.stripQuotesAroundValue(element.getText()), insertHandler, skippedClassNames)};
         }
 
         return new PsiReference[0];
+    }
+
+    private Collection<String> getExcludedClassNames(@NotNull PsiElement element) {
+        return phpClass.getExcludedClassesPath()
+                    .map(excludedClassesPath -> YamlPsiElements.getPropertyFrom(excludedClassesPath, element))
+                    .orElse(Collections.emptyList());
+    }
+
+    @SafeVarargs
+    private static Set<String> concat(Collection<String>... collections) {
+        final Set<String> result = new HashSet<>();
+        Arrays.stream(collections).forEach(result::addAll);
+
+        return result;
     }
 
     @NotNull
@@ -62,7 +77,7 @@ public class PhpClassReferenceProvider extends PsiReferenceProvider {
     @NotNull
     private Set<String> getClassNames(YAMLMapping mapping) {
         return mapping.getKeyValues().stream()
-            .map(keyValue -> "\\"+keyValue.getKeyText())
+            .map(YAMLKeyValue::getKeyText)
             .collect(Collectors.toSet());
     }
 }

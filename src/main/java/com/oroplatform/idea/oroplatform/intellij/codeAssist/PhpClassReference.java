@@ -115,7 +115,7 @@ public class PhpClassReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     private boolean isClassFromBundle(PhpClass phpClass) {
         final boolean isClass = !phpClass.isInterface() && !phpClass.isTrait();
-        return isClass && !skippedClassNames.contains(phpClass.getFQN()) &&
+        return isClass && !skippedClassNames.contains(phpClass.getPresentableFQN()) &&
             (!this.phpClass.getNamespacePart().equals("Entity") || isEntity(phpClass));
     }
 

@@ -280,4 +280,18 @@ class EntityPhpReferenceTest extends PhpReferenceTest {
             ["Country"]
         )
     }
+
+    def void "test: should not suggest excluded entities in entity_aliases"() {
+        suggestions(
+            """
+            |oro_entity:
+            |  entity_aliases:
+            |    <caret>
+            |  exclusions:
+            |    - { entity: Oro\\Bundle\\AcmeBundle\\Entity\\Country }
+            """.stripMargin(),
+            ["City"],
+            ["Country"]
+        )
+    }
 }

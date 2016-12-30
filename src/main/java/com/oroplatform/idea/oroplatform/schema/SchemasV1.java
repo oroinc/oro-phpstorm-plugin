@@ -87,7 +87,7 @@ public class SchemasV1 {
                         Property.any(Container.with(
                             Property.named("alias", Scalars.regexp("^[a-z][a-z0-9_]*$")),
                             Property.named("plural_alias", Scalars.regexp("^[a-z][a-z0-9_]*$"))
-                        )).withKeyElement(Scalars.fullEntity)
+                        )).withKeyElement(Scalars.fullEntity(new PropertyPath("oro_entity", "exclusions", "*", "entity").pointsToValue()))
                     ))
                 ).allowExtraProperties()
             ).required()

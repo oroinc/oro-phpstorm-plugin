@@ -2,7 +2,6 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceProviders;
 import com.oroplatform.idea.oroplatform.schema.*;
@@ -38,13 +37,11 @@ class ReferenceVisitor extends YamlVisitor {
 
     @Override
     public void visitScalar(Scalar scalar) {
-        final PsiReferenceProvider provider = scalar.getProvider(referenceProviders, insertHandler);
-
-        if (provider != null) {
+        scalar.getProvider(referenceProviders, insertHandler).ifPresent(provider -> {
             registrar.registerReferenceProvider(
                 context == VisitingContext.PROPERTY_VALUE ? psiElement().andOr(capture, psiElement().withParent(capture)) : capture,
                 provider
             );
-        }
+        });
     }
 }

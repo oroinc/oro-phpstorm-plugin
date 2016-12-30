@@ -10,20 +10,14 @@ import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpClassProvider;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 import gnu.trove.THashSet;
-import org.jetbrains.yaml.psi.YAMLFile;
-import org.jetbrains.yaml.psi.YAMLMapping;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getAncestors;
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getPropertyFrom;
 
 class FieldTypePhpClassProvider implements PhpClassProvider {
@@ -35,12 +29,8 @@ class FieldTypePhpClassProvider implements PhpClassProvider {
 
     @Override
     public Collection<String> getPhpClasses(PhpIndex phpIndex, PsiElement element, PropertyPath propertyPath) {
-        final YAMLFile file = (YAMLFile) element.getContainingFile();
-        final Set<PsiElement> ancestors = getAncestors(element);
-
-        final List<YAMLMapping> elements = YamlPsiElements.getMappingsFrom(file);
-        final Collection<String> fields = getPropertyFrom(propertyPath, elements, ancestors);
-        final Collection<String> fieldClassNames = getPropertyFrom(classPropertyPath, elements, ancestors);
+        final Collection<String> fields = getPropertyFrom(propertyPath, element);
+        final Collection<String> fieldClassNames = getPropertyFrom(classPropertyPath, element);
 
         return fieldClassNames.stream()
             .flatMap(className -> phpIndex.getClassesByFQN(className).stream())
