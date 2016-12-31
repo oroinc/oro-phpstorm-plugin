@@ -37,7 +37,14 @@ public class SchemasV2 {
     }
 
     private static Schema api() {
-        return new Schema(new FilePathMatcher(FilePathPatterns.API), SchemasV1.apiElement("api"));
+        return new Schema(new FilePathMatcher(FilePathPatterns.API), SchemasV1.apiElement("api", new Container(
+            Property.named("entity_aliases", Container.with(
+                Property.any(Container.with(
+                    Property.named("alias", Scalars.regexp("^[a-z][a-z0-9_]*$")),
+                    Property.named("plural_alias", Scalars.regexp("^[a-z][a-z0-9_]*$"))
+                )).withKeyElement(Scalars.fullEntity)
+            ))
+        )));
     }
 
     private static Schema search() {

@@ -34,6 +34,10 @@ public class Container implements Element {
         ).toArray(Property[]::new));
     }
 
+    Container andWith(Collection<Property> properties) {
+        return andWith(properties.toArray(new Property[properties.size()]));
+    }
+
     public List<Property> getProperties() {
         return Collections.unmodifiableList(properties);
     }

@@ -26,7 +26,20 @@ class ApiCompletionTest extends CompletionTest {
             |  <caret>
             """.stripMargin(),
 
-            ["entities", "relations"]
+            ["entities", "relations", "entity_aliases"]
+        )
+    }
+
+    def void "test: suggest entity_aliases properties"() {
+        suggestions(
+            """
+            |api:
+            |  entity_aliases:
+            |    stdClass:
+            |      <caret>
+            """.stripMargin(),
+
+            ["alias", "plural_alias"]
         )
     }
 }
