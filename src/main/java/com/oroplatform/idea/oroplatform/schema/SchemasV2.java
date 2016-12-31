@@ -43,6 +43,16 @@ public class SchemasV2 {
                     Property.named("alias", Scalars.regexp("^[a-z][a-z0-9_]*$")),
                     Property.named("plural_alias", Scalars.regexp("^[a-z][a-z0-9_]*$"))
                 )).withKeyElement(Scalars.fullEntity)
+            )),
+            Property.named("entities", Container.with(
+                Container.with(
+                    Property.named("fields", Container.with(
+                        Container.with(
+                            Property.named("documentation_resource", Scalars.any),
+                            Property.named("depends_on", Sequence.of(Scalars.field(new PropertyPath("api", "entities", "$this"))))
+                        )
+                    ))
+                ).allowExtraProperties()
             ))
         )));
     }
