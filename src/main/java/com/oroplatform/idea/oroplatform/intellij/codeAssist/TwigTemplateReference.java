@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
+//TODO: refactor with ResourceReference
 public class TwigTemplateReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     private final String templateName;

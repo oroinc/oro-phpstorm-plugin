@@ -1,5 +1,7 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v2
 
+import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.PsiPolyVariantReferenceBase
 import com.intellij.testFramework.LoggedErrorProcessor
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
 import com.oroplatform.idea.oroplatform.schema.SchemasV2
@@ -24,13 +26,21 @@ class ApiCompletionTest extends PhpReferenceTest {
             }
         })
 
-        myFixture.configureByText("classes.php",
+        configureByText("src/Oro/Bundle/AcmeBundle/Resources/doc/api/user.md", "test")
+
+        configureByText("src/Oro/Bundle/AcmeBundle/AcmeBundle.php",
             """
             |<?php
             |
             |namespace Oro\\Bundle\\AcmeBundle {
             |  class AcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
             |}
+            """.stripMargin()
+        )
+
+        configureByText("src/Oro/Bundle/AcmeBundle/Entity/Address.php",
+            """
+            |<?php
             |
             |namespace Oro\\Bundle\\AcmeBundle\\Entity {
             |  class Address {
@@ -38,8 +48,7 @@ class ApiCompletionTest extends PhpReferenceTest {
             |    private \$field2;
             |  }
             |}
-            |
-          """.stripMargin()
+            """.stripMargin()
         )
     }
 
@@ -88,7 +97,20 @@ class ApiCompletionTest extends PhpReferenceTest {
             |          <caret>
             """.stripMargin(),
 
-            ["documentation_resource", "depends_on"]
+            ["depends_on"]
+        )
+    }
+
+    def void "test: suggest new properties for entities"() {
+        suggestions(
+            """
+            |api:
+            |  entities:
+            |    stdClass:
+            |      <caret>
+            """.stripMargin(),
+
+            ["documentation_resource"]
         )
     }
 
@@ -105,6 +127,56 @@ class ApiCompletionTest extends PhpReferenceTest {
 
             ["field2"]
         )
+    }
+
+    def void "test: suggest documentation resource"() {
+        suggestions(
+            """
+            |api:
+            |  entities:
+            |    stdClass:
+            |      documentation_resource: <caret>
+            """.stripMargin(),
+
+            ["@OroAcmeBundle/Resources/doc/api/user.md"]
+        )
+    }
+
+    def void "test: detect documentation resource reference"() {
+        checkReference(
+            """
+            |api:
+            |  entities:
+            |    stdClass:
+            |      documentation_resource: @OroAcmeBundle/Reso<caret>urces/doc/api/user.md
+            """.stripMargin(),
+
+            ["user.md"]
+        )
+    }
+
+    //TODO: refactor test hierarchy
+    def checkReference(String content, List<String> expectedReferences) {
+        assertEquals(expectedReferences, getReferences(content))
+    }
+
+    def List<String> getReferences(String content) {
+        configureByText(content)
+
+        myFixture.getProject().getBaseDir().refresh(false, true)
+
+        def element = myFixture.getFile().findElementAt(myFixture.getCaretOffset())
+        def elements = [element, element.getParent(), element.getParent().getParent()]
+
+        elements.collect { it.getReferences() }
+            .flatten()
+            .findAll { it instanceof PsiPolyVariantReferenceBase }
+            .collect {  it as PsiPolyVariantReferenceBase }
+            .collect { it.multiResolve(false) }
+            .flatten()
+            .collect { (it.getElement() as PsiNamedElement).getName() }
+            .unique()
+            .toList()
     }
 
     @Override

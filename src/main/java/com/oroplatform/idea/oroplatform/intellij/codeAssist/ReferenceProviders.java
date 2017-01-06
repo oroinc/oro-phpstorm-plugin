@@ -22,4 +22,5 @@ public interface ReferenceProviders {
     PsiReferenceProvider phpMethod(String pattern, InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider twigTemplate(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider route(InsertHandler<LookupElement> insertHandler);
+    PsiReferenceProvider resource(String extension, InsertHandler<LookupElement> insertHandler);
 }

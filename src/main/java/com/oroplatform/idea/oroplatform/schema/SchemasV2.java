@@ -46,9 +46,9 @@ public class SchemasV2 {
             )),
             Property.named("entities", Container.with(
                 Container.with(
+                    Property.named("documentation_resource", Scalars.resource("md")),
                     Property.named("fields", Container.with(
                         Container.with(
-                            Property.named("documentation_resource", Scalars.any),
                             Property.named("depends_on", Sequence.of(Scalars.field(new PropertyPath("api", "entities", "$this"))))
                         )
                     ))

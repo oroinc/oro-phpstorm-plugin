@@ -68,4 +68,9 @@ class YamlReferenceProviders implements ReferenceProviders {
     public PsiReferenceProvider route(InsertHandler<LookupElement> insertHandler) {
         return new RouteReferenceProvider();
     }
+
+    @Override
+    public PsiReferenceProvider resource(String extension, InsertHandler<LookupElement> insertHandler) {
+        return new ResourceReferenceProvider(extension);
+    }
 }

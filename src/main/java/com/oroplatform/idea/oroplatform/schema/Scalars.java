@@ -188,6 +188,15 @@ final class Scalars {
         }
     };
 
+    static Scalar resource(final String extension) {
+        return new Scalar() {
+            @Override
+            public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return Optional.of(providers.resource(extension, insertHandler));
+            }
+        };
+    }
+
     final static Scalar route = new Scalar() {
         @Nullable
         @Override
