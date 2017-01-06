@@ -1,10 +1,10 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.ReferenceTest
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
-class NavigationRouteReferenceTest extends ReferenceTest implements RandomIdentifiers {
+class NavigationRouteReferenceTest extends CompletionTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV1.FilePathPatterns.NAVIGATION

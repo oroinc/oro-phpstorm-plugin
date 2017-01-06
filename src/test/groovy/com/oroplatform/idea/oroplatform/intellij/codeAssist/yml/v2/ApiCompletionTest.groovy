@@ -1,12 +1,7 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v2
 
-import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.PsiPolyVariantReferenceBase
-import com.intellij.testFramework.LoggedErrorProcessor
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
 import com.oroplatform.idea.oroplatform.schema.SchemasV2
-import org.apache.log4j.Logger
-import org.jetbrains.annotations.NotNull
 
 class ApiCompletionTest extends PhpReferenceTest {
     @Override
@@ -14,17 +9,9 @@ class ApiCompletionTest extends PhpReferenceTest {
         return SchemasV2.FilePathPatterns.API
     }
 
-
     @Override
     protected void setUp() throws Exception {
         super.setUp()
-
-        //turn off falling tests on internal errors because there is bug in php plugin during indexing class with field
-        LoggedErrorProcessor.setNewInstance(new LoggedErrorProcessor() {
-            @Override
-            void processError(String message, Throwable t, String[] details, @NotNull Logger logger) {
-            }
-        })
 
         configureByText("src/Oro/Bundle/AcmeBundle/Resources/doc/api/user.md", "test")
 
@@ -153,35 +140,5 @@ class ApiCompletionTest extends PhpReferenceTest {
 
             ["user.md"]
         )
-    }
-
-    //TODO: refactor test hierarchy
-    def checkReference(String content, List<String> expectedReferences) {
-        assertEquals(expectedReferences, getReferences(content))
-    }
-
-    def List<String> getReferences(String content) {
-        configureByText(content)
-
-        myFixture.getProject().getBaseDir().refresh(false, true)
-
-        def element = myFixture.getFile().findElementAt(myFixture.getCaretOffset())
-        def elements = [element, element.getParent(), element.getParent().getParent()]
-
-        elements.collect { it.getReferences() }
-            .flatten()
-            .findAll { it instanceof PsiPolyVariantReferenceBase }
-            .collect {  it as PsiPolyVariantReferenceBase }
-            .collect { it.multiResolve(false) }
-            .flatten()
-            .collect { (it.getElement() as PsiNamedElement).getName() }
-            .unique()
-            .toList()
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown()
-        LoggedErrorProcessor.setNewInstance(new LoggedErrorProcessor())
     }
 }

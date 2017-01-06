@@ -1,8 +1,8 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript
 
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.FileReferenceTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
 
-class RequireJsReferenceTest extends FileReferenceTest {
+class RequireJsReferenceTest extends CompletionTest {
     private String oroUIPath = "vendor/Oro/Bundle/UIBundle/Resources/public/js/"
     private String oroDashboardPath = "vendor/Oro/Bundle/DashboardBundle/Resources/public/js/"
 

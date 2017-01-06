@@ -1,9 +1,9 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.FileReferenceTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
-public class WorkflowFilePathReferenceTest extends FileReferenceTest {
+public class WorkflowFilePathReferenceTest extends CompletionTest {
 
     @Override
     String fileName() {

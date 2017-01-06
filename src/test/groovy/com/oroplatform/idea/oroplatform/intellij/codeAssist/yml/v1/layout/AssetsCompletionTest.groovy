@@ -1,9 +1,8 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1.layout
 
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.FileReferenceTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
 
-
-class AssetsCompletionTest extends FileReferenceTest {
+class AssetsCompletionTest extends CompletionTest {
     @Override
     String fileName() {
         return "src/Oro/AcmeBundle/Resources/views/layouts/base/config/assets.yml"
