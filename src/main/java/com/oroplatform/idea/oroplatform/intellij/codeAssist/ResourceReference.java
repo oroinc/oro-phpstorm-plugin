@@ -2,6 +2,7 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
 import com.intellij.codeInsight.completion.PrefixMatcher;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -14,24 +15,31 @@ import com.oroplatform.idea.oroplatform.symfony.Bundles;
 import com.oroplatform.idea.oroplatform.symfony.Resource;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ResourceReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final String resourceName;
     private final String extension;
     private final PhpIndex phpIndex;
+    private final Function<Resource, String> resourceRenderer;
+    private final List<String> pathInResources;
     private final Bundles bundles;
 
     public ResourceReference(PsiElement psiElement, String resourceName, String extension) {
+        this(psiElement, resourceName, extension, Resource::getName, Collections.emptyList());
+    }
+
+    public ResourceReference(PsiElement psiElement, String resourceName, String extension, Function<Resource, String> resourceRenderer, List<String> pathInResources) {
         super(psiElement);
         this.resourceName = resourceName;
         this.extension = extension;
 
         this.phpIndex = PhpIndex.getInstance(psiElement.getProject());
+        this.resourceRenderer = resourceRenderer;
+        this.pathInResources = pathInResources;
         this.bundles = new Bundles(this.phpIndex);
     }
 
@@ -39,7 +47,7 @@ public class ResourceReference extends PsiPolyVariantReferenceBase<PsiElement> {
     @Override
     public ResolveResult[] multiResolve(boolean incompleteCode) {
         final String simpleResourceName = getSimpleResourceName();
-        final PrefixMatcher matcher = new StrictCamelHumpMatcher(resourceName.replace(simpleResourceName, "").replace("@", ""));
+        final PrefixMatcher matcher = new StrictCamelHumpMatcher(resourceName.replace(simpleResourceName, "").replace("@", "").replace(":", ""));
         final PsiFile[] files = FilenameIndex.getFilesByName(getElement().getProject(), simpleResourceName, GlobalSearchScope.allScope(getElement().getProject()));
 
         return Stream.of(files)
@@ -49,7 +57,7 @@ public class ResourceReference extends PsiPolyVariantReferenceBase<PsiElement> {
     }
 
     private String getSimpleResourceName() {
-        final String[] parts = resourceName.split("/");
+        final String[] parts = resourceName.split("/|:");
         return parts.length > 0 ? parts[parts.length - 1] : "";
     }
 
@@ -62,17 +70,28 @@ public class ResourceReference extends PsiPolyVariantReferenceBase<PsiElement> {
     @NotNull
     @Override
     public Object[] getVariants() {
+        final String rootPath = StringUtil.trimStart(pathInResources.stream().collect(Collectors.joining("/")) + "/", "/");
         return bundles.findAll().stream()
             .flatMap(bundle ->
                 phpIndex.getNamespacesByName(bundle.getNamespaceName()).stream()
-                    .flatMap(phpNamespace -> findFileAndResource(bundle, "", getResourcesDirectory(phpNamespace)).stream())
-                    .map(fileAndResource -> LookupElementBuilder.create(fileAndResource.getResource().getName()).withIcon(fileAndResource.getFile().map(file -> file.getFileType().getIcon()).orElse(null)))
+                    .flatMap(phpNamespace -> findFileAndResource(bundle, rootPath, getResourcesDirectory(phpNamespace)).stream())
+                    .map(fileAndResource -> LookupElementBuilder.create(resourceRenderer.apply(fileAndResource.getResource())).withIcon(fileAndResource.getFile().map(file -> file.getFileType().getIcon()).orElse(null)))
             ).toArray();
     }
 
     private VirtualFile getResourcesDirectory(PhpNamespace phpNamespace) {
         final PsiDirectory dir = phpNamespace.getContainingFile().getContainingDirectory();
-        return VfsUtil.findRelativeFile(dir.getVirtualFile(), "Resources");
+        final List<String> path = getPath();
+
+        return VfsUtil.findRelativeFile(dir.getVirtualFile(), path.stream().toArray(String[]::new));
+    }
+
+    @NotNull
+    private List<String> getPath() {
+        final List<String> path = new LinkedList<>();
+        path.add("Resources");
+        path.addAll(pathInResources);
+        return path;
     }
 
     private Collection<FileAndResource> findFileAndResource(Bundle bundle, String parentDirectory, VirtualFile dir) {
