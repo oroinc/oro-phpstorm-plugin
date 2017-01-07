@@ -556,14 +556,17 @@ public class SchemasV1 {
                     Property.named("exclude", Scalars.bool),
                     Property.named("description", Scalars.any),
                     Property.named("property_path", Scalars.any),
-                    Property.named("data_type", Scalars.choices("boolean", "bool", "integer", "int", "float", "string")),
-                    Property.named("allow_array", Scalars.bool)
+                    Property.named("data_type", apiDataType()),
+                    Property.named("allow_array", Scalars.bool),
+                    Property.named("type", apiDataType()),
+                    Property.named("options", Container.any),
+                    Property.named("operators", Sequence.of(Scalars.any))
                 )).withKeyElement(Scalars.field(entityPropertyPath))
             ))
         );
     }
 
-    private static Container apiFields(PropertyPath entityPropertyPath) {
+    static Container apiFields(PropertyPath entityPropertyPath) {
         return Container.with(
             Property.any(Container.with(
                 Property.named("exclude", Scalars.bool),
@@ -572,14 +575,19 @@ public class SchemasV1 {
                 Property.named("data_transformer", OneOf.from(Scalars.service, Scalars.phpClass, Sequence.of(Scalars.callable))),
                 Property.named("collapse", Scalars.bool),
                 Property.named("form_type", Scalars.formType),
-                Property.named("form_options", Scalars.any),
-                Property.named("data_type", OneOf.from(dataType(), Scalars.choices("association:manyToOne", "association:manyToMany", "association:multipleManyToOne"))),
+                Property.named("form_options", Container.any),
+                Property.named("data_type", apiDataType()),
                 Property.named("meta_property", Scalars.bool),
                 Property.named("target_class", Scalars.fullEntity),
                 Property.named("target_type", Scalars.choices("to-one", "to-many", "collection"))
             ).allowExtraProperties()).withKeyElement(Scalars.field(entityPropertyPath))
         );
     }
+
+    static Element apiDataType() {
+        return OneOf.from(dataType(), Scalars.choices("association:manyToOne", "association:manyToMany", "association:multipleManyToOne"));
+    }
+
     private static Container apiSorters(PropertyPath entityPropertyPath) {
         return Container.with(
             Property.named("exclusion_policy", Scalars.choices("all", "none")),
@@ -601,8 +609,9 @@ public class SchemasV1 {
         final Container formOptions = Container.with(
             Property.named("data_class", Scalars.phpClass),
             Property.named("validation_groups", Sequence.of(Scalars.any)),
-            Property.named("extra_fields_message", Scalars.any)
-        );
+            Property.named("extra_fields_message", Scalars.any),
+            Property.named("mapped", Scalars.bool)
+        ).allowExtraProperties();
 
         final Container orderBy = Container.with(
             Property.any(Scalars.strictChoices("ASC", "DESC")).withKeyElement(Scalars.field(new PropertyPath(rootElementName, "entities", "$this")))

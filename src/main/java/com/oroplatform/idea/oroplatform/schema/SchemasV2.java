@@ -37,6 +37,19 @@ public class SchemasV2 {
     }
 
     private static Schema api() {
+        final Property dependOnProperty = Property.named("depends_on", Sequence.of(Scalars.field(new PropertyPath("api", "entities", "$this"))));
+        final Container fieldsExtension = Container.with(
+            Container.with(
+                dependOnProperty,
+                Property.named("fields", SchemasV1.apiFields(new PropertyPath("api", "entities", "$this"))),
+                Property.named("fields", Container.with(
+                    Container.with(
+                        dependOnProperty
+                    ).allowExtraProperties()
+                ))
+            ).allowExtraProperties()
+        );
+
         return new Schema(new FilePathMatcher(FilePathPatterns.API), SchemasV1.apiElement("api", new Container(
             Property.named("entity_aliases", Container.with(
                 Property.any(Container.with(
@@ -47,11 +60,7 @@ public class SchemasV2 {
             Property.named("entities", Container.with(
                 Container.with(
                     Property.named("documentation_resource", Scalars.resource("md")),
-                    Property.named("fields", Container.with(
-                        Container.with(
-                            Property.named("depends_on", Sequence.of(Scalars.field(new PropertyPath("api", "entities", "$this"))))
-                        )
-                    ))
+                    Property.named("fields", fieldsExtension)
                 ).allowExtraProperties()
             ))
         )));

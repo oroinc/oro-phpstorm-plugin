@@ -84,7 +84,7 @@ class ApiCompletionTest extends PhpReferenceTest {
             |          <caret>
             """.stripMargin(),
 
-            ["depends_on"]
+            ["depends_on", "fields"]
         )
     }
 
@@ -139,6 +139,39 @@ class ApiCompletionTest extends PhpReferenceTest {
             """.stripMargin(),
 
             ["user.md"]
+        )
+    }
+
+    def void "test: suggest fields for fields property"() {
+        suggestions(
+            """
+            |api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      fields:
+            |        field1:
+            |          fields:
+            |            <caret>
+            """.stripMargin(),
+
+            ["field2"]
+        )
+    }
+
+    def void "test: suggest properties for nested fields"() {
+        suggestions(
+            """
+            |api:
+            |  entities:
+            |    Oro\\Bundle\\AcmeBundle\\Entity\\Address:
+            |      fields:
+            |        field1:
+            |          fields:
+            |            field2:
+            |              <caret>
+            """.stripMargin(),
+
+            ["depends_on", "property_path", "data_type"]
         )
     }
 }
