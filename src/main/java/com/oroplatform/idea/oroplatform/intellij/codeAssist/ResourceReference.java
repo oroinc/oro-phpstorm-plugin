@@ -1,13 +1,10 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
-import com.intellij.codeInsight.completion.PrefixMatcher;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpNamespace;
 import com.oroplatform.idea.oroplatform.symfony.Bundle;
@@ -18,7 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static com.oroplatform.idea.oroplatform.Functions.toStream;
 
 public class ResourceReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final String resourceName;
@@ -28,16 +26,16 @@ public class ResourceReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final List<String> pathInResources;
     private final Bundles bundles;
 
-    public ResourceReference(PsiElement psiElement, String resourceName, String extension) {
-        this(psiElement, resourceName, extension, Resource::getName, Collections.emptyList());
+    public ResourceReference(PsiElement element, String resourceName, String extension) {
+        this(element, resourceName, extension, Resource::getName, Collections.emptyList());
     }
 
-    public ResourceReference(PsiElement psiElement, String resourceName, String extension, Function<Resource, String> resourceRenderer, List<String> pathInResources) {
-        super(psiElement);
+    public ResourceReference(PsiElement element, String resourceName, String extension, Function<Resource, String> resourceRenderer, List<String> pathInResources) {
+        super(element);
         this.resourceName = resourceName;
         this.extension = extension;
 
-        this.phpIndex = PhpIndex.getInstance(psiElement.getProject());
+        this.phpIndex = PhpIndex.getInstance(element.getProject());
         this.resourceRenderer = resourceRenderer;
         this.pathInResources = pathInResources;
         this.bundles = new Bundles(this.phpIndex);
@@ -46,25 +44,20 @@ public class ResourceReference extends PsiPolyVariantReferenceBase<PsiElement> {
     @NotNull
     @Override
     public ResolveResult[] multiResolve(boolean incompleteCode) {
-        final String simpleResourceName = getSimpleResourceName();
-        final PrefixMatcher matcher = new StrictCamelHumpMatcher(resourceName.replace(simpleResourceName, "").replace("@", "").replace(":", ""));
-        final PsiFile[] files = FilenameIndex.getFilesByName(getElement().getProject(), simpleResourceName, GlobalSearchScope.allScope(getElement().getProject()));
+        final String[] parts = StringUtil.trimStart(resourceName, "@").split("/|:");
 
-        return Stream.of(files)
-            .filter(file -> file.getVirtualFile() != null && matches(matcher, file.getVirtualFile().getPath()))
+        return bundles.findAll().stream()
+            .filter(bundle -> parts.length > 1 && parts[0].equals(bundle.getName()))
+            .flatMap(bundle -> phpIndex.getNamespacesByName(bundle.getNamespaceName()).stream())
+            .flatMap(phpNamespace -> toStream(VfsUtil.findRelativeFile(phpNamespace.getContainingFile().getContainingDirectory().getVirtualFile(), getPath())))
+            .distinct()
+            .flatMap(resourceDir -> {
+                final String resourcePath = resourceName.replaceFirst(".+?(:|/)(Resources/)?", "");
+                return toStream(VfsUtil.findRelativeFile(resourceDir, resourcePath.split(":|/")));
+            })
+            .flatMap(file -> toStream(PsiManager.getInstance(myElement.getProject()).findFile(file)))
             .map(PsiElementResolveResult::new)
             .toArray(ResolveResult[]::new);
-    }
-
-    private String getSimpleResourceName() {
-        final String[] parts = resourceName.split("/|:");
-        return parts.length > 0 ? parts[parts.length - 1] : "";
-    }
-
-    private boolean matches(PrefixMatcher matcher, String path) {
-        final int slashIndex = path.indexOf("/");
-        if(slashIndex < 0) return false;
-        return matcher.prefixMatches(path) || matches(matcher, path.substring(slashIndex + 1));
     }
 
     @NotNull
@@ -81,17 +74,17 @@ public class ResourceReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     private VirtualFile getResourcesDirectory(PhpNamespace phpNamespace) {
         final PsiDirectory dir = phpNamespace.getContainingFile().getContainingDirectory();
-        final List<String> path = getPath();
 
-        return VfsUtil.findRelativeFile(dir.getVirtualFile(), path.stream().toArray(String[]::new));
+        return VfsUtil.findRelativeFile(dir.getVirtualFile(), getPath());
     }
 
     @NotNull
-    private List<String> getPath() {
+    private String[] getPath() {
         final List<String> path = new LinkedList<>();
         path.add("Resources");
         path.addAll(pathInResources);
-        return path;
+
+        return path.stream().toArray(String[]::new);
     }
 
     private Collection<FileAndResource> findFileAndResource(Bundle bundle, String parentDirectory, VirtualFile dir) {

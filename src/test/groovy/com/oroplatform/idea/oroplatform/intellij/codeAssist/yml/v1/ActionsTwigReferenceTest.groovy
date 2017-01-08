@@ -28,6 +28,20 @@ class ActionsTwigReferenceTest extends CompletionTest {
         configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/some1.html.twig", "abc")
         configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/Foo/some2.html.twig", "abc")
         configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/Foo/bar/some3.html.twig", "abc")
+
+        configureByText("vendor/acme2-bundle/Acme2Bundle.php",
+            """
+            |<?php
+            |namespace Oro\\Bundle\\Acme2Bundle {
+            
+            |  class Acme2Bundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+            |}
+            """.stripMargin("|")
+        )
+
+        configureByText("vendor/acme2-bundle/Resources/views/acme2Some1.html.twig", "abc")
+        configureByText("vendor/acme2-bundle/Resources/views/Foo/acme2Some2.html.twig", "abc")
+        configureByText("vendor/acme2-bundle/Resources/views/Foo/bar/acme2Some3.html.twig", "abc")
     }
 
     def void "test: suggest twig templates"() {
@@ -42,6 +56,18 @@ class ActionsTwigReferenceTest extends CompletionTest {
         )
     }
 
+    def void "test: suggest twig templates from not standard bundle location"() {
+        suggestions(
+            """
+            |operations:
+            |  some_op:
+            |    button_options:
+            |      template: <caret>
+            """.stripMargin("|"),
+            ["OroAcme2Bundle::acme2Some1.html.twig", "OroAcme2Bundle:Foo:acme2Some2.html.twig", "OroAcme2Bundle:Foo:bar/acme2Some3.html.twig"]
+        )
+    }
+
     def void "test: detect twig template reference"() {
         checkReference(
             """
@@ -51,6 +77,18 @@ class ActionsTwigReferenceTest extends CompletionTest {
             |      template: OroAcmeBundle:Fo<caret>o:some2.html.twig
             """.stripMargin("|"),
             ["some2.html.twig"]
+        )
+    }
+
+    def void "test: detect twig template reference from not standard bundle location"() {
+        checkReference(
+            """
+            |operations:
+            |  some_op:
+            |    button_options:
+            |      template: OroAcme2Bundle:Fo<caret>o:bar/acme2Some3.html.twig
+            """.stripMargin("|"),
+            ["acme2Some3.html.twig"]
         )
     }
 }
