@@ -10,6 +10,12 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.2</h2>
+<ul>
+  <li>Improved autocomplete for layout update files</li>
+  <li>Fix NullPointerException for autocomplete at the end of file</li>
+</ul>
+
 <h2>1.0.1</h2>
 <ul>
   <li>Improved autocomplete for entity.yml</li>
