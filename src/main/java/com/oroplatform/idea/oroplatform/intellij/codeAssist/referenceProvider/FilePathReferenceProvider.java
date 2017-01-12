@@ -51,7 +51,7 @@ public class FilePathReferenceProvider extends PsiReferenceProvider {
                     } else {
                         return Optional.empty();
                     }
-                }).orElseGet(() -> super.getContainingFile());
+                }).orElse(null);
         }
 
         @Override

@@ -359,4 +359,21 @@ class LayoutUpdateCompletionTest extends CompletionTest {
             ["layout.yml"]
         )
     }
+
+    def void "test: suggest empty list when imports dir doesn't exist"() {
+        configureByText("Resources/views/layouts/some_theme/some2.yml", "")
+
+        suggestions(
+            "Resources/views/layouts/some_theme/some.yml",
+            """
+            |layout:
+            |  actions: []
+            |  imports:
+            |    -
+            |      id: <caret>
+            """.stripMargin(),
+            [],
+            ["some.yml", "some2.yml"]
+        )
+    }
 }
