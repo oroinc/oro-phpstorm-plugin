@@ -114,6 +114,15 @@ class AssetsCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: suggest output at the end of the file"() {
+        suggestions(
+            """
+            |styles:
+            |  output: <caret>""".stripMargin(),
+            ["css/layout/base/styles.css"]
+        )
+    }
+
     def void "test: suggest filters"() {
         configureByText("app/config/config.yml",
             """

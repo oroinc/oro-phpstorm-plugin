@@ -10,7 +10,7 @@ import java.util.Collections;
 public class LayoutAssetsCssOutputChoicesProvider implements ChoicesProvider {
     @Override
     public Collection<Choice> getChoices(PsiElement element) {
-        final PsiDirectory layoutDir = element.getContainingFile().getContainingDirectory().getParent();
+        final PsiDirectory layoutDir = element.getContainingFile().getOriginalFile().getContainingDirectory().getParent();
 
         if(layoutDir == null) return Collections.emptyList();
 

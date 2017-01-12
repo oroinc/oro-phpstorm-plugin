@@ -32,6 +32,15 @@ class EntityCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: suggest oro_entity properties in the last line of the file"() {
+        suggestions(
+            """
+            |oro_entity:
+            |  <caret>""".stripMargin(),
+
+            ["exclusions", "entity_alias_exclusions", "entity_aliases"]
+        )
+    }
 
     def void "test: suggest class and field in exclusions entry"() {
         suggestions(

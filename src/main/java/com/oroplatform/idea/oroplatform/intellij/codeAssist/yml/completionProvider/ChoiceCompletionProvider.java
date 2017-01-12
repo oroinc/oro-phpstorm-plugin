@@ -30,11 +30,11 @@ public class ChoiceCompletionProvider extends CompletionProvider<CompletionParam
         final Set<String> existingProperties = getExistingChoices(parameters);
         result = result.withPrefixMatcher(new PlainPrefixMatcher(result.getPrefixMatcher().getPrefix()));
 
-        choicesProvider.getChoices(parameters.getOriginalPosition()).stream()
+        choicesProvider.getChoices(parameters.getPosition()).stream()
             .filter(choice -> !existingProperties.contains(choice.getName()))
             .map(choice -> {
                 //it is parent in order to get element from higher level of abstraction - YAMLElement
-                final PsiElement element = parameters.getOriginalPosition().getParent();
+                final PsiElement element = parameters.getPosition().getParent();
                 final LookupElementBuilder lookupElement = LookupElementBuilder.create(element, choice.getName())
                         .withInsertHandler(insertHandler)
                         .withTypeText(choice.getDescription(), true)
