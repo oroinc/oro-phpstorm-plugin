@@ -7,6 +7,7 @@ import com.intellij.psi.PsiReferenceProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.*;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.FilePathReferenceProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeDirectoryResolver;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RequirejsReferenceProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.php.YamlPhpClassProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.referenceProvider.*;
 import com.oroplatform.idea.oroplatform.schema.PhpClass;
@@ -72,5 +73,10 @@ class YamlReferenceProviders implements ReferenceProviders {
     @Override
     public PsiReferenceProvider resource(String extension, InsertHandler<LookupElement> insertHandler) {
         return new ResourceReferenceProvider(extension);
+    }
+
+    @Override
+    public PsiReferenceProvider requirejs(InsertHandler<LookupElement> insertHandler) {
+        return RequirejsReferenceProvider.instance();
     }
 }

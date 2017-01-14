@@ -17,7 +17,7 @@ class RequireJsCompletionTest extends CompletionTest {
             |<?php
             |namespace Oro\\AcmeBundle;
             |
-            |class OroAcmeBundle {}
+            |class OroAcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
             """
         )
     }
@@ -81,6 +81,22 @@ class RequireJsCompletionTest extends CompletionTest {
         )
     }
 
+//    TODO: minor bug
+//    def void "test: not suggest js scripts as path keys"() {
+//        configureByText("src/Oro/AcmeBundle/Resources/public/js/script1.js", "")
+//        configureByText("src/Oro/AcmeBundle/Resources/public/js/script2.js", "")
+//
+//        suggestions(
+//            """
+//            |config:
+//            |  paths:
+//            |    <caret>: bundles/oroacme/js/script1.js
+//            """.stripMargin(),
+//            [],
+//            ["bundles/oroacme/js/script1.js", "bundles/oroacme/js/script2.js"]
+//        )
+//    }
+
     def void "test: not suggest css as js scripts"() {
         configureByText("src/Oro/AcmeBundle/Resources/public/css/style1.css", "")
 
@@ -102,6 +118,64 @@ class RequireJsCompletionTest extends CompletionTest {
             |  <caret>
             """.stripMargin(),
             ["paths"]
+        )
+    }
+
+    def void "test: suggest requirejs modules"() {
+        configureByText("src/Oro/AcmeBundle/Resources/public/js/script1.js", "")
+        configureByText("src/Oro/AcmeBundle/Resources/public/js/script2.js", "")
+
+        suggestions(
+            """
+            |config:
+            |  map:
+            |    <caret>
+            """.stripMargin(),
+            ["oroacme/js/script1", "oroacme/js/script2"]
+        )
+    }
+
+    def void "test: detect requirejs module reference"() {
+        configureByText("src/Oro/AcmeBundle/Resources/public/js/script1.js", "")
+        configureByText("src/Oro/AcmeBundle/Resources/public/js/script2.js", "")
+
+        checkFileReferences(
+            """
+            |config:
+            |  map:
+            |    'oroacme/js/sc<caret>ript1': ~
+            """.stripMargin(),
+            ["script1.js"]
+        )
+    }
+
+    def void "test: suggest requirejs modules in map section"() {
+        configureByText("src/Oro/AcmeBundle/Resources/public/js/script1.js", "")
+        configureByText("src/Oro/AcmeBundle/Resources/public/js/script2.js", "")
+
+        suggestions(
+            """
+            |config:
+            |  map:
+            |    oroacme/js/script1:
+            |      script2: <caret>
+            """.stripMargin(),
+            ["oroacme/js/script2"]
+        )
+    }
+
+    def void "test: suggest requirejs modules in shim.deps"() {
+        configureByText("src/Oro/AcmeBundle/Resources/public/js/script1.js", "")
+        configureByText("src/Oro/AcmeBundle/Resources/public/js/script2.js", "")
+
+        suggestions(
+            """
+            |config:
+            |  shim:
+            |    some:
+            |      deps: [<caret>]
+            """.stripMargin(),
+            ["oroacme/js/script1", "oroacme/js/script2"]
         )
     }
 }

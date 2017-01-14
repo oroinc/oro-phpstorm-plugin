@@ -2,6 +2,7 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -43,9 +44,10 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
     @NotNull
     @Override
     public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull ProcessingContext context) {
-        final String text = StringUtil.unquoteString(element.getText().trim().replace(PsiElements.IN_PROGRESS_VALUE, ""));
+        final Pair<PsiElement, String> processedElementAndText = PsiElements.getProcessedElementAndText(element, context);
+        final String text = StringUtil.unquoteString(processedElementAndText.second.trim().replace(PsiElements.IN_PROGRESS_VALUE, ""));
 
-        final List<? extends FileReference> references = getReferences(element, text);
+        final List<? extends FileReference> references = getReferences(processedElementAndText.first, text);
 
         return references.toArray(new PsiReference[references.size()]);
     }

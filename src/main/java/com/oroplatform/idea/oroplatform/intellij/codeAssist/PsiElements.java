@@ -1,5 +1,6 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
@@ -7,6 +8,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.ProcessingContext;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.yaml.psi.YAMLKeyValue;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -32,5 +34,13 @@ public class PsiElements {
         return element -> toStream(Optional.ofNullable(element))
             .filter(e -> cls.isAssignableFrom(e.getClass()))
             .map(cls::cast);
+    }
+
+    static Pair<PsiElement, String> getProcessedElementAndText(PsiElement element, ProcessingContext context) {
+        if(element instanceof YAMLKeyValue && context.get("key") != null) {
+            return Pair.create(((YAMLKeyValue) element).getKey(), ((YAMLKeyValue) element).getKeyText());
+        }
+
+        return Pair.create(element, element.getText());
     }
 }

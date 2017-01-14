@@ -23,4 +23,5 @@ public interface ReferenceProviders {
     PsiReferenceProvider twigTemplate(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider route(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider resource(String extension, InsertHandler<LookupElement> insertHandler);
+    PsiReferenceProvider requirejs(InsertHandler<LookupElement> insertHandler);
 }

@@ -227,6 +227,13 @@ final class Scalars {
         return new Scalar(Collections.emptyList(), defaultValueDescriptor);
     }
 
+    final static Scalar requirejs = new Scalar() {
+        @Override
+        public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.requirejs(insertHandler));
+        }
+    };
+
     final static Scalar fullEntity = phpClass(PhpClass.entity(false));
 
     static Scalar fullEntity(PropertyPath excludedClassesPath) {
