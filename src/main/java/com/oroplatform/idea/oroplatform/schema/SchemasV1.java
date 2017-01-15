@@ -367,15 +367,16 @@ public class SchemasV1 {
             Property.named("is_start", Scalars.bool),
             Property.named("is_hidden", Scalars.bool),
             Property.named("is_unavailable_hidden", Scalars.bool),
-            Property.named("acl_resource", Scalars.any),
-            Property.named("acl_message", Scalars.any),
-            Property.named("message", Scalars.any),
+            Property.named("acl_resource", Scalars.acl),
+            Property.named("acl_message", Scalars.trans),
+            Property.named("message", Scalars.trans),
             Property.named("display_type", Scalars.any),
-            Property.named("page_template", Scalars.any),
-            Property.named("dialog_template", Scalars.any),
+            Property.named("page_template", Scalars.twig),
+            Property.named("dialog_template", Scalars.twig),
             Property.named("init_entities", Sequence.of(Scalars.fullEntity)),
             Property.named("init_routes", Sequence.of(Scalars.route)),
             Property.named("init_context_attribute", Scalars.any),
+            Property.named("init_datagrids", Sequence.of(Scalars.datagrid)),
             Property.named("frontend_options", Container.with(
                 Property.named("class", Scalars.any),
                 Property.named("icon", Scalars.any)
@@ -411,7 +412,8 @@ public class SchemasV1 {
             Property.named("post_actions", actions).deprecated(),
             Property.named("preactions", actions),
             Property.named("actions", actions),
-            Property.named("init_actions", actions)
+            Property.named("init_actions", actions),
+            Property.named("form_init", actions)
         );
 
         final Function<String, String> getSimpleClassName = PhpClassUtil::getSimpleName;
@@ -468,7 +470,11 @@ public class SchemasV1 {
                             Property.named("step", stepReference)
                         )
                     )),
-                    Property.named("scopes", Sequence.of(Container.any))
+                    Property.named("scopes", Sequence.of(Container.any)),
+                    Property.named("datagrids", Sequence.of(Scalars.datagrid)),
+                    Property.named("disable_operations", Container.with(
+                        Property.any(Sequence.of(Scalars.fullEntity)).withKeyElement(Scalars.operation)
+                    ))
                 ).allowExtraProperties()
             ))
         );
