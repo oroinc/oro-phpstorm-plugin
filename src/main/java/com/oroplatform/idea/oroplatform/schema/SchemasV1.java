@@ -55,11 +55,11 @@ public class SchemasV1 {
                     Property.named("class", Scalars.entity).required(),
                     Property.named("permission", Scalars.strictChoices("VIEW", "EDIT", "CREATE", "DELETE", "ASSIGN", "SHARE")).required(),
                     Property.named("group_name", Scalars.any),
-                    Property.named("description", Scalars.any)
+                    Property.named("description", Scalars.trans)
                 ),
                 Container.with(
                     Property.named("type", Scalars.strictChoices("action")),
-                    Property.named("label", Scalars.any).required(),
+                    Property.named("label", Scalars.trans).required(),
                     Property.named("bindings", Sequence.of(Container.with(
                         //define as regular scalars in order to avoid double suggestions
                         Property.named("class", Scalars.any).required(),
@@ -344,7 +344,7 @@ public class SchemasV1 {
 
         final Container attribute = Container.with(
             Property.named("type", Scalars.strictChoices("boolean", "bool", "integer", "int", "float", "string", "array", "object", "entity")),
-            Property.named("label", Scalars.any),
+            Property.named("label", Scalars.trans),
             Property.named("entity_acl", entityAcl),
             Property.named("property_path", Scalars.any),
             Property.named("options", Container.with(
@@ -354,7 +354,7 @@ public class SchemasV1 {
         );
 
         final Container step = Container.with(
-            Property.named("label", Scalars.any),
+            Property.named("label", Scalars.trans),
             Property.named("order", Scalars.integer),
             Property.named("is_final", Scalars.bool),
             Property.named("entity_acl", entityAcl),
@@ -401,7 +401,7 @@ public class SchemasV1 {
                 Property.named("cron", Scalars.any),
                 Property.named("filter", Scalars.any)
             ))),
-            Property.named("label", Scalars.any)
+            Property.named("label", Scalars.trans)
         );
 
         final Container transitionDefinition = Container.with(
@@ -424,7 +424,7 @@ public class SchemasV1 {
             ))),
             Property.named("workflows", Container.with(
                 Container.with(
-                    Property.named("label", Scalars.any),
+                    Property.named("label", Scalars.trans),
                     Property.named("entity", Scalars.fullEntity),
                     Property.named("entity_attribute", Scalars.any)
                         .withKeyElement(Scalars.any(new DefaultValueDescriptor(new PropertyPath("workflows", "$this", "entity").pointsToValue(), getSimpleClassName.andThen(Functions::snakeCase)))),
@@ -497,10 +497,10 @@ public class SchemasV1 {
             Property.named("groups", Container.with(
                 Container.with(
                     Property.named("icon", Scalars.any),
-                    Property.named("title", Scalars.any),
+                    Property.named("title", Scalars.trans),
                     Property.named("page_reload", Scalars.bool),
                     Property.named("priority", Scalars.integer),
-                    Property.named("description", Scalars.any),
+                    Property.named("description", Scalars.trans),
                     Property.named("tooltip", Scalars.any),
                     Property.named("configurator", Scalars.phpCallback),
                     Property.named("handler", Scalars.any)
@@ -555,7 +555,7 @@ public class SchemasV1 {
             Property.named("fields", Container.with(
                 Property.any(Container.with(
                     Property.named("exclude", Scalars.bool),
-                    Property.named("description", Scalars.any),
+                    Property.named("description", Scalars.trans),
                     Property.named("property_path", Scalars.any),
                     Property.named("data_type", apiDataType()),
                     Property.named("allow_array", Scalars.bool),
@@ -571,7 +571,7 @@ public class SchemasV1 {
         return Container.with(
             Property.any(Container.with(
                 Property.named("exclude", Scalars.bool),
-                Property.named("description", Scalars.any),
+                Property.named("description", Scalars.trans),
                 Property.named("property_path", Scalars.any),
                 Property.named("data_transformer", OneOf.from(Scalars.service, Scalars.phpClass, Sequence.of(Scalars.callable))),
                 Property.named("collapse", Scalars.bool),
@@ -621,7 +621,7 @@ public class SchemasV1 {
         final Element action = OneOf.from(
             Container.with(
                 Property.named("exclude", Scalars.bool),
-                Property.named("description", Scalars.any),
+                Property.named("description", Scalars.trans),
                 Property.named("documentation", Scalars.any),
                 Property.named("acl_resource", Scalars.any),
                 Property.named("max_results", Scalars.integer),
@@ -737,7 +737,7 @@ public class SchemasV1 {
                     Container.with(
                         Property.named("name", Scalars.any),
                         Property.named("extends", operations),
-                        Property.named("label", Scalars.any),
+                        Property.named("label", Scalars.trans),
                         Property.named("substitute_operation", operations),
                         Property.named("button_options", Container.with(
                             Property.named("icon", Scalars.any),
@@ -775,7 +775,7 @@ public class SchemasV1 {
                         Property.named("attributes", Container.with(
                             Container.with(
                                 Property.named("type", Scalars.any),
-                                Property.named("label", Scalars.any),
+                                Property.named("label", Scalars.trans),
                                 Property.named("property_path", Scalars.any),
                                 Property.named("options", Container.with(
                                     Property.named("class", Scalars.phpClass)
