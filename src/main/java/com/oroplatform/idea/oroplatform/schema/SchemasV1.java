@@ -28,7 +28,8 @@ public class SchemasV1 {
         public final static String LAYOUT_UPDATE_IMPORT = "Resources/views/layouts/*/imports/*/layout.yml";
         public final static String THEME = "Resources/views/layouts/*/theme.yml";
         public final static String ASSETS = "Resources/views/layouts/*/config/assets.yml";
-        public final static String REQUIRE_JS = "Resources/views/layouts/*/config/requirejs.yml";
+        public final static String LAYOUT_REQUIRE_JS = "Resources/views/layouts/*/config/requirejs.yml";
+        public final static String REQUIRE_JS = "Resources/config/requirejs.yml";
         public final static String IMAGES = "Resources/views/layouts/*/config/images.yml";
     }
 
@@ -1181,7 +1182,7 @@ public class SchemasV1 {
     }
 
     private static Schema requirejs() {
-        return new Schema(new FilePathMatcher(FilePathPatterns.REQUIRE_JS), Container.with(
+        return new Schema(new OrFileMatcher(new FilePathMatcher(FilePathPatterns.LAYOUT_REQUIRE_JS), new FilePathMatcher(FilePathPatterns.REQUIRE_JS)), Container.with(
             Property.named("config", Container.with(
                 Property.named("build_path", Scalars.any),
                 Property.named("shim", Container.with(
