@@ -116,11 +116,11 @@ public class SchemasV1 {
         return Container.with(
             Container.with(
                 Property.named("extended_entity_name", OneOf.from(Scalars.entity, Scalars.any)),
-                Property.named("acl_resource", Scalars.any),
+                Property.named("acl_resource", Scalars.acl),
                 Property.named("mixins", Sequence.of(Scalars.datagrid)),
                 Property.named("source", Container.with(
                     Property.named("type", Scalars.choices("orm", "search")),
-                    Property.named("acl_resource", Scalars.any),
+                    Property.named("acl_resource", Scalars.acl),
                     Property.named("query", Container.with(
                         Property.named("select", Sequence.of(Scalars.any)),
                         Property.named("from", Sequence.of(Container.with(
@@ -215,7 +215,7 @@ public class SchemasV1 {
                     Container.with(
                         Property.named("label", Scalars.trans),
                         Property.named("type", Scalars.choices("navigate", "ajax", "delete", "ajaxdelete", "frontend")),
-                        Property.named("acl_resource", Scalars.any),
+                        Property.named("acl_resource", Scalars.acl),
                         Property.named("icon", Scalars.any),
                         Property.named("link", Scalars.any),
                         Property.named("rowAction", Scalars.bool),
@@ -508,7 +508,7 @@ public class SchemasV1 {
                     Property.named("priority", Scalars.integer),
                     Property.named("description", Scalars.trans),
                     Property.named("tooltip", Scalars.any),
-                    Property.named("configurator", Scalars.phpCallback),
+                    Property.named("configurator", OneOf.from(Scalars.phpCallback, Sequence.of(Scalars.phpCallback))),
                     Property.named("handler", Scalars.any)
                 )
             )),
@@ -516,12 +516,13 @@ public class SchemasV1 {
                 Container.with(
                     Property.named("type", Scalars.formType),
                     Property.named("options", Container.any),
-                    Property.named("acl_resource", Scalars.any),
+                    Property.named("acl_resource", Scalars.acl),
                     Property.named("priority", Scalars.integer),
                     Property.named("ui_only", Scalars.bool),
                     Property.named("data_type", dataType()),
                     Property.named("tooltip", Scalars.any),
-                    Property.named("page_reload", Scalars.bool)
+                    Property.named("page_reload", Scalars.bool),
+                    Property.named("property_path", Scalars.any)
                 )
             )),
             Property.named("tree", Container.with(

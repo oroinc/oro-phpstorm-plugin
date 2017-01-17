@@ -43,6 +43,19 @@ class SystemConfigurationPhpReferenceTest extends PhpReferenceTest {
         )
     }
 
+    def void "test: resolve php class in configurator in sequence item"() {
+        checkPhpReference(
+            """
+            |oro_system_configuration:
+            |  groups:
+            |    platform:
+            |      configurator: [Oro\\Bundle\\Acme<caret>Bundle\\SettingsFormConfigurator]
+            """.stripMargin(),
+
+            ["Oro\\Bundle\\AcmeBundle\\SettingsFormConfigurator"]
+        )
+    }
+
     def void "test: suggest php class in configurator"() {
         suggestions(
             """
