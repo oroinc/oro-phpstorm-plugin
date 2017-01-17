@@ -174,4 +174,19 @@ class ApiCompletionTest extends PhpReferenceTest {
             ["depends_on", "property_path", "data_type"]
         )
     }
+
+    def void "test: suggest disable_meta_properties property for actions"() {
+        suggestions(
+            """
+            |api:
+            |  entities:
+            |    stdClass:
+            |      actions:
+            |        get_list:
+            |          <caret>
+            """.stripMargin(),
+
+            ["disable_meta_properties"]
+        )
+    }
 }

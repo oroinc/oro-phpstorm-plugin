@@ -609,11 +609,11 @@ public class SchemasV1 {
     }
 
     private static Schema api() {
-        return new Schema(new FilePathMatcher(FilePathPatterns.API), apiElement("oro_api", new Container()));
+        return new Schema(new FilePathMatcher(FilePathPatterns.API), apiElement("oro_api", new Container(), new Container()));
     }
 
     @NotNull
-    static Container apiElement(final String rootElementName, final Container apiExtension) {
+    static Container apiElement(final String rootElementName, final Container apiExtension, final Container actionExtension) {
         final Container formOptions = Container.with(
             Property.named("data_class", Scalars.phpClass),
             Property.named("validation_groups", Sequence.of(Scalars.any)),
@@ -629,8 +629,8 @@ public class SchemasV1 {
             Container.with(
                 Property.named("exclude", Scalars.bool),
                 Property.named("description", Scalars.trans),
-                Property.named("documentation", Scalars.any),
-                Property.named("acl_resource", Scalars.any),
+                Property.named("documentation", Scalars.resource("md")),
+                Property.named("acl_resource", Scalars.acl),
                 Property.named("max_results", Scalars.integer),
                 Property.named("order_by", orderBy),
                 Property.named("page_size", Scalars.integer),
@@ -652,7 +652,7 @@ public class SchemasV1 {
                         Property.named("form_options", formOptions)
                     )).withKeyElement(Scalars.field(new PropertyPath(rootElementName, "entities", "$this")))
                 ))
-            ),
+            ).andWith(actionExtension.getProperties()),
             Scalars.bool
         );
 

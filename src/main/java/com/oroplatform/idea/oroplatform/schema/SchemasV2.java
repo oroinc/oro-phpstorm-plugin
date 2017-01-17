@@ -60,9 +60,12 @@ public class SchemasV2 {
             Property.named("entities", Container.with(
                 Container.with(
                     Property.named("documentation_resource", Scalars.resource("md")),
-                    Property.named("fields", fieldsExtension)
+                    Property.named("fields", fieldsExtension),
+                    Property.named("disable_meta_properties", Scalars.bool)
                 ).allowExtraProperties()
             ))
+        ), new Container(
+            Property.named("disable_meta_properties", Scalars.bool)
         )));
     }
 
