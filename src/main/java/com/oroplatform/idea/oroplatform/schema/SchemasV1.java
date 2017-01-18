@@ -915,18 +915,13 @@ public class SchemasV1 {
     }
 
     private static Schema navigation() {
-        return new Schema(new FilePathMatcher(FilePathPatterns.NAVIGATION), navigationElementProperties("oro_"));
-    }
-
-    @NotNull
-    static Container navigationElementProperties(final String propertiesPrefix) {
         final Container attributes = Container.with(
             Property.named("class", Scalars.any),
             Property.named("id", Scalars.any)
         );
 
-        return Container.with(
-            Property.named(propertiesPrefix+"menu_config", Container.with(
+        return new Schema(new FilePathMatcher(FilePathPatterns.NAVIGATION), Container.with(
+            Property.named("oro_" +"menu_config", Container.with(
                 Property.named("templates", Container.with(
                     Container.with(
                         Property.named("template", Scalars.twig),
@@ -978,14 +973,14 @@ public class SchemasV1 {
                             Property.named("brand", Scalars.any),
                             Property.named("brandLink", Scalars.any)
                         )),
-                        Property.named("children", navigationTree(10))
+                        Property.named("children", navigationTree(10, new PropertyPath("oro_menu_config", "items").pointsToValue()))
                     ))
                 ))
             )),
-            Property.named(propertiesPrefix+"titles", Container.with(
+            Property.named("oro_" +"titles", Container.with(
                 Property.any(Scalars.any).withKeyElement(Scalars.route)
             )),
-            Property.named(propertiesPrefix+"navigation_elements", Container.with(
+            Property.named("oro_" +"navigation_elements", Container.with(
                 Container.with(
                     Property.named("routes", Container.with(
                         Property.any(Scalars.bool).withKeyElement(Scalars.route)
@@ -993,15 +988,15 @@ public class SchemasV1 {
                     Property.named("default", Scalars.bool)
                 )
             ))
-        );
+        ));
     }
 
-    private static Element navigationTree(int deep) {
+    private static Element navigationTree(int deep, PropertyPath itemsPath) {
         if(deep == 0) return Scalars.any;
 
         return Container.with(
-            Property.any(navigationTree(deep - 1))
-                .withKeyElement(Scalars.propertiesFromPath(new PropertyPath("oro_menu_config", "items").pointsToValue())),
+            Property.any(navigationTree(deep - 1, itemsPath))
+                .withKeyElement(Scalars.propertiesFromPath(itemsPath)),
             Property.named("position", Scalars.integer)
         );
     }

@@ -86,8 +86,97 @@ public class SchemasV2 {
     }
 
     private static Schema navigation() {
+        final Container attributes = Container.with(
+            Property.named("class", Scalars.any),
+            Property.named("id", Scalars.any)
+        );
+
         return new Schema(new FilePathMatcher(FilePathPatterns.NAVIGATION), Container.with(
-            Property.named("navigation", SchemasV1.navigationElementProperties(""))
+            Property.named("navigation", Container.with(
+                Property.named("menu_config", Container.with(
+                    Property.named("templates", Container.with(
+                        Container.with(
+                            Property.named("template", Scalars.twig),
+                            Property.named("clear_matcher", Scalars.bool),
+                            Property.named("depth", Scalars.integer),
+                            Property.named("current_as_link", Scalars.bool),
+                            Property.named("current_class", Scalars.any),
+                            Property.named("ancestor_class", Scalars.any),
+                            Property.named("first_class", Scalars.any),
+                            Property.named("last_class", Scalars.any),
+                            Property.named("compressed", Scalars.bool),
+                            Property.named("block", Scalars.any),
+                            Property.named("root_class", Scalars.any),
+                            Property.named("is_dropdown", Scalars.bool),
+                            Property.named("allow_safe_labels", Scalars.bool)
+                        )
+                    )),
+                    Property.named("items", Container.with(
+                        Container.with(
+                            Property.named("acl_resource_id", Scalars.acl),
+                            Property.named("translate_domain", Scalars.transDomain),
+                            Property.named("translate_parameters", Container.any),
+                            Property.named("translate_disabled", Scalars.bool),
+                            Property.named("label", Scalars.trans),
+                            Property.named("name", Scalars.any),
+                            Property.named("uri", Scalars.any),
+                            Property.named("route", Scalars.route),
+                            Property.named("route_parameters", Container.any),
+                            Property.named("attributes", attributes),
+                            Property.named("linkAttributes", attributes.andWith(
+                                Property.named("class", Scalars.any),
+                                Property.named("id", Scalars.any),
+                                Property.named("target", Scalars.any),
+                                Property.named("title", Scalars.any),
+                                Property.named("rel", Scalars.any),
+                                Property.named("type", Scalars.any),
+                                Property.named("name", Scalars.any)
+                            )),
+                            Property.named("label_attributes", attributes),
+                            Property.named("children_attributes", attributes),
+                            Property.named("show_non_authorized", Scalars.bool),
+                            Property.named("display", Scalars.bool),
+                            Property.named("display_children", Scalars.bool),
+                            Property.named("extras", Container.any)
+                        )
+                    )),
+                    Property.named("tree", Container.with(
+                        Property.any(Container.with(
+                            Property.named("type", Scalars.any),
+                            Property.named("scope_type", Scalars.any),
+                            Property.named("read_only", Scalars.bool),
+                            Property.named("max_nesting_level", Scalars.integer),
+                            Property.named("merge_strategy", Scalars.strictChoices("append", "replace", "move")),
+                            Property.named("extras", Container.with(
+                                Property.named("brand", Scalars.any),
+                                Property.named("brandLink", Scalars.any)
+                            )),
+                            Property.named("children", navigationTree(10))
+                        ))
+                    ))
+                )),
+                Property.named("titles", Container.with(
+                    Property.any(Scalars.any).withKeyElement(Scalars.route)
+                )),
+                Property.named("navigation_elements", Container.with(
+                    Container.with(
+                        Property.named("routes", Container.with(
+                            Property.any(Scalars.bool).withKeyElement(Scalars.route)
+                        )),
+                        Property.named("default", Scalars.bool)
+                    )
+                ))
+            ))
         ));
+    }
+
+    private static Element navigationTree(int deep) {
+        if(deep == 0) return Scalars.any;
+
+        return Container.with(
+            Property.any(navigationTree(deep - 1))
+                .withKeyElement(Scalars.propertiesFromPath(new PropertyPath("navigation", "menu_config", "items").pointsToValue())),
+            Property.named("position", Scalars.integer)
+        );
     }
 }
