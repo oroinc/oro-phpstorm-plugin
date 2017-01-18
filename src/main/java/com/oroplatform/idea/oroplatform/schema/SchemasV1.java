@@ -768,7 +768,8 @@ public class SchemasV1 {
                         Property.named("acl_resource", acl),
                         Property.named("frontend_options", Container.with(
                             Property.named("template", Scalars.twig),
-                            Property.named("title", Scalars.any),
+                            Property.named("title", Scalars.trans),
+                            Property.named("title_parameters", Container.any),
                             Property.named("options", Container.any),
                             Property.named("confirmation", OneOf.from(Scalars.trans, Container.with(
                                 Property.named("title", Scalars.trans),
@@ -791,7 +792,8 @@ public class SchemasV1 {
                         )),
                         Property.named("datagrid_options", Container.with(
                             Property.named("mass_action_provider", Scalars.massActionProvider),
-                            Property.named("mass_action", massAction())
+                            Property.named("mass_action", massAction()),
+                            Property.named("data", Container.any)
                         )),
                         Property.named("form_options", Container.with(
                             Property.named("attribute_fields", Container.with(
