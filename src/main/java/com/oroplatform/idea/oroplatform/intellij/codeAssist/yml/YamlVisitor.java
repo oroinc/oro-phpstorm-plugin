@@ -6,9 +6,12 @@ import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.ProcessingContext;
 import com.oroplatform.idea.oroplatform.schema.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.yaml.psi.YAMLDocument;
+import org.jetbrains.yaml.psi.YAMLScalar;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.StandardPatterns.string;
@@ -39,7 +42,11 @@ abstract class YamlVisitor implements Visitor {
     public void visitContainer(Container container) {
         final ElementPattern<? extends PsiElement> newCapture = YamlPatterns.mapping(capture);
 
-        handleContainer(container, YamlPatterns.keyInProgress(capture, newCapture));
+        handleContainer(container, psiElement().andOr(
+            YamlPatterns.keyInProgress(capture, newCapture),
+            //support for completely empty file - there is no YAMLMapping element
+            psiElement(LeafPsiElement.class).withParent(psiElement(YAMLScalar.class).withParent(psiElement(YAMLDocument.class).and(capture)))
+        ));
 
         for(final Property property : container.getProperties()) {
             final PsiElementPattern.Capture<PsiElement> propertyCapture = psiElement().withName(string().with(new PatternCondition<String>(null) {

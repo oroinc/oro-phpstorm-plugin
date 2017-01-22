@@ -11,6 +11,7 @@ import com.oroplatform.idea.oroplatform.schema.DefaultValueDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 

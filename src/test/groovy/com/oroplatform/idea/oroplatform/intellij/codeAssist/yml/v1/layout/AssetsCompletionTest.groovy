@@ -30,6 +30,20 @@ class AssetsCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: suggest properties at top level in completely empty file"() {
+        suggestions(
+            """<caret>""".stripMargin(),
+            ["styles"]
+        )
+    }
+
+    def void "test: complete properties at top level in completely empty file"() {
+        completion(
+            """s<caret>""".stripMargin(),
+            """styles: <caret>""".stripMargin(),
+        )
+    }
+
     def void "test: suggest styles properties"() {
         suggestions(
             """

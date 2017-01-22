@@ -6,11 +6,8 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.oroplatform.idea.oroplatform.schema.DefaultValueDescriptor;
-import org.jetbrains.yaml.psi.YAMLFile;
 
 import java.util.Collection;
-
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getAncestors;
 
 class KeyInsertHandler implements InsertHandler<LookupElement> {
     static final InsertHandler<LookupElement> INSTANCE = new KeyInsertHandler();
@@ -61,7 +58,7 @@ class KeyInsertHandler implements InsertHandler<LookupElement> {
             }
         }
 
-        return tailOffset;
+        return 1;
     }
 
     private int getTailPos(int pos, char lastChar) {
