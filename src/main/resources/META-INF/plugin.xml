@@ -10,6 +10,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.5</h2>
+<ul>
+  <li>Fix completion for yaml files created from scratch</li>
+</ul>
+
 <h2>1.0.4</h2>
 <ul>
   <li>A lot of improvements for autocomplete in various files, especially in: workflows.yml, system_configuration.yml, api.yml, actions.yml and navigation.yml</li>
