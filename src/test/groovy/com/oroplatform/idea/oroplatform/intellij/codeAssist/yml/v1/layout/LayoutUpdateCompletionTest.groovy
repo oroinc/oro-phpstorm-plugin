@@ -36,7 +36,7 @@ class LayoutUpdateCompletionTest extends CompletionTest {
             |    - <caret>
             """.stripMargin(),
             ["@add", "@addTree", "@remove", "@move", "@addAlias", "@removeAlias", "@setOption", "@appendOption",
-             "@subtractOption", "@replaceOption", "@removeOption", "@changeBlockType", "@setBlockTheme", "@clear"]
+             "@subtractOption", "@replaceOption", "@removeOption", "@changeBlockType", "@setBlockTheme", "@clear", "@setFormTheme"]
         )
     }
 
@@ -166,6 +166,18 @@ class LayoutUpdateCompletionTest extends CompletionTest {
             |layout:
             |  actions:
             |    - '@setBlockTheme':
+            |        <caret>
+            """.stripMargin(),
+            ["id", "themes"]
+        )
+    }
+
+    def void "test: suggest @setFormTheme properties"() {
+        suggestions(
+            """
+            |layout:
+            |  actions:
+            |    - '@setFormTheme':
             |        <caret>
             """.stripMargin(),
             ["id", "themes"]

@@ -1054,6 +1054,14 @@ public class SchemasV1 {
             new FilePathMatcher(FilePathPatterns.LAYOUT_UPDATE)
         );
 
+        final OneOf setTheme = OneOf.from(
+            Sequence.of(Scalars.any),
+            Container.with(
+                Property.named("themes", OneOf.from(Scalars.twig, Sequence.of(Scalars.twig))).required(),
+                Property.named("id", Scalars.any)
+            )
+        );
+
         return new Schema(matcher, Container.with(
             Property.named("layout", Container.with(
                 Property.named("actions", Sequence.of(Container.with(
@@ -1134,13 +1142,8 @@ public class SchemasV1 {
                             Property.named("optionsCallback", Scalars.any)
                         )
                     )),
-                    Property.named("@setBlockTheme", OneOf.from(
-                        Sequence.of(Scalars.any),
-                        Container.with(
-                            Property.named("themes", OneOf.from(Scalars.twig, Sequence.of(Scalars.twig))).required(),
-                            Property.named("id", Scalars.any)
-                        )
-                    )),
+                    Property.named("@setBlockTheme", setTheme),
+                    Property.named("@setFormTheme", setTheme),
                     Property.named("@clear", Container.any)
                 ).allowExtraProperties())),
                 Property.named("conditions", Container.any),
