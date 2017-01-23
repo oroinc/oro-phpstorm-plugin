@@ -10,8 +10,12 @@ env:
   - "IDEA_VERSION=IU-2016.2;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/27035/php-162.1121.34.zip"
   - "IDEA_VERSION=IU-2016.2.5;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/27859/php-162.1628.23.zip"
   - "IDEA_VERSION=IU-2016.3;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/30133/php-163.7743.20.zip"
+  - "IDEA_VERSION=IU-2016.3.3;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/31161/php-163.10504.2.zip"
+  - "IDEA_VERSION=IU-171-SNAPSHOT;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/31870/php-171.2455.9.zip"
 
 script: ./gradlew downloadAndUnzipPhpPlugin test -DideaVersion=$IDEA_VERSION -DphpPluginUrl=$PHP_PLUGIN_URL --exclude-task=compileJava
 
 matrix:
-  allow_failures: ~
+  allow_failures:
+    # allow failure for EAP
+    - env: "IDEA_VERSION=IU-171-SNAPSHOT;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/31870/php-171.2455.9.zip"
