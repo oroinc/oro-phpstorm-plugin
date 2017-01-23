@@ -13,11 +13,17 @@ import org.jetbrains.yaml.psi.YAMLScalar;
 import java.util.Collections;
 
 public class TwigTemplateReferenceProvider extends PsiReferenceProvider {
+    private final String pattern;
+
+    public TwigTemplateReferenceProvider(String pattern) {
+        this.pattern = pattern;
+    }
+
     @NotNull
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         if(element instanceof YAMLScalar) {
-            return new PsiReference[] { new ResourceReference(element, ((YAMLScalar) element).getTextValue(), "twig", TwigTemplateReferenceProvider::renderTemplate, Collections.singletonList("views")) };
+            return new PsiReference[] { new ResourceReference(element, ((YAMLScalar) element).getTextValue(), pattern+".twig", TwigTemplateReferenceProvider::renderTemplate, Collections.singletonList("views")) };
         }
 
         return new PsiReference[0];

@@ -22,7 +22,7 @@ public class RelativeToElementResolver implements RelativeDirectoryResolver {
     public Optional<PsiDirectory> resolve(PsiElement element) {
         final PsiFile file = element.getContainingFile();
 
-        return relativePath == null ? Optional.ofNullable(file.getParent()) : getRelative(file.getOriginalFile(), relativePath);
+        return relativePath == null ? Optional.ofNullable((PsiDirectory) file.getOriginalElement().getParent()) : getRelative(file.getOriginalFile(), relativePath);
     }
 
     private static Optional<PsiDirectory> getRelative(PsiFile file, String relativePath) {

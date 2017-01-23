@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpNamespace;
+import com.oroplatform.idea.oroplatform.SimpleSuffixMatcher;
 import com.oroplatform.idea.oroplatform.symfony.Bundle;
 import com.oroplatform.idea.oroplatform.symfony.Bundles;
 import com.oroplatform.idea.oroplatform.symfony.Resource;
@@ -20,25 +21,27 @@ import static com.oroplatform.idea.oroplatform.Functions.toStream;
 
 public class ResourceReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final String resourceName;
-    private final String extension;
+    private final String pattern;
     private final PhpIndex phpIndex;
     private final Function<Resource, String> resourceRenderer;
     private final List<String> pathInResources;
     private final Bundles bundles;
+    private final SimpleSuffixMatcher suffixMatcher;
 
-    public ResourceReference(PsiElement element, String resourceName, String extension) {
-        this(element, resourceName, extension, Resource::getName, Collections.emptyList());
+    public ResourceReference(PsiElement element, String resourceName, String pattern) {
+        this(element, resourceName, pattern, Resource::getName, Collections.emptyList());
     }
 
-    public ResourceReference(PsiElement element, String resourceName, String extension, Function<Resource, String> resourceRenderer, List<String> pathInResources) {
+    public ResourceReference(PsiElement element, String resourceName, String pattern, Function<Resource, String> resourceRenderer, List<String> pathInResources) {
         super(element);
         this.resourceName = resourceName;
-        this.extension = extension;
+        this.pattern = pattern;
 
         this.phpIndex = PhpIndex.getInstance(element.getProject());
         this.resourceRenderer = resourceRenderer;
         this.pathInResources = pathInResources;
         this.bundles = new Bundles(this.phpIndex);
+        this.suffixMatcher = new SimpleSuffixMatcher(pattern);
     }
 
     @NotNull
@@ -93,7 +96,7 @@ public class ResourceReference extends PsiPolyVariantReferenceBase<PsiElement> {
         final Collection<FileAndResource> files = new LinkedList<>();
 
         for (VirtualFile file : dir.getChildren()) {
-            if(extension.equals(file.getExtension())) {
+            if(suffixMatcher.matches(file.getPath())) {
                 final Resource resource = new Resource(bundle, parentDirectory + file.getName());
                 files.add(new FileAndResource(PsiManager.getInstance(myElement.getProject()).findFile(file), resource));
             } else if(file.isDirectory()) {

@@ -172,6 +172,103 @@ class LayoutUpdateCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: suggest absolute theme for @setBlockTheme"() {
+        configureByText("src/Oro/Bundle/AcmeBundle/AcmeBundle.php",
+            """
+            |<?php
+            |namespace Oro\\Bundle\\AcmeBundle {
+            |  class AcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+            |}
+            """.stripMargin("|")
+        )
+        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/layouts/some1.html.twig", "abc")
+
+        suggestions(
+            """
+            |layout:
+            |  actions:
+            |    - '@setBlockTheme':
+            |        themes: <caret>
+            """.stripMargin(),
+            ["OroAcmeBundle:layouts:some1.html.twig"]
+        )
+    }
+
+    def void "test: not suggest absolute theme for @setBlockTheme if theme is not 'layouts' dir"() {
+        configureByText("src/Oro/Bundle/AcmeBundle/AcmeBundle.php",
+            """
+            |<?php
+            |namespace Oro\\Bundle\\AcmeBundle {
+            |  class AcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+            |}
+            """.stripMargin("|")
+        )
+        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/some1.html.twig", "abc")
+
+        suggestions(
+            """
+            |layout:
+            |  actions:
+            |    - '@setBlockTheme':
+            |        themes: <caret>
+            """.stripMargin(),
+            [],
+            ["OroAcmeBundle::some1.html.twig"]
+        )
+    }
+
+    def void "test: suggest relative theme for @setBlockTheme"() {
+        configureByText("src/Oro/Bundle/AcmeBundle/AcmeBundle.php",
+            """
+            |<?php
+            |namespace Oro\\Bundle\\AcmeBundle {
+            |  class AcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+            |}
+            """.stripMargin("|")
+        )
+        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/layouts/some_theme/relativeTemplate.html.twig", "abc")
+
+        suggestions(
+            "src/Oro/Bundle/AcmeBundle/Resources/views/layouts/some_theme/some.yml",
+            """
+            |layout:
+            |  actions:
+            |    - '@setBlockTheme':
+            |        themes: <caret>
+            """.stripMargin(),
+            ["relativeTemplate.html.twig"],
+            ["other.yml"]
+        )
+    }
+
+    def void "test: complete relative theme for @setBlockTheme"() {
+        configureByText("src/Oro/Bundle/AcmeBundle/AcmeBundle.php",
+            """
+            |<?php
+            |namespace Oro\\Bundle\\AcmeBundle {
+            |  class AcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+            |}
+            """.stripMargin("|")
+        )
+        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/layouts/some_theme/relativeTemplate.html.twig", "abc")
+
+        completion(
+            "src/Oro/Bundle/AcmeBundle/Resources/views/layouts/some_theme/some.yml",
+            """
+            |layout:
+            |  actions:
+            |    - '@setBlockTheme':
+            |        themes: rela<caret>
+            """.stripMargin(),
+            """
+            |layout:
+            |  actions:
+            |    - '@setBlockTheme':
+            |        themes: relativeTemplate.html.twig
+            """.stripMargin(),
+        )
+    }
+
     def void "test: suggest @setFormTheme properties"() {
         suggestions(
             """

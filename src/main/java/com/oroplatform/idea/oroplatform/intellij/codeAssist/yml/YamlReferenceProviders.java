@@ -21,11 +21,6 @@ class YamlReferenceProviders implements ReferenceProviders {
     }
 
     @Override
-    public PsiReferenceProvider filePath(RelativeDirectoryResolver relativeDirectoryResolver, InsertHandler<LookupElement> insertHandler) {
-        return filePath(relativeDirectoryResolver, Integer.MAX_VALUE, insertHandler);
-    }
-
-    @Override
     public PsiReferenceProvider filePath(RelativeDirectoryResolver relativeDirectoryResolver, int allowedDepth, InsertHandler<LookupElement> insertHandler) {
         return new FilePathReferenceProvider(relativeDirectoryResolver, allowedDepth);
     }
@@ -61,8 +56,8 @@ class YamlReferenceProviders implements ReferenceProviders {
     }
 
     @Override
-    public PsiReferenceProvider twigTemplate(InsertHandler<LookupElement> insertHandler) {
-        return new TwigTemplateReferenceProvider();
+    public PsiReferenceProvider twigTemplate(InsertHandler<LookupElement> insertHandler, String pattern) {
+        return new TwigTemplateReferenceProvider(pattern);
     }
 
     @Override
@@ -71,8 +66,8 @@ class YamlReferenceProviders implements ReferenceProviders {
     }
 
     @Override
-    public PsiReferenceProvider resource(String extension, InsertHandler<LookupElement> insertHandler) {
-        return new ResourceReferenceProvider(extension);
+    public PsiReferenceProvider resource(String pattern, InsertHandler<LookupElement> insertHandler) {
+        return new ResourceReferenceProvider(pattern);
     }
 
     @Override

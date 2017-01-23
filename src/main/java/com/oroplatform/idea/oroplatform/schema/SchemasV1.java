@@ -2,6 +2,7 @@ package com.oroplatform.idea.oroplatform.schema;
 
 import com.oroplatform.idea.oroplatform.Functions;
 import com.oroplatform.idea.oroplatform.PhpClassUtil;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.ElementRootDirsFinder;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.LayoutAssetsCssOutputChoicesProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PublicResourcesRootDirsFinder;
 import org.jetbrains.annotations.NotNull;
@@ -628,7 +629,7 @@ public class SchemasV1 {
             Container.with(
                 Property.named("exclude", Scalars.bool),
                 Property.named("description", Scalars.trans),
-                Property.named("documentation", Scalars.resource("md")),
+                Property.named("documentation", Scalars.resource("**.md")),
                 Property.named("acl_resource", Scalars.acl),
                 Property.named("max_results", Scalars.integer),
                 Property.named("order_by", orderBy),
@@ -1054,10 +1055,11 @@ public class SchemasV1 {
             new FilePathMatcher(FilePathPatterns.LAYOUT_UPDATE)
         );
 
-        final OneOf setTheme = OneOf.from(
+        final Element template = OneOf.from(Scalars.twig("**/Resources/views/layouts/**"), Scalars.relativeFile(new ElementRootDirsFinder(), "twig"));
+        final Element setTheme = OneOf.from(
             Sequence.of(Scalars.any),
             Container.with(
-                Property.named("themes", OneOf.from(Scalars.twig, Sequence.of(Scalars.twig))).required(),
+                Property.named("themes", OneOf.from(template, Sequence.of(template))).required(),
                 Property.named("id", Scalars.any)
             )
         );

@@ -12,7 +12,6 @@ public interface ReferenceProviders {
 
     PhpClassProviders phpClassProviders();
 
-    PsiReferenceProvider filePath(RelativeDirectoryResolver relativeDirectoryResolver, InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider filePath(RelativeDirectoryResolver relativeDirectoryResolver, int allowedDepth, InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider file(RootDirsFinder rootDirsFinder, StringWrapperProvider stringWrapperProvider, VirtualFileFilter virtualFileFilter, InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider phpCallback(InsertHandler<LookupElement> insertHandler);
@@ -20,8 +19,8 @@ public interface ReferenceProviders {
     PsiReferenceProvider phpClass(PhpClass phpClass, InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider phpField(PropertyPath propertyPath, PhpClassProvider phpClassProvider, InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider phpMethod(String pattern, InsertHandler<LookupElement> insertHandler);
-    PsiReferenceProvider twigTemplate(InsertHandler<LookupElement> insertHandler);
+    PsiReferenceProvider twigTemplate(InsertHandler<LookupElement> insertHandler, String pattern);
     PsiReferenceProvider route(InsertHandler<LookupElement> insertHandler);
-    PsiReferenceProvider resource(String extension, InsertHandler<LookupElement> insertHandler);
+    PsiReferenceProvider resource(String pattern, InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider requirejs(InsertHandler<LookupElement> insertHandler);
 }

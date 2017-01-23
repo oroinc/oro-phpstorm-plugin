@@ -139,7 +139,7 @@ final class Scalars {
     final static Scalar filePath = new Scalar() {
         @Override
         public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return Optional.of(providers.filePath(new RelativeToElementResolver(), insertHandler));
+            return Optional.of(providers.filePath(new RelativeToElementResolver(), Integer.MAX_VALUE, insertHandler));
         }
     };
 
@@ -156,7 +156,7 @@ final class Scalars {
         return new Scalar() {
             @Override
             public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return Optional.of(providers.filePath(new RelativeToAppDirectoryResolver(dir), insertHandler));
+                return Optional.of(providers.filePath(new RelativeToAppDirectoryResolver(dir), Integer.MAX_VALUE, insertHandler));
             }
         };
     }
@@ -167,6 +167,10 @@ final class Scalars {
 
     static Scalar file(final RootDirsFinder rootDirsFinder, final String... extensions) {
         return file(rootDirsFinder, new PublicResourceWrappedStringFactory(), extensions);
+    }
+
+    static Scalar relativeFile(final RootDirsFinder rootDirsFinder, final String... extensions) {
+        return file(rootDirsFinder, new StaticStringWrapperProvider(new StringWrapper("", "")), extensions);
     }
 
     private static Scalar file(final RootDirsFinder rootDirsFinder, final StringWrapperProvider stringWrapperProvider, final String... extensions) {
@@ -184,15 +188,25 @@ final class Scalars {
         @Nullable
         @Override
         public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return Optional.of(providers.twigTemplate(insertHandler));
+            return Optional.of(providers.twigTemplate(insertHandler, "**"));
         }
     };
 
-    static Scalar resource(final String extension) {
+    static Scalar twig(final String pattern) {
+        return new Scalar() {
+            @Nullable
+            @Override
+            public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return Optional.of(providers.twigTemplate(insertHandler, pattern));
+            }
+        };
+    }
+
+    static Scalar resource(final String pattern) {
         return new Scalar() {
             @Override
             public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return Optional.of(providers.resource(extension, insertHandler));
+                return Optional.of(providers.resource(pattern, insertHandler));
             }
         };
     }

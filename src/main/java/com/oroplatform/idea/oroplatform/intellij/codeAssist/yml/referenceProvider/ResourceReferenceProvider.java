@@ -9,17 +9,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLScalar;
 
 public class ResourceReferenceProvider extends PsiReferenceProvider {
-    private final String extension;
+    private final String pattern;
 
-    public ResourceReferenceProvider(String extension) {
-        this.extension = extension;
+    public ResourceReferenceProvider(String pattern) {
+        this.pattern = pattern;
     }
 
     @NotNull
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         if(element instanceof YAMLScalar) {
-            return new PsiReference[]{ new ResourceReference(element, ((YAMLScalar) element).getTextValue(), extension)};
+            return new PsiReference[]{ new ResourceReference(element, ((YAMLScalar) element).getTextValue(), pattern)};
         }
 
         return new PsiReference[0];
