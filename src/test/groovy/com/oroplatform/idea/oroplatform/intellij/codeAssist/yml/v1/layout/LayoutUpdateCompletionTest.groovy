@@ -18,17 +18,6 @@ class LayoutUpdateCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: not suggest top level properties for no layout file"() {
-        suggestions(
-            "Resources/views/layouts/some_theme/this_is_not_layout/some.yml",
-            """
-            |<caret>
-            """.stripMargin(),
-            [],
-            ["layout"]
-        )
-    }
-
     def void "test: suggest layout properties"() {
         suggestions(
             """
@@ -295,6 +284,37 @@ class LayoutUpdateCompletionTest extends CompletionTest {
             """
             |<caret>
             """.stripMargin(),
+            ["layout"]
+        )
+    }
+
+    def void "test: suggest properties for layout update in any nested directory"() {
+        suggestions("Resources/views/layouts/some_theme/some_dir/another_dir/layout.yml",
+            """
+            |<caret>
+            """.stripMargin(),
+            ["layout"]
+        )
+    }
+
+    def void "test: not suggest top level properties for theme file"() {
+        suggestions(
+            "Resources/views/layouts/some_theme/theme.yml",
+            """
+            |<caret>
+            """.stripMargin(),
+            [],
+            ["layout"]
+        )
+    }
+
+    def void "test: not suggest top level properties for config file"() {
+        suggestions(
+            "Resources/views/layouts/some_theme/config/assets.yml",
+            """
+            |<caret>
+            """.stripMargin(),
+            [],
             ["layout"]
         )
     }

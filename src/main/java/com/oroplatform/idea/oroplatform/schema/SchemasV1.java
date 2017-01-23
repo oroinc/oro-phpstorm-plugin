@@ -24,8 +24,7 @@ public class SchemasV1 {
         public final static String DASHBOARD = "Resources/config/dashboard.yml";
         public final static String NAVIGATION = "Resources/config/navigation.yml";
         public final static String SEARCH = "Resources/config/search.yml";
-        public final static String LAYOUT_UPDATE = "Resources/views/layouts/*/*.yml";
-        public final static String LAYOUT_UPDATE_IMPORT = "Resources/views/layouts/*/imports/*/layout.yml";
+        public final static String LAYOUT_UPDATE = "Resources/views/layouts/**/*.yml";
         public final static String THEME = "Resources/views/layouts/*/theme.yml";
         public final static String ASSETS = "Resources/views/layouts/*/config/assets.yml";
         public final static String LAYOUT_REQUIRE_JS = "Resources/views/layouts/*/config/requirejs.yml";
@@ -1049,12 +1048,10 @@ public class SchemasV1 {
         );
         final Scalar importId = Scalars.filePathRelativeToElementIn("imports", 1);
 
-        final FileMatcher matcher = new OrFileMatcher(
-            new FilePathMatcher(FilePathPatterns.LAYOUT_UPDATE_IMPORT),
-            new AndFileMatcher(
-                new NotFileMatcher(new FilePathMatcher(FilePathPatterns.THEME)),
-                new FilePathMatcher(FilePathPatterns.LAYOUT_UPDATE)
-            )
+        final FileMatcher matcher = new AndFileMatcher(
+            new NotFileMatcher(new FilePathMatcher(FilePathPatterns.THEME)),
+            new NotFileMatcher(new FilePathMatcher("Resources/views/layouts/*/config/*.yml")),
+            new FilePathMatcher(FilePathPatterns.LAYOUT_UPDATE)
         );
 
         return new Schema(matcher, Container.with(
