@@ -40,6 +40,66 @@ class LayoutUpdateCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: complete operations when quotes are missing"() {
+        completion(
+            """
+            |layout:
+            |  actions:
+            |    - addTr<caret>
+            """.stripMargin(),
+            """
+            |layout:
+            |  actions:
+            |    - '@addTree': <caret>
+            """.stripMargin()
+        )
+    }
+
+    def void "test: complete operations started with @ when quotes are missing"() {
+        completion(
+            """
+            |layout:
+            |  actions:
+            |    - @addTr<caret>
+            """.stripMargin(),
+            """
+            |layout:
+            |  actions:
+            |    - '@addTree': <caret>
+            """.stripMargin()
+        )
+    }
+
+    def void "test: complete operations in quotes"() {
+        completion(
+            """
+            |layout:
+            |  actions:
+            |    - 'addTr<caret>'
+            """.stripMargin(),
+            """
+            |layout:
+            |  actions:
+            |    - '@addTree': <caret>
+            """.stripMargin()
+        )
+    }
+
+    def void "test: complete operations started with @ in quotes"() {
+        completion(
+            """
+            |layout:
+            |  actions:
+            |    - '@addTr<caret>'
+            """.stripMargin(),
+            """
+            |layout:
+            |  actions:
+            |    - '@addTree': <caret>
+            """.stripMargin()
+        )
+    }
+
     def void "test: suggest @add properties"() {
         suggestions(
             """

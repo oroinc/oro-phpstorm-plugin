@@ -18,10 +18,13 @@ class KeyInsertHandler implements InsertHandler<LookupElement> {
         final Document document = context.getDocument();
         final Editor editor = context.getEditor();
 
-        int firstCharPos = firstCharPosition(document, context.getTailOffset());
-        int lastCharPos = lastCharPositionIgnoringSpace(document, context.getTailOffset());
+        final int firstCharPos = firstCharPosition(document, context.getTailOffset());
+        final int lastCharPos = lastCharPositionIgnoringSpace(document, context.getTailOffset());
         final char lastChar = document.getCharsSequence().charAt(lastCharPos);
         final char firstChar = document.getCharsSequence().charAt(firstCharPos);
+        final int firstNonQuoteCharPos = isQuoteChar(firstChar) ? firstCharPos + 1 : firstCharPos;
+        final char firstNonQuoteChar = document.getCharsSequence().charAt(firstNonQuoteCharPos);
+
         if(lastChar != ':') {
             final int tailPos = getTailPos(context.getTailOffset(), lastChar);
             final String padText = isQuoteChar(firstChar) && !isQuoteChar(lastChar) ? firstChar+KEY_COLON : KEY_COLON;
@@ -29,6 +32,20 @@ class KeyInsertHandler implements InsertHandler<LookupElement> {
             editor.getCaretModel().moveToOffset(tailPos + padText.length());
         } else {
             editor.getCaretModel().moveToOffset(lastCharPositionIgnoringSpace(document, lastCharPos + 1));
+        }
+
+        //special support for "@" char at the beginning
+        if(firstNonQuoteChar == '@') {
+            int endQuotePos = lastCharPos + 1;
+            if(item.getLookupString().startsWith("@") && "@@".equals(document.getCharsSequence().subSequence(firstNonQuoteCharPos, firstNonQuoteCharPos + 2).toString())) {
+                document.deleteString(firstNonQuoteCharPos, firstNonQuoteCharPos + 1);
+                endQuotePos--;
+            }
+
+            if(!isQuoteChar(firstChar)) {
+                document.insertString(firstCharPos, "'");
+                document.insertString(endQuotePos, "'");
+            }
         }
 
         final DefaultValueDescriptor defaultValueDescriptor = item.getUserData(DefaultValueDescriptor.KEY);

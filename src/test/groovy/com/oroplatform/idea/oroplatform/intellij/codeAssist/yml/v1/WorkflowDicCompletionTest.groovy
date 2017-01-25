@@ -170,7 +170,7 @@ class WorkflowDicCompletionTest extends CompletionTest implements RandomIdentifi
             |    transition_definitions:
             |      some_transition:
             |        conditions:
-            |          @condition4: <caret>
+            |          '@condition4': <caret>
             """.stripMargin(),
         )
     }
