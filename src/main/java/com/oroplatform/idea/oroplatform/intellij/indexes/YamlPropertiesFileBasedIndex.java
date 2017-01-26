@@ -3,6 +3,7 @@ package com.oroplatform.idea.oroplatform.intellij.indexes;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
+import com.oroplatform.idea.oroplatform.SimpleSuffixMatcher;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import gnu.trove.THashMap;
@@ -49,7 +50,7 @@ class YamlPropertiesFileBasedIndex extends ScalarIndexExtension<String> {
             final YAMLFile file = (YAMLFile) inputData.getPsiFile();
 
             for (IndexBlueprint indexBlueprint : indexBlueprints) {
-                if(inputData.getFile().getPath().endsWith(indexBlueprint.filepathSuffix)) {
+                if(indexBlueprint.filepathSuffixMatcher.matches(inputData.getFile().getPath())) {
                     final Collection<String> values =
                         getPropertyFrom(indexBlueprint.propertyPath, getMappingsFrom(file), Collections.emptySet());
 
@@ -78,7 +79,7 @@ class YamlPropertiesFileBasedIndex extends ScalarIndexExtension<String> {
             if(!file.getFileType().equals(YAMLFileType.YML)) return false;
 
             for (IndexBlueprint indexBlueprint : indexBlueprints) {
-                if(file.getPath().endsWith(indexBlueprint.filepathSuffix)) return true;
+                if(indexBlueprint.filepathSuffixMatcher.matches(file.getPath())) return true;
             }
 
             return false;
@@ -96,11 +97,11 @@ class YamlPropertiesFileBasedIndex extends ScalarIndexExtension<String> {
     }
 
     static class IndexBlueprint {
-        private final String filepathSuffix;
+        private final SimpleSuffixMatcher filepathSuffixMatcher;
         private final PropertyPath propertyPath;
 
         IndexBlueprint(String filepathSuffix, PropertyPath propertyPath) {
-            this.filepathSuffix = filepathSuffix;
+            this.filepathSuffixMatcher = new SimpleSuffixMatcher(filepathSuffix);
             this.propertyPath = propertyPath;
         }
     }

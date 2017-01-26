@@ -13,8 +13,8 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 
 def phpPluginUrl = System.getProperty("phpPluginUrl", "https://plugins.jetbrains.com/files/6610/30133/php-163.7743.20.zip")
+def twigPluginUrl = System.getProperty("twigPluginUrl", "https://plugins.jetbrains.com/files/7303/29512/twig-163.6110.10.zip")
 def ideaVersion = System.getProperty("ideaVersion", "2016.3")
-def phpPluginVersion = phpPluginUrl.find(/[a-z0-9\.\-]+\.zip/).replace(".zip", "")
 def javaVersion = 1.8
 
 sourceCompatibility = javaVersion
@@ -24,7 +24,7 @@ intellij {
     version ideaVersion
     type 'IU'
     pluginName 'idea-oroplatform-plugin'
-    plugins = ['php', 'yaml', 'java-i18n', 'properties', 'CSS', 'JavaScriptLanguage']
+    plugins = ['php', 'yaml', 'java-i18n', 'properties', 'CSS', 'JavaScriptLanguage', 'twig']
     updateSinceUntilBuild false
     sameSinceUntilBuild false
     downloadSources !Boolean.valueOf(System.getenv('CI'))
@@ -35,28 +35,33 @@ repositories {
     mavenCentral()
 }
 
-def phpPluginFiles(String version) {
-    fileTree(dir: "${project.intellij.ideaDirectory}/plugins/$version/php/lib/", include: '*.jar')
+def pluginFiles(String pluginName, String version) {
+    fileTree(dir: "${project.intellij.ideaDirectory}/plugins/$version/$pluginName/lib/", include: '*.jar')
 }
 
 afterEvaluate {
-    it.tasks.findByName("compileJava").dependsOn("downloadAndUnzipPhpPlugin")
-    it.intellij.intellijFiles.addAll(phpPluginFiles(phpPluginVersion).getFiles())
+    [php: phpPluginUrl, twig: twigPluginUrl].each { pluginName, pluginUrl ->
+        def pluginVersion = pluginUrl.find(/[a-z0-9\.\-]+\.zip/).replace(".zip", "")
 
-    project.tasks.create(name: "downloadPhpPlugin", type: Download) {
-        def output = new File("${project.intellij.ideaDirectory}/plugins/${phpPluginVersion}.zip")
+        project.tasks.findByName("compileJava").dependsOn("downloadAndUnzip${pluginName}Plugin")
+        project.intellij.intellijFiles.addAll(pluginFiles(pluginName, pluginVersion).getFiles())
 
-        src phpPluginUrl
-        dest output
-        overwrite false
+        def downloadTask = project.tasks.create(name: "download${pluginName}Plugin", type: Download) {
+            def output = new File("${project.intellij.ideaDirectory}/plugins/${pluginVersion}.zip")
+
+            src pluginUrl
+            dest output
+            overwrite false
+        }
+
+        project.tasks.create(name: "downloadAndUnzip${pluginName}Plugin", dependsOn: "download${pluginName}Plugin", type: Copy) {
+            from zipTree(downloadTask.dest)
+            into "${project.intellij.ideaDirectory}/plugins/$pluginVersion"
+        }
+
+        dependencies {
+            compile pluginFiles(pluginName, pluginVersion)
+        }
     }
 
-    project.tasks.create(name: "downloadAndUnzipPhpPlugin", dependsOn: "downloadPhpPlugin", type: Copy) {
-        from zipTree(downloadPhpPlugin.dest)
-        into "${project.intellij.ideaDirectory}/plugins/$phpPluginVersion"
-    }
-
-    dependencies {
-        compile phpPluginFiles(phpPluginVersion)
-    }
 }

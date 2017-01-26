@@ -254,6 +254,132 @@ class LayoutUpdateCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: show gutter for relative template in twig file when it is used in layout update"() {
+        configureByText("src/Oro/Bundle/AcmeBundle/AcmeBundle.php",
+            """
+            |<?php
+            |namespace Oro\\Bundle\\AcmeBundle {
+            |  class AcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+            |}
+            """.stripMargin()
+        )
+
+        configureByText(
+            "src/Oro/Bundle/AcmeBundle/Resources/views/layouts/some_theme/some.yml",
+            """
+            |layout:
+            |  actions:
+            |    - '@setBlockTheme':
+            |        themes: some1.html.twig
+            """.stripMargin(),
+        )
+
+        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/layouts/some_theme/some1.html.twig", "abc")
+
+        assertEquals(1, myFixture.findAllGutters().size())
+    }
+
+    def void "test: show gutter for relative template in twig file when it is used in layout update and defines in sequence"() {
+        configureByText("src/Oro/Bundle/AcmeBundle/AcmeBundle.php",
+            """
+            |<?php
+            |namespace Oro\\Bundle\\AcmeBundle {
+            |  class AcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+            |}
+            """.stripMargin()
+        )
+
+        configureByText(
+            "src/Oro/Bundle/AcmeBundle/Resources/views/layouts/some_theme/some.yml",
+            """
+            |layout:
+            |  actions:
+            |    - '@setBlockTheme':
+            |        themes: [some1.html.twig]
+            """.stripMargin(),
+        )
+
+        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/layouts/some_theme/some1.html.twig", "abc")
+
+        assertEquals(1, myFixture.findAllGutters().size())
+    }
+
+    def void "test: not show gutter for relative template in twig file when it is not used in layout update"() {
+        configureByText("src/Oro/Bundle/AcmeBundle/AcmeBundle.php",
+            """
+            |<?php
+            |namespace Oro\\Bundle\\AcmeBundle {
+            |  class AcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+            |}
+            """.stripMargin()
+        )
+
+        configureByText(
+            "src/Oro/Bundle/AcmeBundle/Resources/views/layouts/some_theme/some.yml",
+            """
+            |layout:
+            |  actions:
+            |    - '@setBlockTheme':
+            |        themes: some2.html.twig
+            """.stripMargin(),
+        )
+
+        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/layouts/some_theme/some1.html.twig", "abc")
+
+        assertEquals(0, myFixture.findAllGutters().size())
+    }
+
+    def void "test: show gutter for absolute template in twig file when it is used in layout update"() {
+        configureByText("src/Oro/Bundle/AcmeBundle/AcmeBundle.php",
+            """
+            |<?php
+            |namespace Oro\\Bundle\\AcmeBundle {
+            |  class AcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+            |}
+            """.stripMargin()
+        )
+
+        configureByText(
+            "Resources/views/layouts/some_theme/some.yml",
+            """
+            |layout:
+            |  actions:
+            |    - '@setBlockTheme':
+            |        themes: OroAcmeBundle:layouts:some_theme/some1.html.twig
+            """.stripMargin(),
+        )
+
+        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/layouts/some_theme/some1.html.twig", "abc")
+
+        assertEquals(1, myFixture.findAllGutters().size())
+    }
+
+    def void "test: not show gutter for absolute template in twig file when it is not used in layout update"() {
+        configureByText("src/Oro/Bundle/AcmeBundle/AcmeBundle.php",
+            """
+            |<?php
+            |namespace Oro\\Bundle\\AcmeBundle {
+            |  class AcmeBundle extends \\Symfony\\Component\\HttpKernel\\Bundle\\Bundle {}
+            |}
+            """.stripMargin()
+        )
+
+        configureByText(
+            "Resources/views/layouts/some_theme/some.yml",
+            """
+            |layout:
+            |  actions:
+            |    - '@setBlockTheme':
+            |        themes: OroAcmeBundle:layouts:some_theme/some2.html.twig
+            """.stripMargin(),
+        )
+
+        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/layouts/some_theme/some2.html.twig", "abc")
+        configureByText("src/Oro/Bundle/AcmeBundle/Resources/views/layouts/some_theme/some1.html.twig", "abc")
+
+        assertEquals(0, myFixture.findAllGutters().size())
+    }
+
     def void "test: not suggest absolute theme for @setBlockTheme if theme is not 'layouts' dir"() {
         configureByText("src/Oro/Bundle/AcmeBundle/AcmeBundle.php",
             """

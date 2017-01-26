@@ -11,6 +11,11 @@ abstract class CompletionTest extends TestCase {
         completion(fileName(), contents, expected)
     }
 
+    @Override
+    protected boolean isWriteActionRequired() {
+        return false
+    }
+
     def completion(String fileName, String contents, String expected) {
         configureByText(fileName, contents)
         def elements = myFixture.completeBasic()

@@ -14,10 +14,12 @@ public class Bundles {
     }
 
     public Collection<Bundle> findAll() {
-        final Collection<PhpClass> classes = phpIndex.getAllSubclasses("\\Symfony\\Component\\HttpKernel\\Bundle\\Bundle");
-
-        return classes.stream()
+        return findBundleClasses().stream()
             .map(phpClass -> new Bundle(phpClass.getNamespaceName()))
             .collect(Collectors.toList());
+    }
+
+    public Collection<PhpClass> findBundleClasses() {
+        return phpIndex.getAllSubclasses("\\Symfony\\Component\\HttpKernel\\Bundle\\Bundle");
     }
 }

@@ -162,6 +162,7 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     <depends>com.jetbrains.php</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
     <depends>JavaScript</depends>
+    <depends>com.jetbrains.twig</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <completion.contributor language="yaml"
@@ -204,6 +205,9 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.TranslationFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.TranslationDomainFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ServiceParametersFileBasedIndex" />
+        <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.LayoutUpdateThemesFileBasedIndex" />
+
+        <codeInsight.lineMarkerProvider language="Twig" implementationClass="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.TwigLineMarker"/>
 
     </extensions>
 
