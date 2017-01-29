@@ -470,7 +470,9 @@ public class SchemasV1 {
                             Property.named("step", stepReference)
                         )
                     )),
-                    Property.named("scopes", Sequence.of(Container.any)),
+                    Property.named("scopes", Sequence.of(Container.with(
+                        Property.any(Scalars.integer).withKeyElement(Scalars.workflowScope)
+                    ))),
                     Property.named("datagrids", Sequence.of(Scalars.datagrid)),
                     Property.named("disable_operations", Container.with(
                         Property.any(Sequence.of(Scalars.fullEntity)).withKeyElement(Scalars.operation)

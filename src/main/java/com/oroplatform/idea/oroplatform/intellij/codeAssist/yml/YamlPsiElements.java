@@ -15,7 +15,7 @@ import static com.oroplatform.idea.oroplatform.intellij.codeAssist.PsiElements.e
 
 public class YamlPsiElements {
 
-    static Collection<YAMLKeyValue> getKeyValuesFrom(PsiElement element) {
+    public static Collection<YAMLKeyValue> getKeyValuesFrom(PsiElement element) {
         return Stream.of(element.getChildren())
             .flatMap(elementFilter(YAMLKeyValue.class))
             .collect(Collectors.toList());

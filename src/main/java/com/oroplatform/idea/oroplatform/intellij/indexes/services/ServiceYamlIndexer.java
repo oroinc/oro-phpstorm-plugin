@@ -45,7 +45,7 @@ public class ServiceYamlIndexer implements DataIndexer<Service, Void, YAMLFile> 
             .flatMap(serviceMapping -> toStream(() -> serviceMapping.getKeyValueByKey("tags")))
             .flatMap(tagElements -> getSequenceItems(Arrays.asList(tagElements.getChildren())).stream())
             .flatMap(elementFilter(YAMLMapping.class))
-            .map(tag -> new Tag(getValue(tag, "name"), getValue(tag, "alias")))
+            .map(tag -> new Tag(attributes(tag)))
             .collect(Collectors.toList());
 
         final String className = serviceElements.stream()
@@ -56,13 +56,8 @@ public class ServiceYamlIndexer implements DataIndexer<Service, Void, YAMLFile> 
         return new Service(serviceElement.getKeyText(), tags, className);
     }
 
-    private static String getValue(YAMLMapping mapping, String key) {
-        final YAMLKeyValue keyValue = mapping.getKeyValueByKey(key);
-
-        if(keyValue != null) {
-            return keyValue.getValueText();
-        }
-
-        return null;
+    private Map<String, String> attributes(YAMLMapping tag) {
+        return YamlPsiElements.getKeyValuesFrom(tag).stream()
+            .collect(Collectors.toMap(YAMLKeyValue::getKeyText, YAMLKeyValue::getValueText, (v1, v2) -> v2));
     }
 }

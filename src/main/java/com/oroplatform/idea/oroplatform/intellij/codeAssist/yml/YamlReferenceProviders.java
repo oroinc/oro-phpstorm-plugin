@@ -74,4 +74,9 @@ class YamlReferenceProviders implements ReferenceProviders {
     public PsiReferenceProvider requirejs(InsertHandler<LookupElement> insertHandler) {
         return RequirejsReferenceProvider.instance();
     }
+
+    @Override
+    public PsiReferenceProvider workflowScope(InsertHandler<LookupElement> insertHandler) {
+        return new WorkflowScopeReferenceProvider(insertHandler);
+    }
 }

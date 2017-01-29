@@ -93,6 +93,13 @@ final class Scalars {
         }
     };
 
+    final static Scalar workflowScope = new Scalar() {
+        @Override
+        public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.workflowScope(insertHandler));
+        }
+    };
+
     final static Scalar massActionProvider = new Scalar() {
         @Nullable
         @Override

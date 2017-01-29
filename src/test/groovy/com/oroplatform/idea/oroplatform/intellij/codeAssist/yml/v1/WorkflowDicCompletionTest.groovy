@@ -24,6 +24,29 @@ class WorkflowDicCompletionTest extends CompletionTest implements RandomIdentifi
     protected void setUp() throws Exception {
         super.setUp()
 
+        configureByText("classes.php",
+            """
+            |<?php
+            |namespace Acme\\OroBundle;
+            |class AccountScopeProvider {
+            |   public function getCriteriaField() {
+            |       return 'account';
+            |   }
+            |}
+            |class LocalizationScopeProvider {
+            |   const LOCALIZATION_TYPE = 'localization';
+            |   public function getCriteriaField() {
+            |       return self::LOCALIZATION_TYPE;
+            |   }
+            |}
+            |class UserScopeProvider {
+            |   public function getCriteriaField() {
+            |       return 'user';
+            |   }
+            |}
+            """.stripMargin()
+        )
+
         configureByText("Resources/config/services.xml",
             """
             |<container>
@@ -46,6 +69,9 @@ class WorkflowDicCompletionTest extends CompletionTest implements RandomIdentifi
             |    <service id="action2_id">
             |      <tag name="oro_workflow.action" alias="$action2a|$action2b"/>
             |    </service>
+            |    <service id="scope1_id" class="Acme\\OroBundle\\AccountScopeProvider">
+            |      <tag name="oro_scope.provider" scopeType="workflow_definition"/>
+            |    </service>
             |  </services>
             |</container>
           """.stripMargin()
@@ -60,6 +86,14 @@ class WorkflowDicCompletionTest extends CompletionTest implements RandomIdentifi
             |  action3_id:
             |    tags:
             |      - { name: oro_workflow.action, alias: $action3 }
+            |  scope2_id:
+            |    class: Acme\\OroBundle\\LocalizationScopeProvider
+            |    tags:
+            |      - { name: oro_scope.provider, scopeType: workflow_definition }
+            |  no_scope2_id:
+            |    class: Acme\\OroBundle\\UserScopeProvider
+            |    tags:
+            |      - { name: oro_scope.provider, scopeType: invalid }
             """.stripMargin()
         )
     }
@@ -214,6 +248,46 @@ class WorkflowDicCompletionTest extends CompletionTest implements RandomIdentifi
             |        conditions:
             |          '@condition4': <caret>
             """.stripMargin(),
+        )
+    }
+
+    def void "test: suggest scope for simple scope provider"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    scopes:
+            |      -
+            |         <caret>
+            """.stripMargin(),
+            ["account"]
+        )
+    }
+
+    def void "test: suggest scope for scope provider with name defined as const reference"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    scopes:
+            |      -
+            |         <caret>
+            """.stripMargin(),
+            ["localization"]
+        )
+    }
+
+    def void "test: not suggest scope for scope provider that has unsupported scopeType"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    scopes:
+            |      -
+            |         <caret>
+            """.stripMargin(),
+            [],
+            ["user"]
         )
     }
 }

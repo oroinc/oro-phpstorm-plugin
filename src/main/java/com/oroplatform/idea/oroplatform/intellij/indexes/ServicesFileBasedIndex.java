@@ -37,6 +37,6 @@ public class ServicesFileBasedIndex extends BaseServicesFileBasedIndex<Service> 
 
     @Override
     public int getVersion() {
-        return 2;
+        return 3;
     }
 }

@@ -2,21 +2,27 @@ package com.oroplatform.idea.oroplatform.symfony;
 
 import com.google.common.base.Objects;
 
-public class Tag {
-    private final String name;
-    private final String alias;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
-    public Tag(String name, String alias) {
-        this.name = name;
-        this.alias = alias;
+public class Tag {
+    private final Map<String, String> parameters = new HashMap<>();
+
+    public Tag(Map<String, String> parameters) {
+        this.parameters.putAll(parameters);
     }
 
     public String getName() {
-        return name;
+        return parameters.get("name");
     }
 
     public String getAlias() {
-        return alias;
+        return parameters.get("alias");
+    }
+
+    public Optional<String> get(String name) {
+        return Optional.ofNullable(parameters.get(name));
     }
 
     @Override
@@ -24,12 +30,11 @@ public class Tag {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Tag tag = (Tag) o;
-        return Objects.equal(name, tag.name) &&
-            Objects.equal(alias, tag.alias);
+        return Objects.equal(parameters, tag.parameters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, alias);
+        return Objects.hashCode(parameters);
     }
 }

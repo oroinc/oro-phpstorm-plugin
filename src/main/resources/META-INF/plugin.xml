@@ -212,6 +212,7 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.TranslationDomainFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ServiceParametersFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.LayoutUpdateThemesFileBasedIndex" />
+        <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.WorkflowScopeFileBasedIndex" />
 
         <codeInsight.lineMarkerProvider language="Twig" implementationClass="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.TwigLineMarker"/>
 

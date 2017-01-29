@@ -1,12 +1,25 @@
 package com.oroplatform.idea.oroplatform.intellij.indexes;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.indexing.FileBasedIndex;
+import com.jetbrains.php.PhpIndex;
+import com.jetbrains.php.lang.psi.elements.ClassConstantReference;
+import com.jetbrains.php.lang.psi.elements.Field;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.oroplatform.idea.oroplatform.symfony.Service;
+import com.oroplatform.idea.oroplatform.symfony.ServiceClassName;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.oroplatform.idea.oroplatform.Functions.toStream;
 
 public class ServicesIndex {
 
@@ -48,5 +61,48 @@ public class ServicesIndex {
     public Optional<String> findParameterValue(String name) {
         return FileBasedIndex.getInstance().getValues(ServiceParametersFileBasedIndex.KEY, name, GlobalSearchScope.allScope(project)).stream()
             .findFirst();
+    }
+
+    public Collection<WorkflowScope> findWorkflowScopes() {
+        final PhpIndex phpIndex = PhpIndex.getInstance(project);
+
+        return FileBasedIndex.getInstance().getAllKeys(WorkflowScopeFileBasedIndex.KEY, project).stream()
+            .map(ServiceClassName::new)
+            .map(serviceClassName -> {
+                return serviceClassName.getServiceParameter()
+                    .flatMap(this::findParameterValue)
+                    .orElse(serviceClassName.getClassName());
+            })
+            .flatMap(className -> phpIndex.getClassesByFQN(className).stream())
+            .flatMap(phpClass -> toStream(findWorkflowScope(phpClass)))
+            .collect(Collectors.toList());
+    }
+
+    private Optional<WorkflowScope> findWorkflowScope(PhpClass phpClass) {
+        return phpClass.getMethods().stream()
+            .filter(method -> "getCriteriaField".equals(method.getName()))
+            .flatMap(method -> PsiTreeUtil.collectElementsOfType(method, PhpReturn.class).stream())
+            .flatMap(phpReturn -> toStream(phpReturn.getArgument()))
+            .flatMap(argument -> {
+                if(argument instanceof ClassConstantReference && ((ClassConstantReference) argument).resolve() instanceof Field) {
+                    final Field classConstant = (Field) ((ClassConstantReference) argument).resolve();
+                    return toStream(classConstant.getDefaultValue()).map(PsiElement::getText);
+                } else {
+                    return Stream.of(argument.getText());
+                }
+            })
+            .map(StringUtil::stripQuotesAroundValue)
+            .map(name -> new WorkflowScope(phpClass, name))
+            .findFirst();
+    }
+
+    public static class WorkflowScope {
+        public final PhpClass phpClass;
+        public final String name;
+
+        private WorkflowScope(PhpClass phpClass, String name) {
+            this.phpClass = phpClass;
+            this.name = name;
+        }
     }
 }

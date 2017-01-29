@@ -41,13 +41,12 @@ public class ServiceXmlIndexer implements DataIndexer<Service, Void, XmlFile> {
     private static Collection<Tag> getServiceTags(XmlTag serviceTag) {
         return PsiTreeUtil.findChildrenOfType(serviceTag, XmlTag.class).stream()
             .filter(tag -> tag.getName().equals("tag"))
-            .map(tag -> new Tag(getXmlAttribute(tag, "name"), getXmlAttribute(tag, "alias")))
+            .map(tag -> new Tag(attributes(tag)))
             .collect(Collectors.toList());
     }
 
-    private static String getXmlAttribute(XmlTag tag, String attributeName) {
-        final XmlAttribute attribute = tag.getAttribute(attributeName);
-
-        return attribute == null ? null : attribute.getValue();
+    private static Map<String, String> attributes(XmlTag tag) {
+        return Stream.of(tag.getAttributes())
+            .collect(Collectors.toMap(XmlAttribute::getName, XmlAttribute::getValue, (v1, v2) -> v2));
     }
 }
