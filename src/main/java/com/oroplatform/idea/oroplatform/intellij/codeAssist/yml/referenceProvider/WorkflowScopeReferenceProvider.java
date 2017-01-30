@@ -8,6 +8,7 @@ import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.WorkflowScopeReference;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLScalar;
 
 public class WorkflowScopeReferenceProvider extends PsiReferenceProvider {
@@ -25,6 +26,9 @@ public class WorkflowScopeReferenceProvider extends PsiReferenceProvider {
             return new PsiReference[] {
                 new WorkflowScopeReference(keyValue, keyValue.getTextValue(), insertHandler)
             };
+        } else if(element instanceof YAMLKeyValue && context.get("key") != null) {
+            final YAMLKeyValue keyValue = (YAMLKeyValue) element;
+            return new PsiReference[] { new WorkflowScopeReference(keyValue.getKey(), keyValue.getKeyText(), insertHandler) };
         }
         return new PsiReference[0];
     }

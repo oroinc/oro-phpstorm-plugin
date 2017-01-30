@@ -1,10 +1,10 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
-class WorkflowDicCompletionTest extends CompletionTest implements RandomIdentifiers {
+class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV1.FilePathPatterns.WORKFLOW
@@ -27,7 +27,7 @@ class WorkflowDicCompletionTest extends CompletionTest implements RandomIdentifi
         configureByText("classes.php",
             """
             |<?php
-            |namespace Acme\\OroBundle;
+            |namespace Oro\\AcmeBundle;
             |class AccountScopeProvider {
             |   public function getCriteriaField() {
             |       return 'account';
@@ -42,6 +42,11 @@ class WorkflowDicCompletionTest extends CompletionTest implements RandomIdentifi
             |class UserScopeProvider {
             |   public function getCriteriaField() {
             |       return 'user';
+            |   }
+            |}
+            |class LanguageScopeProvider {
+            |   public function getCriteriaField() {
+            |       return 'language';
             |   }
             |}
             """.stripMargin()
@@ -69,7 +74,7 @@ class WorkflowDicCompletionTest extends CompletionTest implements RandomIdentifi
             |    <service id="action2_id">
             |      <tag name="oro_workflow.action" alias="$action2a|$action2b"/>
             |    </service>
-            |    <service id="scope1_id" class="Acme\\OroBundle\\AccountScopeProvider">
+            |    <service id="scope1_id" class="Oro\\AcmeBundle\\AccountScopeProvider">
             |      <tag name="oro_scope.provider" scopeType="workflow_definition"/>
             |    </service>
             |  </services>
@@ -79,6 +84,8 @@ class WorkflowDicCompletionTest extends CompletionTest implements RandomIdentifi
 
         configureByText("Resources/config/services.yml",
             """
+            |parameters:
+            |   language.class: Oro\\AcmeBundle\\LanguageScopeProvider
             |services:
             |  condition3_id:
             |    tags:
@@ -87,11 +94,15 @@ class WorkflowDicCompletionTest extends CompletionTest implements RandomIdentifi
             |    tags:
             |      - { name: oro_workflow.action, alias: $action3 }
             |  scope2_id:
-            |    class: Acme\\OroBundle\\LocalizationScopeProvider
+            |    class: Oro\\AcmeBundle\\LocalizationScopeProvider
             |    tags:
             |      - { name: oro_scope.provider, scopeType: workflow_definition }
-            |  no_scope2_id:
-            |    class: Acme\\OroBundle\\UserScopeProvider
+            |  scope3_id:
+            |    class: '%language.class%'
+            |    tags:
+            |      - { name: oro_scope.provider, scopeType: workflow_definition }
+            |  no_scope4_id:
+            |    class: Oro\\AcmeBundle\\UserScopeProvider
             |    tags:
             |      - { name: oro_scope.provider, scopeType: invalid }
             """.stripMargin()
@@ -290,4 +301,31 @@ class WorkflowDicCompletionTest extends CompletionTest implements RandomIdentifi
             ["user"]
         )
     }
+
+    def void "test: detect scope scope reference"() {
+        checkPhpReference(
+            """
+            |workflows:
+            |  some:
+            |    scopes:
+            |      -
+            |         local<caret>ization: ~
+            """.stripMargin(),
+            ["Oro\\AcmeBundle\\LocalizationScopeProvider"]
+        )
+    }
+
+    def void "test: detect scope reference when class name is defined as service parameter"() {
+        checkPhpReference(
+            """
+            |workflows:
+            |  some:
+            |    scopes:
+            |      -
+            |         lang<caret>uage: ~
+            """.stripMargin(),
+            ["Oro\\AcmeBundle\\LanguageScopeProvider"]
+        )
+    }
+
 }
