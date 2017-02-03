@@ -8,27 +8,29 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ProcessingContext;
-import com.oroplatform.idea.oroplatform.intellij.indexes.ServicesIndex;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.function.Function;
 
-public class ServiceCompletionProvider extends CompletionProvider<CompletionParameters> {
+public class SimpleCompletionProvider extends CompletionProvider<CompletionParameters> {
 
     private final InsertHandler<LookupElement> insertHandler;
+    private final Function<Project, Collection<String>> getLookupStrings;
 
-    public ServiceCompletionProvider(InsertHandler<LookupElement> insertHandler) {
+    public SimpleCompletionProvider(InsertHandler<LookupElement> insertHandler, Function<Project, Collection<String>> getLookupStrings) {
         this.insertHandler = insertHandler;
+        this.getLookupStrings = getLookupStrings;
     }
 
     @Override
     protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
         final Project project = parameters.getOriginalFile().getProject();
 
-        final Collection<String> actions = ServicesIndex.instance(project).findServices();
+        final Collection<String> elements = getLookupStrings.apply(project);
 
-        for (String service : actions) {
-            result.addElement(LookupElementBuilder.create(service).withInsertHandler(insertHandler));
+        for (String element : elements) {
+            result.addElement(LookupElementBuilder.create(element).withInsertHandler(insertHandler));
         }
     }
 }
