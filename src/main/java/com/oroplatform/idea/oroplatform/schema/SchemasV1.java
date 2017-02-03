@@ -584,7 +584,7 @@ public class SchemasV1 {
                 Property.named("property_path", Scalars.any),
                 Property.named("data_transformer", OneOf.from(Scalars.service, Scalars.phpClass, Sequence.of(Scalars.callable))),
                 Property.named("collapse", Scalars.bool),
-                Property.named("form_type", Scalars.formType),
+                Property.named("form_type", Scalars.apiFormType),
                 Property.named("form_options", Container.any),
                 Property.named("data_type", apiDataType()),
                 Property.named("meta_property", Scalars.bool),

@@ -115,6 +115,13 @@ final class Scalars {
         }
     };
 
+    final static Scalar apiFormType = new Scalar() {
+        @Override
+        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.apiFormType(insertHandler));
+        }
+    };
+
     final static Scalar assetsFilter = new Scalar() {
         @Override
         public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {

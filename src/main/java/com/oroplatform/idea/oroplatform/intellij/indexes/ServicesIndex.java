@@ -45,6 +45,21 @@ public class ServicesIndex {
         return FileBasedIndex.getInstance().getAllKeys(FormTypesFileBasedIndex.KEY, project);
     }
 
+    public Collection<String> findApiFormTypes() {
+        final Collection<String> standardApiFormTypes = findStandardApiFormTypes().stream()
+            .map(formType -> formType.replace("form.type.", "")).collect(Collectors.toSet());
+
+        return Stream.concat(
+            findFormTypes().stream()
+                .filter(standardApiFormTypes::contains),
+            FileBasedIndex.getInstance().getAllKeys(ApiFormTypesFileBasedIndex.KEY, project).stream()
+        ).collect(Collectors.toList());
+    }
+
+    private Collection<String> findStandardApiFormTypes() {
+        return FileBasedIndex.getInstance().getAllKeys(StandardApiFormTypeFileBasedIndex.KEY, project);
+    }
+
     public Collection<String> findServices() {
         return FileBasedIndex.getInstance().getAllKeys(ServicesFileBasedIndex.KEY, project);
     }

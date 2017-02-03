@@ -76,4 +76,9 @@ class YamlCompletionProviders implements CompletionProviders {
     public CompletionProvider<CompletionParameters> assetsFilter(InsertHandler<LookupElement> insertHandler) {
         return new AssetsFilterCompletionProvider(insertHandler);
     }
+
+    @Override
+    public CompletionProvider<CompletionParameters> apiFormType(InsertHandler<LookupElement> insertHandler) {
+        return new ApiFormTypeCompletionProvider(insertHandler);
+    }
 }
