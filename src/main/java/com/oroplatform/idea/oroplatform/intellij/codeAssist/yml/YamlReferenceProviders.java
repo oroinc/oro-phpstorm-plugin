@@ -27,7 +27,7 @@ class YamlReferenceProviders implements ReferenceProviders {
 
     @Override
     public PsiReferenceProvider file(RootDirsFinder rootDirsFinder, StringWrapperProvider stringWrapperProvider, VirtualFileFilter virtualFileFilter, InsertHandler<LookupElement> insertHandler) {
-        return new WrappedFileReferenceProvider(stringWrapperProvider, rootDirsFinder, virtualFileFilter);
+        return new WrappedFileReferenceProvider(stringWrapperProvider, rootDirsFinder, virtualFileFilter, insertHandler);
     }
 
     @Override

@@ -68,6 +68,56 @@ class AssetsCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: suggest inputs in one quote"() {
+        configureByText("src/Oro/AcmeBundle/Resources/public/some_theme/css/styles1.css", "")
+        configureByText("src/Oro/AcmeBundle/Resources/public/some_theme/css/styles2.css", "")
+
+        suggestions(
+            """
+            |styles:
+            |  inputs:
+            |    - '<caret>
+            """.stripMargin(),
+            ["bundles/oroacme/some_theme/css/styles1.css", "bundles/oroacme/some_theme/css/styles2.css"]
+        )
+    }
+
+    def void "test: close missing quote for inputs"() {
+        configureByText("src/Oro/AcmeBundle/Resources/public/some_theme/css/styles1.css", "")
+        configureByText("src/Oro/AcmeBundle/Resources/public/some_theme/css/styles2.css", "")
+
+        completion(
+            """
+            |styles:
+            |  inputs:
+            |    - 'styles1<caret>
+            """.stripMargin(),
+            """
+            |styles:
+            |  inputs:
+            |    - 'bundles/oroacme/some_theme/css/styles1.css'
+            """.stripMargin()
+        )
+    }
+
+    def void "test: close missing double quote for inputs"() {
+        configureByText("src/Oro/AcmeBundle/Resources/public/some_theme/css/styles1.css", "")
+        configureByText("src/Oro/AcmeBundle/Resources/public/some_theme/css/styles2.css", "")
+
+        completion(
+            """
+            |styles:
+            |  inputs:
+            |    - "styles1<caret>
+            """.stripMargin(),
+            """
+            |styles:
+            |  inputs:
+            |    - "bundles/oroacme/some_theme/css/styles1.css"
+            """.stripMargin()
+        )
+    }
+
     def void "test: not suggest js as inputs"() {
         configureByText("src/Oro/AcmeBundle/Resources/public/some_theme/js/main.js", "")
 

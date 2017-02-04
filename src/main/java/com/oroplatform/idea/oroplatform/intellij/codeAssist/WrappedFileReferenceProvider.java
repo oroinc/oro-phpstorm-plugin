@@ -1,5 +1,6 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist;
 
+import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.Pair;
@@ -29,16 +30,22 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
     private final RootDirsFinder rootDirsFinder;
     private final VirtualFileFilter fileFilter;
     private final FilePathTransformer filePathTransformer;
+    private final InsertHandler<LookupElement> insertHandler;
 
-    public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirsFinder rootDirsFinder, VirtualFileFilter fileFilter) {
-        this(stringWrapperProvider, rootDirsFinder, fileFilter, new NullFilePathTransformer());
+    public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirsFinder rootDirsFinder, VirtualFileFilter fileFilter, InsertHandler<LookupElement> insertHandler) {
+        this(stringWrapperProvider, rootDirsFinder, fileFilter, new NullFilePathTransformer(), insertHandler);
     }
 
     public WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirsFinder rootDirsFinder, VirtualFileFilter fileFilter, FilePathTransformer filePathTransformer) {
+        this(stringWrapperProvider, rootDirsFinder, fileFilter, filePathTransformer, null);
+    }
+
+    private WrappedFileReferenceProvider(StringWrapperProvider stringWrapperProvider, RootDirsFinder rootDirsFinder, VirtualFileFilter fileFilter, FilePathTransformer filePathTransformer, InsertHandler<LookupElement> insertHandler) {
         this.stringWrapperProvider = stringWrapperProvider;
         this.rootDirsFinder = rootDirsFinder;
         this.fileFilter = fileFilter;
         this.filePathTransformer = filePathTransformer;
+        this.insertHandler = insertHandler;
     }
 
     @NotNull
@@ -83,7 +90,7 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
 
                 final FileReferenceSet fileReferenceSet = new FileReferenceSet(relativePath, element, 0, this, true);
 
-                return Stream.of(new WrappedFileReference(wrapperAndDir.stringWrapper, fileReferenceSet, element, "", wrapperAndDir.sourceDir, fileFilter, filePathTransformer));
+                return Stream.of(new WrappedFileReference(wrapperAndDir.stringWrapper, fileReferenceSet, element, "", wrapperAndDir.sourceDir, fileFilter, filePathTransformer, insertHandler));
             })
             .collect(Collectors.toList());
 
@@ -130,7 +137,7 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
 
         VfsUtilCore.iterateChildrenRecursively(rootDir, null, file -> {
             if(file.getPath().equals(referenceFilePath)) {
-                references.add(new WrappedFileReference(stringWrapper, fileReferenceSet, element, relativePath + file.getPath().replace(rootDir.getPath()+"/", ""), rootDir, fileFilter, filePathTransformer));
+                references.add(new WrappedFileReference(stringWrapper, fileReferenceSet, element, relativePath + file.getPath().replace(rootDir.getPath()+"/", ""), rootDir, fileFilter, filePathTransformer, insertHandler));
             }
             return true;
         });
@@ -143,13 +150,19 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
         private final VirtualFile rootDir;
         private final VirtualFileFilter fileFilter;
         private final FilePathTransformer filePathTransformer;
+        private final InsertHandler<LookupElement> insertHandler;
 
-        WrappedFileReference(StringWrapper stringWrapper, FileReferenceSet fileReferenceSet, PsiElement element, String text, VirtualFile rootDir, VirtualFileFilter fileFilter, FilePathTransformer filePathTransformer) {
-            super(fileReferenceSet, new TextRange(isQuotedAsInt(element), element.getTextLength() - isQuotedAsInt(element)), 0, text);
+        WrappedFileReference(StringWrapper stringWrapper, FileReferenceSet fileReferenceSet, PsiElement element, String text, VirtualFile rootDir, VirtualFileFilter fileFilter, FilePathTransformer filePathTransformer, InsertHandler<LookupElement> insertHandler) {
+            super(fileReferenceSet, new TextRange(startsWithQuoteAsInt(element), element.getTextLength() - isQuotedAsInt(element)), 0, text);
             this.stringWrapper = stringWrapper;
             this.rootDir = rootDir;
             this.fileFilter = fileFilter;
             this.filePathTransformer = filePathTransformer;
+            this.insertHandler = insertHandler;
+        }
+
+        private static int startsWithQuoteAsInt(PsiElement element) {
+            return element.getText().startsWith("'") || element.getText().startsWith("\"") ? 1 : 0;
         }
 
         private static int isQuotedAsInt(PsiElement element) {
@@ -167,7 +180,7 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
 
             VfsUtilCore.iterateChildrenRecursively(rootDir, null, file -> {
                 if(!file.isDirectory() && fileFilter.accept(file)) {
-                    final LookupElementBuilder lookupElement = LookupElementBuilder.create(getLookupString(file)).withIcon(file.getFileType().getIcon());
+                    final LookupElementBuilder lookupElement = LookupElementBuilder.create(getLookupString(file)).withIcon(file.getFileType().getIcon()).withInsertHandler(insertHandler);
                     elements.add(lookupElement);
                 }
                 return true;

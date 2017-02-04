@@ -24,7 +24,7 @@ abstract class YamlVisitor implements Visitor {
     YamlVisitor(ElementPattern<? extends PsiElement> capture, VisitingContext context) {
         this.capture = capture;
         this.context = context;
-        this.insertHandler = context == VisitingContext.PROPERTY_KEY ? KeyInsertHandler.INSTANCE : null;
+        this.insertHandler = context == VisitingContext.PROPERTY_KEY ? KeyInsertHandler.INSTANCE : FixMissingQuoteInsertHandler.INSTANCE;
     }
 
     @Override

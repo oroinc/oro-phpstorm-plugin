@@ -3,7 +3,6 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.oroplatform.idea.oroplatform.schema.DefaultValueDescriptor;
 
@@ -15,15 +14,15 @@ class KeyInsertHandler implements InsertHandler<LookupElement> {
 
     @Override
     public void handleInsert(InsertionContext context, LookupElement item) {
-        final Document document = context.getDocument();
+        final DocumentOps document = new DocumentOps(context.getDocument());
         final Editor editor = context.getEditor();
 
-        final int firstCharPos = firstCharPosition(document, context.getTailOffset());
-        final int lastCharPos = lastCharPositionIgnoringSpace(document, context.getTailOffset());
-        final char lastChar = document.getCharsSequence().charAt(lastCharPos);
-        final char firstChar = document.getCharsSequence().charAt(firstCharPos);
+        final int firstCharPos = document.firstCharPositionBefore(context.getTailOffset());
+        final int lastCharPos = document.lastCharPositionIgnoringSpaceAfter(context.getTailOffset());
+        final char lastChar = document.charAt(lastCharPos);
+        final char firstChar = document.charAt(firstCharPos);
         final int firstNonQuoteCharPos = isQuoteChar(firstChar) ? firstCharPos + 1 : firstCharPos;
-        final char firstNonQuoteChar = document.getCharsSequence().charAt(firstNonQuoteCharPos);
+        final char firstNonQuoteChar = document.charAt(firstNonQuoteCharPos);
 
         if(lastChar != ':') {
             final int tailPos = getTailPos(context.getTailOffset(), lastChar);
@@ -31,13 +30,13 @@ class KeyInsertHandler implements InsertHandler<LookupElement> {
             document.insertString(tailPos, padText);
             editor.getCaretModel().moveToOffset(tailPos + padText.length());
         } else {
-            editor.getCaretModel().moveToOffset(lastCharPositionIgnoringSpace(document, lastCharPos + 1));
+            editor.getCaretModel().moveToOffset(document.lastCharPositionIgnoringSpaceAfter(lastCharPos + 1));
         }
 
         //special support for "@" char at the beginning
         if(firstNonQuoteChar == '@') {
             int endQuotePos = lastCharPos + 1;
-            if(item.getLookupString().startsWith("@") && "@@".equals(document.getCharsSequence().subSequence(firstNonQuoteCharPos, firstNonQuoteCharPos + 2).toString())) {
+            if(item.getLookupString().startsWith("@") && "@@".equals(document.substring(firstNonQuoteCharPos, firstNonQuoteCharPos + 2))) {
                 document.deleteString(firstNonQuoteCharPos, firstNonQuoteCharPos + 1);
                 endQuotePos--;
             }
@@ -65,37 +64,11 @@ class KeyInsertHandler implements InsertHandler<LookupElement> {
 //        AutoPopupController.getInstance(editor.getProject()).scheduleAutoPopup(editor);
     }
 
-    private int firstCharPosition(Document document, int tailOffset) {
-        CharSequence charsSequence = document.getCharsSequence();
-
-        for(int i=tailOffset; i>1; i--) {
-            char charAt = charsSequence.charAt(i-1);
-            if(Character.isWhitespace(charAt)) {
-                return i;
-            }
-        }
-
-        return 1;
-    }
-
     private int getTailPos(int pos, char lastChar) {
         return pos + (isQuoteChar(lastChar) ? 1 : 0);
     }
 
     private boolean isQuoteChar(char lastChar) {
         return lastChar == '\'' || lastChar == '"';
-    }
-
-    private int lastCharPositionIgnoringSpace(Document document, int tailOffset) {
-        CharSequence charsSequence = document.getCharsSequence();
-
-        for(int i=tailOffset; i<charsSequence.length(); i++) {
-            char charAt = charsSequence.charAt(i);
-            if(charAt != ' ') {
-                return i;
-            }
-        }
-
-        return Math.min(tailOffset, charsSequence.length() - 1);
     }
 }
