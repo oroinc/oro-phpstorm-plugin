@@ -17,7 +17,6 @@ public interface CompletionProviders {
     CompletionProvider<CompletionParameters> propertiesFromPath(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> choices(ChoicesProvider choicesProvider, InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> operation(InsertHandler<LookupElement> insertHandler);
-    CompletionProvider<CompletionParameters> translation(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> translationDomain(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> assetsFilter(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> apiFormType(InsertHandler<LookupElement> insertHandler);

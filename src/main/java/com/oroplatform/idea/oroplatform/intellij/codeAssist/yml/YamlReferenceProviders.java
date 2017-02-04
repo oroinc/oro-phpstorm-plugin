@@ -79,4 +79,9 @@ class YamlReferenceProviders implements ReferenceProviders {
     public PsiReferenceProvider workflowScope(InsertHandler<LookupElement> insertHandler) {
         return new WorkflowScopeReferenceProvider(insertHandler);
     }
+
+    @Override
+    public PsiReferenceProvider translation(InsertHandler<LookupElement> insertHandler) {
+        return new TranslationReferenceProvider(insertHandler);
+    }
 }

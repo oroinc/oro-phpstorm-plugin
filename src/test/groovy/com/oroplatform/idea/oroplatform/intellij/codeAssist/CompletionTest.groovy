@@ -89,7 +89,7 @@ abstract class CompletionTest extends TestCase {
             .collect {  it as PsiPolyVariantReferenceBase }
             .collect { it.multiResolve(false) }
             .flatten()
-            .collect { (it.getElement() as PsiNamedElement).getName() }
+            .collect { if(it.getElement() instanceof PsiNamedElement) it.getElement().getName() else it.getElement().getText() }
             .unique()
             .toList()
     }

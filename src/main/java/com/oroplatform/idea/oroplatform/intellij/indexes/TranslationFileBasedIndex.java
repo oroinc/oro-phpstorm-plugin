@@ -1,27 +1,32 @@
 package com.oroplatform.idea.oroplatform.intellij.indexes;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
-import com.jetbrains.php.lang.PhpFileType;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.oroplatform.idea.oroplatform.SimpleSuffixMatcher;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlScalarVisitor;
+import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.yaml.YAMLFileType;
+import org.jetbrains.yaml.psi.YAMLFile;
 
 import java.util.Map;
 
 public class TranslationFileBasedIndex extends ScalarIndexExtension<String> {
-    private final KeyDescriptor<String> keyDescriptor = new EnumeratorStringDescriptor();
     public static final ID<String, Void> KEY = ID.create("com.oroplatform.idea.oroplatform.translations");
+
+    private final KeyDescriptor<String> keyDescriptor = new EnumeratorStringDescriptor();
+    private final SimpleSuffixMatcher suffixMatcher = new SimpleSuffixMatcher("Resources/translations/*.en.yml");
 
     @NotNull
     @Override
     public FileBasedIndex.InputFilter getInputFilter() {
-        return new DefaultFileTypeSpecificInputFilter(PhpFileType.INSTANCE) {
+        return new DefaultFileTypeSpecificInputFilter(YAMLFileType.YML) {
             @Override
             public boolean acceptInput(@NotNull VirtualFile file) {
-                return file.getPath().contains("/cache/dev/translations/catalogue.en");
+                return suffixMatcher.matches(file.getPath());
             }
         };
     }
@@ -40,25 +45,18 @@ public class TranslationFileBasedIndex extends ScalarIndexExtension<String> {
     @NotNull
     @Override
     public DataIndexer<String, Void, FileContent> getIndexer() {
-        return new TranslationsDataIndexer() {
-            @Override
-            void indexCatalogue(Map<String, Void> index, ArrayCreationExpression catalogue) {
-                for (ArrayHashElement domainHash : catalogue.getHashElements()) {
-                    if(!(domainHash.getValue() instanceof ArrayCreationExpression)) continue;
+        return inputData -> {
+            final Map<String, Void> index = new THashMap<>();
 
-                    final ArrayCreationExpression translations = (ArrayCreationExpression) domainHash.getValue();
-
-                    indexTranslations(index, translations);
-                }
+            if(!OroPlatformSettings.getInstance(inputData.getProject()).isPluginEnabled() || !(inputData.getPsiFile() instanceof YAMLFile)) {
+                return index;
             }
 
-            private void indexTranslations(Map<String, Void> index, ArrayCreationExpression translations) {
-                for (ArrayHashElement translationHash : translations.getHashElements()) {
-                    if(translationHash.getKey() == null) continue;
-                    final String translation = translationHash.getKey().getText();
-                    index.put(StringUtil.stripQuotesAroundValue(translation), null);
-                }
-            }
+            final YAMLFile file = (YAMLFile) inputData.getPsiFile();
+
+            file.accept(new YamlScalarVisitor((trans, element) -> index.put(trans, null)));
+
+            return index;
         };
     }
 
@@ -70,6 +68,7 @@ public class TranslationFileBasedIndex extends ScalarIndexExtension<String> {
 
     @Override
     public int getVersion() {
-        return 0;
+        return 1;
     }
+
 }

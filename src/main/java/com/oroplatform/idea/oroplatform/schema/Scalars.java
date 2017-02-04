@@ -234,9 +234,8 @@ final class Scalars {
     };
 
     final static Scalar trans = new Scalar() {
-        @Nullable
         @Override
-        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+        public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
             return Optional.of(providers.translation(insertHandler));
         }
     };

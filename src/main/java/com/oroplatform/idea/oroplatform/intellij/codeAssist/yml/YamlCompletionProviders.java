@@ -69,11 +69,6 @@ class YamlCompletionProviders implements CompletionProviders {
     }
 
     @Override
-    public CompletionProvider<CompletionParameters> translation(InsertHandler<LookupElement> insertHandler) {
-        return new SimpleCompletionProvider(insertHandler, project -> TranslationIndex.instance(project).findTranslations());
-    }
-
-    @Override
     public CompletionProvider<CompletionParameters> translationDomain(InsertHandler<LookupElement> insertHandler) {
         return new SimpleCompletionProvider(insertHandler, project -> TranslationIndex.instance(project).findDomains());
     }

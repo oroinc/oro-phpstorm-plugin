@@ -93,7 +93,11 @@ public class YamlPsiElements {
         return getAncestors(element, new HashSet<>());
     }
 
-    private static Set<PsiElement> getAncestors(PsiElement element, Set<PsiElement> ancestors) {
+    public static List<PsiElement> getOrderedAncestors(PsiElement element) {
+        return getAncestors(element, new LinkedList<>());
+    }
+
+    private static <Coll extends Collection<PsiElement>> Coll getAncestors(PsiElement element, Coll ancestors) {
         final PsiElement parent = element.getParent();
 
         if(parent == null || parent instanceof PsiFile) {

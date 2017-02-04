@@ -24,4 +24,5 @@ public interface ReferenceProviders {
     PsiReferenceProvider resource(String pattern, InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider requirejs(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider workflowScope(InsertHandler<LookupElement> insertHandler);
+    PsiReferenceProvider translation(InsertHandler<LookupElement> insertHandler);
 }

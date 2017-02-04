@@ -19,16 +19,12 @@ class ActionsTranslationsCompletionTest extends CompletionTest implements Random
         super.setUp()
 
         configureByText(
-            "some/app/cache/dev/translations/catalogue.en.fff.php",
+            "some/Resources/translations/messages.en.yml",
             """
-            |<?php
-            |use Symfony\\Component\\Translation\\MessageCatalogue;
-            |\$catalogue = new MessageCatalogue('en', array (
-            |   'some_domain' => array(
-            |       '$trans1' => 'en trans1',
-            |       '$trans2' => 'en trans2',
-            |   ),
-            |));
+            |oro:
+            |  user:
+            |    $trans1: Action
+            |    value.$trans2: Value
             """.stripMargin()
         )
     }
@@ -41,7 +37,31 @@ class ActionsTranslationsCompletionTest extends CompletionTest implements Random
             |    frontend_options:
             |      confirmation: <caret>
             """.stripMargin(),
-            [trans1, trans2]
+            ["oro.user.$trans1", "oro.user.value.$trans2"]
+        )
+    }
+
+    def void "test: detect translation reference"() {
+        checkReference(
+            """
+            |operations:
+            |  op1:
+            |    frontend_options:
+            |      confirmation: oro.us<caret>er.$trans1
+            """.stripMargin(),
+            ["Action"]
+        )
+    }
+
+    def void "test: detect nested translation reference"() {
+        checkReference(
+            """
+            |operations:
+            |  op1:
+            |    frontend_options:
+            |      confirmation: oro.us<caret>er.value.$trans2
+            """.stripMargin(),
+            ["Value"]
         )
     }
 }
