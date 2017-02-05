@@ -99,7 +99,22 @@ class ActionsCompletionTest extends CompletionTest {
             |      <caret>
             """.stripMargin(),
 
-            ["mass_action_provider", "mass_action"]
+            ["mass_action_provider", "mass_action", "data"]
+        )
+    }
+
+    def void "test: suggest properties for datagrid_options.data"() {
+        suggestions(
+            """
+            |operations:
+            |  some_op:
+            |    datagrid_options:
+            |      data:
+            |        <caret>
+            """.stripMargin(),
+
+            ["entity", "importProcessor", "importJob", "importValidateProcessor", "importValidateJob", "exportProcessor",
+             "exportJob", "exportLabel", "exportTemplateProcessor", "exportTemplateJob", "exportTemplateLabel"]
         )
     }
 

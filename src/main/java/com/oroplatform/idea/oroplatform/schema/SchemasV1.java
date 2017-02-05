@@ -771,7 +771,17 @@ public class SchemasV1 {
                         Property.named("frontend_options", Container.with(
                             Property.named("template", Scalars.twig),
                             Property.named("title", Scalars.trans),
-                            Property.named("title_parameters", Container.any),
+                            Property.named("title_parameters", Container.with(
+                                Property.named("allowMaximize", Scalars.bool),
+                                Property.named("allowMinimize", Scalars.bool),
+                                Property.named("modal", Scalars.bool),
+                                Property.named("dblclick", Scalars.choices("maximize", "minimize", "restore")),
+                                Property.named("maximizedHeightDecreaseBy", Scalars.choices("minimize-bar", "false")),
+                                Property.named("titlebar", Scalars.choices("transparent", "false")),
+                                Property.named("width", Scalars.integer),
+                                Property.named("height", Scalars.integer),
+                                Property.named("minWidth", Scalars.integer)
+                            )),
                             Property.named("options", Container.any),
                             Property.named("confirmation", OneOf.from(Scalars.trans, Container.with(
                                 Property.named("title", Scalars.trans),
@@ -784,7 +794,7 @@ public class SchemasV1 {
                         Property.named("preconditions", conditions),
                         Property.named("attributes", Container.with(
                             Container.with(
-                                Property.named("type", Scalars.any),
+                                Property.named("type", Scalars.strictChoices("bool", "boolean", "int", "integer", "float", "string", "array", "object", "entity")),
                                 Property.named("label", Scalars.trans),
                                 Property.named("property_path", Scalars.any),
                                 Property.named("options", Container.with(
@@ -795,7 +805,20 @@ public class SchemasV1 {
                         Property.named("datagrid_options", Container.with(
                             Property.named("mass_action_provider", Scalars.massActionProvider),
                             Property.named("mass_action", massAction()),
-                            Property.named("data", Container.any)
+                            Property.named("data", Container.with(
+                                Property.named("entity", Scalars.fullEntity),
+                                //TODO: support for services suggestions
+                                Property.named("importProcessor", Scalars.any),
+                                Property.named("importJob", Scalars.any),
+                                Property.named("importValidateProcessor", Scalars.any),
+                                Property.named("importValidateJob", Scalars.any),
+                                Property.named("exportProcessor", Scalars.any),
+                                Property.named("exportJob", Scalars.any),
+                                Property.named("exportLabel", Scalars.trans),
+                                Property.named("exportTemplateProcessor", Scalars.any),
+                                Property.named("exportTemplateJob", Scalars.any),
+                                Property.named("exportTemplateLabel", Scalars.trans)
+                            ))
                         )),
                         Property.named("form_options", Container.with(
                             Property.named("attribute_fields", Container.with(
