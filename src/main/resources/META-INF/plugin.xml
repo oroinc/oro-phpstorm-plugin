@@ -10,6 +10,13 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.8</h2>
+<ul>
+  <li>Fix support for form_type in api.yml</li>
+  <li>Fix support for autocomplete asset filepaths (eg. in assets.yml) starting with quote char</li>
+  <li>Navigation to translations sources</li>
+</ul>
+
 <h2>1.0.7</h2>
 <ul>
   <li>Autocomplete for scopes in workflows.yml</li>
