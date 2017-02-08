@@ -813,16 +813,15 @@ public class SchemasV1 {
                             Property.named("mass_action", massAction()),
                             Property.named("data", Container.with(
                                 Property.named("entity", Scalars.fullEntity),
-                                //TODO: support for batch_jobs suggestions
                                 Property.named("importProcessor", Scalars.service(importExportProcessorPredicate.apply("import"))),
-                                Property.named("importJob", Scalars.any),
+                                Property.named("importJob", Scalars.batchJob),
                                 Property.named("importValidateProcessor", Scalars.service(importExportProcessorPredicate.apply("import_validation"))),
-                                Property.named("importValidateJob", Scalars.any),
+                                Property.named("importValidateJob", Scalars.batchJob),
                                 Property.named("exportProcessor", Scalars.service(importExportProcessorPredicate.apply("export"))),
-                                Property.named("exportJob", Scalars.any),
+                                Property.named("exportJob", Scalars.batchJob),
                                 Property.named("exportLabel", Scalars.trans),
                                 Property.named("exportTemplateProcessor", Scalars.service(importExportProcessorPredicate.apply("export_template"))),
-                                Property.named("exportTemplateJob", Scalars.any),
+                                Property.named("exportTemplateJob", Scalars.batchJob),
                                 Property.named("exportTemplateLabel", Scalars.trans)
                             ))
                         )),

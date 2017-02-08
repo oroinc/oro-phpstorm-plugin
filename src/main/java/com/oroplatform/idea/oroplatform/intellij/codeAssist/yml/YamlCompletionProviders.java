@@ -89,4 +89,9 @@ class YamlCompletionProviders implements CompletionProviders {
     public CompletionProvider<CompletionParameters> apiFormType(InsertHandler<LookupElement> insertHandler) {
         return new SimpleCompletionProvider(insertHandler, project -> ServicesIndex.instance(project).findApiFormTypes());
     }
+
+    @Override
+    public CompletionProvider<CompletionParameters> batchJob(InsertHandler<LookupElement> insertHandler) {
+        return new SimpleCompletionProvider(insertHandler, project -> ConfigurationIndex.instance(project).getBatchJobs());
+    }
 }

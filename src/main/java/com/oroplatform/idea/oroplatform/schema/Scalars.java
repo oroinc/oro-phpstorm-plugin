@@ -74,6 +74,13 @@ final class Scalars {
         return new Scalar(Collections.singletonList(new PatternRequirement(Pattern.compile(pattern))));
     }
 
+    final static Scalar batchJob = new Scalar() {
+        @Override
+        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.batchJob(insertHandler));
+        }
+    };
+
     final static Scalar condition = new Scalar() {
         @Override
         public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {

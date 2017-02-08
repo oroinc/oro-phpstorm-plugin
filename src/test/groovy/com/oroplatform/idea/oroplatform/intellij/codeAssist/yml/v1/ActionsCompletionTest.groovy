@@ -1,10 +1,11 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
 
-class ActionsCompletionTest extends CompletionTest {
+class ActionsCompletionTest extends CompletionTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV1.FilePathPatterns.ACTIONS
@@ -115,6 +116,31 @@ class ActionsCompletionTest extends CompletionTest {
 
             ["entity", "importProcessor", "importJob", "importValidateProcessor", "importValidateJob", "exportProcessor",
              "exportJob", "exportLabel", "exportTemplateProcessor", "exportTemplateJob", "exportTemplateLabel"]
+        )
+    }
+
+    def void "test: suggest batch jobs for datagrid_options.data.importJob"() {
+
+        def batchJob = randomIdentifier("batchJob")
+
+        configureByText("Resources/config/batch_jobs.yml",
+            """
+            |connector:
+            |  jobs:
+            |    $batchJob: ~
+            """.stripMargin()
+        )
+
+        suggestions(
+            """
+            |operations:
+            |  some_op:
+            |    datagrid_options:
+            |      data:
+            |        importJob: <caret>
+            """.stripMargin(),
+
+            [batchJob]
         )
     }
 

@@ -28,4 +28,8 @@ public class ConfigurationIndex {
     public Collection<String> getOperations() {
         return FileBasedIndex.getInstance().getAllKeys(OperationFileBasedIndex.KEY, project);
     }
+
+    public Collection<String> getBatchJobs() {
+        return FileBasedIndex.getInstance().getAllKeys(BatchJobFileBasedIndex.KEY, project);
+    }
 }
