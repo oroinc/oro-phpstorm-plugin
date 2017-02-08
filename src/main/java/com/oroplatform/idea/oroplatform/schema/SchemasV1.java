@@ -5,10 +5,12 @@ import com.oroplatform.idea.oroplatform.PhpClassUtil;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ElementRootDirsFinder;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.LayoutAssetsCssOutputChoicesProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.PublicResourcesRootDirsFinder;
+import com.oroplatform.idea.oroplatform.symfony.Service;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static java.util.Arrays.asList;
 
@@ -740,6 +742,10 @@ public class SchemasV1 {
         final Element operations = OneOf.from(Scalars.choices("UPDATE", "DELETE"), Scalars.operation);
         final Element acl = OneOf.from(Scalars.acl, Sequence.of(Scalars.acl));
 
+        final Function<String, Predicate<Service>> importExportProcessorPredicate = processorType -> {
+            return service -> service.getTags().stream().anyMatch(tag -> "oro_importexport.processor".equals(tag.getName()) && processorType.equals(tag.getType()));
+        };
+
         return new Schema(new FilePathMatcher(FilePathPatterns.ACTIONS), Container.with(
             Property.named("operations", Container.with(
                 Property.any(
@@ -807,15 +813,15 @@ public class SchemasV1 {
                             Property.named("mass_action", massAction()),
                             Property.named("data", Container.with(
                                 Property.named("entity", Scalars.fullEntity),
-                                //TODO: support for services suggestions
-                                Property.named("importProcessor", Scalars.any),
+                                //TODO: support for batch_jobs suggestions
+                                Property.named("importProcessor", Scalars.service(importExportProcessorPredicate.apply("import"))),
                                 Property.named("importJob", Scalars.any),
-                                Property.named("importValidateProcessor", Scalars.any),
+                                Property.named("importValidateProcessor", Scalars.service(importExportProcessorPredicate.apply("import_validation"))),
                                 Property.named("importValidateJob", Scalars.any),
-                                Property.named("exportProcessor", Scalars.any),
+                                Property.named("exportProcessor", Scalars.service(importExportProcessorPredicate.apply("export"))),
                                 Property.named("exportJob", Scalars.any),
                                 Property.named("exportLabel", Scalars.trans),
-                                Property.named("exportTemplateProcessor", Scalars.any),
+                                Property.named("exportTemplateProcessor", Scalars.service(importExportProcessorPredicate.apply("export_template"))),
                                 Property.named("exportTemplateJob", Scalars.any),
                                 Property.named("exportTemplateLabel", Scalars.trans)
                             ))

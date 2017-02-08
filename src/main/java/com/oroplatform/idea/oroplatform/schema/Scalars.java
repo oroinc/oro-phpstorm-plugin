@@ -14,12 +14,14 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.Re
 import com.oroplatform.idea.oroplatform.schema.requirements.ChoicesRequirement;
 import com.oroplatform.idea.oroplatform.schema.requirements.PatternRequirement;
 import com.oroplatform.idea.oroplatform.schema.requirements.Requirement;
+import com.oroplatform.idea.oroplatform.symfony.Service;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 final class Scalars {
@@ -92,6 +94,15 @@ final class Scalars {
             return Optional.of(providers.service(insertHandler));
         }
     };
+
+    static Scalar service(final Predicate<Service> predicate) {
+        return new Scalar() {
+            @Override
+            public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return Optional.of(providers.service(predicate, insertHandler));
+            }
+        };
+    }
 
     final static Scalar workflowScope = new Scalar() {
         @Override

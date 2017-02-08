@@ -5,6 +5,9 @@ import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
+import com.oroplatform.idea.oroplatform.symfony.Service;
+
+import java.util.function.Predicate;
 
 public interface CompletionProviders {
     CompletionProvider<CompletionParameters> action(InsertHandler<LookupElement> insertHandler);
@@ -13,6 +16,7 @@ public interface CompletionProviders {
     CompletionProvider<CompletionParameters> datagrid(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> acl(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> service(InsertHandler<LookupElement> insertHandler);
+    CompletionProvider<CompletionParameters> service(Predicate<Service> predicate, InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> massActionProvider(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> propertiesFromPath(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> choices(ChoicesProvider choicesProvider, InsertHandler<LookupElement> insertHandler);

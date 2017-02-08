@@ -16,6 +16,7 @@ class ActionsDicCompletionTest extends CompletionTest implements RandomIdentifie
     def unknownService = randomIdentifier("unknown")
     def condition1 = randomIdentifier("condition1")
     def action1 = randomIdentifier("action1")
+    def importProcessor1 = randomIdentifier("importProcessor1")
 
     @Override
     protected void setUp() throws Exception {
@@ -39,6 +40,9 @@ class ActionsDicCompletionTest extends CompletionTest implements RandomIdentifie
             |    </service>
             |    <service id="service8">
             |      <tag name="oro_workflow.action" alias="$action1"/>
+            |    </service>
+            |    <service id="$importProcessor1">
+            |      <tag name="oro_importexport.processor" type="import"/>
             |    </service>
             |  </services>
             |</container>
@@ -128,6 +132,21 @@ class ActionsDicCompletionTest extends CompletionTest implements RandomIdentifie
 
             ["@$action1"],
             ["@$condition1"]
+        )
+    }
+
+    def void "test: suggest importProcessors in datagrid_options"() {
+        suggestions(
+            """
+            |operations:
+            |  some_op:
+            |    datagrid_options:
+            |      data:
+            |        importProcessor: <caret>
+            """.stripMargin(),
+
+            [importProcessor1],
+            ["service1", "service2", "service8"]
         )
     }
 }

@@ -21,6 +21,10 @@ public class Tag {
         return parameters.get("alias");
     }
 
+    public String getType() {
+        return parameters.get("type");
+    }
+
     public Optional<String> get(String name) {
         return Optional.ofNullable(parameters.get(name));
     }

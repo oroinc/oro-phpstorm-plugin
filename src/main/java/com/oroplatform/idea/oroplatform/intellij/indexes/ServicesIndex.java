@@ -15,7 +15,9 @@ import com.oroplatform.idea.oroplatform.symfony.Service;
 import com.oroplatform.idea.oroplatform.symfony.ServiceClassName;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -62,6 +64,21 @@ public class ServicesIndex {
 
     public Collection<String> findServices() {
         return FileBasedIndex.getInstance().getAllKeys(ServicesFileBasedIndex.KEY, project);
+    }
+
+    public Collection<String> findServices(Predicate<Service> predicate) {
+        final Collection<String> serviceNames = FileBasedIndex.getInstance().getAllKeys(ServicesFileBasedIndex.KEY, project);
+        final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+
+        return serviceNames.stream().filter(serviceName -> {
+            final Collection<Service> services = new LinkedList<>();
+            FileBasedIndex.getInstance().processValues(ServicesFileBasedIndex.KEY, serviceName, null, ((file, value) -> {
+                services.add(value);
+                return false;
+            }), scope);
+
+            return services.stream().anyMatch(predicate);
+        }).collect(Collectors.toList());
     }
 
     public Optional<Service> findService(String id) {

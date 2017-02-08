@@ -14,7 +14,9 @@ import com.oroplatform.idea.oroplatform.intellij.indexes.ConfigurationIndex;
 import com.oroplatform.idea.oroplatform.intellij.indexes.ServicesIndex;
 import com.oroplatform.idea.oroplatform.intellij.indexes.TranslationIndex;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
+import com.oroplatform.idea.oroplatform.symfony.Service;
 
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 class YamlCompletionProviders implements CompletionProviders {
@@ -46,6 +48,11 @@ class YamlCompletionProviders implements CompletionProviders {
     @Override
     public CompletionProvider<CompletionParameters> service(InsertHandler<LookupElement> insertHandler) {
         return new SimpleCompletionProvider(insertHandler, project -> ServicesIndex.instance(project).findServices());
+    }
+
+    @Override
+    public CompletionProvider<CompletionParameters> service(Predicate<Service> predicate, InsertHandler<LookupElement> insertHandler) {
+        return new SimpleCompletionProvider(insertHandler, project -> ServicesIndex.instance(project).findServices(predicate));
     }
 
     @Override
