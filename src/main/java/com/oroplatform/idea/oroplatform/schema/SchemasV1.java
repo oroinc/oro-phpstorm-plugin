@@ -752,7 +752,7 @@ public class SchemasV1 {
                     Container.with(
                         Property.named("name", Scalars.any),
                         Property.named("extends", operations),
-                        Property.named("label", Scalars.trans),
+                        Property.named("label", Scalars.trans).required(),
                         Property.named("substitute_operation", operations),
                         Property.named("button_options", Container.with(
                             Property.named("icon", Scalars.any),

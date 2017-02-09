@@ -12,7 +12,7 @@ import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.oroplatform.idea.oroplatform.symfony.Service;
-import com.oroplatform.idea.oroplatform.symfony.ServiceClassName;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -36,15 +36,25 @@ public class ServicesIndex {
     }
 
     public Collection<String> findConditionNames() {
-        return FileBasedIndex.getInstance().getAllKeys(ConditionsFileBasedIndex.KEY, project);
+        return getServiceAliasesByTag("oro_action.condition");
     }
 
     public Collection<String> findActionNames() {
-        return FileBasedIndex.getInstance().getAllKeys(ActionsFileBasedIndex.KEY, project);
+        return getServiceAliasesByTag("oro_action.action");
+    }
+
+    private Collection<String> getServiceAliasesByTag(String tagName) {
+        return FileBasedIndex.getInstance().getAllKeys(ServicesFileBasedIndex.KEY, project).stream()
+            .flatMap(serviceId -> getServices(serviceId).stream())
+            .flatMap(service -> service.getTags().stream())
+            .filter(tag -> tagName.equals(tag.getName()))
+            .flatMap(tag -> toStream(tag.getAlias()))
+            .flatMap(alias -> Stream.of(alias.split("\\|")))
+            .collect(Collectors.toList());
     }
 
     public Collection<String> findFormTypes() {
-        return FileBasedIndex.getInstance().getAllKeys(FormTypesFileBasedIndex.KEY, project);
+        return getServiceAliasesByTag("form.type");
     }
 
     public Collection<String> findApiFormTypes() {
@@ -54,7 +64,7 @@ public class ServicesIndex {
         return Stream.concat(
             findFormTypes().stream()
                 .filter(standardApiFormTypes::contains),
-            FileBasedIndex.getInstance().getAllKeys(ApiFormTypesFileBasedIndex.KEY, project).stream()
+            getServiceAliasesByTag("oro.api.form.type").stream()
         ).collect(Collectors.toList());
     }
 
@@ -68,17 +78,21 @@ public class ServicesIndex {
 
     public Collection<String> findServices(Predicate<Service> predicate) {
         final Collection<String> serviceNames = FileBasedIndex.getInstance().getAllKeys(ServicesFileBasedIndex.KEY, project);
+
+        return serviceNames.stream()
+            .filter(serviceName -> getServices(serviceName).stream().anyMatch(predicate))
+            .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private Collection<Service> getServices(String serviceName) {
         final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-
-        return serviceNames.stream().filter(serviceName -> {
-            final Collection<Service> services = new LinkedList<>();
-            FileBasedIndex.getInstance().processValues(ServicesFileBasedIndex.KEY, serviceName, null, ((file, value) -> {
-                services.add(value);
-                return false;
-            }), scope);
-
-            return services.stream().anyMatch(predicate);
-        }).collect(Collectors.toList());
+        final Collection<Service> services = new LinkedList<>();
+        FileBasedIndex.getInstance().processValues(ServicesFileBasedIndex.KEY, serviceName, null, ((file, value) -> {
+            services.add(value);
+            return false;
+        }), scope);
+        return services;
     }
 
     public Optional<Service> findService(String id) {
@@ -87,7 +101,7 @@ public class ServicesIndex {
     }
 
     public Collection<String> findMassActionProviders() {
-        return FileBasedIndex.getInstance().getAllKeys(MassActionProviderFileBasedIndex.KEY, project);
+        return getServiceAliasesByTag("oro_action.datagrid.mass_action_provider");
     }
 
     public Optional<String> findParameterValue(String name) {
@@ -98,8 +112,10 @@ public class ServicesIndex {
     public Collection<WorkflowScope> findWorkflowScopes() {
         final PhpIndex phpIndex = PhpIndex.getInstance(project);
 
-        return FileBasedIndex.getInstance().getAllKeys(WorkflowScopeFileBasedIndex.KEY, project).stream()
-            .map(ServiceClassName::new)
+        return FileBasedIndex.getInstance().getAllKeys(ServicesFileBasedIndex.KEY, project).stream()
+            .flatMap(serviceId -> getServices(serviceId).stream())
+            .filter(this::isWorkflowScope)
+            .flatMap(service -> toStream(service.getClassName()))
             .map(serviceClassName -> {
                 return serviceClassName.getServiceParameter()
                     .flatMap(this::findParameterValue)
@@ -108,6 +124,10 @@ public class ServicesIndex {
             .flatMap(className -> phpIndex.getClassesByFQN(className).stream())
             .flatMap(phpClass -> toStream(findWorkflowScope(phpClass)))
             .collect(Collectors.toList());
+    }
+
+    private boolean isWorkflowScope(Service service) {
+        return service.getTags().stream().anyMatch(tag -> "oro_scope.provider".equals(tag.getName()) && tag.get("scopeType").filter("workflow_definition"::equals).isPresent());
     }
 
     private Optional<WorkflowScope> findWorkflowScope(PhpClass phpClass) {

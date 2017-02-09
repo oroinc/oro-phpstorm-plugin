@@ -211,12 +211,8 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
                 groupKey="inspection.group"
         />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ImportFileBasedIndex" />
-        <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ConditionsFileBasedIndex" />
-        <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ActionsFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.DatagridFileBasedIndex" />
-        <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.FormTypesFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ServicesFileBasedIndex" />
-        <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.MassActionProviderFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.AclFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.OperationFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.RouteFileBasedIndex" />
@@ -224,8 +220,6 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.TranslationDomainFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ServiceParametersFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.LayoutUpdateThemesFileBasedIndex" />
-        <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.WorkflowScopeFileBasedIndex" />
-        <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.ApiFormTypesFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.StandardApiFormTypeFileBasedIndex" />
         <fileBasedIndex implementation="com.oroplatform.idea.oroplatform.intellij.indexes.BatchJobFileBasedIndex" />
 

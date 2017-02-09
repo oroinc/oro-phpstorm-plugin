@@ -57,22 +57,22 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |<container>
             |  <services>
             |    <service id="condition1_id">
-            |      <tag name="oro_workflow.condition" alias="$condition1"/>
+            |      <tag name="oro_action.condition" alias="$condition1"/>
             |    </service>
             |    <service id="condition2_id">
-            |      <tag name="oro_workflow.condition" alias="$condition2a|$condition2b"/>
+            |      <tag name="oro_action.condition" alias="$condition2a|$condition2b"/>
             |    </service>
             |    <service id="condition4_id">
-            |      <tag name="oro_workflow.condition" alias="condition4"/>
+            |      <tag name="oro_action.condition" alias="condition4"/>
             |    </service>
             |    <service id="some_service">
             |      <tag name="xxx" alias="$unknown"/>
             |    </service>
-            |    <service id="action1_id">
-            |      <tag name="oro_workflow.action" alias="$action1"/>
+            |    <service id="${action1}_id">
+            |      <tag name="oro_action.action" alias="$action1"/>
             |    </service>
-            |    <service id="action2_id">
-            |      <tag name="oro_workflow.action" alias="$action2a|$action2b"/>
+            |    <service id="${action2a}_id">
+            |      <tag name="oro_action.action" alias="$action2a|$action2b"/>
             |    </service>
             |    <service id="scope1_id" class="Oro\\AcmeBundle\\AccountScopeProvider">
             |      <tag name="oro_scope.provider" scopeType="workflow_definition"/>
@@ -89,10 +89,10 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |services:
             |  condition3_id:
             |    tags:
-            |      - { name: oro_workflow.condition, alias: $condition3 }
-            |  action3_id:
+            |      - { name: oro_action.condition, alias: $condition3 }
+            |  ${action3}_id:
             |    tags:
-            |      - { name: oro_workflow.action, alias: $action3 }
+            |      - { name: oro_action.action, alias: $action3 }
             |  scope2_id:
             |    class: Oro\\AcmeBundle\\LocalizationScopeProvider
             |    tags:

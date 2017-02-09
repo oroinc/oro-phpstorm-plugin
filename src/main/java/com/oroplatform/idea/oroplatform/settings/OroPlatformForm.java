@@ -105,9 +105,8 @@ public class OroPlatformForm implements Configurable {
         final FileBasedIndex index = FileBasedIndex.getInstance();
 
         final ID<?, ?>[] indexIds = new ID<?, ?>[] {
-            ImportFileBasedIndex.KEY, ImportFileBasedIndex.KEY, ConditionsFileBasedIndex.KEY, FormTypesFileBasedIndex.KEY,
-            DatagridFileBasedIndex.KEY, ServicesFileBasedIndex.KEY, MassActionProviderFileBasedIndex.KEY, AclFileBasedIndex.KEY,
-            OperationFileBasedIndex.KEY, RouteFileBasedIndex.KEY, TranslationFileBasedIndex.KEY
+            ImportFileBasedIndex.KEY, ImportFileBasedIndex.KEY, DatagridFileBasedIndex.KEY, ServicesFileBasedIndex.KEY,
+            AclFileBasedIndex.KEY, OperationFileBasedIndex.KEY, RouteFileBasedIndex.KEY, TranslationFileBasedIndex.KEY
         };
 
         for (ID<?, ?> indexId : indexIds) {

@@ -36,10 +36,10 @@ class ActionsDicCompletionTest extends CompletionTest implements RandomIdentifie
             |      <tag name="form.type" alias="$form1"/>
             |    </service>
             |    <service id="service7">
-            |      <tag name="oro_workflow.condition" alias="$condition1"/>
+            |      <tag name="oro_action.condition" alias="$condition1"/>
             |    </service>
             |    <service id="service8">
-            |      <tag name="oro_workflow.action" alias="$action1"/>
+            |      <tag name="oro_action.action" alias="$action1"/>
             |    </service>
             |    <service id="$importProcessor1">
             |      <tag name="oro_importexport.processor" type="import"/>
