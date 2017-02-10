@@ -36,6 +36,20 @@ class ActionsCompletionTest extends CompletionTest implements RandomIdentifiers 
         )
     }
 
+    def void "test: suggest groups defined in other operations"() {
+        suggestions(
+            """
+            |operations:
+            |  some_op1:
+            |    groups: [<caret>]
+            |  some_op2:
+            |    groups: [group1, group2]
+            """.stripMargin(),
+
+            ["group1", "group2"]
+        )
+    }
+
     def void "test: suggest properties for button_options"() {
         suggestions(
             """
@@ -87,7 +101,7 @@ class ActionsCompletionTest extends CompletionTest implements RandomIdentifiers 
             |          <caret>
             """.stripMargin(),
 
-            ["class"]
+            ["class", "multiple"]
         )
     }
 

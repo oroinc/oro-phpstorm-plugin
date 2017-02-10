@@ -768,7 +768,7 @@ public class SchemasV1 {
                         Property.named("for_all_entities", Scalars.bool),
                         Property.named("exclude_entities", Sequence.of(Scalars.fullEntity)),
                         Property.named("routes", Sequence.of(Scalars.route)),
-                        Property.named("groups", Sequence.of(Scalars.any)),
+                        Property.named("groups", Sequence.of(Scalars.propertiesFromPath(new PropertyPath("operations", "*", "groups", "*").pointsToValue()))),
                         Property.named("datagrids", Sequence.of(Scalars.datagrid)),
                         Property.named("for_all_datagrids", Scalars.bool),
                         Property.named("exclude_datagrids", Sequence.of(Scalars.datagrid)),
@@ -804,7 +804,8 @@ public class SchemasV1 {
                                 Property.named("label", Scalars.trans),
                                 Property.named("property_path", Scalars.any),
                                 Property.named("options", Container.with(
-                                    Property.named("class", Scalars.phpClass)
+                                    Property.named("class", Scalars.phpClass),
+                                    Property.named("multiple", Scalars.bool)
                                 ))
                             )
                         )),
