@@ -8,12 +8,10 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.ChoicesProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.completionProvider.*;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ChoiceCompletionProvider;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ChoicesFromPathCompletionProvider;
 import com.oroplatform.idea.oroplatform.intellij.indexes.AssetsFiltersIndex;
 import com.oroplatform.idea.oroplatform.intellij.indexes.ConfigurationIndex;
 import com.oroplatform.idea.oroplatform.intellij.indexes.ServicesIndex;
 import com.oroplatform.idea.oroplatform.intellij.indexes.TranslationIndex;
-import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 import com.oroplatform.idea.oroplatform.symfony.Service;
 
 import java.util.function.Predicate;
@@ -58,11 +56,6 @@ class YamlCompletionProviders implements CompletionProviders {
     @Override
     public CompletionProvider<CompletionParameters> massActionProvider(InsertHandler<LookupElement> insertHandler) {
         return new SimpleCompletionProvider(insertHandler, project -> ServicesIndex.instance(project).findMassActionProviders());
-    }
-
-    @Override
-    public CompletionProvider<CompletionParameters> propertiesFromPath(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler) {
-        return new ChoicesFromPathCompletionProvider(path, prefix, insertHandler);
     }
 
     @Override

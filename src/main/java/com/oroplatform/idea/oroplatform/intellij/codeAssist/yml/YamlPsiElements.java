@@ -119,6 +119,33 @@ public class YamlPsiElements {
         return path.doesPointToValue() ? getPropertyValuesFrom(path, elements, ancestors) : getPropertyKeysFrom(path, elements, ancestors);
     }
 
+    public static Collection<? extends YAMLPsiElement> getElementsByPath(PropertyPath path, PsiElement element) {
+        final Collection<YAMLMapping> elements = getMappingsFrom(element.getContainingFile());
+        final Set<PsiElement> ancestors = getAncestors(element);
+
+        return path.doesPointToValue() ? getElementsValuesByPath(path, elements, ancestors) : getElementsKeysByPath(path, elements, ancestors);
+    }
+
+    private static Collection<? extends YAMLPsiElement> getElementsKeysByPath(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
+        if(path.getProperties().isEmpty()) {
+            return getParentKeyValuesFrom(elements);
+        }
+
+        final PropertyPath.Property property = path.getProperties().element();
+
+        return getElementsKeysByPath(path.dropHead(), getElementsForProperty(property, elements, ancestors), ancestors);
+    }
+
+    private static Collection<YAMLPsiElement> getElementsValuesByPath(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
+        if(path.getProperties().isEmpty()) {
+            return getElementsValuesFrom(elements);
+        }
+
+        final PropertyPath.Property property = path.getProperties().element();
+
+        return getElementsValuesByPath(path.dropHead(), getElementsForProperty(property, elements, ancestors), ancestors);
+    }
+
     private static Collection<String> getPropertyKeysFrom(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {
         if(path.getProperties().isEmpty()) {
             return getParentKeysFrom(elements);
@@ -175,10 +202,15 @@ public class YamlPsiElements {
     }
 
     private static Collection<String> getParentKeysFrom(Collection<? extends YAMLPsiElement> elements) {
+        return getParentKeyValuesFrom(elements).stream()
+            .map(YAMLKeyValue::getKeyText)
+            .collect(Collectors.toList());
+    }
+
+    private static Collection<YAMLKeyValue> getParentKeyValuesFrom(Collection<? extends YAMLPsiElement> elements) {
         return elements.stream()
             .flatMap(element -> toStream(element.getParent()))
             .flatMap(elementFilter(YAMLKeyValue.class))
-            .map(YAMLKeyValue::getKeyText)
             .collect(Collectors.toList());
     }
 
@@ -195,6 +227,16 @@ public class YamlPsiElements {
                 .flatMap(elementFilter(YAMLMapping.class))
                 .flatMap(element -> element.getKeyValues().stream())
                 .map(YAMLKeyValue::getKeyText)
+        ).collect(Collectors.toList());
+    }
+
+    private static Collection<YAMLPsiElement> getElementsValuesFrom(Collection<? extends YAMLPsiElement> elements) {
+        return Stream.concat(
+            elements.stream()
+                .flatMap(elementFilter(YAMLScalar.class)),
+            elements.stream()
+                .flatMap(elementFilter(YAMLMapping.class))
+                .flatMap(element -> element.getKeyValues().stream())
         ).collect(Collectors.toList());
     }
 

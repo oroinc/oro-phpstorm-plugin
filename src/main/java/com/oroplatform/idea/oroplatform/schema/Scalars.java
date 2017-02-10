@@ -51,7 +51,7 @@ final class Scalars {
     static Scalar propertiesFromPath(final PropertyPath path, final String prefix) {
         return new Scalar() {
             @Override
-            public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
                 return Optional.of(providers.propertiesFromPath(path, prefix, insertHandler));
             }
         };
