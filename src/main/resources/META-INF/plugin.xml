@@ -10,6 +10,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.9</h2>
+<ul>
+  <li>Improved autocomplete for actions.yml</li>
+</ul>
+
 <h2>1.0.8</h2>
 <ul>
   <li>Fix support for form_type in api.yml</li>
