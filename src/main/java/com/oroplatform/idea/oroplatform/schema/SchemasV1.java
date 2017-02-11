@@ -364,7 +364,7 @@ public class SchemasV1 {
         );
 
         final Container transition = Container.with(
-            Property.named("step_to", Scalars.any),
+            Property.named("step_to", choicesFromPropertyPath(new PropertyPath("workflows", "$this", "steps"))),
             Property.named("transition_definition", Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "transition_definitions").pointsToValue())),
             Property.named("is_start", Scalars.bool),
             Property.named("is_hidden", Scalars.bool),
@@ -828,10 +828,12 @@ public class SchemasV1 {
                         )),
                         Property.named("form_options", Container.with(
                             Property.named("attribute_fields", Container.with(
-                                Container.with(
-                                    Property.named("form_type", Scalars.formType),
-                                    Property.named("options", Container.any)
-                                )
+                                Property.any(
+                                    Container.with(
+                                        Property.named("form_type", Scalars.formType),
+                                        Property.named("options", Container.any)
+                                    )
+                                ).withKeyElement(Scalars.propertiesFromPath(new PropertyPath("operations", "$this", "attributes").pointsToValue()))
                             )),
                             Property.named("attribute_default_values", Container.with(
                                 Property.any(Scalars.any)

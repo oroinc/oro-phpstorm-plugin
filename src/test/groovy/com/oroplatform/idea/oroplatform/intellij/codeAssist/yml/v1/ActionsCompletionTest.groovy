@@ -236,6 +236,28 @@ class ActionsCompletionTest extends CompletionTest implements RandomIdentifiers 
         )
     }
 
+    def void "test: suggest attributes for attribute_fields"() {
+        suggestions(
+            """
+            |operations:
+            |  some_op:
+            |    attributes:
+            |      attr1: ~
+            |      attr2: ~
+            |    form_options:
+            |      attribute_fields:
+            |        <caret>
+            |  some_op2:
+            |    attributes:
+            |      attr3: ~
+            |
+            """.stripMargin(),
+
+            ["attr1", "attr2"],
+            ["attr3"]
+        )
+    }
+
     def void "test: suggest attributes for attribute_default_values"() {
         suggestions(
             """
