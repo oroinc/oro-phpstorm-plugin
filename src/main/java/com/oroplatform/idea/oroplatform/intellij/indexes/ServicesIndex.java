@@ -66,23 +66,9 @@ public class ServicesIndex {
             .collect(Collectors.toList());
     }
 
-    private Collection<String> findFormTypes() {
-        return getServiceAliasesByTag("form.type");
-    }
-
-    public Collection<String> findApiFormTypes() {
-        final Collection<String> standardApiFormTypes = findStandardApiFormTypes().stream()
+    public Collection<String> findStandardApiFormTypes() {
+        return FileBasedIndex.getInstance().getAllKeys(StandardApiFormTypeFileBasedIndex.KEY, project).stream()
             .map(formType -> formType.replace("form.type.", "")).collect(Collectors.toSet());
-
-        return Stream.concat(
-            findFormTypes().stream()
-                .filter(standardApiFormTypes::contains),
-            getServiceAliasesByTag("oro.api.form.type").stream()
-        ).collect(Collectors.toList());
-    }
-
-    private Collection<String> findStandardApiFormTypes() {
-        return FileBasedIndex.getInstance().getAllKeys(StandardApiFormTypeFileBasedIndex.KEY, project);
     }
 
     public Collection<String> findServices() {

@@ -11,6 +11,7 @@ import com.oroplatform.idea.oroplatform.intellij.ExtensionFileFilter;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.*;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeToAppDirectoryResolver;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeToElementResolver;
+import com.oroplatform.idea.oroplatform.intellij.indexes.ServicesIndex;
 import com.oroplatform.idea.oroplatform.schema.requirements.ChoicesRequirement;
 import com.oroplatform.idea.oroplatform.schema.requirements.PatternRequirement;
 import com.oroplatform.idea.oroplatform.schema.requirements.Requirement;
@@ -21,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -126,17 +128,21 @@ final class Scalars {
         }
     };
 
-    final static Scalar formType = new Scalar() {
-        @Override
-        public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return Optional.of(providers.serviceAlias("form.type", insertHandler));
-        }
-    };
+    final static Scalar formType = formType(servicesIndex -> Optional.empty());
+
+    static Scalar formType(Function<ServicesIndex, Optional<Collection<String>>> getAllowedValues) {
+        return new Scalar() {
+            @Override
+            public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return Optional.of(providers.serviceAlias("form.type", insertHandler, getAllowedValues));
+            }
+        };
+    }
 
     final static Scalar apiFormType = new Scalar() {
         @Override
-        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return Optional.of(providers.apiFormType(insertHandler));
+        public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.serviceAlias("oro.api.form.type", insertHandler));
         }
     };
 

@@ -10,9 +10,14 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.Re
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RequirejsReferenceProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.php.YamlPhpClassProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.referenceProvider.*;
+import com.oroplatform.idea.oroplatform.intellij.indexes.ServicesIndex;
 import com.oroplatform.idea.oroplatform.schema.PhpClass;
 import com.oroplatform.idea.oroplatform.schema.PhpMethod;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
+
+import java.util.Collection;
+import java.util.Optional;
+import java.util.function.Function;
 
 class YamlReferenceProviders implements ReferenceProviders {
     @Override
@@ -91,7 +96,7 @@ class YamlReferenceProviders implements ReferenceProviders {
     }
 
     @Override
-    public PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler) {
-        return new ServiceAliasReferenceProvider(aliasTag, insertHandler);
+    public PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler, Function<ServicesIndex, Optional<Collection<String>>> getAllowedValues) {
+        return new ServiceAliasReferenceProvider(aliasTag, insertHandler, getAllowedValues);
     }
 }

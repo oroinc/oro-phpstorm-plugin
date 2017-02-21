@@ -20,6 +20,5 @@ public interface CompletionProviders {
     CompletionProvider<CompletionParameters> operation(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> translationDomain(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> assetsFilter(InsertHandler<LookupElement> insertHandler);
-    CompletionProvider<CompletionParameters> apiFormType(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> batchJob(InsertHandler<LookupElement> insertHandler);
 }

@@ -9,6 +9,7 @@ import com.oroplatform.idea.oroplatform.symfony.Service;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -587,6 +588,7 @@ public class SchemasV1 {
                 Property.named("data_transformer", OneOf.from(Scalars.service, Scalars.phpClass, Sequence.of(Scalars.callable))),
                 Property.named("collapse", Scalars.bool),
                 Property.named("form_type", Scalars.apiFormType),
+                Property.named("form_type", Scalars.formType(servicesIndex -> Optional.of(servicesIndex.findStandardApiFormTypes()))),
                 Property.named("form_options", Container.any),
                 Property.named("data_type", apiDataType()),
                 Property.named("meta_property", Scalars.bool),

@@ -5,8 +5,13 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.PsiReferenceProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.referenceProvider.RelativeDirectoryResolver;
+import com.oroplatform.idea.oroplatform.intellij.indexes.ServicesIndex;
 import com.oroplatform.idea.oroplatform.schema.PhpClass;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
+
+import java.util.Collection;
+import java.util.Optional;
+import java.util.function.Function;
 
 public interface ReferenceProviders {
 
@@ -26,5 +31,9 @@ public interface ReferenceProviders {
     PsiReferenceProvider workflowScope(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider translation(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider propertiesFromPath(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler);
-    PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler);
+    PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler, Function<ServicesIndex, Optional<Collection<String>>> getAllowedValues);
+
+    default PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler) {
+        return serviceAlias(aliasTag, insertHandler, servicesIndex -> Optional.empty());
+    }
 }

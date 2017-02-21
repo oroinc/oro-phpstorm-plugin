@@ -1,11 +1,10 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
-
-class ApiDicCompletionTest extends CompletionTest implements RandomIdentifiers {
+class ApiDicCompletionTest extends PhpReferenceTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV1.FilePathPatterns.API
@@ -26,6 +25,15 @@ class ApiDicCompletionTest extends CompletionTest implements RandomIdentifiers {
     protected void setUp() throws Exception {
         super.setUp()
 
+        configureByText("classes.php",
+            """
+            |<?php
+            |namespace Oro\\Forms;
+            |class UserFormType {}
+            |class ContactFormType {}
+            """.stripMargin()
+        )
+
         configureByText("Resources/config/oro/app.yml",
             """
             |oro_api:
@@ -41,13 +49,13 @@ class ApiDicCompletionTest extends CompletionTest implements RandomIdentifiers {
             |    <service id="$service1"></service>
             |    <service id="$service2"></service>
             |    <service id="$service3"></service>
-            |    <service id="form.type.$form1">
+            |    <service id="form.type.$form1" class="Oro\\Forms\\UserFormType">
             |      <tag name="form.type" alias="$form1"/>
             |    </service>
             |    <service id="$service7">
             |      <tag name="form.type" alias="$form2"/>
             |    </service>
-            |    <service id="$service8">
+            |    <service id="$service8" class="Oro\\Forms\\ContactFormType">
             |      <tag name="oro.api.form.type" alias="$form3"/>
             |    </service>
             |  </services>
@@ -116,6 +124,34 @@ class ApiDicCompletionTest extends CompletionTest implements RandomIdentifiers {
             """.stripMargin(),
             [form1],
             [form2]
+        )
+    }
+
+    def void "test: detect standard form types references in fields.form_type"() {
+        checkPhpReference(
+            """
+            |oro_api:
+            |  entities:
+            |    stdClass:
+            |      fields:
+            |         field1:
+            |           form_type: ${insertSomewhere(form1, "<caret>")}
+            """.stripMargin(),
+            ["Oro\\Forms\\UserFormType"]
+        )
+    }
+
+    def void "test: detect oro form types references in fields.form_type"() {
+        checkPhpReference(
+            """
+            |oro_api:
+            |  entities:
+            |    stdClass:
+            |      fields:
+            |         field1:
+            |           form_type: ${insertSomewhere(form3, "<caret>")}
+            """.stripMargin(),
+            ["Oro\\Forms\\ContactFormType"]
         )
     }
 }

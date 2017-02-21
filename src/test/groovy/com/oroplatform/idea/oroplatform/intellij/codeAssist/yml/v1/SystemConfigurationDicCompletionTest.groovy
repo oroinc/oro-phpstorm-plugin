@@ -26,7 +26,7 @@ class SystemConfigurationDicCompletionTest extends PhpReferenceTest implements R
             |namespace Oro\\Forms;
             |class UserFormType {}
             |class ContactFormType {}
-            """
+            """.stripMargin()
         )
 
         configureByText("Resources/config/services.xml",
