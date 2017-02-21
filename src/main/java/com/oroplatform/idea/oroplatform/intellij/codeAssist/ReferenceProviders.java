@@ -26,4 +26,5 @@ public interface ReferenceProviders {
     PsiReferenceProvider workflowScope(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider translation(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider propertiesFromPath(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler);
+    PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler);
 }

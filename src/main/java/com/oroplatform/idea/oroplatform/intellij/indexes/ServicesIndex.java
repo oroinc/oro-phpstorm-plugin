@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.oroplatform.idea.oroplatform.symfony.Service;
+import com.oroplatform.idea.oroplatform.symfony.ServiceClassName;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -43,7 +44,7 @@ public class ServicesIndex {
         return getServiceAliasesByTag("oro_action.action");
     }
 
-    private Collection<String> getServiceAliasesByTag(String tagName) {
+    public Collection<String> getServiceAliasesByTag(String tagName) {
         return FileBasedIndex.getInstance().getAllKeys(ServicesFileBasedIndex.KEY, project).stream()
             .flatMap(serviceId -> getServices(serviceId).stream())
             .flatMap(service -> service.getTags().stream())
@@ -53,7 +54,19 @@ public class ServicesIndex {
             .collect(Collectors.toList());
     }
 
-    public Collection<String> findFormTypes() {
+    public Collection<PhpClass> getServiceAliasClasses(String aliasTag, String text) {
+        final PhpIndex phpIndex = PhpIndex.getInstance(project);
+
+        return FileBasedIndex.getInstance().getAllKeys(ServicesFileBasedIndex.KEY, project).stream()
+            .flatMap(serviceId -> getServices(serviceId).stream())
+            .filter(service -> service.getTags().stream().anyMatch(tag -> aliasTag.equals(tag.getName()) && text.equals(tag.getAlias())))
+            .flatMap(service -> toStream(service.getClassName()))
+            .map(this::getClassNameFrom)
+            .flatMap(className -> phpIndex.getClassesByFQN(className).stream())
+            .collect(Collectors.toList());
+    }
+
+    private Collection<String> findFormTypes() {
         return getServiceAliasesByTag("form.type");
     }
 
@@ -116,14 +129,17 @@ public class ServicesIndex {
             .flatMap(serviceId -> getServices(serviceId).stream())
             .filter(this::isWorkflowScope)
             .flatMap(service -> toStream(service.getClassName()))
-            .map(serviceClassName -> {
-                return serviceClassName.getServiceParameter()
-                    .flatMap(this::findParameterValue)
-                    .orElse(serviceClassName.getClassName());
-            })
+            .map(this::getClassNameFrom)
             .flatMap(className -> phpIndex.getClassesByFQN(className).stream())
             .flatMap(phpClass -> toStream(findWorkflowScope(phpClass)))
             .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private String getClassNameFrom(ServiceClassName serviceClassName) {
+        return serviceClassName.getServiceParameter()
+            .flatMap(this::findParameterValue)
+            .orElse(serviceClassName.getClassName());
     }
 
     private boolean isWorkflowScope(Service service) {

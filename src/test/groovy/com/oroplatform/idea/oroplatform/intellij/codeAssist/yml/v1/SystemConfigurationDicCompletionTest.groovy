@@ -1,11 +1,10 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
-
-class SystemConfigurationDicCompletionTest extends CompletionTest implements RandomIdentifiers {
+class SystemConfigurationDicCompletionTest extends PhpReferenceTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV1.FilePathPatterns.SYSTEM_CONFIGURATION
@@ -21,11 +20,20 @@ class SystemConfigurationDicCompletionTest extends CompletionTest implements Ran
     protected void setUp() throws Exception {
         super.setUp()
 
+        configureByText("classes.php",
+            """
+            |<?php
+            |namespace Oro\\Forms;
+            |class UserFormType {}
+            |class ContactFormType {}
+            """
+        )
+
         configureByText("Resources/config/services.xml",
             """
             |<container>
             |  <services>
-            |    <service id="from1_id">
+            |    <service id="from1_id" class="Oro\\Forms\\UserFormType">
             |      <tag name="form.type" alias="$form1"/>
             |    </service>
             |    <service id="form2_id">
@@ -43,6 +51,7 @@ class SystemConfigurationDicCompletionTest extends CompletionTest implements Ran
             """
             |services:
             |  form3_id:
+            |    class: Oro\\Forms\\ContactFormType
             |    tags:
             |      - { name: form.type, alias: $form3 }
             |  some_service_2:
@@ -77,6 +86,32 @@ class SystemConfigurationDicCompletionTest extends CompletionTest implements Ran
 
             [form3],
             [unknown2]
+        )
+    }
+
+    def void "test: detect form types classes from xml file"() {
+        checkPhpReference(
+            """
+            |oro_system_configuration:
+            |  fields:
+            |    field:
+            |      type: ${insertSomewhere(form1, "<caret>")}
+            """.stripMargin(),
+
+            ["Oro\\Forms\\UserFormType"]
+        )
+    }
+
+    def void "test: detect form types classes from ynl file"() {
+        checkPhpReference(
+            """
+            |oro_system_configuration:
+            |  fields:
+            |    field:
+            |      type: ${insertSomewhere(form3, "<caret>")}
+            """.stripMargin(),
+
+            ["Oro\\Forms\\ContactFormType"]
         )
     }
 }

@@ -29,11 +29,6 @@ class YamlCompletionProviders implements CompletionProviders {
     }
 
     @Override
-    public CompletionProvider<CompletionParameters> formType(InsertHandler<LookupElement> insertHandler) {
-        return new SimpleCompletionProvider(insertHandler, project -> ServicesIndex.instance(project).findFormTypes());
-    }
-
-    @Override
     public CompletionProvider<CompletionParameters> datagrid(InsertHandler<LookupElement> insertHandler) {
         return new SimpleCompletionProvider(insertHandler, project -> ConfigurationIndex.instance(project).getDatagrids());
     }

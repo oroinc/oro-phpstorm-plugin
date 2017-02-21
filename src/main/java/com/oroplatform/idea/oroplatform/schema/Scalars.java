@@ -128,8 +128,8 @@ final class Scalars {
 
     final static Scalar formType = new Scalar() {
         @Override
-        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return Optional.of(providers.formType(insertHandler));
+        public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.serviceAlias("form.type", insertHandler));
         }
     };
 

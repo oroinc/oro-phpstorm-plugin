@@ -11,7 +11,6 @@ import java.util.function.Predicate;
 public interface CompletionProviders {
     CompletionProvider<CompletionParameters> action(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> condition(InsertHandler<LookupElement> insertHandler);
-    CompletionProvider<CompletionParameters> formType(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> datagrid(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> acl(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> service(InsertHandler<LookupElement> insertHandler);

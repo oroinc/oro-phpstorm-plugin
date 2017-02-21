@@ -89,4 +89,9 @@ class YamlReferenceProviders implements ReferenceProviders {
     public PsiReferenceProvider propertiesFromPath(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler) {
         return new ElementByPathReferenceProvider(path, prefix, insertHandler);
     }
+
+    @Override
+    public PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler) {
+        return new ServiceAliasReferenceProvider(aliasTag, insertHandler);
+    }
 }
