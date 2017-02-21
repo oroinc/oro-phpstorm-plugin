@@ -99,10 +99,6 @@ public class ServicesIndex {
             .findFirst();
     }
 
-    public Collection<String> findMassActionProviders() {
-        return getServiceAliasesByTag("oro_action.datagrid.mass_action_provider");
-    }
-
     public Optional<String> findParameterValue(String name) {
         return FileBasedIndex.getInstance().getValues(ServiceParametersFileBasedIndex.KEY, name, GlobalSearchScope.allScope(project)).stream()
             .findFirst();

@@ -15,7 +15,6 @@ public interface CompletionProviders {
     CompletionProvider<CompletionParameters> acl(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> service(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> service(Predicate<Service> predicate, InsertHandler<LookupElement> insertHandler);
-    CompletionProvider<CompletionParameters> massActionProvider(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> choices(ChoicesProvider choicesProvider, InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> operation(InsertHandler<LookupElement> insertHandler);
     CompletionProvider<CompletionParameters> translationDomain(InsertHandler<LookupElement> insertHandler);

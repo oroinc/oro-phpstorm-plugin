@@ -49,11 +49,6 @@ class YamlCompletionProviders implements CompletionProviders {
     }
 
     @Override
-    public CompletionProvider<CompletionParameters> massActionProvider(InsertHandler<LookupElement> insertHandler) {
-        return new SimpleCompletionProvider(insertHandler, project -> ServicesIndex.instance(project).findMassActionProviders());
-    }
-
-    @Override
     public CompletionProvider<CompletionParameters> choices(ChoicesProvider choicesProvider, InsertHandler<LookupElement> insertHandler) {
         return new ChoiceCompletionProvider(choicesProvider, insertHandler);
     }

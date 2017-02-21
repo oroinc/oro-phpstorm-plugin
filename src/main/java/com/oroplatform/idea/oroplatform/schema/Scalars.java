@@ -121,10 +121,9 @@ final class Scalars {
     };
 
     final static Scalar massActionProvider = new Scalar() {
-        @Nullable
         @Override
-        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return Optional.of(providers.massActionProvider(insertHandler));
+        public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.serviceAlias("oro_action.datagrid.mass_action_provider", insertHandler));
         }
     };
 
