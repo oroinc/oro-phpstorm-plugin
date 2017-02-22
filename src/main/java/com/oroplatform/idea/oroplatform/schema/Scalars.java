@@ -85,15 +85,15 @@ final class Scalars {
 
     final static Scalar condition = new Scalar() {
         @Override
-        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return Optional.of(providers.condition(insertHandler));
+        public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.serviceAlias("oro_action.condition", insertHandler, "@"));
         }
     };
 
     final static Scalar action = new Scalar() {
         @Override
-        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
-            return Optional.of(providers.action(insertHandler));
+        public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.serviceAlias("oro_action.action", insertHandler, "@"));
         }
     };
 
@@ -133,7 +133,7 @@ final class Scalars {
         return new Scalar() {
             @Override
             public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
-                return Optional.of(providers.serviceAlias("form.type", insertHandler, getAllowedValues));
+                return Optional.of(providers.serviceAlias("form.type", insertHandler, getAllowedValues, ""));
             }
         };
     }

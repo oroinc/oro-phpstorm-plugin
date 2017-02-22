@@ -36,14 +36,6 @@ public class ServicesIndex {
         return new ServicesIndex(project);
     }
 
-    public Collection<String> findConditionNames() {
-        return getServiceAliasesByTag("oro_action.condition");
-    }
-
-    public Collection<String> findActionNames() {
-        return getServiceAliasesByTag("oro_action.action");
-    }
-
     public Collection<String> getServiceAliasesByTag(String tagName) {
         return FileBasedIndex.getInstance().getAllKeys(ServicesFileBasedIndex.KEY, project).stream()
             .flatMap(serviceId -> getServices(serviceId).stream())

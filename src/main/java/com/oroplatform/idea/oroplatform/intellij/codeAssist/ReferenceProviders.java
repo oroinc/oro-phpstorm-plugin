@@ -31,9 +31,13 @@ public interface ReferenceProviders {
     PsiReferenceProvider workflowScope(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider translation(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider propertiesFromPath(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler);
-    PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler, Function<ServicesIndex, Optional<Collection<String>>> getAllowedValues);
+    PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler, Function<ServicesIndex, Optional<Collection<String>>> getAllowedValues, String prefix);
 
     default PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler) {
-        return serviceAlias(aliasTag, insertHandler, servicesIndex -> Optional.empty());
+        return serviceAlias(aliasTag, insertHandler, servicesIndex -> Optional.empty(), "");
+    }
+
+    default PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler, String prefix) {
+        return serviceAlias(aliasTag, insertHandler, servicesIndex -> Optional.empty(), prefix);
     }
 }

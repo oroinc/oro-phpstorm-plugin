@@ -96,7 +96,7 @@ class YamlReferenceProviders implements ReferenceProviders {
     }
 
     @Override
-    public PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler, Function<ServicesIndex, Optional<Collection<String>>> getAllowedValues) {
-        return new ServiceAliasReferenceProvider(aliasTag, insertHandler, getAllowedValues);
+    public PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler, Function<ServicesIndex, Optional<Collection<String>>> getAllowedValues, String prefix) {
+        return new ServiceAliasReferenceProvider(aliasTag, insertHandler, getAllowedValues, prefix);
     }
 }

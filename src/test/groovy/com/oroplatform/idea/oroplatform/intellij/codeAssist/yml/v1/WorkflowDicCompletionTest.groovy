@@ -49,6 +49,7 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |       return 'language';
             |   }
             |}
+            |class NotCondition {}
             """.stripMargin()
         )
 
@@ -56,7 +57,7 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             """
             |<container>
             |  <services>
-            |    <service id="condition1_id">
+            |    <service id="condition1_id" class="Oro\\AcmeBundle\\NotCondition">
             |      <tag name="oro_action.condition" alias="$condition1"/>
             |    </service>
             |    <service id="condition2_id">
@@ -153,6 +154,20 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
         )
     }
 
+    def void "test: detect conditions reference"() {
+        checkPhpReference(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        conditions:
+            |          '@${insertSomewhere(condition1, "<caret>")}': ~
+            """.stripMargin(),
+            ["Oro\\AcmeBundle\\NotCondition"]
+        )
+    }
+
     def void "test: suggest actions after new line defined in xml file"() {
         suggestions(
             """
@@ -241,23 +256,21 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
         )
     }
 
-    def void "test: complete quoted at beginning conditions as keys"() {
+    def void "test: complete quoted at beginning of a key"() {
         completion(
             """
             |workflows:
             |  some:
             |    transition_definitions:
             |      some_transition:
-            |        conditions:
-            |          'ondition4<caret>
+            |        'conditions<caret>
             """.stripMargin(),
             """
             |workflows:
             |  some:
             |    transition_definitions:
             |      some_transition:
-            |        conditions:
-            |          '@condition4': <caret>
+            |        'conditions': <caret>
             """.stripMargin(),
         )
     }

@@ -41,7 +41,8 @@ class YamlPatterns {
             //some:
             //  xxx: ~
             //  <caret>
-            psiElement(YAMLScalar.class).withSuperParent(2, superParent),
+            psiElement(YAMLScalar.class).withSuperParent(2, superParent)
+                .afterLeafSkipping(psiElement(YAMLTokenTypes.INDENT), psiElement(YAMLTokenTypes.EOL)),
             //some:
             //  <caret>
             psiElement(YAMLScalar.class).withParent(superParent)
@@ -50,6 +51,11 @@ class YamlPatterns {
             //  - <caret>
             psiElement(LeafPsiElement.class)
                 .withSuperParent(2, psiElement(YAMLSequenceItem.class).and(superParent)),
+            //for references
+            //some:
+            //  - <caret>
+            psiElement(YAMLScalar.class)
+                .withParent(psiElement(YAMLSequenceItem.class).and(superParent)),
             key(parent)
         );
     }

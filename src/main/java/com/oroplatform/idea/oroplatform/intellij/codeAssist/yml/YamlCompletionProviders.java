@@ -6,7 +6,7 @@ import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.ChoicesProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionProviders;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.completionProvider.*;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.completionProvider.SimpleCompletionProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ChoiceCompletionProvider;
 import com.oroplatform.idea.oroplatform.intellij.indexes.AssetsFiltersIndex;
 import com.oroplatform.idea.oroplatform.intellij.indexes.ConfigurationIndex;
@@ -15,18 +15,8 @@ import com.oroplatform.idea.oroplatform.intellij.indexes.TranslationIndex;
 import com.oroplatform.idea.oroplatform.symfony.Service;
 
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 class YamlCompletionProviders implements CompletionProviders {
-    @Override
-    public CompletionProvider<CompletionParameters> action(InsertHandler<LookupElement> insertHandler) {
-        return new SimpleCompletionProvider(insertHandler, project -> ServicesIndex.instance(project).findActionNames().stream().map(el -> "@"+el).collect(Collectors.toList()));
-    }
-
-    @Override
-    public CompletionProvider<CompletionParameters> condition(InsertHandler<LookupElement> insertHandler) {
-        return new SimpleCompletionProvider(insertHandler, project -> ServicesIndex.instance(project).findConditionNames().stream().map(el -> "@"+el).collect(Collectors.toList()));
-    }
 
     @Override
     public CompletionProvider<CompletionParameters> datagrid(InsertHandler<LookupElement> insertHandler) {
