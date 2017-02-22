@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.ClassConstantReference;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpReturn;
+import com.oroplatform.idea.oroplatform.symfony.AliasedService;
 import com.oroplatform.idea.oroplatform.symfony.Service;
 import com.oroplatform.idea.oroplatform.symfony.ServiceClassName;
 import org.jetbrains.annotations.NotNull;
@@ -36,13 +37,16 @@ public class ServicesIndex {
         return new ServicesIndex(project);
     }
 
-    public Collection<String> getServiceAliasesByTag(String tagName) {
+    public Collection<AliasedService> getServiceAliasesByTag(String tagName) {
         return FileBasedIndex.getInstance().getAllKeys(ServicesFileBasedIndex.KEY, project).stream()
             .flatMap(serviceId -> getServices(serviceId).stream())
-            .flatMap(service -> service.getTags().stream())
-            .filter(tag -> tagName.equals(tag.getName()))
-            .flatMap(tag -> toStream(tag.getAlias()))
-            .flatMap(alias -> Stream.of(alias.split("\\|")))
+            .flatMap(service -> {
+                return service.getTags().stream()
+                    .filter(tag -> tagName.equals(tag.getName()))
+                    .flatMap(tag -> toStream(tag.getAlias()))
+                    .flatMap(alias -> Stream.of(alias.split("\\|")))
+                    .map(alias -> new AliasedService(service, alias));
+            })
             .collect(Collectors.toList());
     }
 

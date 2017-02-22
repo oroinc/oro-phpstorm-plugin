@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReferenceBase;
 import com.intellij.psi.ResolveResult;
+import com.jetbrains.php.PhpIcons;
 import com.oroplatform.idea.oroplatform.intellij.indexes.ServicesIndex;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,8 +48,17 @@ public class ServiceAliasReference extends PsiPolyVariantReferenceBase<PsiElemen
     public Object[] getVariants() {
         final Optional<Collection<String>> allowedValues = getAllowedValues.apply(servicesIndex);
         return servicesIndex.getServiceAliasesByTag(aliasTag).stream()
-            .filter(alias -> !allowedValues.isPresent() || allowedValues.filter(values -> values.contains(alias)).isPresent())
-            .map(service -> LookupElementBuilder.create(prefix + service).withInsertHandler(insertHandler))
+            .filter(aliasedService -> !allowedValues.isPresent() || allowedValues.filter(values -> values.contains(aliasedService.getAlias())).isPresent())
+            .map(aliasedService -> {
+                final Optional<String> className = aliasedService.getService().getClassName()
+                    .filter(c -> !c.isServiceParameter())
+                    .flatMap(name -> Optional.ofNullable(name.getClassName()).map(n -> "[" + n + "]"));
+
+                return LookupElementBuilder.create(prefix + aliasedService.getAlias())
+                    .withTypeText(className.orElse(""), true)
+                    .withIcon(PhpIcons.CLASS)
+                    .withInsertHandler(insertHandler);
+            })
             .toArray();
     }
 }
