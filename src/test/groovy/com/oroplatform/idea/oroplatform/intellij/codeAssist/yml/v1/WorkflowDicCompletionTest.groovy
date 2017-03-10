@@ -39,6 +39,12 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |       return self::LOCALIZATION_TYPE;
             |   }
             |}
+            |class CustomerScopeProvider {
+            |   const CUSTOMER_TYPE = 'customer';
+            |   public function getCriteriaField() {
+            |       return self::CUSTOMER_TYPE;
+            |   }
+            |}
             |class UserScopeProvider {
             |   public function getCriteriaField() {
             |       return 'user';
@@ -106,6 +112,12 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |    class: Oro\\AcmeBundle\\UserScopeProvider
             |    tags:
             |      - { name: oro_scope.provider, scopeType: invalid }
+            |  scope5_id:
+            |    class: Oro\\AcmeBundle\\CustomerScopeProvider
+            |  scope5_id_link:
+            |    tags:
+            |      - { name: oro_scope.provider, scopeType: workflow_definition }
+            |      - { name: oro_service_link, service: scope5_id }
             """.stripMargin()
         )
     }
@@ -338,6 +350,19 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |         lang<caret>uage: ~
             """.stripMargin(),
             ["Oro\\AcmeBundle\\LanguageScopeProvider"]
+        )
+    }
+
+    def void "test: suggest scope for scope provider extended by oro link"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    scopes:
+            |      -
+            |         <caret>
+            """.stripMargin(),
+            ["customer"]
         )
     }
 

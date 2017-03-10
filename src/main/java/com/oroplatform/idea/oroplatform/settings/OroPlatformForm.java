@@ -91,7 +91,7 @@ public class OroPlatformForm implements Configurable {
 
     @Override
     public void apply() throws ConfigurationException {
-        final boolean hasBeenEnabled = pluginEnabled.isRolloverEnabled() && !getSettings().isPluginEnabled();
+        final boolean hasBeenEnabled = pluginEnabled.isSelected() && !getSettings().isPluginEnabled();
 
         getSettings().setAppDir(appDir.getText());
         getSettings().setPluginEnabled(pluginEnabled.isSelected());

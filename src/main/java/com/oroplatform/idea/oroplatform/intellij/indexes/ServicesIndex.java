@@ -87,7 +87,18 @@ public class ServicesIndex {
             services.add(value);
             return false;
         }), scope);
-        return services;
+
+        return services.stream()
+            .flatMap(service -> {
+                return Stream.concat(
+                    Stream.of(service),
+                    service.getTags().stream()
+                        .filter(tag -> "oro_service_link".equals(tag.getName()) && !tag.get("service").filter(serviceName::equals).isPresent())
+                        .flatMap(tag -> toStream(tag.get("service")))
+                        .flatMap(serviceLink -> getServices(serviceLink).stream().map(service::merge))
+                );
+
+            }).collect(Collectors.toList());
     }
 
     public Optional<Service> findService(String id) {

@@ -28,6 +28,13 @@ public class Service {
         return Optional.ofNullable(className).map(ServiceClassName::new);
     }
 
+    public Service merge(Service service) {
+        final Set<Tag> mergedTags = new HashSet<>(tags);
+        mergedTags.addAll(service.tags);
+
+        return new Service(service.id == null ? id : service.id, mergedTags, service.className == null ? className : service.className);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
