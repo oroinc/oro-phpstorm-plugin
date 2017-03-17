@@ -82,7 +82,13 @@ public class WrappedFileReferenceProvider extends PsiReferenceProvider {
     private List<? extends FileReference> emptyReferences(final PsiElement element, List<StringWrapperAndSourceDir> wrappersAndDirs) {
         return wrappersAndDirs.stream()
             .flatMap(wrapperAndDir -> {
-                final String relativePath = relativePathTo(wrapperAndDir.sourceDir, element.getOriginalElement().getContainingFile().getOriginalFile().getVirtualFile().getParent());
+                final VirtualFile containingDirectory = element.getOriginalElement().getContainingFile().getOriginalFile().getVirtualFile().getParent();
+
+                if(containingDirectory == null) {
+                    return Stream.empty();
+                }
+
+                final String relativePath = relativePathTo(wrapperAndDir.sourceDir, containingDirectory);
 
                 if(!element.getText().contains(PsiElements.IN_PROGRESS_VALUE) || relativePath == null) {
                     return Stream.empty();

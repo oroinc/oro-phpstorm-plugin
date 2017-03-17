@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -27,6 +28,7 @@ import org.jetbrains.yaml.psi.YAMLFile;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,11 +51,16 @@ public class TwigLineMarker implements LineMarkerProvider {
 
         elements.stream()
             .flatMap(elementFilter(TwigFile.class))
+            .filter(twigFile -> twigFile.getVirtualFile() != null)
             .flatMap(twigFile -> {
                 final Project project = twigFile.getProject();
                 final Bundles bundles = new Bundles(PhpIndex.getInstance(project));
                 final LayoutUpdateThemesIndex index = LayoutUpdateThemesIndex.instance(project);
-                final Predicate<VirtualFile> hasCommonAncestor = file -> twigFile.getVirtualFile().getParent().getPath().startsWith(file.getParent().getPath());
+                final Predicate<VirtualFile> hasCommonAncestor = file -> {
+                    final Optional<String> maybeFilePath = Optional.ofNullable(file.getParent()).map(VirtualFile::getPath);
+                    final Optional<String> maybeTemplateParentPath = getParentVirtualFile(twigFile).map(VirtualFile::getPath);
+                    return maybeTemplateParentPath.flatMap(templateParentPath -> maybeFilePath.map(templateParentPath::startsWith)).orElse(false);
+                };
 
                 final Collection<VirtualFile> layoutUpdates = Stream.concat(
                     index.findLayoutUpdates(twigFile.getName()).stream().filter(hasCommonAncestor),
@@ -85,6 +92,10 @@ public class TwigLineMarker implements LineMarkerProvider {
 
             })
             .forEach(result::add);
+    }
+
+    private Optional<VirtualFile> getParentVirtualFile(PsiFile file) {
+        return Optional.ofNullable(file.getVirtualFile()).map(VirtualFile::getParent);
     }
 
     private Stream<String> getTwigTemplateAbsoluteNames(TwigFile twigFile, Bundles bundles) {
