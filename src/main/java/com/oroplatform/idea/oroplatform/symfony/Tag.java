@@ -2,9 +2,7 @@ package com.oroplatform.idea.oroplatform.symfony;
 
 import com.google.common.base.Objects;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class Tag {
     private final Map<String, String> parameters = new HashMap<>();
@@ -17,8 +15,10 @@ public class Tag {
         return parameters.get("name");
     }
 
-    public String getAlias() {
-        return parameters.get("alias");
+    public Collection<String> getAliases() {
+        return Optional.ofNullable(parameters.get("alias"))
+            .map(alias -> Arrays.asList(alias.split("\\|")))
+            .orElse(Collections.emptyList());
     }
 
     public String getType() {

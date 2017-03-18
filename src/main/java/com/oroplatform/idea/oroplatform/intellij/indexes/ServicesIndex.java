@@ -43,8 +43,7 @@ public class ServicesIndex {
             .flatMap(service -> {
                 return service.getTags().stream()
                     .filter(tag -> tagName.equals(tag.getName()))
-                    .flatMap(tag -> toStream(tag.getAlias()))
-                    .flatMap(alias -> Stream.of(alias.split("\\|")))
+                    .flatMap(tag -> tag.getAliases().stream())
                     .map(alias -> new AliasedService(service, alias));
             })
             .collect(Collectors.toList());
@@ -55,7 +54,7 @@ public class ServicesIndex {
 
         return FileBasedIndex.getInstance().getAllKeys(ServicesFileBasedIndex.KEY, project).stream()
             .flatMap(serviceId -> getServices(serviceId).stream())
-            .filter(service -> service.getTags().stream().anyMatch(tag -> aliasTag.equals(tag.getName()) && text.equals(tag.getAlias())))
+            .filter(service -> service.getTags().stream().anyMatch(tag -> aliasTag.equals(tag.getName()) && tag.getAliases().contains(text)))
             .flatMap(service -> toStream(service.getClassName()))
             .map(this::getClassNameFrom)
             .flatMap(className -> phpIndex.getClassesByFQN(className).stream())

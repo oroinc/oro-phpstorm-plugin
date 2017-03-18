@@ -56,6 +56,7 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |   }
             |}
             |class NotCondition {}
+            |class Condition2a {}
             """.stripMargin()
         )
 
@@ -66,7 +67,7 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |    <service id="condition1_id" class="Oro\\AcmeBundle\\NotCondition">
             |      <tag name="oro_action.condition" alias="$condition1"/>
             |    </service>
-            |    <service id="condition2_id">
+            |    <service id="condition2_id" class="Oro\\AcmeBundle\\Condition2a">
             |      <tag name="oro_action.condition" alias="$condition2a|$condition2b"/>
             |    </service>
             |    <service id="condition4_id">
@@ -177,6 +178,20 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |          '@${insertSomewhere(condition1, "<caret>")}': ~
             """.stripMargin(),
             ["Oro\\AcmeBundle\\NotCondition"]
+        )
+    }
+
+    def void "test: detect reference for conditions having multiple aliases"() {
+        checkPhpReference(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        conditions:
+            |          '@${insertSomewhere(condition2a, "<caret>")}': ~
+            """.stripMargin(),
+            ["Oro\\AcmeBundle\\Condition2a"]
         )
     }
 
