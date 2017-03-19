@@ -1,7 +1,11 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.jetbrains.php.lang.psi.elements.ClassConstantReference;
+import com.jetbrains.php.lang.psi.elements.Field;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.*;
@@ -89,6 +93,14 @@ public class YamlPsiElements {
         return element == null ? Optional.empty() : getFirstMapping(element.getParent(), --maxDepth);
     }
 
+    public static Optional<YAMLKeyValue> getFirstKeyValue(PsiElement element) {
+        if(element instanceof YAMLKeyValue) {
+            return Optional.of((YAMLKeyValue) element);
+        }
+
+        return element == null ? Optional.empty() : getFirstKeyValue(element.getParent());
+    }
+
     public static Set<PsiElement> getAncestors(PsiElement element) {
         return getAncestors(element, new HashSet<>());
     }
@@ -124,6 +136,17 @@ public class YamlPsiElements {
         final Set<PsiElement> ancestors = getAncestors(element);
 
         return path.doesPointToValue() ? getElementsValuesByPath(path, elements, ancestors) : getElementsKeysByPath(path, elements, ancestors);
+    }
+
+    public static Optional<String> getTextOfPhpString(PsiElement element) {
+        if(element instanceof ClassConstantReference && ((ClassConstantReference) element).resolve() instanceof Field) {
+            final Field classConstant = (Field) ((ClassConstantReference) element).resolve();
+            return Optional.ofNullable(classConstant.getDefaultValue()).map(PsiElement::getText).map(StringUtil::stripQuotesAroundValue);
+        } else if (element instanceof StringLiteralExpression){
+            return Optional.of(((StringLiteralExpression) element).getContents());
+        } else {
+            return Optional.empty();
+        }
     }
 
     private static Collection<? extends YAMLPsiElement> getElementsKeysByPath(PropertyPath path, Collection<? extends YAMLPsiElement> elements, Set<PsiElement> ancestors) {

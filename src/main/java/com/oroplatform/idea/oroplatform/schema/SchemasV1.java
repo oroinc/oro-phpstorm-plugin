@@ -338,10 +338,11 @@ public class SchemasV1 {
         final Element conditions = Repeated.atAnyLevel(Container.with(
             Property.any(workflowAttributes).withKeyElement(Scalars.condition)
         ));
+        final Element action = Container.with(Property.any(Scalars.any).withKeyElement(Scalars.objectInitializationOptions));
 
         final Sequence actions = Sequence.of(
             Container.with(
-                Property.any(OneOf.from(workflowAttributes, Container.with(workflowAttributes))).withKeyElement(Scalars.action)
+                Property.any(OneOf.from(action, workflowAttributes, Container.with(workflowAttributes))).withKeyElement(Scalars.action)
             )
         );
 

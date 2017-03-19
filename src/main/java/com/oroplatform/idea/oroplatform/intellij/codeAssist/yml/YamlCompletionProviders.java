@@ -8,6 +8,7 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.ChoicesProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionProviders;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.completionProvider.SimpleCompletionProvider;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ChoiceCompletionProvider;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.completionProvider.ObjectInitializationOptionsCompletionProvider;
 import com.oroplatform.idea.oroplatform.intellij.indexes.AssetsFiltersIndex;
 import com.oroplatform.idea.oroplatform.intellij.indexes.ConfigurationIndex;
 import com.oroplatform.idea.oroplatform.intellij.indexes.ServicesIndex;
@@ -62,4 +63,10 @@ class YamlCompletionProviders implements CompletionProviders {
     public CompletionProvider<CompletionParameters> batchJob(InsertHandler<LookupElement> insertHandler) {
         return new SimpleCompletionProvider(insertHandler, project -> ConfigurationIndex.instance(project).getBatchJobs());
     }
+
+    @Override
+    public CompletionProvider<CompletionParameters> objectInitializationOptions(InsertHandler<LookupElement> insertHandler) {
+        return new ObjectInitializationOptionsCompletionProvider(insertHandler);
+    }
+
 }

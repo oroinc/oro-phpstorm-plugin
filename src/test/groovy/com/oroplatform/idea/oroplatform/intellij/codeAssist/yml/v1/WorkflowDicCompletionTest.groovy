@@ -19,6 +19,7 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
     def action2a = randomIdentifier("action2a")
     def action2b = randomIdentifier("action2b")
     def action3 = randomIdentifier("action3")
+    def assignUrlAction = randomIdentifier("assign_url")
 
     @Override
     protected void setUp() throws Exception {
@@ -57,6 +58,21 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |}
             |class NotCondition {}
             |class Condition2a {}
+            |class AssignUrlAction {
+            |   const ATTRIBUTE = 'attribute';
+            |   public function initialize(array \$options) {
+            |    if (empty(\$options['route'])) {
+            |        throw new InvalidParameterException('Route parameter must be specified');
+            |    }
+            |
+            |    if (!empty(\$options['route_parameters']) && !is_array(\$options['route_parameters'])) {
+            |        throw new InvalidParameterException('Route parameters must be an array');
+            |    }
+            |    if (empty(\$options[self::ATTRIBUTE])) {
+            |        throw new InvalidParameterException('Attribiute parameters is required');
+            |    }
+            |   }
+            |}
             """.stripMargin()
         )
 
@@ -101,6 +117,10 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |  ${action3}_id:
             |    tags:
             |      - { name: oro_action.action, alias: $action3 }
+            |  assign_url:
+            |    class: Oro\\AcmeBundle\\AssignUrlAction
+            |    tags:
+            |      - { name: oro_action.action, alias: $assignUrlAction }
             |  scope2_id:
             |    class: Oro\\AcmeBundle\\LocalizationScopeProvider
             |    tags:
@@ -223,6 +243,21 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             """.stripMargin(),
             ["@$action1", "@$action2a", "@$action2b"],
             ["@$unknown"]
+        )
+    }
+
+    def void "test: suggest action options"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        init_actions:
+            |          - "@$assignUrlAction":
+            |               <caret>
+            """.stripMargin(),
+            ["route", "route_parameters", "attribute"]
         )
     }
 

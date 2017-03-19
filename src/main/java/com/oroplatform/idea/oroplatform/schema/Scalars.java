@@ -97,6 +97,13 @@ final class Scalars {
         }
     };
 
+    final static Scalar objectInitializationOptions = new Scalar() {
+        @Override
+        public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+            return Optional.of(providers.objectInitializationOptions(insertHandler));
+        }
+    };
+
     final static Scalar service = new Scalar() {
         @Override
         public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
