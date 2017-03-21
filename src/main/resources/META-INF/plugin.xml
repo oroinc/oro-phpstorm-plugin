@@ -10,6 +10,12 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.12</h2>
+<ul>
+  <li>Better autocomplete for actions / conditions in workflows.yml</li>
+  <li>Fixed navigation to actions / conditions in workflows.yml</li>
+</ul>
+
 <h2>1.0.11</h2>
 <ul>
   <li>Fixed support for scopes in workflows.yml</li>
