@@ -81,21 +81,20 @@ class RequireJsCompletionTest extends CompletionTest {
         )
     }
 
-//    TODO: minor bug
-//    def void "test: not suggest js scripts as path keys"() {
-//        configureByText("src/Oro/AcmeBundle/Resources/public/js/script1.js", "")
-//        configureByText("src/Oro/AcmeBundle/Resources/public/js/script2.js", "")
-//
-//        suggestions(
-//            """
-//            |config:
-//            |  paths:
-//            |    <caret>: bundles/oroacme/js/script1.js
-//            """.stripMargin(),
-//            [],
-//            ["bundles/oroacme/js/script1.js", "bundles/oroacme/js/script2.js"]
-//        )
-//    }
+    def void "test: not suggest js scripts as path keys"() {
+        configureByText("src/Oro/AcmeBundle/Resources/public/js/script1.js", "")
+        configureByText("src/Oro/AcmeBundle/Resources/public/js/script2.js", "")
+
+        suggestions(
+            """
+            |config:
+            |  paths:
+            |    <caret>: bundles/oroacme/js/script1.js
+            """.stripMargin(),
+            [],
+            ["bundles/oroacme/js/script1.js", "bundles/oroacme/js/script2.js"]
+        )
+    }
 
     def void "test: not suggest css as js scripts"() {
         configureByText("src/Oro/AcmeBundle/Resources/public/css/style1.css", "")

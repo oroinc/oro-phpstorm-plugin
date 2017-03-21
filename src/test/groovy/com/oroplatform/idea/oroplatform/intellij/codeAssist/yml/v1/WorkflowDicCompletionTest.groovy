@@ -60,6 +60,11 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |class Condition2a {}
             |class AssignUrlAction {
             |   const ATTRIBUTE = 'attribute';
+            |   private function someFunction() {
+            |       \$this->getOption(\$this->options, 'option_from_getOption');
+            |       \$this->options['option_from_\$this_options'];
+            |       \$options['options_that_shouldnt_exist'];
+            |   }
             |   public function initialize(array \$options) {
             |    if (empty(\$options['route'])) {
             |        throw new InvalidParameterException('Route parameter must be specified');
@@ -258,6 +263,85 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |               <caret>
             """.stripMargin(),
             ["route", "route_parameters", "attribute"]
+        )
+    }
+
+    def void "test: suggest action options from getOption and \$this->options"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        init_actions:
+            |          - "@$assignUrlAction":
+            |               <caret>
+            """.stripMargin(),
+            ["option_from_\$this_options", "option_from_getOption"],
+            ["options_that_shouldnt_exist"]
+        )
+    }
+
+    def void "test: suggest action options in parameters property"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        init_actions:
+            |          - "@$assignUrlAction":
+            |               parameters:
+            |                 <caret>
+            """.stripMargin(),
+            ["route", "route_parameters", "attribute"]
+        )
+    }
+
+    def void "test: suggest parameters, conditions etc. for actions"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        init_actions:
+            |          - "@$assignUrlAction":
+            |               <caret>
+            """.stripMargin(),
+            ["parameters", "actions", "conditions", "break_on_failure"]
+        )
+    }
+
+    def void "test: suggest nested actions"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        init_actions:
+            |          - "@$assignUrlAction":
+            |               actions:
+        |                     - <caret>
+            """.stripMargin(),
+            ["@$action1"]
+        )
+    }
+
+    def void "test: suggest action conditions"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        init_actions:
+            |          - "@$assignUrlAction":
+            |               conditions:
+        |                     - <caret>
+            """.stripMargin(),
+            ["@$condition1"]
         )
     }
 

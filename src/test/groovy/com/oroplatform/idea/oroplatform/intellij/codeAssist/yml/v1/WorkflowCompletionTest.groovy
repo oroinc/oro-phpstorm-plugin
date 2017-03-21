@@ -4,7 +4,7 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
-public class WorkflowCompletionTest extends CompletionTest implements RandomIdentifiers {
+class WorkflowCompletionTest extends CompletionTest implements RandomIdentifiers {
     @Override
     String fileName() {
         return SchemasV1.FilePathPatterns.WORKFLOW
@@ -641,6 +641,26 @@ public class WorkflowCompletionTest extends CompletionTest implements RandomIden
             |              xxx: <caret>
             """.stripMargin(),
 
+            ["\$someAttribute"]
+        )
+    }
+
+    def void "test: not suggest attributes in actions as keys"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    attributes:
+            |      someAttribute:
+            |        type: string
+            |    transition_definitions:
+            |      some:
+            |        post_actions:
+            |          - @assign_value:
+            |              <caret>
+            """.stripMargin(),
+
+            [],
             ["\$someAttribute"]
         )
     }

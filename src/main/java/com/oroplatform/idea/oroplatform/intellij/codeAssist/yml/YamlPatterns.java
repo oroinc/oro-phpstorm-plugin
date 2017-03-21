@@ -65,7 +65,7 @@ class YamlPatterns {
         //but not:
         //some:
         //  <caret>
-        return psiElement(LeafPsiElement.class).afterLeaf(psiElement().andNot(psiElement(YAMLTokenTypes.INDENT)));
+        return psiElement().afterLeaf(psiElement().andNot(psiElement(YAMLTokenTypes.INDENT)));
     }
 
     static ElementPattern<? extends PsiElement> sequence(ElementPattern<? extends PsiElement> parent) {

@@ -338,13 +338,8 @@ public class SchemasV1 {
         final Element conditions = Repeated.atAnyLevel(Container.with(
             Property.any(workflowAttributes).withKeyElement(Scalars.condition)
         ));
-        final Element action = Container.with(Property.any(Scalars.any).withKeyElement(Scalars.objectInitializationOptions));
 
-        final Sequence actions = Sequence.of(
-            Container.with(
-                Property.any(OneOf.from(action, workflowAttributes, Container.with(workflowAttributes))).withKeyElement(Scalars.action)
-            )
-        );
+        final Element actions = actions(conditions, workflowAttributes, 5);
 
         final Container attribute = Container.with(
             Property.named("type", Scalars.strictChoices("boolean", "bool", "integer", "int", "float", "string", "array", "object", "entity")),
@@ -483,6 +478,27 @@ public class SchemasV1 {
                     ))
                 ).allowExtraProperties()
             ))
+        );
+    }
+
+    private static Element action(Element conditions, Element workflowAttributes, int maxDepth) {
+        final Container initializationOptions = Container.with(Property.any(Scalars.any).withKeyElement(Scalars.objectInitializationOptions));
+        return OneOf.from(
+            initializationOptions,
+            Container.with(
+                Property.named("parameters", initializationOptions),
+                Property.named("actions", maxDepth == 0 ? Container.any : actions(conditions, workflowAttributes, maxDepth - 1)),
+                Property.named("conditions", conditions),
+                Property.named("break_on_failure", Scalars.bool)
+            )
+        );
+    }
+
+    private static Element actions(Element conditions, Element workflowAttributes, int maxDepth) {
+        return Sequence.of(
+            Container.with(
+                Property.any(OneOf.from(action(conditions, workflowAttributes, maxDepth), workflowAttributes, Container.with(workflowAttributes))).withKeyElement(Scalars.action)
+            )
         );
     }
 

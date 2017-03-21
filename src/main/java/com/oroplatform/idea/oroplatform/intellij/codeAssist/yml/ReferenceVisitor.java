@@ -39,7 +39,7 @@ class ReferenceVisitor extends YamlVisitor {
     public void visitScalar(Scalar scalar) {
         scalar.getProvider(referenceProviders, insertHandler).ifPresent(provider -> {
             registrar.registerReferenceProvider(
-                context == VisitingContext.PROPERTY_VALUE ? psiElement().andOr(capture, psiElement().withParent(capture)) : capture,
+                context == VisitingContext.PROPERTY_VALUE ? YamlPatterns.scalarValue().andOr(capture, psiElement().withParent(capture)) : capture,
                 provider
             );
         });

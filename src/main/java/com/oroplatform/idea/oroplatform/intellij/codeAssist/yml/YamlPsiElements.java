@@ -93,14 +93,6 @@ public class YamlPsiElements {
         return element == null ? Optional.empty() : getFirstMapping(element.getParent(), --maxDepth);
     }
 
-    public static Optional<YAMLKeyValue> getFirstKeyValue(PsiElement element) {
-        if(element instanceof YAMLKeyValue) {
-            return Optional.of((YAMLKeyValue) element);
-        }
-
-        return element == null ? Optional.empty() : getFirstKeyValue(element.getParent());
-    }
-
     public static Set<PsiElement> getAncestors(PsiElement element) {
         return getAncestors(element, new HashSet<>());
     }
