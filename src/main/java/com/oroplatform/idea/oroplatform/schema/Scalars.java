@@ -16,6 +16,7 @@ import com.oroplatform.idea.oroplatform.schema.requirements.ChoicesRequirement;
 import com.oroplatform.idea.oroplatform.schema.requirements.PatternRequirement;
 import com.oroplatform.idea.oroplatform.schema.requirements.Requirement;
 import com.oroplatform.idea.oroplatform.symfony.Service;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -89,6 +90,31 @@ final class Scalars {
             return Optional.of(providers.serviceAlias("oro_action.condition", insertHandler, "@"));
         }
     };
+
+    static Scalar ifCompositeCondition(final Scalar scalar) {
+        return new Scalar() {
+            @NotNull
+            @Override
+            public Collection<Requirement> getRequirements() {
+                return scalar.getRequirements();
+            }
+
+            @Override
+            public Optional<CompletionProvider<CompletionParameters>> getProvider(CompletionProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return scalar.getProvider(providers, insertHandler);
+            }
+
+            @Override
+            public DefaultValueDescriptor getDefaultValueDescriptor() {
+                return scalar.getDefaultValueDescriptor();
+            }
+
+            @Override
+            public Optional<PsiReferenceProvider> getProvider(ReferenceProviders providers, InsertHandler<LookupElement> insertHandler) {
+                return scalar.getProvider(providers, insertHandler).map(providers::ifCompositeCondition);
+            }
+        };
+    }
 
     final static Scalar action = new Scalar() {
         @Override

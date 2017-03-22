@@ -20,10 +20,20 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
     def action2b = randomIdentifier("action2b")
     def action3 = randomIdentifier("action3")
     def assignUrlAction = randomIdentifier("assign_url")
+    def orCondition = randomIdentifier("or")
+    def trueCondition = randomIdentifier("true")
 
     @Override
     protected void setUp() throws Exception {
         super.setUp()
+
+        configureByText("std_classes.php",
+            """
+            |<?php
+            |namespace Oro\\Component\\ConfigExpression\\Condition;
+            |class AbstractComposite {}
+            """.stripMargin()
+        )
 
         configureByText("classes.php",
             """
@@ -58,6 +68,8 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |}
             |class NotCondition {}
             |class Condition2a {}
+            |class OrCondition extends \\Oro\\Component\\ConfigExpression\\Condition\\AbstractComposite {}
+            |class TrueCondition {}
             |class AssignUrlAction {
             |   const ATTRIBUTE = 'attribute';
             |   private function someFunction() {
@@ -126,6 +138,14 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |    class: Oro\\AcmeBundle\\AssignUrlAction
             |    tags:
             |      - { name: oro_action.action, alias: $assignUrlAction }
+            |  or:
+            |    class: Oro\\AcmeBundle\\OrCondition
+            |    tags:
+            |      - { name: oro_action.condition, alias: $orCondition }
+            |  true_condition:
+            |    class: Oro\\AcmeBundle\\TrueCondition
+            |    tags:
+            |      - { name: oro_action.condition, alias: $trueCondition }
             |  scope2_id:
             |    class: Oro\\AcmeBundle\\LocalizationScopeProvider
             |    tags:
@@ -188,6 +208,53 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |          @not: <caret>
             """.stripMargin(),
             [],
+            ["@$condition1", "@$condition2a", "@$condition2b"]
+        )
+    }
+
+    def void "test: does not suggest conditions as keys for not composite conditions"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        conditions:
+            |          '@$trueCondition':
+            |               <caret>
+            """.stripMargin(),
+            [],
+            ["@$condition1", "@$condition2a", "@$condition2b"]
+        )
+    }
+
+    def void "test: suggest conditions as keys for composite conditions"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        conditions:
+            |          '@$orCondition':
+            |               <caret>
+            """.stripMargin(),
+            ["@$condition1", "@$condition2a", "@$condition2b"]
+        )
+    }
+
+    def void "test: suggest conditions as keys for composite conditions in parameters key"() {
+        suggestions(
+            """
+            |workflows:
+            |  some:
+            |    transition_definitions:
+            |      some_transition:
+            |        conditions:
+            |          '@$orCondition':
+            |               parameters:
+            |                   <caret>
+            """.stripMargin(),
             ["@$condition1", "@$condition2a", "@$condition2b"]
         )
     }
@@ -323,7 +390,7 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |        init_actions:
             |          - "@$assignUrlAction":
             |               actions:
-        |                     - <caret>
+            |                 - <caret>
             """.stripMargin(),
             ["@$action1"]
         )
@@ -339,7 +406,7 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
             |        init_actions:
             |          - "@$assignUrlAction":
             |               conditions:
-        |                     - <caret>
+            |                 - <caret>
             """.stripMargin(),
             ["@$condition1"]
         )

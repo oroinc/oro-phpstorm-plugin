@@ -32,6 +32,7 @@ public interface ReferenceProviders {
     PsiReferenceProvider translation(InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider propertiesFromPath(PropertyPath path, String prefix, InsertHandler<LookupElement> insertHandler);
     PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler, Function<ServicesIndex, Optional<Collection<String>>> getAllowedValues, String prefix);
+    PsiReferenceProvider ifCompositeCondition(PsiReferenceProvider provider);
 
     default PsiReferenceProvider serviceAlias(String aliasTag, InsertHandler<LookupElement> insertHandler) {
         return serviceAlias(aliasTag, insertHandler, servicesIndex -> Optional.empty(), "");

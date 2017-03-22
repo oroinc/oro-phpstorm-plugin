@@ -11,14 +11,11 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
-import static com.oroplatform.idea.oroplatform.Functions.toStream;
-import static com.oroplatform.idea.oroplatform.intellij.codeAssist.PsiElements.elementFilter;
 import static com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlPsiElements.getTextOfPhpString;
 
 public class ObjectInitializationOptionsCompletionProvider extends CompletionProvider<CompletionParameters> {
@@ -30,12 +27,7 @@ public class ObjectInitializationOptionsCompletionProvider extends CompletionPro
 
     @Override
     protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result) {
-        toStream(YamlPsiElements.getOrderedAncestors(parameters.getPosition()))
-            .flatMap(elementFilter(YAMLKeyValue.class))
-            .flatMap(keyValue -> Stream.of(keyValue.getReferences()))
-            .flatMap(reference -> toStream(reference.resolve()))
-            .flatMap(elementFilter(PhpClass.class))
-            .limit(1) // get only first class reference from the closest KeyValue
+        YamlPsiElements.getFirstPhpClassKeyFromAncestors(parameters.getPosition())
             .flatMap(this::optionsFromPhpClass)
             .map(option -> LookupElementBuilder.create(option).withInsertHandler(insertHandler))
             .forEach(result::addElement);

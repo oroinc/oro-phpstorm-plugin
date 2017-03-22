@@ -5,12 +5,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.php.lang.psi.elements.ClassConstantReference;
 import com.jetbrains.php.lang.psi.elements.Field;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.*;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -111,6 +113,20 @@ public class YamlPsiElements {
         ancestors.add(parent);
 
         return getAncestors(parent, ancestors);
+    }
+
+    public static Stream<PhpClass> getFirstPhpClassKeyFromAncestors(PsiElement element) {
+        return getFirstPhpClassKeyFromAncestors(element, keyValue -> true);
+    }
+
+    public static Stream<PhpClass> getFirstPhpClassKeyFromAncestors(PsiElement element, Predicate<YAMLKeyValue> predicate) {
+        return YamlPsiElements.getOrderedAncestors(element).stream()
+            .flatMap(elementFilter(YAMLKeyValue.class))
+            .filter(predicate)
+            .flatMap(keyValue -> Stream.of(keyValue.getReferences()))
+            .flatMap(reference -> toStream(reference.resolve()))
+            .flatMap(elementFilter(PhpClass.class))
+            .limit(1); // get only first class reference from the closest KeyValue
     }
 
     public static Collection<String> getPropertyFrom(PropertyPath path, PsiElement element) {

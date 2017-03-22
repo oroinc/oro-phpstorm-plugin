@@ -335,11 +335,9 @@ public class SchemasV1 {
 
         final Element attributesElement = Scalars.propertiesFromPath(new PropertyPath("workflows", "$this", "attributes").pointsToValue(), "$");
         final Element workflowAttributes = OneOf.from(attributesElement, Sequence.of(attributesElement));
-        final Element conditions = Repeated.atAnyLevel(Container.with(
-            Property.any(workflowAttributes).withKeyElement(Scalars.condition)
-        ));
+        final Element conditions = conditions(workflowAttributes);
 
-        final Element actions = actions(conditions, workflowAttributes, 5);
+        final Element actions = actions(Sequence.of(conditions), workflowAttributes, 5);
 
         final Container attribute = Container.with(
             Property.named("type", Scalars.strictChoices("boolean", "bool", "integer", "int", "float", "string", "array", "object", "entity")),
@@ -499,6 +497,24 @@ public class SchemasV1 {
             Container.with(
                 Property.any(OneOf.from(action(conditions, workflowAttributes, maxDepth), workflowAttributes, Container.with(workflowAttributes))).withKeyElement(Scalars.action)
             )
+        );
+    }
+
+    private static Element conditions(Element workflowAttributes) {
+        // use Repeated.atAnyLevel instead of complex recursive structure because of performance
+        final Element condition =  Repeated.atAnyLevel(
+            Container.with(
+                Property.any(Container.any).withKeyElement(Scalars.ifCompositeCondition(Scalars.condition)),
+                Property.named("parameters", Container.any),
+                Property.named("message", Scalars.trans),
+                Property.any(workflowAttributes),
+                Property.any(Scalars.any).withKeyElement(Scalars.objectInitializationOptions)
+            )
+        );
+
+        return Container.with(
+            Property.any(condition).withKeyElement(Scalars.condition),
+            Property.any(workflowAttributes)
         );
     }
 
