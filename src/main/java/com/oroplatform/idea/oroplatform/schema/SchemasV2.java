@@ -21,11 +21,11 @@ public class SchemasV2 {
     static final Collection<Schema> ALL = asList(workflow(), datagrid(), acl(), api(), search(), systemConfiguration(), dashboard(), navigation());
 
     private static Schema workflow() {
-        return new Schema(new WorkflowMatcher("workflows.yml"), SchemasV1.workflowElement());
+        return new Schema(new ImportedFileMatcher("workflows.yml", SchemasV2.FilePathPatterns.WORKFLOW), SchemasV1.workflowElement());
     }
 
     private static Schema datagrid() {
-        return new Schema(new FilePathMatcher(FilePathPatterns.DATAGRID), Container.with(
+        return new Schema(new ImportedFileMatcher("datagrids.yml", FilePathPatterns.DATAGRID), Container.with(
             Property.named("imports", Sequence.of(Container.with(
                 Property.named("resource", Scalars.filePath)
             ))),

@@ -99,7 +99,7 @@ public class SchemasV1 {
     }
 
     private static Schema datagrid() {
-        return new Schema(new FilePathMatcher(FilePathPatterns.DATAGRID), Container.with(
+        return new Schema(new ImportedFileMatcher("datagrid.yml", FilePathPatterns.DATAGRID), Container.with(
                 Property.named("imports", Sequence.of(Container.with(
                     Property.named("resource", Scalars.filePath)
                 ))),
@@ -325,7 +325,7 @@ public class SchemasV1 {
     }
 
     private static Schema workflow() {
-        return new Schema(new WorkflowMatcher("workflow.yml"), workflowElement());
+        return new Schema(new ImportedFileMatcher("workflow.yml", SchemasV1.FilePathPatterns.WORKFLOW), workflowElement());
     }
 
     @NotNull

@@ -11,14 +11,18 @@ import com.oroplatform.idea.oroplatform.intellij.indexes.ImportIndex;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import org.jetbrains.yaml.YAMLFileType;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Stream;
 
-class WorkflowMatcher implements FileMatcher {
+class ImportedFileMatcher implements FileMatcher {
 
     private final String rootFileName;
+    private final Collection<String> rootFilePatterns;
 
-    WorkflowMatcher(String rootFileName) {
+    ImportedFileMatcher(String rootFileName, String... rootFilePatterns) {
         this.rootFileName = rootFileName;
+        this.rootFilePatterns = Arrays.asList(rootFilePatterns);
     }
 
     @Override
@@ -34,7 +38,7 @@ class WorkflowMatcher implements FileMatcher {
             return false;
         }
 
-        if(isWorkflowPath(file.getOriginalFile().getVirtualFile().getPath())) {
+        if(isRootFile(file.getOriginalFile().getVirtualFile().getPath())) {
             return true;
         }
 
@@ -43,11 +47,11 @@ class WorkflowMatcher implements FileMatcher {
 
         return Stream.of(rootFileName)
             .flatMap(filename -> Stream.of(FilenameIndex.getFilesByName(file.getProject(), filename, scope)))
-            .anyMatch(workflowFile -> isWorkflowPath(filePath(workflowFile)) && isImported(index, file, workflowFile));
+            .anyMatch(rootFile -> isRootFile(filePath(rootFile)) && isImported(index, file, rootFile));
     }
 
-    private boolean isWorkflowPath(String path) {
-        return (path.endsWith(SchemasV1.FilePathPatterns.WORKFLOW) || path.endsWith(SchemasV2.FilePathPatterns.WORKFLOW)) && path.endsWith(rootFileName);
+    private boolean isRootFile(String path) {
+        return rootFilePatterns.stream().anyMatch(path::endsWith) && path.endsWith(rootFileName);
     }
 
     private static String filePath(PsiFile file) {

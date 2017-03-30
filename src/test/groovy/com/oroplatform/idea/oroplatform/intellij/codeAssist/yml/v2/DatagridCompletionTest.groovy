@@ -10,6 +10,8 @@ class DatagridCompletionTest extends CompletionTest implements RandomIdentifiers
         return SchemasV2.FilePathPatterns.DATAGRID
     }
 
+    def imported1 = randomIdentifier("imported1")
+
     def void "test: suggest datagrids as top property"() {
         suggestions(
             """
@@ -65,6 +67,43 @@ class DatagridCompletionTest extends CompletionTest implements RandomIdentifiers
             """.stripMargin(),
 
             ["resource"]
+        )
+    }
+
+    def void "test: suggest datagrids as top property for imported file"() {
+        configureByText(
+            SchemasV2.FilePathPatterns.DATAGRID,
+            """
+            |imports:
+            |  - { resource: ${imported1}.yml }
+            """.stripMargin()
+        )
+
+        suggestions(
+            "Resources/config/oro/${imported1}.yml",
+            """
+            |<caret>
+            """.stripMargin(),
+            ["imports", "datagrids"]
+        )
+    }
+
+    def void "test: not suggest datagrids as top property for not imported file"() {
+        configureByText(
+            SchemasV2.FilePathPatterns.DATAGRID,
+            """
+            |imports:
+            |  - { resource: ${imported1}.yml }
+            """.stripMargin()
+        )
+
+        suggestions(
+            "Resources/config/oro/notimported.yml",
+            """
+            |<caret>
+            """.stripMargin(),
+            [],
+            ["imports", "datagrids"]
         )
     }
 }
