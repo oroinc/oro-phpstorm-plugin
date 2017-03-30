@@ -16,7 +16,7 @@ class DatagridCompletionTest extends CompletionTest implements RandomIdentifiers
             |<caret>
             """.stripMargin(),
 
-            ["datagrids"]
+            ["datagrids", "imports"]
         )
     }
 
@@ -54,6 +54,17 @@ class DatagridCompletionTest extends CompletionTest implements RandomIdentifiers
             """.stripMargin(),
 
             [grid1, grid2]
+        )
+    }
+
+    def void "test: suggest datagrid imports resource"() {
+        suggestions(
+            """
+            |imports:
+            | - { <caret> }
+            """.stripMargin(),
+
+            ["resource"]
         )
     }
 }

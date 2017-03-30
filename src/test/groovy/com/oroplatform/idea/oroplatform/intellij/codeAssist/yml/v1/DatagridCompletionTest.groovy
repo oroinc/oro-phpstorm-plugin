@@ -17,7 +17,7 @@ public class DatagridCompletionTest extends CompletionTest {
             |<caret>
             """.stripMargin(),
 
-            ["datagrid"]
+            ["datagrid", "imports"]
         )
     }
 
@@ -518,6 +518,17 @@ public class DatagridCompletionTest extends CompletionTest {
             """.stripMargin(),
 
             ["type", "route", "params"]
+        )
+    }
+
+    def void "test: suggest datagrid imports resource"() {
+        suggestions(
+            """
+            |imports:
+            | - { <caret> }
+            """.stripMargin(),
+
+            ["resource"]
         )
     }
 }

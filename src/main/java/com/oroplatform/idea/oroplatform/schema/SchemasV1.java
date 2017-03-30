@@ -100,6 +100,9 @@ public class SchemasV1 {
 
     private static Schema datagrid() {
         return new Schema(new FilePathMatcher(FilePathPatterns.DATAGRID), Container.with(
+                Property.named("imports", Sequence.of(Container.with(
+                    Property.named("resource", Scalars.filePath)
+                ))),
                 Property.named("datagrid",
                     datagridElementProperties()
                 )
