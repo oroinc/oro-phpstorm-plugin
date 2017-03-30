@@ -77,13 +77,17 @@ class YamlPatterns {
     }
 
     static PsiElementPattern.Capture<YAMLDocument> getDocumentPattern(final FileMatcher matcher) {
-        final PsiFilePattern.Capture<PsiFile> filePattern = psiFile().with(new PatternCondition<PsiFile>(null) {
-            @Override
-            public boolean accepts(@NotNull PsiFile psiFile, ProcessingContext context) {
-                return matcher.matches(psiFile);
-            }
-        });
+        final PsiFilePattern.Capture<PsiFile> filePattern = getFilePattern(matcher);
 
         return psiElement(YAMLDocument.class).inFile(filePattern.withLanguage(YAMLLanguage.INSTANCE));
+    }
+
+    static PsiFilePattern.Capture<PsiFile> getFilePattern(FileMatcher matcher) {
+        return psiFile().with(new PatternCondition<PsiFile>(null) {
+                @Override
+                public boolean accepts(@NotNull PsiFile psiFile, ProcessingContext context) {
+                    return matcher.matches(psiFile);
+                }
+            });
     }
 }
