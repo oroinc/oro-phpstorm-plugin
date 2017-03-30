@@ -10,6 +10,13 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.13</h2>
+<ul>
+  <li>Better autocomplete for conditions in workflows.yml</li>
+  <li>Support for translations autocomplete and navigation in more places</li>
+  <li>Support for imported files in datagrids.yml</li>
+</ul>
+
 <h2>1.0.12</h2>
 <ul>
   <li>Better autocomplete for actions / conditions in workflows.yml</li>
