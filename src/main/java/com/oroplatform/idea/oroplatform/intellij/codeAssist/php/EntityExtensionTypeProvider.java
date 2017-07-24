@@ -4,7 +4,6 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocParamTag;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -51,11 +50,8 @@ public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
             return phpType;
         }
 
-        if(psiElement instanceof FieldReference) {
-            final FieldReference fieldReference = (FieldReference) psiElement;
-            final Field field = (Field) fieldReference.resolve();
-
-            if(field == null) return null;
+        if(psiElement instanceof Field) {
+            final Field field = (Field) psiElement;
 
             final PhpType phpType = new PhpType();
 
@@ -74,12 +70,22 @@ public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
             return phpType;
         }
 
+        if(psiElement instanceof AssignmentExpression) {
+            final AssignmentExpression assignment = (AssignmentExpression) psiElement;
+
+            if(assignment.getValue() == null ||
+                    assignment.getValue().getFirstPsiChild() == null ||
+                    !(assignment.getValue().getFirstPsiChild() instanceof ClassReference)) return null;
+
+            final String className = assignment.getValue().getFirstPsiChild().getText();
+
+            return getType(project, className);
+        }
+
         return null;
     }
 
-    @Nullable
     private PhpType getType(Project project, String className) {
-        final PhpIndex phpIndex = PhpIndex.getInstance(project);
         final PhpType outputType = new PhpType();
 
         for (Entity entity : Entities.instance(project).findEntities(className)) {
@@ -87,7 +93,7 @@ public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
 
             final String extensionClassName = "\\Extend\\Entity\\EX_" + bundleName + "_" + entity.getSimpleName();
 
-            phpIndex.getClassesByFQN(extensionClassName).forEach(outputType::add);
+            outputType.add("#C" + extensionClassName);
         }
 
         return outputType;
@@ -98,7 +104,6 @@ public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
         return null;
     }
 
-    //TODO: should be it defined correctly if PhpIndex.getBySignature is not used?
     @Override
     public Collection<? extends PhpNamedElement> getBySignature(String expression, Set<String> visited, int depth, Project project) {
         return null;

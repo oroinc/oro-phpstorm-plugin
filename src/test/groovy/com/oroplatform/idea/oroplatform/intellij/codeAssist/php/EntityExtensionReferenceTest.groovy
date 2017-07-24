@@ -76,20 +76,6 @@ class EntityExtensionReferenceTest extends PhpReferenceTest {
         )
     }
 
-    def void "test: suggest extension method for variable with @var phpDoc"() {
-        if(ignored) return;
-
-        suggestions(
-            """
-            |<?php
-            |/** @var \$country Oro\\Bundle\\AcmeBundle\\Entity\\Country */
-            |\$country = null;
-            |\$country-><caret>
-            """.stripMargin(),
-            ["getName", "getIsoName"]
-        )
-    }
-
     def void "test: suggest extension method for method return type"() {
         if(ignored) return;
 
