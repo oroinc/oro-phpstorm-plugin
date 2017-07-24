@@ -12,6 +12,7 @@ env:
   - "IDEA_VERSION=IU-2016.3;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/30133/php-163.7743.20.zip;TWIG_PLUGIN_URL=https://plugins.jetbrains.com/files/7303/29512/twig-163.6110.10.zip"
   - "IDEA_VERSION=IU-2016.3.3;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/31161/php-163.10504.2.zip;TWIG_PLUGIN_URL=https://plugins.jetbrains.com/files/7303/30911/twig-163.9735.4.zip"
   - "IDEA_VERSION=IU-2017.1;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/33685/php-171.3780.104.zip;TWIG_PLUGIN_URL=https://plugins.jetbrains.com/files/7303/31309/twig-171.1834.12.zip"
+  - "IDEA_VERSION=IU-2017.2;PHP_PLUGIN_URL=https://download.plugins.jetbrains.com/6610/36973/php-172.3317.83.zip;TWIG_PLUGIN_URL=https://download.plugins.jetbrains.com/7303/35796/twig-172.2827.17.zip"
 
 script: ./gradlew downloadAndUnzipPhpPlugin downloadAndUnzipTwigPlugin test -DideaVersion=$IDEA_VERSION -DphpPluginUrl=$PHP_PLUGIN_URL -DtwigPluginUrl=$TWIG_PLUGIN_URL --exclude-task=compileJava
 
