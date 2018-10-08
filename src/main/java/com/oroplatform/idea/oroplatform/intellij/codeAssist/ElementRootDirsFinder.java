@@ -9,6 +9,8 @@ import java.util.Collections;
 public class ElementRootDirsFinder implements RootDirsFinder {
     @Override
     public Collection<VirtualFile> getRootDirs(PsiElement element) {
-        return Collections.singletonList(element.getOriginalElement().getContainingFile().getOriginalFile().getVirtualFile().getParent());
+        final VirtualFile rootDir = element.getOriginalElement().getContainingFile().getOriginalFile().getVirtualFile().getParent();
+        if(rootDir == null) return Collections.emptyList();
+        else return Collections.singletonList(rootDir);
     }
 }

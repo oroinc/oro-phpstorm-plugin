@@ -14,6 +14,7 @@ import com.oroplatform.idea.oroplatform.intellij.ExtensionFileFilter;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.*;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsComponent;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsConfig;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -35,7 +36,7 @@ public class RequirejsReferenceProvider {
         private final StringWrapperProvider stringWrapperProvider = new PublicResourceWrappedStringFactory();
 
         @Override
-        public StringWrapper getStringWrapperFor(PsiElement requestElement, VirtualFile sourceDir) {
+        public StringWrapper getStringWrapperFor(@NotNull PsiElement requestElement, @NotNull VirtualFile sourceDir) {
             return Optional.ofNullable(PsiManager.getInstance(requestElement.getProject()).findDirectory(sourceDir))
                 //dir is used for StringWrapper building, because in this case not important is from which file completion
                 //is triggered (requestElement) as in cases assets in config files, but source dir of completed element (eg. js module).
@@ -76,6 +77,8 @@ public class RequirejsReferenceProvider {
 
         private Optional<String> getModuleName(PsiElement element) {
             final VirtualFile sourceDir = element.getContainingFile().getOriginalFile().getVirtualFile().getParent();
+            if(sourceDir == null) return Optional.empty();
+
             final StringWrapper stringWrapper = stringWrapperProvider.getStringWrapperFor(element, sourceDir);
             final Optional<VirtualFile> rootDirs = rootDirsFinder.getRootDirs(element).stream().findFirst().flatMap(dir -> Optional.ofNullable(dir.findChild("js")));
 

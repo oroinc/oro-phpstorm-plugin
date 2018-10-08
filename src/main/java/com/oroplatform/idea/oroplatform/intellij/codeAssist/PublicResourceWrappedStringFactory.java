@@ -8,14 +8,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.PhpNamespace;
 import com.oroplatform.idea.oroplatform.StringWrapper;
 import com.oroplatform.idea.oroplatform.symfony.Bundle;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public class PublicResourceWrappedStringFactory implements StringWrapperProvider {
     @Override
-    public StringWrapper getStringWrapperFor(PsiElement elementRequest, VirtualFile sourceDirectory) {
+    public StringWrapper getStringWrapperFor(@NotNull PsiElement elementRequest, @NotNull VirtualFile sourceDirectory) {
         return new PublicResourcesRootDirsFinder().getRootDirs(elementRequest).stream().findFirst()
             .map(publicDir -> publicDir.getParent().getParent())
             .flatMap(this::findFirstPhpFile)
@@ -33,7 +33,6 @@ public class PublicResourceWrappedStringFactory implements StringWrapperProvider
         return Optional.ofNullable(PsiManager.getInstance(element.getProject()).findFile(phpFile));
     }
 
-    @Nullable
     private Optional<VirtualFile> findFirstPhpFile(VirtualFile bundleDir) {
         for (VirtualFile virtualFile : bundleDir.getChildren()) {
             if(virtualFile.getName().endsWith(".php")) {

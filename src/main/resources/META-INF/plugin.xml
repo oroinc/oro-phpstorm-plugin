@@ -10,6 +10,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.15</h2>
+<ul>
+  <li>Fix possible NullPointerException in requirejs support</li>
+</ul>
+
 <h2>1.0.14</h2>
 <ul>
   <li>[#13] Fix possible deadlock and crash</li>
