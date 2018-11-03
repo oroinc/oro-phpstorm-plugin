@@ -1,5 +1,7 @@
 package com.oroplatform.idea.oroplatform.schema;
 
+import com.intellij.openapi.util.text.StringUtil;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -121,14 +123,16 @@ public class Property {
 
     private static class ExactlyPattern implements Pattern {
         private final String value;
+        private final String valueWithoutAt;
 
         private ExactlyPattern(String value) {
             this.value = value;
+            this.valueWithoutAt = StringUtil.trimStart(value, "@");
         }
 
         @Override
         public boolean matches(String value) {
-            return this.value.equals(value);
+            return this.value.equals(value) || !this.value.equals(this.valueWithoutAt) && this.valueWithoutAt.equals(value);
         }
 
         @Override

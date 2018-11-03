@@ -112,6 +112,18 @@ class LayoutUpdateCompletionTest extends CompletionTest {
         )
     }
 
+    def void "test: suggest @add properties when it is not in quotes"() {
+        suggestions(
+            """
+            |layout:
+            |  actions:
+            |    - @add:
+            |        <caret>
+            """.stripMargin(),
+                ["id", "parentId", "blockType", "options", "siblingId", "prepend"]
+        )
+    }
+
     def void "test: suggest @remove properties"() {
         suggestions(
             """
