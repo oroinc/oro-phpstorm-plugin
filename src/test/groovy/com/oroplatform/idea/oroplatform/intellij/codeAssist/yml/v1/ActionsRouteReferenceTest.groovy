@@ -68,7 +68,7 @@ class ActionsRouteReferenceTest extends CompletionTest implements RandomIdentifi
     def void "test: suggest routes"() {
         suggestions(
             """
-`           |operations:
+            |operations:
             |  op1:
             |    routes:
             |      - <caret>
@@ -80,7 +80,7 @@ class ActionsRouteReferenceTest extends CompletionTest implements RandomIdentifi
     def void "test: detect route reference"() {
         checkReference(
             """
-`           |operations:
+            |operations:
             |  op1:
             |    routes:
             |      - ${insertSomewhere(createRoute, "<caret>")}
@@ -92,7 +92,7 @@ class ActionsRouteReferenceTest extends CompletionTest implements RandomIdentifi
     def void "test: suggest routes from symfony3 url generator"() {
         suggestions(
             """
-`           |operations:
+            |operations:
             |  op1:
             |    routes:
             |      - <caret>

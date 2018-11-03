@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 @State(
     name = "OroPlatformPluginSettings",
     storages = {
-        @Storage(file = StoragePathMacros.PROJECT_FILE),
-        @Storage(id = "dir", file = StoragePathMacros.PROJECT_CONFIG_DIR + "/oroPlatform.xml", scheme = StorageScheme.DIRECTORY_BASED)
+        @Storage(file = "$PROJECT_FILE$"),
+        @Storage(file = "$PROJECT_CONFIG_DIR$/oroPlatform.xml", scheme = StorageScheme.DIRECTORY_BASED)
     }
 )
 public class OroPlatformSettings implements PersistentStateComponent<Element>, ModificationTracker {

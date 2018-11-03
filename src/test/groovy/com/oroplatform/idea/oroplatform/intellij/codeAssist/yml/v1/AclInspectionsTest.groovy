@@ -24,7 +24,7 @@ class AclInspectionsTest extends InspectionTest {
             |some_id:
             |  $actionRequiredProperties
             |  type: <weak_warning>invalid</weak_warning>
-            """.stripMargin()
+            |""".stripMargin()
         )
     }
 
@@ -34,7 +34,7 @@ class AclInspectionsTest extends InspectionTest {
             |some_id:
             |  $actionRequiredProperties
             |  type: <weak_warning>"invalid"</weak_warning>
-            """.stripMargin()
+            |""".stripMargin()
         )
     }
 
@@ -54,7 +54,7 @@ class AclInspectionsTest extends InspectionTest {
             |some_id:
             |  $actionRequiredProperties
             |  type: "action"
-            """.stripMargin()
+            |""".stripMargin()
         )
     }
 
@@ -63,7 +63,7 @@ class AclInspectionsTest extends InspectionTest {
             """
             |some_id:
             |  <weak_warning descr="The 'label' property is required.">type: "action"</weak_warning>
-            """.stripMargin()
+            |""".stripMargin()
         )
     }
 
@@ -73,7 +73,7 @@ class AclInspectionsTest extends InspectionTest {
             |some_id:
             |  <weak_warning descr="The 'permission' property is required.">type: "entity"
             |  class: stdClass</weak_warning>
-            """.stripMargin()
+            |""".stripMargin()
         )
     }
 
@@ -85,7 +85,7 @@ class AclInspectionsTest extends InspectionTest {
             |  $actionRequiredProperties
             |  type: "action"
             |  <weak_warning>some: value</weak_warning>
-            """.stripMargin()
+            |""".stripMargin()
         )
     }
 
@@ -96,7 +96,7 @@ class AclInspectionsTest extends InspectionTest {
             |  $actionRequiredProperties
             |  type: "action"
             |  <weak_warning>permission: VIEW</weak_warning>
-            """.stripMargin()
+            |""".stripMargin()
         )
     }
 
@@ -108,7 +108,7 @@ class AclInspectionsTest extends InspectionTest {
             |  permission: VIEW
             |  class: stdClass
             |  <weak_warning>xxx: VIEW</weak_warning>
-            """.stripMargin()
+            |""".stripMargin()
         )
     }
 
@@ -121,7 +121,7 @@ class AclInspectionsTest extends InspectionTest {
             |  type: "action"
             |  <weak_warning>permission: VIEW</weak_warning>
             |  <weak_warning>class: stdClass</weak_warning>
-            """.stripMargin()
+            |""".stripMargin()
         )
     }
 
@@ -133,7 +133,7 @@ class AclInspectionsTest extends InspectionTest {
             |  type: "action"
             |  bindings:
             |    - { class: stdClass, method: abc, <weak_warning>some: value</weak_warning> }
-            """.stripMargin()
+            |""".stripMargin()
         )
     }
 
@@ -145,7 +145,7 @@ class AclInspectionsTest extends InspectionTest {
             |  type: "action"
             |  bindings:
             |    - <weak_warning>{ class: stdClass }</weak_warning>
-            """.stripMargin()
+            |""".stripMargin()
         )
     }
 
@@ -155,7 +155,7 @@ class AclInspectionsTest extends InspectionTest {
             |some_id:
             |  $actionRequiredProperties
             |  type: <weak_warning>["action"]</weak_warning>
-            """.stripMargin()
+            |""".stripMargin()
         )
     }
 
@@ -166,7 +166,7 @@ class AclInspectionsTest extends InspectionTest {
             |  $actionRequiredProperties
             |  type: "action"
             |  <weak_warning>type: "action"</weak_warning>
-            """.stripMargin()
+            |""".stripMargin()
         )
     }
 
@@ -176,7 +176,7 @@ class AclInspectionsTest extends InspectionTest {
             |some_id:
             |  $actionRequiredProperties
             |  <weak_warning>type:</weak_warning>
-            """.stripMargin()
+            |""".stripMargin()
         )
     }
 }

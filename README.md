@@ -1,4 +1,4 @@
-Oro PhpStorm Plugin [![Build Status](https://travis-ci.org/orocrm/oro-phpstorm-plugin.svg?branch=master)](https://travis-ci.org/orocrm/oro-phpstorm-plugin)
+Oro PhpStorm Plugin [![Build Status](https://travis-ci.org/oroinc/oro-phpstorm-plugin.svg?branch=master)](https://travis-ci.org/oroinc/oro-phpstorm-plugin)
 ==========================================================================================================================================================================
 
 [![Version](http://phpstorm.espend.de/badge/8449/version)](https://plugins.jetbrains.com/plugin/8449)

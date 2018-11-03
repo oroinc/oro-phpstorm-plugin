@@ -6,15 +6,17 @@ jdk:
   - oraclejdk8
 
 env:
-  - "IDEA_VERSION=IU-2016.1.3;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/25793/php-145.970.40.zip;TWIG_PLUGIN_URL=https://plugins.jetbrains.com/files/7303/24757/twig-145.258.2.zip"
-  - "IDEA_VERSION=IU-2016.2;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/27035/php-162.1121.34.zip;TWIG_PLUGIN_URL=https://plugins.jetbrains.com/files/7303/27028/twig-162.1121.34.zip"
-  - "IDEA_VERSION=IU-2016.2.5;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/27859/php-162.1628.23.zip;TWIG_PLUGIN_URL=https://plugins.jetbrains.com/files/7303/27028/twig-162.1121.34.zip"
-  - "IDEA_VERSION=IU-2016.3;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/30133/php-163.7743.20.zip;TWIG_PLUGIN_URL=https://plugins.jetbrains.com/files/7303/29512/twig-163.6110.10.zip"
-  - "IDEA_VERSION=IU-2016.3.3;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/31161/php-163.10504.2.zip;TWIG_PLUGIN_URL=https://plugins.jetbrains.com/files/7303/30911/twig-163.9735.4.zip"
-  - "IDEA_VERSION=IU-2017.1;PHP_PLUGIN_URL=https://plugins.jetbrains.com/files/6610/33685/php-171.3780.104.zip;TWIG_PLUGIN_URL=https://plugins.jetbrains.com/files/7303/31309/twig-171.1834.12.zip"
-  - "IDEA_VERSION=IU-2017.2;PHP_PLUGIN_URL=https://download.plugins.jetbrains.com/6610/36973/php-172.3317.83.zip;TWIG_PLUGIN_URL=https://download.plugins.jetbrains.com/7303/35796/twig-172.2827.17.zip"
+  - "IDEA_VERSION=IU-2016.1.3;PHP_PLUGIN_VERSION=145.970.40;TWIG_PLUGIN_VERSION=145.258.2"
+  - "IDEA_VERSION=IU-2016.2;PHP_PLUGIN_VERSION=162.1121.34;TWIG_PLUGIN_VERSION=162.1121.34"
+  - "IDEA_VERSION=IU-2016.2.5;PHP_PLUGIN_VERSION=162.1628.23;TWIG_PLUGIN_VERSION=162.1121.34"
+  - "IDEA_VERSION=IU-2016.3;PHP_PLUGIN_VERSION=163.7743.20;TWIG_PLUGIN_VERSION=163.6110.10"
+  - "IDEA_VERSION=IU-2016.3.3;PHP_PLUGIN_VERSION=163.10504.2;TWIG_PLUGIN_VERSION=163.9735.4"
+  - "IDEA_VERSION=IU-2017.1;PHP_PLUGIN_VERSION=171.3780.104;TWIG_PLUGIN_VERSION=171.1834.12"
+  - "IDEA_VERSION=IU-2017.2;PHP_PLUGIN_VERSION=172.3317.83;TWIG_PLUGIN_VERSION=172.2827.17"
+  - "IDEA_VERSION=IU-2018.2.4;PHP_PLUGIN_VERSION=182.4505.42;TWIG_PLUGIN_VERSION=182.3458.35"
+  - "IDEA_VERSION=IU-2018.3;PHP_PLUGIN_VERSION=183.4284.150;TWIG_PLUGIN_VERSION=183.3795.24"
 
-script: ./gradlew downloadAndUnzipPhpPlugin downloadAndUnzipTwigPlugin test -DideaVersion=$IDEA_VERSION -DphpPluginUrl=$PHP_PLUGIN_URL -DtwigPluginUrl=$TWIG_PLUGIN_URL --exclude-task=compileJava
+script: ./gradlew test -DideaVersion=$IDEA_VERSION -DphpPluginVersion=$PHP_PLUGIN_VERSION -DtwigPluginVersion=$TWIG_PLUGIN_VERSION --exclude-task=compileJava
 
 matrix:
   allow_failures: []
