@@ -6,7 +6,7 @@
 
 Execute: `./gradlew buildPlugin`. The first run takes a long time as Gradle needs to download the whole IntelliJ SDK. 
 
-After the command executed successfully, a .zip file with the plugin will be available in the `build/libs` directory.
+After the command executed successfully, a .zip file with the plugin will be available in the `build/distributions` directory.
 
 ## How to run tests?
 
