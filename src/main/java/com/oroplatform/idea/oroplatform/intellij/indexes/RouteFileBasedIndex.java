@@ -71,9 +71,10 @@ public class RouteFileBasedIndex extends FileBasedIndexExtension<String, Route> 
                         final PhpClass phpClass = (PhpClass) element;
 
                         //for symfony <2.8
-                        final Collection<Field> fields = phpClass.getOwnFieldMap().get("declaredRoutes");
-                        for (Field field : fields) {
-                            indexRoutes(index, field.getDefaultValue());
+                        for (Field field : phpClass.getOwnFields()) {
+                            if (field.getName().equals("declaredRoutes")) {
+                                indexRoutes(index, field.getDefaultValue());
+                            }
                         }
 
                         //for symfony >=2.8
