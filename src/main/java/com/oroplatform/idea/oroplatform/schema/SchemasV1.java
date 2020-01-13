@@ -121,7 +121,7 @@ public class SchemasV1 {
 
         return Container.with(
             Container.with(
-                Property.named("extended_entity_name", OneOf.from(Scalars.entity, Scalars.any)),
+                Property.named("extended_entity_name", OneOf.from(Scalars.fullEntity, Scalars.any)),
                 Property.named("acl_resource", Scalars.acl),
                 Property.named("mixins", Sequence.of(Scalars.datagrid)),
                 Property.named("source", Container.with(
@@ -130,7 +130,7 @@ public class SchemasV1 {
                     Property.named("query", Container.with(
                         Property.named("select", Sequence.of(Scalars.any)),
                         Property.named("from", Sequence.of(Container.with(
-                            Property.named("table", Scalars.entity),
+                            Property.named("table", Scalars.fullEntity),
                             Property.named("alias", Scalars.any)
                         ))),
                         Property.named("join", Container.with(
