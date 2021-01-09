@@ -7,10 +7,9 @@ import com.jetbrains.php.PhpIcons;
 import javax.swing.*;
 
 public class Icons {
-    public static final Icon DOCTRINE = IconLoader.findIcon("icons/doctrine.png");
-    public static final Icon TWIG = IconLoader.findIcon("icons/twig.png");
-    public static final Icon ROUTE = IconLoader.findIcon("icons/route.png");
-    public static final Icon ORO = IconLoader.findIcon("icons/oro.png");
+    public static final Icon DOCTRINE = IconLoader.getIcon("icons/doctrine.png");
+    public static final Icon ROUTE = IconLoader.getIcon("icons/route.png");
+    public static final Icon ORO = IconLoader.getIcon("icons/oro.png");
     public static final Icon PUBLIC_METHOD;
 
     static {
