@@ -10,6 +10,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.0.19</h2>
+<ul>
+  <li>[#17] Fixed IllegalArgumentException in Twig templates used by layouts in PHPStorm 2020.3</li>
+</ul>
+
 <h2>1.0.18</h2>
 <ul>
   <li>[#15] extended_entity_name and table options for datagrids provide incorrect suggestions</li>
