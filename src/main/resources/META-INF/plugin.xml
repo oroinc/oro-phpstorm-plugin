@@ -1,6 +1,6 @@
 <idea-plugin version="2">
     <id>com.oroplatform.idea.oroplatform</id>
-    <name>Oro PHPStorm Plugin</name>
+    <name>OroPlatform</name>
     <vendor url="https://github.com/orocrm/oro-phpstorm-plugin">Oro Inc.</vendor>
 
     <description><![CDATA[
@@ -10,6 +10,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>2022.3</h2>
+<ul>
+  <li>Fixed compatibility with PHPStorm 2022.3</li>
+</ul>
+
 <h2>1.0.19</h2>
 <ul>
   <li>[#17] Fixed IllegalArgumentException in Twig templates used by layouts in PHPStorm 2020.3</li>

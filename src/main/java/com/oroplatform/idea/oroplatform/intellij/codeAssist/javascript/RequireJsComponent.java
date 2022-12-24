@@ -54,15 +54,17 @@ public class RequireJsComponent implements ProjectComponent {
 
     @Override
     public void initComponent() {
-        if(ApplicationManager.getApplication().isUnitTestMode()) {
-            init();
-        } else {
-            StartupManager.getInstance(project).registerPostStartupActivity(() -> {
-                if(OroPlatformSettings.getInstance(project).isPluginEnabled()) {
-                    init();
-                }
-            });
-        }
+        // RequireJS bundle was removed in OroCommerce 4.1
+        return;
+//        if(ApplicationManager.getApplication().isUnitTestMode()) {
+//            init();
+//        } else {
+//            StartupManager.getInstance(project).registerPostStartupActivity(() -> {
+//                if(OroPlatformSettings.getInstance(project).isPluginEnabled()) {
+//                    init();
+//                }
+//            });
+//        }
     }
 
     private void init() {
