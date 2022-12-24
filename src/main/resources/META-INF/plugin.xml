@@ -233,7 +233,7 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
 </ul>
     ]]></change-notes>
 
-    <idea-version since-build="145.258.0"/>
+    <idea-version since-build="223.7571.212"/>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.jetbrains.php</depends>
