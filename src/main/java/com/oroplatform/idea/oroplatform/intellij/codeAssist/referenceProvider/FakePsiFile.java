@@ -51,7 +51,7 @@ class FakePsiFile implements PsiFile {
     }
 
     @Override
-    public boolean processChildren(PsiElementProcessor<PsiFileSystemItem> processor) {
+    public boolean processChildren(@NotNull PsiElementProcessor<? super PsiFileSystemItem> processor) {
         return psiDirectory.processChildren(processor);
     }
 

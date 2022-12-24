@@ -44,7 +44,7 @@ public class TwigLineMarker implements LineMarkerProvider {
     }
 
     @Override
-    public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
+    public void collectSlowLineMarkers(@NotNull List<? extends PsiElement> elements, @NotNull Collection<? super LineMarkerInfo<?>> result) {
         if(elements.isEmpty() || !OroPlatformSettings.getInstance(elements.get(0).getProject()).isPluginEnabled()) {
             return;
         }
@@ -80,7 +80,7 @@ public class TwigLineMarker implements LineMarkerProvider {
                                     .flatMap(file -> toStream(PsiManager.getInstance(project).findFile(file)))
                                     .flatMap(elementFilter(YAMLFile.class))
                                     .flatMap(file -> ReferencesSearch.search(twigFile, GlobalSearchScope.fileScope(file)).findAll().stream())
-                                    .map(PsiReference::getElement)
+                                    .map(ref -> ref.getElement())
                                     .collect(Collectors.toList());
                             }
                         })
