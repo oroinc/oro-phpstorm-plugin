@@ -10,6 +10,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>2023.1</h2>
+<ul>
+  <li>Updated compatibility with PHPStorm 2023.1</li>
+</ul>
+
 <h2>2022.3</h2>
 <ul>
   <li>Fixed compatibility with PHPStorm 2022.3</li>
@@ -238,7 +243,7 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
 </ul>
     ]]></change-notes>
 
-    <idea-version since-build="223.7571.212"/>
+    <idea-version since-build="231.8109.51"/>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.jetbrains.php</depends>
