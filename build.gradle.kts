@@ -2,12 +2,21 @@ plugins {
     id("org.jetbrains.intellij") version "1.14.2"
 }
 
+
+buildscript {
+    project.apply {
+        from("$rootDir/config/settings.gradle.kts")
+    }
+}
+
 group = "com.oroplatform"
 version = "2023.1"
 
+val javaLanguageVersionSetting = project.extra["javaLanguageVersionSetting"].toString()
+
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(javaLanguageVersionSetting))
     }
 }
 
@@ -33,7 +42,8 @@ repositories {
 
 tasks {
     runIde {
-        ideDir.set(file("/home/aleksander/programs/PhpStorm-231.8109.199"))
+        val pathToIde = project.extra["pathToIde"]
+        ideDir.set(file("$pathToIde"))
     }
     buildSearchableOptions {
         enabled = true
