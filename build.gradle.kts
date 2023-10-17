@@ -10,7 +10,7 @@ buildscript {
 }
 
 group = "com.oroplatform"
-version = "2023.1"
+version = "2023.2"
 
 val javaLanguageVersionSetting = project.extra["javaLanguageVersionSetting"].toString()
 
@@ -23,15 +23,15 @@ java {
 intellij {
     pluginName.set("idea-oroplatform-plugin")
     type.set("IU")
-    version.set("2023.1")
+    version.set("2023.2.3")
     plugins.set(listOf(
-        "com.jetbrains.php:231.8109.51",
+        "com.jetbrains.php:232.10072.27",
         "yaml",
         "java-i18n",
         "properties",
         "css-impl",
         "JavaScript",
-        "com.jetbrains.twig:231.8109.78"
+        "com.jetbrains.twig:232.10072.32"
     ))
     sandboxDir.set("${project.rootDir}/.idea-sandbox")
 }
