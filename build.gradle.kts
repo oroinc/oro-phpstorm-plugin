@@ -5,6 +5,12 @@ plugins {
 group = "com.oroplatform"
 version = "2023.1"
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 intellij {
     pluginName.set("idea-oroplatform-plugin")
     type.set("IU")
@@ -27,6 +33,9 @@ repositories {
 
 tasks {
     runIde {
-        ideDir.set(file("/home/michael/Programs/PhpStorm-231.8770.68"))
+        ideDir.set(file("/home/aleksander/programs/PhpStorm-231.8109.199"))
+    }
+    buildSearchableOptions {
+        enabled = true
     }
 }
