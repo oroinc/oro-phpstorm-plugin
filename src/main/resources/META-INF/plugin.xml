@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.oroplatform.idea.oroplatform</id>
     <name>OroPlatform</name>
-    <vendor url="https://github.com/orocrm/oro-phpstorm-plugin">oroinc</vendor>
+    <vendor url="https://github.com/oroinc/oro-phpstorm-plugin">oroinc</vendor>
 
     <description><![CDATA[
 <h1>Oro PHPStorm Plugin</h1>
