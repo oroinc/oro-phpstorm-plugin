@@ -5,7 +5,7 @@ plugins {
 
 buildscript {
     project.apply {
-        from("$rootDir/config/settings.gradle.kts")
+        from("$rootDir/config/extra-settings.gradle.kts")
     }
 }
 
