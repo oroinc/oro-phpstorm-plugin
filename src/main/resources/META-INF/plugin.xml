@@ -272,6 +272,7 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
         <php.typeProvider3 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.php.EntityExtensionTypeProvider"/>
         <projectConfigurable instance="com.oroplatform.idea.oroplatform.settings.OroPlatformForm"
                              id="OroPlatform.settings"
+                             displayName="ORO Platform Config"
                              groupId="language" />
         <projectService serviceImplementation="com.oroplatform.idea.oroplatform.settings.OroPlatformSettings"/>
         <localInspection

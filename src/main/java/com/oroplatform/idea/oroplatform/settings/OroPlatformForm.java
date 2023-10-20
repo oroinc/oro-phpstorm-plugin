@@ -1,10 +1,13 @@
 package com.oroplatform.idea.oroplatform.settings;
 
 import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.ui.TextBrowseFolderListener;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -36,32 +39,30 @@ public class OroPlatformForm implements Configurable {
     public OroPlatformForm(@NotNull Project project) {
         this.project = project;
         appDirDefault.addActionListener(e -> appDir.setText(OroPlatformSettings.DEFAULT_APP_DIRECTORY));
-        appDir.getButton().addMouseListener(listener(appDir));
+        appDir.addBrowseFolderListener(listener(appDir));
     }
 
-    private MouseListener listener(final TextFieldWithBrowseButton textField) {
-        return new MouseAdapter() {
+    private TextBrowseFolderListener listener(final TextFieldWithBrowseButton textField) {
+
+        FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
+        return new TextBrowseFolderListener(descriptor, project) {
+
             @Override
-            public void mousePressed(MouseEvent e) {
-                final String text = textField.getTextField().getText();
-                VirtualFile chosenFile = FileChooser.chooseFile(
-                    FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-                    project,
-                    VfsUtil.findRelativeFile(text == null ? "" : text, project.getBaseDir())
+            public void actionPerformed(ActionEvent e) {
+                VirtualFile projectDir = ProjectUtil.guessProjectDir(project);
+                VirtualFile selectedFile = FileChooser.chooseFile(
+                        descriptor,
+                        project,
+                        VfsUtil.findRelativeFile(appDir.getText(), projectDir)
                 );
 
-                if (chosenFile == null) {
+                if (null == selectedFile) {
                     return;
                 }
 
-                String path = VfsUtil.getRelativePath(chosenFile, project.getBaseDir(), '/');
+                String relativePath = projectDir != null ? VfsUtil.getRelativePath(selectedFile, projectDir) : null;
 
-                if (path == null) {
-                    //chosen file is out of the project base dir
-                    path = chosenFile.getPath();
-                }
-
-                textField.setText(path);
+                appDir.setText(relativePath);
             }
         };
     }

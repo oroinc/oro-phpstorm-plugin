@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 class EntityExtensions {
 
-    static final String EXTENSIONS_DIR_RELATIVE_PATH = "cache/dev/oro_entities/Extend/Entity";
+    static final String EXTENSIONS_DIR_RELATIVE_PATH = "var/cache/dev/oro_entities/Extend/Entity";
 
     private static final Key<CachedValue<Map<String, Collection<String>>>> CACHE_KEY =
         new Key<>("com.oroplatform.idea.oroplatform.cache.entity_extensions");

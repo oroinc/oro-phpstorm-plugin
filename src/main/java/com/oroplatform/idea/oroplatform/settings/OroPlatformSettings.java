@@ -39,7 +39,8 @@ public class OroPlatformSettings implements PersistentStateComponent<Element>, M
     }
 
     public VirtualFile getAppVirtualDir() {
-        return getProjectRoot(project).findFileByRelativePath(OroPlatformSettings.getInstance(project).getAppDir());
+        VirtualFile appVirtualDir = getProjectRoot(project).findFileByRelativePath(OroPlatformSettings.getInstance(project).getAppDir());
+        return appVirtualDir != null ? appVirtualDir : getProjectRoot(project).findFileByRelativePath("");
     }
 
     private static VirtualFile getProjectRoot(Project project) {
