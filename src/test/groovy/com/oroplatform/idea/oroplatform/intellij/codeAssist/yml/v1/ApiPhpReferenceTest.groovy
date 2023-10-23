@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull
 
 
 class ApiPhpReferenceTest extends PhpReferenceTest implements RandomIdentifiers {
-    @Override
+
     String fileName() {
         return SchemasV1.FilePathPatterns.API
     }
@@ -19,13 +19,11 @@ class ApiPhpReferenceTest extends PhpReferenceTest implements RandomIdentifiers 
     def parameter1 = randomIdentifier("parameter1")
     def parameter2 = randomIdentifier("parameter2")
 
-    @Override
     protected void setUp() throws Exception {
         super.setUp()
 
         //turn off falling tests on internal errors because there is bug in php plugin during indexing class with field
         LoggedErrorProcessor.setNewInstance(new LoggedErrorProcessor() {
-            @Override
             void processError(String message, Throwable t, String[] details, @NotNull Logger logger) {
             }
         })

@@ -15,7 +15,6 @@ abstract class PhpReferenceTest extends CompletionTest {
 
         //turn off falling tests on internal errors because there is bug in php plugin during indexing class with field
         LoggedErrorProcessor.setNewInstance(new LoggedErrorProcessor() {
-            @Override
             void processError(String message, Throwable t, String[] details, @NotNull Logger logger) {
             }
         })

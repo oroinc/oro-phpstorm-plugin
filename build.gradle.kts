@@ -1,7 +1,27 @@
 plugins {
     id("org.jetbrains.intellij") version "1.14.2"
+    id("groovy")
 }
 
+
+dependencies {
+    sourceSets.named("test") {
+        implementation("junit:junit:4.11")
+        testImplementation("org.junit.platform:junit-platform-launcher")
+        testRuntimeOnly("org.junit.vintage:junit-vintage-engine") {
+            because("allows JUnit 3 and JUnit 4 tests to run")
+        }
+        testImplementation("org.spockframework:spock-core:2.4-M1-groovy-4.0") {
+            because("allows Spock specifications to run")
+        }
+        testImplementation("org.junit.jupiter:junit-jupiter-api")
+        testImplementation("org.junit.jupiter:junit-jupiter")
+    }
+}
+
+java.sourceSets["test"].java {
+    srcDir("src/test/groovy")
+}
 
 buildscript {
     project.apply {
@@ -47,5 +67,10 @@ tasks {
     }
     buildSearchableOptions {
         enabled = true
+    }
+    test {
+        useJUnitPlatform() {
+            includeEngines("junit-vintage", "junit-jupiter")
+        }
     }
 }
