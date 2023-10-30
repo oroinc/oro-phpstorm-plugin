@@ -1,5 +1,6 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist
+package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist
 
+import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest;
 import com.intellij.psi.PsiPolyVariantReferenceBase
 import com.intellij.testFramework.LoggedErrorProcessor
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement
@@ -14,11 +15,10 @@ abstract class PhpReferenceTest extends CompletionTest {
         super.setUp()
 
         //turn off falling tests on internal errors because there is bug in php plugin during indexing class with field
-        LoggedErrorProcessor.setNewInstance(new LoggedErrorProcessor() {
-            @Override
-            void processError(String message, Throwable t, String[] details, @NotNull Logger logger) {
-            }
-        })
+//        LoggedErrorProcessor.setNewInstance(new LoggedErrorProcessor() {
+//            void processError(String message, Throwable t, String[] details, @NotNull Logger logger) {
+//            }
+//        })
     }
 
     def checkPhpReference(String content, List<String> expectedReferences) {

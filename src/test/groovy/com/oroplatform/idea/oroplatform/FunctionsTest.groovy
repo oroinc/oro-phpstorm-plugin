@@ -1,7 +1,8 @@
-package com.oroplatform.idea.oroplatform
+package groovy.com.oroplatform.idea.oroplatform
 
 import org.junit.Test
 import static org.junit.Assert.*
+import com.oroplatform.idea.oroplatform.Functions;
 
 class FunctionsTest {
 

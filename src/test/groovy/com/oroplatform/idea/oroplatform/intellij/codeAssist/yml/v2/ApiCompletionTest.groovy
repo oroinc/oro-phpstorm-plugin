@@ -1,6 +1,6 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v2
+package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v2
 
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
+import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
 import com.oroplatform.idea.oroplatform.schema.SchemasV2
 
 class ApiCompletionTest extends PhpReferenceTest {

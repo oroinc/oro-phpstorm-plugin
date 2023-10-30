@@ -1,7 +1,7 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
+package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
+import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
+import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
 class ApiDicCompletionTest extends PhpReferenceTest implements RandomIdentifiers {

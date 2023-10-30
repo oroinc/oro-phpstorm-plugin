@@ -1,9 +1,9 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist
+package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings
 
-abstract class TestCase extends LightPlatformCodeInsightFixtureTestCase {
+abstract class TestCase extends BasePlatformTestCase {
 
     abstract def String fileName()
 

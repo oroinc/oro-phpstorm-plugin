@@ -1,4 +1,4 @@
-package com.oroplatform.idea.oroplatform.symfony
+package groovy.com.oroplatform.idea.oroplatform.symfony
 
 import org.junit.Test
 import static org.junit.Assert.*

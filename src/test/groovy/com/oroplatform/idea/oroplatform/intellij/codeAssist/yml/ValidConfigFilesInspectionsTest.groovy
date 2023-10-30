@@ -1,7 +1,8 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
+package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.SchemaInspection;
 
 class ValidConfigFilesInspectionsTest extends CodeInsightFixtureTestCase {
 
@@ -11,43 +12,43 @@ class ValidConfigFilesInspectionsTest extends CodeInsightFixtureTestCase {
         myFixture.enableInspections(SchemaInspection.class)
     }
 
-    def void "test: check workflows.yml file"() {
+    def void "test: check workflows yml file"() {
         checkFile("Resources/config/oro/workflows.yml")
     }
 
-    def void "test: check acls.yml file"() {
+    def void "test: check acls yml file"() {
         checkFile("Resources/config/oro/acls.yml")
     }
 
-    def void "test: check datagrids.yml file"() {
+    def void "test: check datagrids yml file"() {
         checkFile("Resources/config/oro/datagrids.yml")
     }
 
-    def void "test: check entity.yml file"() {
+    def void "test: check entity yml file"() {
         checkFile("Resources/config/oro/entity.yml")
     }
 
-    def void "test: check system_configuration.yml file"() {
+    def void "test: check system_configuration yml file"() {
         checkFile("Resources/config/oro/system_configuration.yml")
     }
 
-    def void "test: check api.yml file"() {
+    def void "test: check api yml file"() {
         checkFile("Resources/config/oro/api.yml")
     }
 
-    def void "test: check actions.yml file"() {
+    def void "test: check actions yml file"() {
         checkFile("Resources/config/oro/actions.yml")
     }
 
-    def void "test: check dashboards.yml file"() {
+    def void "test: check dashboards yml file"() {
         checkFile("Resources/config/oro/dashboards.yml")
     }
 
-    def void "test: check navigation.yml file"() {
+    def void "test: check navigation yml file"() {
         checkFile("Resources/config/oro/navigation.yml")
     }
 
-    def void "test: check search.yml file"() {
+    def void "test: check search yml file"() {
         checkFile("Resources/config/oro/search.yml")
     }
 

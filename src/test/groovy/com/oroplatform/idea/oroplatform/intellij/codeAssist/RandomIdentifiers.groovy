@@ -1,4 +1,4 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist
+package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist
 
 
 trait RandomIdentifiers {

@@ -1,6 +1,6 @@
-package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
+package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.InspectionTest
+import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.InspectionTest
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.SchemaInspection
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
