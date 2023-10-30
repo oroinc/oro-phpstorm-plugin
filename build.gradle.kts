@@ -1,22 +1,44 @@
 plugins {
     id("org.jetbrains.intellij") version "1.14.2"
+    id("groovy")
+}
+
+
+dependencies {
+    sourceSets.named("test") {
+        testImplementation("org.codehaus.groovy:groovy-all:2.4.14")
+    }
+}
+
+buildscript {
+    project.apply {
+        from("$rootDir/config/extra-settings.gradle.kts")
+    }
 }
 
 group = "com.oroplatform"
-version = "2023.1"
+version = "2023.2"
+
+val javaLanguageVersionSetting = project.extra["javaLanguageVersionSetting"].toString()
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(javaLanguageVersionSetting))
+    }
+}
 
 intellij {
     pluginName.set("idea-oroplatform-plugin")
     type.set("IU")
-    version.set("2023.1")
+    version.set("2023.2.3")
     plugins.set(listOf(
-        "com.jetbrains.php:231.8109.51",
+        "com.jetbrains.php:232.10072.27",
         "yaml",
         "java-i18n",
         "properties",
         "css-impl",
         "JavaScript",
-        "com.jetbrains.twig:231.8109.78"
+        "com.jetbrains.twig:232.10072.32"
     ))
     sandboxDir.set("${project.rootDir}/.idea-sandbox")
 }
@@ -27,6 +49,10 @@ repositories {
 
 tasks {
     runIde {
-        ideDir.set(file("/home/michael/Programs/PhpStorm-231.8770.68"))
+        val pathToIde = project.extra["pathToIde"]
+        ideDir.set(file("$pathToIde"))
+    }
+    buildSearchableOptions {
+        enabled = true
     }
 }
