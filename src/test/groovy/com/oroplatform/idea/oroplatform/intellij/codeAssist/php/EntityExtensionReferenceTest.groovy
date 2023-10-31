@@ -10,6 +10,7 @@ class EntityExtensionReferenceTest extends PhpReferenceTest {
 
     // PhpTypeProvider3 is a deprecated class - which invalidates the entire test. Setting to ignore
     // until we have actual way of providing references for extended classes (the old one doesn't work)
+    // - Alek Mosingiewicz
     def boolean ignored = true
 
     @Override
