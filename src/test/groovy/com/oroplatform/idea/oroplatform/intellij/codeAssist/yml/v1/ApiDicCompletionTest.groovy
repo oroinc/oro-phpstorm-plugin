@@ -98,7 +98,7 @@ class ApiDicCompletionTest extends PhpReferenceTest implements RandomIdentifiers
         )
     }
 
-    def void "test: suggest api form types as fields.form_type"() {
+    def void "test: suggest api form types as fields(dot)form_type"() {
         suggestions(
             """
             |oro_api:
@@ -112,7 +112,7 @@ class ApiDicCompletionTest extends PhpReferenceTest implements RandomIdentifiers
         )
     }
 
-    def void "test: suggest standard form types defined in app.yml as fields.form_type"() {
+    def void "test: suggest standard form types defined in app(dot)yml as fields(dot)form_type"() {
         suggestions(
             """
             |oro_api:
@@ -127,7 +127,7 @@ class ApiDicCompletionTest extends PhpReferenceTest implements RandomIdentifiers
         )
     }
 
-    def void "test: detect standard form types references in fields.form_type"() {
+    def void "test: detect standard form types references in fields(dot)form_type"() {
         checkPhpReference(
             """
             |oro_api:
@@ -141,7 +141,7 @@ class ApiDicCompletionTest extends PhpReferenceTest implements RandomIdentifiers
         )
     }
 
-    def void "test: detect oro form types references in fields.form_type"() {
+    def void "test: detect oro form types references in fields(dot)form_type"() {
         checkPhpReference(
             """
             |oro_api:

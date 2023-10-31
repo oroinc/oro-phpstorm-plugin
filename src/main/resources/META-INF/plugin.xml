@@ -296,10 +296,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
 
     </extensions>
 
-    <extensions defaultExtensionNs="com.jetbrains">
-        <!-- for PhpStorm >= 2016.3 -->
-        <php.typeProvider3 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.php.EntityExtensionTypeProvider"/>
-    </extensions>
+    <!-- This extension is obsolete and breaks unit tests - blocking for now - Alek Mosingiewicz -->
+<!--    <extensions defaultExtensionNs="com.jetbrains">-->
+<!--        &lt;!&ndash; for PhpStorm >= 2016.3 &ndash;&gt;-->
+<!--        <php.typeProvider3 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.php.EntityExtensionTypeProvider"/>-->
+<!--    </extensions>-->
 
     <project-components>
         <component>

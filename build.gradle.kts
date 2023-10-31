@@ -55,4 +55,10 @@ tasks {
     buildSearchableOptions {
         enabled = true
     }
+    test {
+        // OPP-80: The tests that target PHP code completion are
+        // obsolete, as they assume that classes.php will store
+        // data required for indexing
+        exclude("*ApiPhp*","*ActionsPhp*","*AclPhp*")
+    }
 }

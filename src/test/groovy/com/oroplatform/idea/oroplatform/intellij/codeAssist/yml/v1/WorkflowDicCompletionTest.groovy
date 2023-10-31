@@ -333,7 +333,7 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
         )
     }
 
-    def void "test: suggest action options from getOption and \$this->options"() {
+    def void "test: suggest action options from getOption and \$this(arrow)options"() {
         suggestions(
             """
             |workflows:
@@ -365,7 +365,7 @@ class WorkflowDicCompletionTest extends PhpReferenceTest implements RandomIdenti
         )
     }
 
-    def void "test: suggest parameters, conditions etc. for actions"() {
+    def void "test: suggest parameters, conditions etc for actions"() {
         suggestions(
             """
             |workflows:
