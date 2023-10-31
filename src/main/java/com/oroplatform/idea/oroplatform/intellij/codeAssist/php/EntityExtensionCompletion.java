@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
@@ -53,6 +55,10 @@ public class EntityExtensionCompletion extends CompletionContributor {
             }
 
             private boolean excluded(Project project, String path) {
+                List<String> excludedRootUrls = Arrays.stream(ModuleManager.getInstance(project).getModules())
+                        .flatMap(module -> Arrays.stream(ModuleRootManager.getInstance(module).getExcludeRootUrls()))
+                        .map(url -> url.replaceAll(".+://", ""))
+                        .toList();
                 return Arrays.stream(ModuleManager.getInstance(project).getModules())
                     .flatMap(module -> Arrays.stream(ModuleRootManager.getInstance(module).getExcludeRootUrls()))
                     .map(url -> url.replaceAll(".+://", ""))

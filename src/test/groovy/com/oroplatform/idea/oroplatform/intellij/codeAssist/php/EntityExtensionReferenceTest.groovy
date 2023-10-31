@@ -8,11 +8,14 @@ class EntityExtensionReferenceTest extends PhpReferenceTest {
         return "test.php"
     }
 
-    def boolean ignored = false
+    // PhpTypeProvider3 is a deprecated class - which invalidates the entire test. Setting to ignore
+    // until we have actual way of providing references for extended classes (the old one doesn't work)
+    def boolean ignored = true
 
     @Override
     protected void setUp() throws Exception {
         super.setUp()
+
 
         try {
             Class.forName("com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider3")

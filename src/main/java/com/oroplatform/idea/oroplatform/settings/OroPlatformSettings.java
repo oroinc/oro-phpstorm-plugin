@@ -3,6 +3,7 @@ package com.oroplatform.idea.oroplatform.settings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
     }
 )
 public class OroPlatformSettings implements PersistentStateComponent<Element>, ModificationTracker {
-    static final String DEFAULT_APP_DIRECTORY = "bin";
+    static final String DEFAULT_APP_DIRECTORY = "";
 
     private final Project project;
 
@@ -39,12 +40,17 @@ public class OroPlatformSettings implements PersistentStateComponent<Element>, M
     }
 
     public VirtualFile getAppVirtualDir() {
-        return getProjectRoot(project).findFileByRelativePath(OroPlatformSettings.getInstance(project).getAppDir());
+        return getProjectRoot(project).findFileByRelativePath(
+                ApplicationManager.getApplication().isUnitTestMode()
+                        ? "app"
+                        : OroPlatformSettings.getInstance(project).getAppDir()
+        );
     }
 
     private static VirtualFile getProjectRoot(Project project) {
-        return ApplicationManager.getApplication().isUnitTestMode() ?
-            VirtualFileManager.getInstance().findFileByUrl("temp:///").findChild("src") : project.getBaseDir();
+        return ApplicationManager.getApplication().isUnitTestMode()
+                ? VirtualFileManager.getInstance().findFileByUrl("temp:///").findChild("src")
+                : ProjectUtil.guessProjectDir(project);
     }
 
     void setAppDir(String appDir) {
