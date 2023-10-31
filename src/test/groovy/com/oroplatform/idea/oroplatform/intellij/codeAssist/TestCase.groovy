@@ -1,4 +1,4 @@
-package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist
+package com.oroplatform.idea.oroplatform.intellij.codeAssist
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings

@@ -1,8 +1,8 @@
-package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
-import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
-import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
-import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
 class ActionsDicCompletionTest extends PhpReferenceTest implements RandomIdentifiers {

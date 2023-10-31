@@ -1,4 +1,4 @@
-package groovy.com.oroplatform.idea.oroplatform.schema
+package com.oroplatform.idea.oroplatform.schema
 
 import com.oroplatform.idea.oroplatform.schema.Container
 import com.oroplatform.idea.oroplatform.schema.OneOf

@@ -1,4 +1,4 @@
-package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist
+package com.oroplatform.idea.oroplatform.intellij.codeAssist
 
 import com.intellij.psi.PsiPolyVariantReferenceBase
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement

@@ -1,4 +1,4 @@
-package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase

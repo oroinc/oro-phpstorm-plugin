@@ -1,7 +1,7 @@
-package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.php
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.php
 
 import com.intellij.testFramework.PsiTestUtil
-import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
 
 
 class EntityExtensionCompletionTest extends CompletionTest {

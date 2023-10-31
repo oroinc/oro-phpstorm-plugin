@@ -1,6 +1,7 @@
-package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist
+package com.oroplatform.idea.oroplatform.intellij.codeAssist
 
 import com.intellij.codeInsight.lookup.Lookup
+import com.intellij.openapi.project.ProjectUtil
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiPolyVariantReferenceBase
@@ -78,7 +79,7 @@ abstract class CompletionTest extends TestCase {
     def List<String> getReferences(String content) {
         configureByText(content)
 
-        myFixture.getProject().getBaseDir().refresh(false, true)
+        ProjectUtil.guessProjectDir(myFixture.getProject()).refresh(false, true)
 
         def element = myFixture.getFile().findElementAt(myFixture.getCaretOffset())
         def elements = [element, element.getParent(), element.getParent().getParent()]

@@ -1,6 +1,6 @@
-package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript
 
-import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
 
 class RequireJsReferenceTest extends CompletionTest {
     private String oroUIPath = "vendor/Oro/Bundle/UIBundle/Resources/public/js/"

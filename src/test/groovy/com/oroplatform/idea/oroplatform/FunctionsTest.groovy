@@ -1,4 +1,4 @@
-package groovy.com.oroplatform.idea.oroplatform
+package com.oroplatform.idea.oroplatform
 
 import org.junit.Test
 import static org.junit.Assert.*

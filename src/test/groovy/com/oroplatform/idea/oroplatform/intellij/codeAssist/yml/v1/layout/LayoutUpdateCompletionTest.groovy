@@ -1,6 +1,6 @@
-package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1.layout
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1.layout
 
-import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
 
 
 class LayoutUpdateCompletionTest extends CompletionTest {

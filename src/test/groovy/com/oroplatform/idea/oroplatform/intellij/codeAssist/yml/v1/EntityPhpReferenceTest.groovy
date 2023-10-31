@@ -1,6 +1,6 @@
-package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v1
 
-import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
 import com.oroplatform.idea.oroplatform.schema.SchemasV1
 
 class EntityPhpReferenceTest extends PhpReferenceTest {

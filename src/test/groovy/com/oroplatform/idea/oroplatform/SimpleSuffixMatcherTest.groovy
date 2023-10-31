@@ -1,4 +1,4 @@
-package groovy.com.oroplatform.idea.oroplatform
+package com.oroplatform.idea.oroplatform
 
 import com.oroplatform.idea.oroplatform.SimpleSuffixMatcher
 import org.junit.Test

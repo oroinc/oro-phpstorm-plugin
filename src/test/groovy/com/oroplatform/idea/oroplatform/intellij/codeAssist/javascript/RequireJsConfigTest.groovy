@@ -1,4 +1,4 @@
-package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsConfig
 import org.junit.Test

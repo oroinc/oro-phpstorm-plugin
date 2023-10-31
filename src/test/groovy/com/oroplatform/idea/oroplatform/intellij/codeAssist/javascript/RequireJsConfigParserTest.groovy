@@ -1,7 +1,7 @@
-package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript
 
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsConfigParser
-import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.TestCase
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.TestCase
 import org.jetbrains.yaml.psi.YAMLFile
 
 class RequireJsConfigParserTest extends TestCase {

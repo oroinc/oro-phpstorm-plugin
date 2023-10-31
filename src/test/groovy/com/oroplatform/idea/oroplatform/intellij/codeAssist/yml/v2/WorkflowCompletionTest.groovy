@@ -1,7 +1,7 @@
-package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v2
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.v2
 
-import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
-import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.CompletionTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.RandomIdentifiers
 import com.oroplatform.idea.oroplatform.schema.SchemasV2
 
 class WorkflowCompletionTest extends CompletionTest implements RandomIdentifiers {

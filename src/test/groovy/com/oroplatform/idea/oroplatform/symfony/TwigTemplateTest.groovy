@@ -1,4 +1,4 @@
-package groovy.com.oroplatform.idea.oroplatform.symfony
+package com.oroplatform.idea.oroplatform.symfony
 
 import com.oroplatform.idea.oroplatform.symfony.Bundle
 import com.oroplatform.idea.oroplatform.symfony.Resource

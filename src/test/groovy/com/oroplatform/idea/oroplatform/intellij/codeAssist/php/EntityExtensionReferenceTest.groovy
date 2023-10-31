@@ -1,6 +1,6 @@
-package groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.php
+package com.oroplatform.idea.oroplatform.intellij.codeAssist.php
 
-import groovy.com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.PhpReferenceTest
 
 class EntityExtensionReferenceTest extends PhpReferenceTest {
     @Override
