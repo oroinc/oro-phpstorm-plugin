@@ -56,9 +56,14 @@ tasks {
         enabled = true
     }
     test {
-        // OPP-80: The tests that target PHP code completion are
-        // obsolete, as they assume that classes.php will store
-        // data required for indexing
-        exclude("*ApiPhp*","*ActionsPhp*","*AclPhp*")
+        // OPP-80: The tests that target PHP code completion and JS completion
+        // or those that use the information no longer present in classes.php in the newer version of the platform
+        // are obsolete, as they assume that classes.php will store
+        // data required for indexing, hence they should be removed from tests
+        // Alek Mosingiewicz
+        setExcludes(listOf(
+                "*com/oroplatform/idea/oroplatform/intellij/codeAssist/javascript*",
+                "*com/oroplatform/idea/oroplatform/intellij/codeAssist/yml/v1/AclPhpReferenceTest*",
+        ))
     }
 }
