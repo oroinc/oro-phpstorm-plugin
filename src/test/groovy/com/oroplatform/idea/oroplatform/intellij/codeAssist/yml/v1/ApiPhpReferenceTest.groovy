@@ -22,12 +22,6 @@ class ApiPhpReferenceTest extends PhpReferenceTest implements RandomIdentifiers 
     protected void setUp() throws Exception {
         super.setUp()
 
-        //turn off falling tests on internal errors because there is bug in php plugin during indexing class with field
-        LoggedErrorProcessor.setNewInstance(new LoggedErrorProcessor() {
-            void processError(String message, Throwable t, String[] details, @NotNull Logger logger) {
-            }
-        })
-
         myFixture.configureByText("classes.php",
             """
             |<?php
@@ -306,11 +300,5 @@ class ApiPhpReferenceTest extends PhpReferenceTest implements RandomIdentifiers 
             ["someFuncInstance"],
             ["someFunc"]
         )
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown()
-        LoggedErrorProcessor.setNewInstance(new LoggedErrorProcessor())
     }
 }
