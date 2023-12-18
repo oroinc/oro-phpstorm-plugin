@@ -12,16 +12,26 @@ class TypePropertyDescriptionProviderTest {
 
     @Test
     def void "should use property value type as description"() {
-        final PropertyDescriptionProvider provider = new TypePropertyDescriptionProvider();
-        assertEquals("object", provider.getDescription(Property("some", Container())))
-        assertEquals("string", provider.getDescription(Property("some", Scalars.any)))
-        assertEquals("integer", provider.getDescription(Property("some", Scalars.integer)))
-        assertEquals("boolean", provider.getDescription(Property("some", Scalars.bool)))
-        assertEquals("string[]", provider.getDescription(Property("some", new Sequence(Scalars.any))))
-        assertEquals("object[]", provider.getDescription(Property("some", new Sequence(Container()))))
-        assertEquals("integer or boolean", provider.getDescription(Property("some", OneOf(Scalars.integer, Scalars.bool))))
-        assertEquals("integer", provider.getDescription(Property("some", OneOf(Scalars.integer, Scalars.integer))))
-        assertEquals("boolean", provider.getDescription(Property("some", Scalars.bool)))
-        assertEquals("boolean", provider.getDescription(Property("some", Repeated.atAnyLevel(Scalars.bool))))
+        final PropertyDescriptionProvider provider = new TypePropertyDescriptionProvider()
+        assertEquals("object", provider.getDescription(new Property("some", createTestContainer())))
+        assertEquals("string", provider.getDescription(new Property("some", Scalars.any)))
+        assertEquals("integer", provider.getDescription(new Property("some", Scalars.integer)))
+        assertEquals("boolean", provider.getDescription(new Property("some", Scalars.bool)))
+        assertEquals("string[]", provider.getDescription(new Property("some", new Sequence(Scalars.any))))
+        assertEquals("object[]", provider.getDescription(new Property("some", new Sequence(createTestContainer()))))
+        assertEquals("integer or boolean", provider.getDescription(new Property("some", new OneOf(Scalars.integer, Scalars.bool))))
+        assertEquals("integer", provider.getDescription(new Property("some", new OneOf(Scalars.integer, Scalars.integer))))
+        assertEquals("boolean", provider.getDescription(new Property("some", Scalars.bool)))
+        assertEquals("boolean", provider.getDescription(new Property("some", Repeated.atAnyLevel(Scalars.bool))))
+    }
+
+    def static Container createTestContainer() {
+        Property property = new Property('test', new Element() {
+            @Override
+            void accept(Visitor visitor) {
+                return; //dummy method
+            }
+        })
+        return new Container(property)
     }
 }
