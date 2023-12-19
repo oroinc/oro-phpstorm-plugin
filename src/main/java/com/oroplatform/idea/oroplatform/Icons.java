@@ -7,9 +7,9 @@ import com.intellij.ui.RowIcon;
 import javax.swing.*;
 
 public class Icons {
-    public static final Icon DOCTRINE = IconLoader.getIcon("icons/doctrine.png");
-    public static final Icon ROUTE = IconLoader.getIcon("icons/route.png");
-    public static final Icon ORO = IconLoader.getIcon("icons/oro.png");
+    public static final Icon DOCTRINE = IconLoader.getIcon("icons/doctrine.png", Icons.class);
+    public static final Icon ROUTE = IconLoader.getIcon("icons/route.png", Icons.class);
+    public static final Icon ORO = IconLoader.getIcon("icons/oro.png", Icons.class);
     public static final Icon PUBLIC_METHOD;
 
     static {
