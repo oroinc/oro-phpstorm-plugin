@@ -12,6 +12,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 @State(
     name = "OroPlatformPluginSettings",
     storages = {
@@ -50,7 +52,7 @@ public class OroPlatformSettings implements PersistentStateComponent<Element>, M
 
     private static VirtualFile getProjectRoot(Project project) {
         return ApplicationManager.getApplication().isUnitTestMode()
-                ? VirtualFileManager.getInstance().findFileByUrl("temp:///").findChild("src")
+                ? Objects.requireNonNull(VirtualFileManager.getInstance().findFileByUrl("temp:///")).findChild("src")
                 : ProjectUtil.guessProjectDir(project);
     }
 
