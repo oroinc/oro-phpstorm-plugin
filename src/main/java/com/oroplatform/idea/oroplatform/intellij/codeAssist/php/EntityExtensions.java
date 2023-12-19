@@ -73,7 +73,7 @@ class EntityExtensions {
     }
 
     private Map<String, Collection<String>> loadEntityExtensions(VirtualFile extensionsDir) {
-        final Map<String, Collection<String>> extensions = new THashMap<>();
+        final Map<String, Collection<String>> extensions = new HashMap<>();
         for (VirtualFile file : extensionsDir.getChildren()) {
             extensions.put(file.getName(), getExtensionMethodsFromFile(file));
         }
