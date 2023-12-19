@@ -4,7 +4,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
-import com.intellij.openapi.project.impl.ProjectImpl;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -31,7 +30,7 @@ public class OroPlatformSettings implements PersistentStateComponent<Element>, M
 
     @NotNull
     public static OroPlatformSettings getInstance(@NotNull Project project) {
-        return ServiceManager.getService(project, OroPlatformSettings.class);
+        return project.getService(OroPlatformSettings.class);
     }
 
     private String appDir = DEFAULT_APP_DIRECTORY;
@@ -90,7 +89,7 @@ public class OroPlatformSettings implements PersistentStateComponent<Element>, M
         writeVerboseBoolean(pluginEnabledElement, pluginEnabled);
 
         Element timeStampElement = new Element("lastModifiedTimeStamp");
-        timeStampElement.setText(lastModifiedTimeStamp + "");
+        timeStampElement.setText(String.valueOf(lastModifiedTimeStamp));
 
         element.addContent(appDirElement);
         element.addContent(pluginEnabledElement);
