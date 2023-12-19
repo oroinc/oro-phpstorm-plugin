@@ -46,7 +46,7 @@ class ImportedFileMatcher implements FileMatcher {
         final ImportIndex index = ImportIndex.instance(file.getProject());
 
         return Stream.of(rootFileName)
-            .flatMap(filename -> Stream.of(FilenameIndex.getFilesByName(file.getProject(), filename, scope)))
+            .flatMap(filename -> Stream.of(FilenameIndex.getVirtualFilesByName(filename, scope).toArray(VirtualFile[]::new)))
             .anyMatch(rootFile -> isRootFile(filePath(rootFile)) && isImported(index, file, rootFile));
     }
 
@@ -54,11 +54,11 @@ class ImportedFileMatcher implements FileMatcher {
         return rootFilePatterns.stream().anyMatch(path::endsWith) && path.endsWith(rootFileName);
     }
 
-    private static String filePath(PsiFile file) {
-        return file.getOriginalFile().getVirtualFile().getPath();
+    private static String filePath(VirtualFile file) {
+        return file.getPath();
     }
 
-    private boolean isImported(ImportIndex index, PsiFile importedFile, PsiFile importingFile) {
+    private boolean isImported(ImportIndex index, PsiFile importedFile, VirtualFile importingFile) {
         for (String nextImportedFilePath : index.getImportedFilePathsFor(importingFile)) {
             if(nextImportedFilePath.equals(importedFile.getOriginalFile().getVirtualFile().getPath())) {
                 return true;
@@ -69,7 +69,7 @@ class ImportedFileMatcher implements FileMatcher {
 
             if (nextImportedFile != null) {
                 final PsiFile importedPsiFile = PsiManager.getInstance(importedFile.getProject()).findFile(nextImportedFile);
-                if (importedPsiFile != null && isImported(index, importedFile, importedPsiFile)) {
+                if (importedPsiFile != null && isImported(index, importedFile, importedPsiFile.getVirtualFile())) {
                     return true;
                 }
             }

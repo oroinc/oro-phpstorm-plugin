@@ -1,6 +1,7 @@
 package com.oroplatform.idea.oroplatform.intellij.indexes;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -23,12 +24,12 @@ public class ImportIndex {
         return new ImportIndex(project);
     }
 
-    public Collection<String> getImportedFilePathsFor(PsiFile file) {
+    public Collection<String> getImportedFilePathsFor(VirtualFile file) {
         final FileBasedIndex index = FileBasedIndex.getInstance();
         final Collection<String> importedFiles = index.getAllKeys(ImportFileBasedIndex.KEY, project);
 
         return importedFiles.stream()
-            .filter(filePath -> index.getContainingFiles(ImportFileBasedIndex.KEY, filePath, scope).contains(file.getVirtualFile()))
+            .filter(filePath -> index.getContainingFiles(ImportFileBasedIndex.KEY, filePath, scope).contains(file))
             .collect(Collectors.toList());
     }
 }
