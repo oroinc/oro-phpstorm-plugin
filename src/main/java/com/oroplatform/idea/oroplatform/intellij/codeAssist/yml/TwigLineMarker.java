@@ -27,9 +27,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLFile;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -72,18 +74,13 @@ public class TwigLineMarker implements LineMarkerProvider {
                 } else {
                     return Stream.of(
                         NavigationGutterIconBuilder.create(Icons.ORO)
-                        .setTargets(new NotNullLazyValue<Collection<? extends PsiElement>>() {
-                            @NotNull
-                            @Override
-                            protected Collection<? extends PsiElement> compute() {
-                                return layoutUpdates.stream()
+                                .setTargets(layoutUpdates.stream()
                                     .flatMap(file -> toStream(PsiManager.getInstance(project).findFile(file)))
                                     .flatMap(elementFilter(YAMLFile.class))
                                     .flatMap(file -> ReferencesSearch.search(twigFile, GlobalSearchScope.fileScope(file)).findAll().stream())
                                     .map(ref -> ref.getElement())
-                                    .collect(Collectors.toList());
-                            }
-                        })
+                                    .collect(Collectors.toList())
+                                )
                         .setTooltipText(OroPlatformBundle.message("gutter.navigateToLayout"))
                         .createLineMarkerInfo(twigFile)
                     );
