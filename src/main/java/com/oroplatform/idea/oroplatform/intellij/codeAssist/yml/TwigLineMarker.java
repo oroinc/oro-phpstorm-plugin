@@ -4,12 +4,10 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.jetbrains.php.PhpIndex;
@@ -27,11 +25,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLFile;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,7 +37,7 @@ import static com.oroplatform.idea.oroplatform.intellij.codeAssist.PsiElements.e
 public class TwigLineMarker implements LineMarkerProvider {
     @Nullable
     @Override
-    public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
+    public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement element) {
         return null;
     }
 
@@ -67,7 +63,7 @@ public class TwigLineMarker implements LineMarkerProvider {
                 final Collection<VirtualFile> layoutUpdates = Stream.concat(
                     index.findLayoutUpdates(twigFile.getName()).stream().filter(hasCommonAncestor),
                     getTwigTemplateAbsoluteNames(twigFile, bundles).flatMap(name -> index.findLayoutUpdates(name).stream())
-                ).collect(Collectors.toList());
+                ).toList();
 
                 if(layoutUpdates.isEmpty()) {
                     return Stream.empty();

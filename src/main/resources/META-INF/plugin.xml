@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin>
     <id>com.oroplatform.idea.oroplatform</id>
     <name>OroPlatform</name>
     <vendor url="https://github.com/oroinc/oro-phpstorm-plugin">oroinc</vendor>
