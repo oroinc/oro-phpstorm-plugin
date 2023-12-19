@@ -302,6 +302,10 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
 
         <codeInsight.lineMarkerProvider language="Twig" implementationClass="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.TwigLineMarker"/>
 
+        <notificationGroup id="Oro Notifications"
+                           displayType="BALLOON"
+                           key="notifications.group"/>
+
     </extensions>
 
     <!-- This extension is obsolete and breaks unit tests - blocking for now - Alek Mosingiewicz -->
