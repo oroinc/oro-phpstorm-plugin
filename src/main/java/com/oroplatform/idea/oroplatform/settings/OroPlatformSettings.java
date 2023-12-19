@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
     }
 )
 public class OroPlatformSettings implements PersistentStateComponent<Element>, ModificationTracker {
-    static final String DEFAULT_APP_DIRECTORY = "";
+    static final String DEFAULT_APP_DIRECTORY = "bin";
 
     private final Project project;
 
