@@ -1,8 +1,8 @@
 package com.oroplatform.idea.oroplatform;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.RowIcon;
-import com.jetbrains.php.PhpIcons;
 
 import javax.swing.*;
 
@@ -14,8 +14,8 @@ public class Icons {
 
     static {
         final RowIcon publicMethod = new RowIcon(2);
-        publicMethod.setIcon(PhpIcons.METHOD_ICON, 0);
-        publicMethod.setIcon(PhpIcons.PUBLIC_ICON, 1);
+        publicMethod.setIcon(AllIcons.Nodes.Method, 0);
+        publicMethod.setIcon(AllIcons.Nodes.Public, 1);
 
         PUBLIC_METHOD = publicMethod;
     }
