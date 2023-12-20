@@ -307,6 +307,12 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
                            displayType="BALLOON"
                            key="notifications.group"/>
 
+        <projectService
+                serviceInterface="com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsInterface"
+                serviceImplementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsService"
+                id="com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsService"
+        />
+
     </extensions>
 
     <!-- This extension is obsolete and breaks unit tests - blocking for now - Alek Mosingiewicz -->
