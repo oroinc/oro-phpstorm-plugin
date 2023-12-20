@@ -247,7 +247,7 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
 </ul>
     ]]></change-notes>
 
-    <idea-version since-build="231.8109.51"/>
+    <idea-version since-build="231.8109.175"/>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.jetbrains.php</depends>
@@ -264,6 +264,7 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
                 language="yaml"
                 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.ReferenceContributor"
         />
+        <postStartupActivity implementation="com.oroplatform.idea.oroplatform.intellij.ProjectConfigurator" />
         <psi.referenceContributor
                 language="JavaScript"
                 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsReferenceContributor"
