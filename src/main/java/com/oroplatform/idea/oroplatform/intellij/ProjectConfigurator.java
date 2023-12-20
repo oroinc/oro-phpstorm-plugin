@@ -2,6 +2,7 @@ package com.oroplatform.idea.oroplatform.intellij;
 
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import org.jetbrains.annotations.NotNull;
@@ -26,8 +27,8 @@ public class ProjectConfigurator implements ProjectComponent {
     }
 
     private boolean isOroPlatformDetected() {
-        return VfsUtil.findRelativeFile(project.getBaseDir(), "vendor", "oro", "platform") != null ||
-            VfsUtil.findRelativeFile(project.getBaseDir(), "package", "platform", "src", "Oro") != null;
+        return VfsUtil.findRelativeFile(ProjectUtil.guessProjectDir(project), "vendor", "oro", "platform") != null ||
+            VfsUtil.findRelativeFile(ProjectUtil.guessProjectDir(project), "package", "platform", "src", "Oro") != null;
     }
 
     @Override
