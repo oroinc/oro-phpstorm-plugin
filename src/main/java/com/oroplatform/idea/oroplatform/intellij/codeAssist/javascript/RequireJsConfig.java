@@ -1,16 +1,16 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript;
 
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class RequireJsConfig {
-    private final Map<String, String> pathAliases = new HashMap<>();
+    private final Map<String, String> pathAliases = new THashMap<>();
     private Map<String, String> reversedPathAliases;
-    private final Map<String, Map<String, String>> mappings = new HashMap<>();
+    private final Map<String, Map<String, String>> mappings = new THashMap<>();
     private Map<String, Map<String, String>> reversedMappings;
 
     public RequireJsConfig(Map<String, String> pathAliases, Map<String, Map<String, String>> mappings) {
@@ -19,7 +19,7 @@ public class RequireJsConfig {
     }
 
     RequireJsConfig() {
-        this(new HashMap<>(), new HashMap<>());
+        this(new THashMap<>(), new THashMap<>());
     }
 
     public Optional<String> getPathForAlias(String alias) {
@@ -38,16 +38,16 @@ public class RequireJsConfig {
 
     @NotNull
     private Map<String, String> reverseMap(Map<String, String> map) {
-        final Map<String, String> reversedMap = new HashMap<>();
+        final Map<String, String> reversedMap = new THashMap<>();
         map.forEach((key, value) -> reversedMap.put(value, key));
         return reversedMap;
     }
 
     public RequireJsConfig merge(RequireJsConfig config) {
-        final Map<String, String> mergedPaths = new HashMap<>(pathAliases);
+        final Map<String, String> mergedPaths = new THashMap<>(pathAliases);
         mergedPaths.putAll(config.pathAliases);
 
-        final Map<String, Map<String, String>> mergedMappings = new HashMap<>(mappings);
+        final Map<String, Map<String, String>> mergedMappings = new THashMap<>(mappings);
         config.mappings.forEach((key, value) -> mergedMappings.merge(key, value, RequireJsConfig::merge));
 
         return new RequireJsConfig(mergedPaths, mergedMappings);
@@ -66,7 +66,7 @@ public class RequireJsConfig {
     public Optional<String> getPackageForAlias(String pkg, String pkgAlias) {
         synchronized (this) {
             if(reversedMappings == null) {
-                reversedMappings = new HashMap<>();
+                reversedMappings = new THashMap<>();
                 mappings.forEach((key, value) -> reversedMappings.put(key, reverseMap(value)));
             }
         }
@@ -75,7 +75,7 @@ public class RequireJsConfig {
     }
 
     private static <K,V> Map<K, V> merge(Map<K, V> map1, Map<K, V> map2) {
-        final Map<K, V> result = new HashMap<>(map1);
+        final Map<K, V> result = new THashMap<>(map1);
         result.putAll(map2);
 
         return result;

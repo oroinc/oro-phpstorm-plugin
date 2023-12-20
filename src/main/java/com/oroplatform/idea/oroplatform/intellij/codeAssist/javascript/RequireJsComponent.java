@@ -12,11 +12,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLFile;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class RequireJsComponent implements ProjectComponent {
@@ -24,7 +23,7 @@ public class RequireJsComponent implements ProjectComponent {
 
     private final Project project;
     private final RequireJsConfigParser configParser = new RequireJsConfigParser();
-    private final Map<String, RequireJsConfig> configs = new HashMap<>();
+    private final Map<String, RequireJsConfig> configs = new THashMap<>();
     private final VirtualFileListener vfsListener = new RequireJsConfigListener();
 
     private RequireJsConfig mergedConfig;
