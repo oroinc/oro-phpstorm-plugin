@@ -3,10 +3,12 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.ProjectActivity;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.ElementManipulator;
 import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import kotlin.Unit;
 import kotlin.coroutines.Continuation;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +42,7 @@ public class YamlSupport implements ProjectActivity, Disposable {
                 ElementManipulators.INSTANCE.addExplicitExtension(manipulator.key, manipulator.manipulator);
             }
         }
+        Disposer.register(OroPlatformSettings.getInstance(project), this);
         return continuation;
     }
 

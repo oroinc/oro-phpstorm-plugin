@@ -1,5 +1,6 @@
 package com.oroplatform.idea.oroplatform.settings;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
@@ -19,7 +20,7 @@ import java.util.Objects;
         @Storage("$PROJECT_CONFIG_DIR$/oroPlatform.xml")
     }
 )
-public class OroPlatformSettings implements PersistentStateComponent<Element>, ModificationTracker {
+public class OroPlatformSettings implements PersistentStateComponent<Element>, ModificationTracker, Disposable {
     static final String DEFAULT_APP_DIRECTORY = "bin";
 
     private final Project project;
@@ -144,6 +145,11 @@ public class OroPlatformSettings implements PersistentStateComponent<Element>, M
     @Override
     public long getModificationCount() {
         return lastModifiedTimeStamp;
+    }
+
+    @Override
+    public void dispose() {
+        // empty implementation, needed to remove another service
     }
 
     private static class VerboseBoolean {
