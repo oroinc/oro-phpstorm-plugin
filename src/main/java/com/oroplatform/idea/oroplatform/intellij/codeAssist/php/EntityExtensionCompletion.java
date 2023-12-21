@@ -55,10 +55,6 @@ public class EntityExtensionCompletion extends CompletionContributor {
             }
 
             private boolean excluded(Project project, String path) {
-                List<String> excludedRootUrls = Arrays.stream(ModuleManager.getInstance(project).getModules())
-                        .flatMap(module -> Arrays.stream(ModuleRootManager.getInstance(module).getExcludeRootUrls()))
-                        .map(url -> url.replaceAll(".+://", ""))
-                        .toList();
                 return Arrays.stream(ModuleManager.getInstance(project).getModules())
                     .flatMap(module -> Arrays.stream(ModuleRootManager.getInstance(module).getExcludeRootUrls()))
                     .map(url -> url.replaceAll(".+://", ""))
@@ -67,8 +63,7 @@ public class EntityExtensionCompletion extends CompletionContributor {
 
             @Nullable
             private PhpType getPhpType(PsiElement element) {
-                if(!(element.getParent() instanceof MemberReference)) return null;
-                final MemberReference phpElement = (MemberReference) element.getParent();
+                if(!(element.getParent() instanceof MemberReference phpElement)) return null;
                 if(phpElement.getClassReference() == null) return null;
 
                 return phpElement.getClassReference().getType();
