@@ -52,7 +52,7 @@ public final class RequireJsService implements RequireJsInterface {
                 .map(virtualFiles -> PsiUtilCore.toPsiFiles(project.getService(PsiManager.class), virtualFiles))
                 .map(psiFiles -> psiFiles.size() > 0 ? psiFiles.get(0) : new ArrayList<>())
                 .toArray(PsiFile[]::new);
-        //FilenameIndex.getFilesByName(project, REQUIREJS, GlobalSearchScope.allScope(project));
+
         for (PsiFile file : files) {
             parseConfigFile(file);
         }
