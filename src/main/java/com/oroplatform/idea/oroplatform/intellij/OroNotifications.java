@@ -19,7 +19,7 @@ class OroNotifications {
                 NotificationType.INFORMATION);
 
         final OroPlatformSettings settings = OroPlatformSettings.getInstance(project);
-        //TODO add translations
+
         notification.addAction(new NotificationAction(OroPlatformBundle.message("notifications.enablePlugin.accept")) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e, @NotNull Notification notification) {
