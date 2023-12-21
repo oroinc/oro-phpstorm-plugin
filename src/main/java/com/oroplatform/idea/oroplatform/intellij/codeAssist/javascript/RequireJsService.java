@@ -9,11 +9,8 @@ import com.intellij.psi.util.PsiUtilCore;
 import gnu.trove.THashMap;
 import org.jetbrains.yaml.psi.YAMLFile;
 
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class RequireJsService implements RequireJsInterface {
