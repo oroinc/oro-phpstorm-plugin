@@ -12,9 +12,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.oroplatform.idea.oroplatform.StringWrapper;
 import com.oroplatform.idea.oroplatform.intellij.ExtensionFileFilter;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.*;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsComponent;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsConfig;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsInterface;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsService;
 import com.oroplatform.idea.oroplatform.util.SubclassCollector;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +67,7 @@ public class RequirejsReferenceProvider {
         @Override
         public String variantLookupString(PsiElement element, String text) {
             final Project project = element.getProject();
-            final RequireJsConfig config = RequireJsService.getInstance(project).getRequireJsConfig();;
+            final RequireJsConfig config = RequireJsService.getInstance(project).getRequireJsConfig();
 
             return config.getAliasForPath("bundles/" + text + ".js")
                     .or(() -> getModuleName(element).flatMap(name -> config.getPackageAliasFor(name, text)))

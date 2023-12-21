@@ -46,7 +46,7 @@ public class ResourceReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     @NotNull
     @Override
-    public ResolveResult[] multiResolve(boolean incompleteCode) {
+    public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
         final String[] parts = StringUtil.trimStart(resourceName, "@").split("/|:");
 
         return bundles.findAll().stream()
@@ -65,7 +65,7 @@ public class ResourceReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
         final String rootPath = StringUtil.trimStart(pathInResources.stream().collect(Collectors.joining("/")) + "/", "/");
         return bundles.findAll().stream()
             .flatMap(bundle ->

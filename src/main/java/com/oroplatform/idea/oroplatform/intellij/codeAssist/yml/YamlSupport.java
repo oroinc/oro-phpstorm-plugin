@@ -1,7 +1,6 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.yml;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.ProjectActivity;
 import com.intellij.psi.ElementManipulator;
