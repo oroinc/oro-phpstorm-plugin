@@ -16,6 +16,7 @@ import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJs
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsConfig;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsInterface;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsService;
+import com.oroplatform.idea.oroplatform.util.SubclassCollector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -97,8 +98,9 @@ public class RequirejsReferenceProvider {
 
         private Collection<PhpClass> getBundleClasses(Project project) {
             final PhpIndex phpIndex = PhpIndex.getInstance(project);
+            SubclassCollector subclassCollector = new SubclassCollector(phpIndex);
 
-            return phpIndex.getAllSubclasses("\\Symfony\\Component\\HttpKernel\\Bundle\\Bundle");
+            return subclassCollector.getAllSubclasses("\\Symfony\\Component\\HttpKernel\\Bundle\\Bundle");
         }
     }
 }
