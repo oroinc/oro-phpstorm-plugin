@@ -14,6 +14,7 @@ import com.oroplatform.idea.oroplatform.schema.PropertyPath;
 import gnu.trove.THashSet;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ class FieldTypePhpClassProvider implements PhpClassProvider {
     }
 
     private Collection<String> getFieldTypes(Field field) {
-        final Collection<String> classNames = new THashSet<>();
+        final Collection<String> classNames = new HashSet<>();
         final PhpDocComment docComment = field.getDocComment();
 
         if(docComment == null) return classNames;

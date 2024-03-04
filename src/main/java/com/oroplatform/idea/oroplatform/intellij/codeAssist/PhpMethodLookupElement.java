@@ -18,8 +18,9 @@ class PhpMethodLookupElement extends PhpLookupElement {
     private final Method method;
 
     PhpMethodLookupElement(@NotNull Method method) {
-        super(getFQN(method), INDEX_KEY, method.getIcon(), null, method.getProject(), null);
+        super(method); // OPP-75: there's no default constructor, so choosing the least problematic solution
         this.method = method;
+        this.lookupString = getFQN(method); // TODO FQN should come ideally from method itself, check why it's not the case
     }
 
     private static String getFQN(Method method) {
@@ -29,7 +30,7 @@ class PhpMethodLookupElement extends PhpLookupElement {
     }
 
     @Override
-    public void renderElement(LookupElementPresentation presentation) {
+    public void renderElement(@NotNull LookupElementPresentation presentation) {
         super.renderElement(presentation);
 
         final Collection<String> parameters = new LinkedList<>();

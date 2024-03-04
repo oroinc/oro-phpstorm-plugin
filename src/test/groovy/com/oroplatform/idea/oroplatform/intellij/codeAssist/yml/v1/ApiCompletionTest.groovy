@@ -76,7 +76,7 @@ class ApiCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest values of fields.data_type"() {
+    def void "test: suggest values of fields(dot)data_type"() {
         suggestions(
             """
             |oro_api:
@@ -91,7 +91,7 @@ class ApiCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest association values of fields.data_type"() {
+    def void "test: suggest association values of fields(dot)data_type"() {
         suggestions(
             """
             |oro_api:
@@ -147,7 +147,7 @@ class ApiCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest filters.fields properties"() {
+    def void "test: suggest filters(dot)fields properties"() {
         suggestions(
             """
             |oro_api:
@@ -177,7 +177,7 @@ class ApiCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest sorters.fields properties"() {
+    def void "test: suggest sorters(dot)fields properties"() {
         suggestions(
             """
             |oro_api:
@@ -223,7 +223,7 @@ class ApiCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest actions.fields properties"() {
+    def void "test: suggest actions(dot)fields properties"() {
         suggestions(
             """
             |oro_api:
@@ -240,7 +240,7 @@ class ApiCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest actions.status_codes properties"() {
+    def void "test: suggest actions(dot)status_codes properties"() {
         suggestions(
             """
             |oro_api:
@@ -257,7 +257,7 @@ class ApiCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest actions.status_codes values"() {
+    def void "test: suggest actions(dot)status_codes values"() {
         suggestions(
             """
             |oro_api:

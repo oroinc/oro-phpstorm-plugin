@@ -12,8 +12,9 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.oroplatform.idea.oroplatform.StringWrapper;
 import com.oroplatform.idea.oroplatform.intellij.ExtensionFileFilter;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.*;
-import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsComponent;
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsConfig;
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsService;
+import com.oroplatform.idea.oroplatform.util.SubclassCollector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -56,23 +57,21 @@ public class RequirejsReferenceProvider {
         @Override
         public String referenceFilePath(PsiElement element, String text) {
             final Project project = element.getProject();
-            final RequireJsConfig config = project.getComponent(RequireJsComponent.class).getRequireJsConfig();
+            final RequireJsConfig config = RequireJsService.getInstance(project).getRequireJsConfig();
 
             return config.getPathForAlias(text).map(t -> StringUtil.trimEnd(StringUtil.trimStart(t, "bundles/"), ".js"))
-                .map(Optional::of)
-                .orElseGet(() -> getModuleName(element).flatMap(name -> config.getPackageForAlias(name, text)))
-                .orElse(text);
+                    .or(() -> getModuleName(element).flatMap(name -> config.getPackageForAlias(name, text)))
+                    .orElse(text);
         }
 
         @Override
         public String variantLookupString(PsiElement element, String text) {
             final Project project = element.getProject();
-            final RequireJsConfig config = project.getComponent(RequireJsComponent.class).getRequireJsConfig();
+            final RequireJsConfig config = RequireJsService.getInstance(project).getRequireJsConfig();
 
-            return config.getAliasForPath("bundles/"+text+".js")
-                .map(Optional::of)
-                .orElseGet(() -> getModuleName(element).flatMap(name -> config.getPackageAliasFor(name, text)))
-                .orElse(text);
+            return config.getAliasForPath("bundles/" + text + ".js")
+                    .or(() -> getModuleName(element).flatMap(name -> config.getPackageAliasFor(name, text)))
+                    .orElse(text);
         }
 
         private Optional<String> getModuleName(PsiElement element) {
@@ -97,8 +96,9 @@ public class RequirejsReferenceProvider {
 
         private Collection<PhpClass> getBundleClasses(Project project) {
             final PhpIndex phpIndex = PhpIndex.getInstance(project);
+            SubclassCollector subclassCollector = new SubclassCollector(phpIndex);
 
-            return phpIndex.getAllSubclasses("\\Symfony\\Component\\HttpKernel\\Bundle\\Bundle");
+            return subclassCollector.getAllSubclasses("\\Symfony\\Component\\HttpKernel\\Bundle\\Bundle");
         }
     }
 }

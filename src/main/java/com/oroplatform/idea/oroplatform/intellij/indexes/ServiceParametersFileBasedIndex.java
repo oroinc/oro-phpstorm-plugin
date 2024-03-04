@@ -10,7 +10,7 @@ import com.oroplatform.idea.oroplatform.intellij.indexes.services.ParameterYmlIn
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLFile;
 
-import java.util.HashMap;
+import gnu.trove.THashMap;
 import java.util.Map;
 
 public class ServiceParametersFileBasedIndex extends FileBasedIndexExtension<String, String> {
@@ -29,7 +29,7 @@ public class ServiceParametersFileBasedIndex extends FileBasedIndexExtension<Str
     @Override
     public DataIndexer<String, String, FileContent> getIndexer() {
         return inputData -> {
-            final Map<String, String> index = new HashMap<>();
+            final Map<String, String> index = new THashMap<>();
 
             if(inputData.getPsiFile() instanceof XmlFile) {
                 final XmlFile file = (XmlFile) inputData.getPsiFile();

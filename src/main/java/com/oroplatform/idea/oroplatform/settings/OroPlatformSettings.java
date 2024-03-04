@@ -1,8 +1,10 @@
 package com.oroplatform.idea.oroplatform.settings;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -10,13 +12,15 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 @State(
     name = "OroPlatformPluginSettings",
     storages = {
         @Storage("$PROJECT_CONFIG_DIR$/oroPlatform.xml")
     }
 )
-public class OroPlatformSettings implements PersistentStateComponent<Element>, ModificationTracker {
+public class OroPlatformSettings implements PersistentStateComponent<Element>, ModificationTracker, Disposable {
     static final String DEFAULT_APP_DIRECTORY = "bin";
 
     private final Project project;
@@ -27,7 +31,7 @@ public class OroPlatformSettings implements PersistentStateComponent<Element>, M
 
     @NotNull
     public static OroPlatformSettings getInstance(@NotNull Project project) {
-        return ServiceManager.getService(project, OroPlatformSettings.class);
+        return project.getService(OroPlatformSettings.class);
     }
 
     private String appDir = DEFAULT_APP_DIRECTORY;
@@ -39,12 +43,17 @@ public class OroPlatformSettings implements PersistentStateComponent<Element>, M
     }
 
     public VirtualFile getAppVirtualDir() {
-        return getProjectRoot(project).findFileByRelativePath(OroPlatformSettings.getInstance(project).getAppDir());
+        return getProjectRoot(project).findFileByRelativePath(
+                ApplicationManager.getApplication().isUnitTestMode()
+                        ? "app"
+                        : OroPlatformSettings.getInstance(project).getAppDir()
+        );
     }
 
     private static VirtualFile getProjectRoot(Project project) {
-        return ApplicationManager.getApplication().isUnitTestMode() ?
-            VirtualFileManager.getInstance().findFileByUrl("temp:///").findChild("src") : project.getBaseDir();
+        return ApplicationManager.getApplication().isUnitTestMode()
+                ? Objects.requireNonNull(VirtualFileManager.getInstance().findFileByUrl("temp:///")).findChild("src")
+                : ProjectUtil.guessProjectDir(project);
     }
 
     void setAppDir(String appDir) {
@@ -81,7 +90,7 @@ public class OroPlatformSettings implements PersistentStateComponent<Element>, M
         writeVerboseBoolean(pluginEnabledElement, pluginEnabled);
 
         Element timeStampElement = new Element("lastModifiedTimeStamp");
-        timeStampElement.setText(lastModifiedTimeStamp + "");
+        timeStampElement.setText(String.valueOf(lastModifiedTimeStamp));
 
         element.addContent(appDirElement);
         element.addContent(pluginEnabledElement);
@@ -136,6 +145,11 @@ public class OroPlatformSettings implements PersistentStateComponent<Element>, M
     @Override
     public long getModificationCount() {
         return lastModifiedTimeStamp;
+    }
+
+    @Override
+    public void dispose() {
+        // empty implementation, needed to remove another service
     }
 
     private static class VerboseBoolean {

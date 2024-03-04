@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocParamTag;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider3;
+import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
 import com.oroplatform.idea.oroplatform.symfony.Entity;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Set;
 
-public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
+public class EntityExtensionTypeProvider implements PhpTypeProvider4 {
     @Override
     public char getKey() {
         return '\u0189';
@@ -30,8 +30,7 @@ public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
             return null;
         }
 
-        if(psiElement instanceof Variable) {
-            final Variable variable = (Variable) psiElement;
+        if(psiElement instanceof Variable variable) {
 
             if(!StringUtil.startsWith(variable.getSignature(), "#C")) return null;
             final String className = StringUtil.trimStart(variable.getSignature(), "#C");
@@ -39,8 +38,7 @@ public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
             return getType(project, className);
         }
 
-        if(psiElement instanceof Method) {
-            final Method method = (Method) psiElement;
+        if(psiElement instanceof Method method) {
             final PhpType phpType = new PhpType();
 
             for (String localType : method.getLocalType(false).getTypes()) {
@@ -50,8 +48,7 @@ public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
             return phpType;
         }
 
-        if(psiElement instanceof Field) {
-            final Field field = (Field) psiElement;
+        if(psiElement instanceof Field field) {
 
             final PhpType phpType = new PhpType();
 
@@ -70,8 +67,7 @@ public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
             return phpType;
         }
 
-        if(psiElement instanceof AssignmentExpression) {
-            final AssignmentExpression assignment = (AssignmentExpression) psiElement;
+        if(psiElement instanceof AssignmentExpression assignment) {
 
             if(assignment.getValue() == null ||
                     assignment.getValue().getFirstPsiChild() == null ||
@@ -107,5 +103,20 @@ public class EntityExtensionTypeProvider implements PhpTypeProvider3 {
     @Override
     public Collection<? extends PhpNamedElement> getBySignature(String expression, Set<String> visited, int depth, Project project) {
         return null;
+    }
+
+    @Override
+    public @Nullable PhpType complete(String s, Project project) {
+        return null; //TODO this is a stub, currently this functionality is not operational, but implementation might become necessary once it's restored
+    }
+
+    @Override
+    public boolean emptyResultIsComplete() {
+        return PhpTypeProvider4.super.emptyResultIsComplete();
+    }
+
+    @Override
+    public boolean interceptsNativeSignature() {
+        return PhpTypeProvider4.super.interceptsNativeSignature();
     }
 }

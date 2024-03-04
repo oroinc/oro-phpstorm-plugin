@@ -2,6 +2,7 @@ package com.oroplatform.idea.oroplatform.symfony;
 
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.oroplatform.idea.oroplatform.util.SubclassCollector;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ public class Bundles {
     }
 
     public Collection<PhpClass> findBundleClasses() {
-        return phpIndex.getAllSubclasses("\\Symfony\\Component\\HttpKernel\\Bundle\\Bundle");
+        SubclassCollector collector = new SubclassCollector(phpIndex);
+        return collector.getAllSubclasses("\\Symfony\\Component\\HttpKernel\\Bundle\\Bundle");
     }
 }

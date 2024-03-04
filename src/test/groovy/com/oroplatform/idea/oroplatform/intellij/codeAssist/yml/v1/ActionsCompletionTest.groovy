@@ -90,7 +90,7 @@ class ActionsCompletionTest extends CompletionTest implements RandomIdentifiers 
         )
     }
 
-    def void "test: suggest properties for attributes.options"() {
+    def void "test: suggest properties for attributes options"() {
         suggestions(
             """
             |operations:
@@ -118,7 +118,7 @@ class ActionsCompletionTest extends CompletionTest implements RandomIdentifiers 
         )
     }
 
-    def void "test: suggest properties for datagrid_options.data"() {
+    def void "test: suggest properties for datagrid_options(dot)data"() {
         suggestions(
             """
             |operations:
@@ -133,7 +133,7 @@ class ActionsCompletionTest extends CompletionTest implements RandomIdentifiers 
         )
     }
 
-    def void "test: suggest batch jobs for datagrid_options.data.importJob"() {
+    def void "test: suggest batch jobs for datagrid_options(dot)data(dot)importJob"() {
 
         def batchJob = randomIdentifier("batchJob")
 
@@ -206,7 +206,7 @@ class ActionsCompletionTest extends CompletionTest implements RandomIdentifiers 
         )
     }
 
-    def void "test: suggest properties for action_groups.parameters"() {
+    def void "test: suggest properties for action_groups(dot)parameters"() {
         suggestions(
             """
             |action_groups:

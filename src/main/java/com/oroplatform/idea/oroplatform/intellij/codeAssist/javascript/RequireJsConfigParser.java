@@ -6,7 +6,7 @@ import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLMapping;
 
 import java.util.Collections;
-import java.util.HashMap;
+import gnu.trove.THashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -19,7 +19,7 @@ public class RequireJsConfigParser {
         final YAMLKeyValue pathsKeyValue = YAMLUtil.getQualifiedKeyInFile(configFile, "config", "map");
         if(pathsKeyValue != null && pathsKeyValue.getValue() instanceof YAMLMapping) {
             final YAMLMapping pathsMapping = (YAMLMapping) pathsKeyValue.getValue();
-            final Map<String, Map<String, String>> map = new HashMap<>();
+            final Map<String, Map<String, String>> map = new THashMap<>();
 
             for (YAMLKeyValue yamlKeyValue : pathsMapping.getKeyValues()) {
                 if(yamlKeyValue.getValue() instanceof YAMLMapping) {

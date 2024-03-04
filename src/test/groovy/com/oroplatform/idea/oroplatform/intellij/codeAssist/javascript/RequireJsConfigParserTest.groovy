@@ -1,5 +1,6 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript
 
+import com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsConfigParser
 import com.oroplatform.idea.oroplatform.intellij.codeAssist.TestCase
 import org.jetbrains.yaml.psi.YAMLFile
 

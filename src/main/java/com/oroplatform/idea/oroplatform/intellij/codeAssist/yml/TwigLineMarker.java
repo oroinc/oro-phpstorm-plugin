@@ -4,7 +4,6 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -39,7 +38,7 @@ import static com.oroplatform.idea.oroplatform.intellij.codeAssist.PsiElements.e
 public class TwigLineMarker implements LineMarkerProvider {
     @Nullable
     @Override
-    public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
+    public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement element) {
         return null;
     }
 
@@ -65,25 +64,20 @@ public class TwigLineMarker implements LineMarkerProvider {
                 final Collection<VirtualFile> layoutUpdates = Stream.concat(
                     index.findLayoutUpdates(twigFile.getName()).stream().filter(hasCommonAncestor),
                     getTwigTemplateAbsoluteNames(twigFile, bundles).flatMap(name -> index.findLayoutUpdates(name).stream())
-                ).collect(Collectors.toList());
+                ).toList();
 
                 if(layoutUpdates.isEmpty()) {
                     return Stream.empty();
                 } else {
                     return Stream.of(
                         NavigationGutterIconBuilder.create(Icons.ORO)
-                        .setTargets(new NotNullLazyValue<Collection<? extends PsiElement>>() {
-                            @NotNull
-                            @Override
-                            protected Collection<? extends PsiElement> compute() {
-                                return layoutUpdates.stream()
+                                .setTargets(layoutUpdates.stream()
                                     .flatMap(file -> toStream(PsiManager.getInstance(project).findFile(file)))
                                     .flatMap(elementFilter(YAMLFile.class))
                                     .flatMap(file -> ReferencesSearch.search(twigFile, GlobalSearchScope.fileScope(file)).findAll().stream())
                                     .map(ref -> ref.getElement())
-                                    .collect(Collectors.toList());
-                            }
-                        })
+                                    .collect(Collectors.toList())
+                                )
                         .setTooltipText(OroPlatformBundle.message("gutter.navigateToLayout"))
                         .createLineMarkerInfo(twigFile)
                     );

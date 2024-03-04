@@ -1,7 +1,7 @@
-<idea-plugin version="2">
+<idea-plugin>
     <id>com.oroplatform.idea.oroplatform</id>
     <name>OroPlatform</name>
-    <vendor url="https://github.com/orocrm/oro-phpstorm-plugin">Oro Inc.</vendor>
+    <vendor url="https://github.com/oroinc/oro-phpstorm-plugin">oroinc</vendor>
 
     <description><![CDATA[
 <h1>Oro PHPStorm Plugin</h1>
@@ -10,6 +10,10 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>2023.2</h2>
+<ul>
+  <li>Updated compatibility with PHPStorm 2023.2.3</li>
+</ul>
 <h2>2023.1</h2>
 <ul>
   <li>Updated compatibility with PHPStorm 2023.1</li>
@@ -243,7 +247,7 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
 </ul>
     ]]></change-notes>
 
-    <idea-version since-build="231.8109.51"/>
+    <idea-version since-build="231.8109.175"/>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.jetbrains.php</depends>
@@ -260,14 +264,21 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
                 language="yaml"
                 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.ReferenceContributor"
         />
+        <postStartupActivity implementation="com.oroplatform.idea.oroplatform.intellij.ProjectConfigurator" />
+        <postStartupActivity implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlSupport" />
+
         <psi.referenceContributor
                 language="JavaScript"
                 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsReferenceContributor"
         />
+        <!-- This extension is obsolete and breaks unit tests - blocking for now - Alek Mosingiewicz -->
         <!-- for PhpStorm < 2016.3 -->
+        <!--
         <php.typeProvider3 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.php.EntityExtensionTypeProvider"/>
+        -->
         <projectConfigurable instance="com.oroplatform.idea.oroplatform.settings.OroPlatformForm"
                              id="OroPlatform.settings"
+                             displayName="ORO Platform Config"
                              groupId="language" />
         <projectService serviceImplementation="com.oroplatform.idea.oroplatform.settings.OroPlatformSettings"/>
         <localInspection
@@ -294,27 +305,29 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
 
         <codeInsight.lineMarkerProvider language="Twig" implementationClass="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.TwigLineMarker"/>
 
+        <notificationGroup id="Oro Notifications"
+                           displayType="BALLOON"
+                           key="notifications.group"/>
+
+        <projectService
+                serviceInterface="com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsInterface"
+                serviceImplementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsService"
+                id="com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsService"
+        />
+
     </extensions>
 
-    <extensions defaultExtensionNs="com.jetbrains">
-        <!-- for PhpStorm >= 2016.3 -->
-        <php.typeProvider3 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.php.EntityExtensionTypeProvider"/>
-    </extensions>
+    <!-- This extension is obsolete and breaks unit tests - blocking for now - Alek Mosingiewicz -->
+<!--    <extensions defaultExtensionNs="com.jetbrains">-->
+<!--        &lt;!&ndash; for PhpStorm >= 2016.3 &ndash;&gt;-->
+<!--        <php.typeProvider3 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.php.EntityExtensionTypeProvider"/>-->
+<!--    </extensions>-->
 
     <project-components>
-        <component>
-            <implementation-class>com.oroplatform.idea.oroplatform.intellij.ProjectConfigurator</implementation-class>
-        </component>
         <component>
             <implementation-class>com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsComponent</implementation-class>
         </component>
     </project-components>
-
-    <application-components>
-        <component>
-            <implementation-class>com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlSupport</implementation-class>
-        </component>
-    </application-components>
 
     <actions>
     </actions>

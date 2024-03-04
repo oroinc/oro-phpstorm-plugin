@@ -28,7 +28,7 @@ class DatagridInspectionsTest extends InspectionTest {
         )
     }
 
-    def void "test: allow boolean for options.export"() {
+    def void "test: allow boolean for options(dot)export"() {
         checkInspection(
             """
             |datagrid:
@@ -39,7 +39,7 @@ class DatagridInspectionsTest extends InspectionTest {
         )
     }
 
-    def void "test: allow object for options.export"() {
+    def void "test: allow object for options(dot)export"() {
         checkInspection(
             """
             |datagrid:

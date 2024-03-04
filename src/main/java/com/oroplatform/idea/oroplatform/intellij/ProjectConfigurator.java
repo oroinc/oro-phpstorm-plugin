@@ -1,53 +1,32 @@
 package com.oroplatform.idea.oroplatform.intellij;
 
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.startup.ProjectActivity;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.oroplatform.idea.oroplatform.settings.OroPlatformSettings;
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class ProjectConfigurator implements ProjectComponent {
+public class ProjectConfigurator implements ProjectActivity {
 
-    private final Project project;
-
-    public ProjectConfigurator(@NotNull Project project) {
-        this.project = project;
-    }
-
+    @Nullable
     @Override
-    public void projectOpened() {
-        if(couldPluginBeEnabled()) {
+    public Object execute(@NotNull Project project, @NotNull Continuation<? super Unit> continuation) {
+        if(couldPluginBeEnabled(project)) {
             OroNotifications.showPluginEnableNotification(project);
         }
+        return continuation;
     }
 
-    private boolean couldPluginBeEnabled() {
-        return isOroPlatformDetected() && OroPlatformSettings.getInstance(project).couldPluginBeEnabled();
+    private boolean couldPluginBeEnabled(@NotNull Project project) {
+        return isOroPlatformDetected(project) && OroPlatformSettings.getInstance(project).couldPluginBeEnabled();
     }
 
-    private boolean isOroPlatformDetected() {
-        return VfsUtil.findRelativeFile(project.getBaseDir(), "vendor", "oro", "platform") != null ||
-            VfsUtil.findRelativeFile(project.getBaseDir(), "package", "platform", "src", "Oro") != null;
-    }
-
-    @Override
-    public void projectClosed() {
-
-    }
-
-    @Override
-    public void initComponent() {
-
-    }
-
-    @Override
-    public void disposeComponent() {
-
-    }
-
-    @NotNull
-    @Override
-    public String getComponentName() {
-        return "ProjectConfigurator";
+    private boolean isOroPlatformDetected(@NotNull Project project) {
+        return VfsUtil.findRelativeFile(ProjectUtil.guessProjectDir(project), "vendor", "oro", "platform") != null ||
+            VfsUtil.findRelativeFile(ProjectUtil.guessProjectDir(project), "package", "platform", "src", "Oro") != null;
     }
 }

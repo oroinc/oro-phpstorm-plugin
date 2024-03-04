@@ -504,7 +504,7 @@ class LayoutUpdateCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest @addTree/items properties"() {
+    def void "test: suggest @addTree slash items properties"() {
         suggestions(
             """
             |layout:
@@ -518,7 +518,7 @@ class LayoutUpdateCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest @addTree/tree properties at second level"() {
+    def void "test: suggest @addTree slash tree properties at second level"() {
         suggestions(
             """
             |layout:
@@ -536,7 +536,7 @@ class LayoutUpdateCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest @addTree/tree properties at third level"() {
+    def void "test: suggest @addTree slash tree properties at third level"() {
         suggestions(
             """
             |layout:
@@ -556,7 +556,7 @@ class LayoutUpdateCompletionTest extends CompletionTest {
     }
 
 
-    def void "test: suggest @addTree/tree properties at fourth level"() {
+    def void "test: suggest @addTree slash tree properties at fourth level"() {
         suggestions(
             """
             |layout:
@@ -576,7 +576,7 @@ class LayoutUpdateCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: don't suggest properties for theme.yml"() {
+    def void "test: don't suggest properties for theme yml"() {
         suggestions("Resources/views/layouts/some_theme/theme.yml",
             """
             |<caret>

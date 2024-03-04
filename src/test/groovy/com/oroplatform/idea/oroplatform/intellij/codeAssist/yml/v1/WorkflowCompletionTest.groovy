@@ -367,7 +367,7 @@ class WorkflowCompletionTest extends CompletionTest implements RandomIdentifiers
         )
     }
 
-    def void "test: suggest properties in 'attributes.entity_acl'"() {
+    def void "test: suggest properties in 'attributes entity_acl'"() {
         suggestions(
             """
             |workflows:
@@ -382,7 +382,7 @@ class WorkflowCompletionTest extends CompletionTest implements RandomIdentifiers
         )
     }
 
-    def void "test: suggest properties in 'attributes.options'"() {
+    def void "test: suggest properties in 'attributes options'"() {
         suggestions(
             """
             |workflows:
@@ -426,7 +426,7 @@ class WorkflowCompletionTest extends CompletionTest implements RandomIdentifiers
         )
     }
 
-    def void "test: suggest properties in 'steps.entity_acl'"() {
+    def void "test: suggest properties in 'steps entity_acl'"() {
         suggestions(
             """
             |workflows:
@@ -456,7 +456,7 @@ class WorkflowCompletionTest extends CompletionTest implements RandomIdentifiers
         )
     }
 
-    def void "test: suggest properties in 'transitions.form_options'"() {
+    def void "test: suggest properties in 'transitions form_options'"() {
         suggestions(
             """
             |workflows:
@@ -471,7 +471,7 @@ class WorkflowCompletionTest extends CompletionTest implements RandomIdentifiers
         )
     }
 
-    def void "test: suggest attributes for in 'transitions.form_options.attribute_fields'"() {
+    def void "test: suggest attributes for in 'transitions form_options attribute_fields'"() {
         suggestions(
             """
             |workflows:
@@ -490,7 +490,7 @@ class WorkflowCompletionTest extends CompletionTest implements RandomIdentifiers
         )
     }
 
-    def void "test: suggest properties in 'transitions.frontend_options'"() {
+    def void "test: suggest properties in 'transitions frontend_options'"() {
         suggestions(
             """
             |workflows:
@@ -505,7 +505,7 @@ class WorkflowCompletionTest extends CompletionTest implements RandomIdentifiers
         )
     }
 
-    def void "test: suggest properties in 'transitions.triggers'"() {
+    def void "test: suggest properties in 'transitions triggers'"() {
         suggestions(
             """
             |workflows:

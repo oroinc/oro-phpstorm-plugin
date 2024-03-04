@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
@@ -61,8 +63,7 @@ public class EntityExtensionCompletion extends CompletionContributor {
 
             @Nullable
             private PhpType getPhpType(PsiElement element) {
-                if(!(element.getParent() instanceof MemberReference)) return null;
-                final MemberReference phpElement = (MemberReference) element.getParent();
+                if(!(element.getParent() instanceof MemberReference phpElement)) return null;
                 if(phpElement.getClassReference() == null) return null;
 
                 return phpElement.getClassReference().getType();

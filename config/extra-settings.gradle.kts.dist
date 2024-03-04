@@ -1,0 +1,2 @@
+val pathToIde by extra("/path/to/your/phpstorm/ide")
+val javaLanguageVersionSetting by extra("17")

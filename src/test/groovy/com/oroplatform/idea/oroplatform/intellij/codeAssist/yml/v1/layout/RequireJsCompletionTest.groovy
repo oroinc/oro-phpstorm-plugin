@@ -163,7 +163,7 @@ class RequireJsCompletionTest extends CompletionTest {
         )
     }
 
-    def void "test: suggest requirejs modules in shim.deps"() {
+    def void "test: suggest requirejs modules in shim deps"() {
         configureByText("src/Oro/AcmeBundle/Resources/public/js/script1.js", "")
         configureByText("src/Oro/AcmeBundle/Resources/public/js/script2.js", "")
 
