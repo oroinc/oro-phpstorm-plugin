@@ -36,7 +36,7 @@ public class PhpClassReferenceProvider extends PsiReferenceProvider {
             final Set<String> skippedClassNames = concat(getClassNamesFromSiblings(keyValue), getExcludedClassNames(element));
 
             return new PsiReference[] {
-                new PhpClassReference(keyValue.getKey(), phpClass, keyValue.getKeyText(), insertHandler, skippedClassNames)
+                new PhpClassReference(element, phpClass, keyValue.getKeyText(), insertHandler, skippedClassNames)
             };
 
         // skip scalar element in key context
