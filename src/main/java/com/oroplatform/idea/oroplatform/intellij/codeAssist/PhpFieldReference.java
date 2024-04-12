@@ -20,7 +20,7 @@ public class PhpFieldReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final Collection<String> classNames = new LinkedList<>();
     private final String fieldName;
 
-    public PhpFieldReference(PsiElement element, Collection<String> classNames, String fieldName) {
+    public PhpFieldReference(@NotNull PsiElement element, Collection<String> classNames, String fieldName) {
         super(element);
         this.classNames.addAll(classNames);
         this.fieldName = fieldName;

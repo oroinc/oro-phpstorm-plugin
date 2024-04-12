@@ -42,10 +42,11 @@ public class PhpFieldReferenceProvider extends PsiReferenceProvider {
         return new PsiReference[0];
     }
 
-    private static PsiElement getReferenceElement(PsiElement element, boolean allowsKey) {
-        if(element instanceof YAMLKeyValue) {
-            final YAMLKeyValue keyValue = (YAMLKeyValue) element;
-            return allowsKey ? keyValue.getKey() : keyValue.getValue();
+    private static @NotNull PsiElement getReferenceElement(PsiElement element, boolean allowsKey) {
+        if(element instanceof YAMLKeyValue keyValue) {
+            assert (allowsKey ? keyValue.getKey() : keyValue.getValue()) != null;
+            assert keyValue.getValue() != null;
+            return element;
         } else {
             return element;
         }
