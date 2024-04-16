@@ -30,7 +30,6 @@ public class PhpFieldReferenceProvider extends PsiReferenceProvider {
     public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         try {
             final boolean allowsKey = context.get("key") != null;
-            assertReferenceElement(element, allowsKey);
             if(element instanceof YAMLPsiElement) {
                 final PhpIndex phpIndex = PhpIndex.getInstance(element.getProject());
                 final Collection<String> properties = phpClassProvider.getPhpClasses(phpIndex, element, classPropertyPath);
@@ -44,14 +43,6 @@ public class PhpFieldReferenceProvider extends PsiReferenceProvider {
         }
 
         return new PsiReference[0];
-    }
-
-    private static void assertReferenceElement(PsiElement element, boolean allowsKey) {
-        if(element instanceof YAMLKeyValue keyValue) {
-            assert allowsKey;
-            assert keyValue.getKey() != null;
-            assert keyValue.getValue() != null;
-        }
     }
 
     private static String getReferenceText(PsiElement element, boolean allowsKey) {
