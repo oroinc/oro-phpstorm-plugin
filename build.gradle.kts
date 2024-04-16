@@ -30,15 +30,15 @@ java {
 intellij {
     pluginName.set("idea-oroplatform-plugin")
     type.set("IU")
-    version.set("2023.3.1")
+    version.set("2024.1")
     plugins.set(listOf(
-        "com.jetbrains.php:233.11799.297",
+        "com.jetbrains.php:241.14494.237",
         "yaml",
         "java-i18n",
         "properties",
         "css-impl",
         "JavaScript",
-        "com.jetbrains.twig:233.11799.297"
+        "com.jetbrains.twig:241.14494.237"
     ))
     sandboxDir.set("${project.rootDir}/.idea-sandbox")
 }
