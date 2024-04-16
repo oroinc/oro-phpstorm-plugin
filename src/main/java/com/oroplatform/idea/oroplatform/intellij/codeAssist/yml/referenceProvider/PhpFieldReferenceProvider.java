@@ -27,16 +27,20 @@ public class PhpFieldReferenceProvider extends PsiReferenceProvider {
     @NotNull
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-        final boolean allowsKey = context.get("key") != null;
-        if(!allowsKey && element instanceof YAMLKeyValue) return new PsiReference[0];
+        try {
+            final boolean allowsKey = context.get("key") != null;
+            if(!allowsKey && element instanceof YAMLKeyValue) return new PsiReference[0];
 
-        if(element instanceof YAMLPsiElement) {
-            final PhpIndex phpIndex = PhpIndex.getInstance(element.getProject());
-            final Collection<String> properties = phpClassProvider.getPhpClasses(phpIndex, element, classPropertyPath);
+            if(element instanceof YAMLPsiElement) {
+                final PhpIndex phpIndex = PhpIndex.getInstance(element.getProject());
+                final Collection<String> properties = phpClassProvider.getPhpClasses(phpIndex, element, classPropertyPath);
 
-            if(!properties.isEmpty()) {
-                return new PsiReference[]{new PhpFieldReference(getReferenceElement(element, allowsKey), properties, getReferenceText(element, allowsKey))};
+                if(!properties.isEmpty()) {
+                    return new PsiReference[]{new PhpFieldReference(getReferenceElement(element, allowsKey), properties, getReferenceText(element, allowsKey))};
+                }
             }
+        } catch (Throwable throwable) {
+               // TODO handle exception
         }
 
         return new PsiReference[0];
@@ -46,6 +50,7 @@ public class PhpFieldReferenceProvider extends PsiReferenceProvider {
         if(element instanceof YAMLKeyValue keyValue) {
             assert (allowsKey ? keyValue.getKey() : keyValue.getValue()) != null;
             assert keyValue.getValue() != null;
+            assert allowsKey;
             return element;
         } else {
             return element;
