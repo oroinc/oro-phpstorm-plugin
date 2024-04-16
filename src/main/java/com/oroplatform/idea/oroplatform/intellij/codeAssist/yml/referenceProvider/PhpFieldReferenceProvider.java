@@ -49,7 +49,7 @@ public class PhpFieldReferenceProvider extends PsiReferenceProvider {
     private static void assertReferenceElement(PsiElement element, boolean allowsKey) {
         if(element instanceof YAMLKeyValue keyValue) {
             assert allowsKey;
-            assert (allowsKey ? keyValue.getKey() : keyValue.getValue()) != null;
+            assert keyValue.getKey() != null;
             assert keyValue.getValue() != null;
         }
     }
@@ -57,8 +57,7 @@ public class PhpFieldReferenceProvider extends PsiReferenceProvider {
     private static String getReferenceText(PsiElement element, boolean allowsKey) {
         if(element instanceof YAMLScalar) {
             return ((YAMLScalar) element).getTextValue();
-        } else if(element instanceof YAMLKeyValue) {
-            final YAMLKeyValue keyValue = (YAMLKeyValue) element;
+        } else if(element instanceof YAMLKeyValue keyValue) {
             return allowsKey ? keyValue.getKeyText() : keyValue.getValueText();
         } else {
             return element.getText();
