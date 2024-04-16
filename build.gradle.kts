@@ -17,7 +17,7 @@ buildscript {
 }
 
 group = "com.oroplatform"
-version = "2023.2"
+version = "2024.1"
 
 val javaLanguageVersionSetting = project.extra["javaLanguageVersionSetting"].toString()
 
