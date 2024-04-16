@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public final class RequireJsService implements RequireJsInterface {
-    private static final String REQUIREJS = "requirejs.yml";
+    private static final String JSCONFIG = "jsmodules.yml";
 
     private final Project project;
     private final RequireJsConfigParser configParser = new RequireJsConfigParser();
@@ -47,7 +47,7 @@ public final class RequireJsService implements RequireJsInterface {
 
     private void initConfigs() {
         final PsiFile[] files = Stream.of(
-                        FilenameIndex.getVirtualFilesByName(REQUIREJS, GlobalSearchScope.allScope(project))
+                        FilenameIndex.getVirtualFilesByName(JSCONFIG, GlobalSearchScope.allScope(project))
                 )
                 .map(virtualFiles -> PsiUtilCore.toPsiFiles(project.getService(PsiManager.class), virtualFiles))
                 .map(psiFiles -> psiFiles.size() > 0 ? psiFiles.get(0) : new ArrayList<>())
