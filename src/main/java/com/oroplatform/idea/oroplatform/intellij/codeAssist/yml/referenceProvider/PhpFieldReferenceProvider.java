@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLPsiElement;
 import org.jetbrains.yaml.psi.YAMLScalar;
+import com.intellij.openapi.diagnostic.Logger;
 
 import java.util.Collection;
 
@@ -26,34 +27,30 @@ public class PhpFieldReferenceProvider extends PsiReferenceProvider {
 
     @NotNull
     @Override
-    public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+    public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         try {
             final boolean allowsKey = context.get("key") != null;
-            if(!allowsKey && element instanceof YAMLKeyValue) return new PsiReference[0];
-
+            assertReferenceElement(element, allowsKey);
             if(element instanceof YAMLPsiElement) {
                 final PhpIndex phpIndex = PhpIndex.getInstance(element.getProject());
                 final Collection<String> properties = phpClassProvider.getPhpClasses(phpIndex, element, classPropertyPath);
 
                 if(!properties.isEmpty()) {
-                    return new PsiReference[]{new PhpFieldReference(getReferenceElement(element, allowsKey), properties, getReferenceText(element, allowsKey))};
+                    return new PsiReference[]{new PhpFieldReference(element, properties, getReferenceText(element, allowsKey))};
                 }
             }
         } catch (Throwable throwable) {
-               // TODO handle exception
+               Logger.getInstance("error").error("Failed to assert that element can be added to reference", throwable);
         }
 
         return new PsiReference[0];
     }
 
-    private static @NotNull PsiElement getReferenceElement(PsiElement element, boolean allowsKey) {
+    private static void assertReferenceElement(PsiElement element, boolean allowsKey) {
         if(element instanceof YAMLKeyValue keyValue) {
+            assert allowsKey;
             assert (allowsKey ? keyValue.getKey() : keyValue.getValue()) != null;
             assert keyValue.getValue() != null;
-            assert allowsKey;
-            return element;
-        } else {
-            return element;
         }
     }
 
