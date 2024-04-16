@@ -33,12 +33,10 @@ public class ServiceAliasReferenceProvider extends PsiReferenceProvider {
     @NotNull
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-        if(element instanceof YAMLKeyValue) {
-            final YAMLKeyValue keyValue = (YAMLKeyValue) element;
-            return new PsiReference[] { new ServiceAliasReference(aliasTag, element, keyValue.getKeyText(), prefix, getAllowedValues, insertHandler) };
-        } else if(element instanceof YAMLScalar) {
-            final YAMLScalar scalar = (YAMLScalar) element;
-            return new PsiReference[] { new ServiceAliasReference(aliasTag, element, scalar.getTextValue(), prefix, getAllowedValues, insertHandler) };
+        if (element instanceof YAMLKeyValue keyValue) {
+            return new PsiReference[]{new ServiceAliasReference(aliasTag, element, keyValue.getKeyText(), prefix, getAllowedValues, insertHandler)};
+        } else if (element instanceof YAMLScalar scalar) {
+            return new PsiReference[]{new ServiceAliasReference(aliasTag, element, scalar.getTextValue(), prefix, getAllowedValues, insertHandler)};
         }
 
         return new PsiReference[0];
