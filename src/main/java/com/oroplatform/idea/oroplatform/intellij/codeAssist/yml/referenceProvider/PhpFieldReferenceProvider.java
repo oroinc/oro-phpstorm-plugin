@@ -39,7 +39,7 @@ public class PhpFieldReferenceProvider extends PsiReferenceProvider {
                 }
             }
         } catch (Throwable throwable) {
-               Logger.getInstance("error").error("Failed to assert that element can be added to reference", throwable);
+               Logger.getInstance("error").error("Unable to get Php Field Reference", throwable);
         }
 
         return new PsiReference[0];
