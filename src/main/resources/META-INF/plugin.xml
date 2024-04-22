@@ -10,6 +10,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>2024.1</h2>
+<ul>
+  <li>Fixed reference provider errors.</li>
+  <li>Updated dependencies.</li>
+</ul>
 <h2>2023.2</h2>
 <ul>
   <li>Updated compatibility with PHPStorm 2023.2.3</li>

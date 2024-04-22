@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLPsiElement;
 import org.jetbrains.yaml.psi.YAMLScalar;
+import com.intellij.openapi.diagnostic.Logger;
 
 import java.util.Collection;
 
@@ -26,36 +27,28 @@ public class PhpFieldReferenceProvider extends PsiReferenceProvider {
 
     @NotNull
     @Override
-    public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-        final boolean allowsKey = context.get("key") != null;
-        if(!allowsKey && element instanceof YAMLKeyValue) return new PsiReference[0];
+    public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+        try {
+            final boolean allowsKey = context.get("key") != null;
+            if(element instanceof YAMLPsiElement) {
+                final PhpIndex phpIndex = PhpIndex.getInstance(element.getProject());
+                final Collection<String> properties = phpClassProvider.getPhpClasses(phpIndex, element, classPropertyPath);
 
-        if(element instanceof YAMLPsiElement) {
-            final PhpIndex phpIndex = PhpIndex.getInstance(element.getProject());
-            final Collection<String> properties = phpClassProvider.getPhpClasses(phpIndex, element, classPropertyPath);
-
-            if(!properties.isEmpty()) {
-                return new PsiReference[]{new PhpFieldReference(getReferenceElement(element, allowsKey), properties, getReferenceText(element, allowsKey))};
+                if(!properties.isEmpty()) {
+                    return new PsiReference[]{new PhpFieldReference(element, properties, getReferenceText(element, allowsKey))};
+                }
             }
+        } catch (Throwable throwable) {
+               Logger.getInstance("error").error("Unable to get Php Field Reference", throwable);
         }
 
         return new PsiReference[0];
     }
 
-    private static PsiElement getReferenceElement(PsiElement element, boolean allowsKey) {
-        if(element instanceof YAMLKeyValue) {
-            final YAMLKeyValue keyValue = (YAMLKeyValue) element;
-            return allowsKey ? keyValue.getKey() : keyValue.getValue();
-        } else {
-            return element;
-        }
-    }
-
     private static String getReferenceText(PsiElement element, boolean allowsKey) {
         if(element instanceof YAMLScalar) {
             return ((YAMLScalar) element).getTextValue();
-        } else if(element instanceof YAMLKeyValue) {
-            final YAMLKeyValue keyValue = (YAMLKeyValue) element;
+        } else if(element instanceof YAMLKeyValue keyValue) {
             return allowsKey ? keyValue.getKeyText() : keyValue.getValueText();
         } else {
             return element.getText();

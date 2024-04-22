@@ -24,11 +24,11 @@ public class WorkflowScopeReferenceProvider extends PsiReferenceProvider {
         if(element instanceof YAMLScalar) {
             final YAMLScalar keyValue = (YAMLScalar) element;
             return new PsiReference[] {
-                new WorkflowScopeReference(keyValue, keyValue.getTextValue(), insertHandler)
+                new WorkflowScopeReference(element, keyValue.getTextValue(), insertHandler)
             };
         } else if(element instanceof YAMLKeyValue && context.get("key") != null) {
             final YAMLKeyValue keyValue = (YAMLKeyValue) element;
-            return new PsiReference[] { new WorkflowScopeReference(keyValue.getKey(), keyValue.getKeyText(), insertHandler) };
+            return new PsiReference[] { new WorkflowScopeReference(element, keyValue.getKeyText(), insertHandler) };
         }
         return new PsiReference[0];
     }

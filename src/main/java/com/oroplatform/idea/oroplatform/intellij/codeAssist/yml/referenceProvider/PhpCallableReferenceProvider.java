@@ -19,9 +19,7 @@ public class PhpCallableReferenceProvider extends PsiReferenceProvider {
     @NotNull
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-        if(element instanceof YAMLScalar && element.getParent() instanceof YAMLSequenceItem) {
-            final YAMLScalar scalarElement = (YAMLScalar) element;
-            final YAMLSequenceItem parent = (YAMLSequenceItem) element.getParent();
+        if(element instanceof YAMLScalar scalarElement && element.getParent() instanceof YAMLSequenceItem parent) {
             final YAMLSequence sequence = (YAMLSequence) parent.getParent();
             final int index = sequence.getItems().indexOf(parent);
 
@@ -32,8 +30,7 @@ public class PhpCallableReferenceProvider extends PsiReferenceProvider {
                 };
             } else if(index == 1) {
                 final YAMLSequenceItem classSequenceItem = sequence.getItems().get(0);
-                if(classSequenceItem.getValue() instanceof YAMLScalar) {
-                    final YAMLScalar classScalar = (YAMLScalar) classSequenceItem.getValue();
+                if(classSequenceItem.getValue() instanceof YAMLScalar classScalar) {
                     return new PsiReference[]{
                         new PhpMethodReference(element, new PhpMethod(new PhpMethod.PhpMethodStaticMatcher()), classScalar.getTextValue(), scalarElement.getTextValue()),
                         new ServiceMethodReference(element, classScalar.getTextValue(), scalarElement.getTextValue())
