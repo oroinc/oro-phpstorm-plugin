@@ -16,9 +16,8 @@ public class RequireJsConfigParser {
     }
 
     private static Map<String, Map<String, String>> parseMap(YAMLFile configFile) {
-        final YAMLKeyValue pathsKeyValue = YAMLUtil.getQualifiedKeyInFile(configFile, "config", "map");
-        if(pathsKeyValue != null && pathsKeyValue.getValue() instanceof YAMLMapping) {
-            final YAMLMapping pathsMapping = (YAMLMapping) pathsKeyValue.getValue();
+        final YAMLKeyValue pathsKeyValue = YAMLUtil.getQualifiedKeyInFile(configFile, "map");
+        if(pathsKeyValue != null && pathsKeyValue.getValue() instanceof YAMLMapping pathsMapping) {
             final Map<String, Map<String, String>> map = new THashMap<>();
 
             for (YAMLKeyValue yamlKeyValue : pathsMapping.getKeyValues()) {

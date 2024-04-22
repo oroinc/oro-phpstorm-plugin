@@ -1,6 +1,7 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FilenameIndex;
@@ -9,9 +10,8 @@ import com.intellij.psi.util.PsiUtilCore;
 import gnu.trove.THashMap;
 import org.jetbrains.yaml.psi.YAMLFile;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public final class RequireJsService implements RequireJsInterface {
     private static final String JSCONFIG = "jsmodules.yml";
@@ -46,12 +46,11 @@ public final class RequireJsService implements RequireJsInterface {
     }
 
     private void initConfigs() {
-        final PsiFile[] files = Stream.of(
-                        FilenameIndex.getVirtualFilesByName(JSCONFIG, GlobalSearchScope.allScope(project))
-                )
-                .map(virtualFiles -> PsiUtilCore.toPsiFiles(project.getService(PsiManager.class), virtualFiles))
-                .map(psiFiles -> psiFiles.size() > 0 ? psiFiles.get(0) : new ArrayList<>())
-                .toArray(PsiFile[]::new);
+        // OPP-96: the original stream-based implementation was completely non-functional
+        Collection<VirtualFile> virtualFiles = FilenameIndex
+                .getVirtualFilesByName(JSCONFIG, GlobalSearchScope.allScope(project));
+        final PsiFile[] files =
+                PsiUtilCore.toPsiFiles(project.getService(PsiManager.class), virtualFiles).toArray(new PsiFile[0]);
 
         for (PsiFile file : files) {
             parseConfigFile(file);
