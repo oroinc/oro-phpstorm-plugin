@@ -1,12 +1,12 @@
 package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript;
 
+import gnu.trove.THashMap;
 import org.jetbrains.yaml.YAMLUtil;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLMapping;
 
 import java.util.Collections;
-import gnu.trove.THashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
