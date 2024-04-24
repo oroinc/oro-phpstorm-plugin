@@ -1,7 +1,6 @@
 package com.oroplatform.idea.oroplatform;
 
 import com.intellij.AbstractBundle;
-import com.intellij.CommonBundle;
 import org.jetbrains.annotations.PropertyKey;
 
 import java.util.ResourceBundle;
