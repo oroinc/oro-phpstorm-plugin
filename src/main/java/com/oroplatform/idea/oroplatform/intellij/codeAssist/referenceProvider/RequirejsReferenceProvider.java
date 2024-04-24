@@ -60,8 +60,8 @@ public class RequirejsReferenceProvider {
             final RequireJsConfig config = RequireJsService.getInstance(project).getRequireJsConfig();
 
             return config.getPathForAlias(text).map(t -> StringUtil.trimEnd(StringUtil.trimStart(t, "bundles/"), ".js"))
-                    .or(() -> config.getDynamicImportByName(text))
                     .or(() -> getModuleName(element).flatMap(name -> config.getPackageForAlias(name, text)))
+                    .or(() -> config.getDynamicImportByName(text))
                     .orElse(text);
         }
 
