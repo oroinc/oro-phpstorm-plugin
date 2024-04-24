@@ -26,10 +26,6 @@ public class RequireJsConfig {
         return Optional.ofNullable(pathAliases.get(alias));
     }
 
-    public List<String> getDynamicImports() {
-        return dynamicImports;
-    }
-
     public Optional<String> getAliasForPath(String path) {
         synchronized (this) {
             if(reversedPathAliases == null) {
@@ -79,6 +75,12 @@ public class RequireJsConfig {
         }
 
         return getValueFromMapOfMaps(reversedMappings, pkg, pkgAlias);
+    }
+
+    public Optional<String> getDynamicImportByName(String name) {
+        return dynamicImports.stream()
+                .filter(dynamicImport -> dynamicImport.equals(name))
+                .findFirst();
     }
 
     private static <K,V> Map<K, V> merge(Map<K, V> map1, Map<K, V> map2) {
