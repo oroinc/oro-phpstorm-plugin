@@ -11,6 +11,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class RequireJsGoToDeclarationHandler extends JSGotoDeclarationHandler {
@@ -28,12 +29,12 @@ public class RequireJsGoToDeclarationHandler extends JSGotoDeclarationHandler {
             return new PsiElement[0];
         }
 
-        PsiElement[] standardElements = super.getGotoDeclarationTargets(sourceElement, offset, editor);
+        Optional<PsiElement[]> standardElements = Optional.ofNullable(super.getGotoDeclarationTargets(sourceElement, offset, editor));
 
         return Stream.concat(Arrays.stream(((PsiMultiReference) multiReference).multiResolve(true))
                         .filter(ResolveResult::isValidResult)
                         .map(ResolveResult::getElement),
-                Arrays.stream(standardElements != null ? standardElements : new PsiElement[0])
+                Arrays.stream(standardElements.orElseGet(() -> new PsiElement[0]))
         ).toArray(PsiElement[]::new);
 
     }
