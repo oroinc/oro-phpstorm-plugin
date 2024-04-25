@@ -10,9 +10,10 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
-<h2>2024.1</h2>
+<h2>1.1.0</h2>
 <ul>
   <li>Fixed reference provider errors.</li>
+  <li>Updated RequireJS navigation to work with new jsmodules.yml files.</li>
   <li>Updated dependencies.</li>
 </ul>
 <h2>2023.2</h2>
