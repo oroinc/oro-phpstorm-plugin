@@ -18,8 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
@@ -41,10 +39,10 @@ public class EntityExtensionCompletion extends CompletionContributor {
                 final VirtualFile appDir = settings.getAppVirtualDir();
                 if (appDir == null) return;
 
-                final String extensionsPath = appDir.getPath() + "/" + EntityExtensions.EXTENSIONS_DIR_RELATIVE_PATH;
+                final String extensionsPath = appDir.getPath() + "/" + ExFileBasedEntityExtensions.EXTENSIONS_DIR_RELATIVE_PATH;
                 if(!excluded(project, extensionsPath)) return;
 
-                final EntityExtensions extensions = EntityExtensions.instance(project);
+                final ExFileBasedEntityExtensions extensions = ExFileBasedEntityExtensions.instance(project);
                 final Entities entities = Entities.instance(project);
 
                 type.getTypes().stream()
