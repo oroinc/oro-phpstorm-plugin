@@ -17,8 +17,6 @@ import java.util.stream.Collectors;
 
 class ExFileBasedEntityExtensions implements EntityExtensions {
 
-    static final String EXTENSIONS_DIR_RELATIVE_PATH = "cache/dev/oro_entities/Extend/Entity";
-
     private static final Key<CachedValue<Map<String, Collection<String>>>> CACHE_KEY =
         new Key<>("com.oroplatform.idea.oroplatform.cache.entity_extensions");
 
@@ -52,7 +50,7 @@ class ExFileBasedEntityExtensions implements EntityExtensions {
                 final VirtualFile appDir = settings.getAppVirtualDir();
 
                 if(appDir == null) return null;
-                final VirtualFile extensionsDir = appDir.findFileByRelativePath(EXTENSIONS_DIR_RELATIVE_PATH);
+                final VirtualFile extensionsDir = appDir.findFileByRelativePath(EntityExtensions.EXTENSIONS_DIR_RELATIVE_PATH);
                 if(extensionsDir == null) return null;
 
                 final Map<String, Collection<String>> extensions = loadEntityExtensions(extensionsDir);

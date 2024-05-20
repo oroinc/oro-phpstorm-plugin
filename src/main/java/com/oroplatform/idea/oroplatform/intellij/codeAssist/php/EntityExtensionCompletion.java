@@ -30,6 +30,7 @@ public class EntityExtensionCompletion extends CompletionContributor {
                 final PsiElement element = parameters.getPosition();
                 final Project project = element.getProject();
                 final OroPlatformSettings settings = OroPlatformSettings.getInstance(project);
+                final EntityExtensionsProvider entityExtensionsProvider = EntityExtensionsProvider.instance(project);
 
                 if(!settings.isPluginEnabled()) return;
 
@@ -39,10 +40,10 @@ public class EntityExtensionCompletion extends CompletionContributor {
                 final VirtualFile appDir = settings.getAppVirtualDir();
                 if (appDir == null) return;
 
-                final String extensionsPath = appDir.getPath() + "/" + ExFileBasedEntityExtensions.EXTENSIONS_DIR_RELATIVE_PATH;
+                final String extensionsPath = appDir.getPath() + "/" + EntityExtensions.EXTENSIONS_DIR_RELATIVE_PATH;
                 if(!excluded(project, extensionsPath)) return;
 
-                final ExFileBasedEntityExtensions extensions = ExFileBasedEntityExtensions.instance(project);
+                final EntityExtensions extensions = entityExtensionsProvider.getEntityExtensions();//ExFileBasedEntityExtensions.instance(project);
                 final Entities entities = Entities.instance(project);
 
                 type.getTypes().stream()
