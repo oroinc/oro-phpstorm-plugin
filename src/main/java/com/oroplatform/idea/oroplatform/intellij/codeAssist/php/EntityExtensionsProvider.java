@@ -26,22 +26,22 @@ public class EntityExtensionsProvider {
 
     public EntityExtensions getEntityExtensions() {
         VirtualFile appDir = getAppDir(project);
-        ExFileBasedEntityExtensions exFileBasedEntityExtensions = getExFileEntityExtensions(appDir);
+        PhpBasedEntityExtensions phpBasedEntityExtensions = getExFileEntityExtensions(appDir);
 
-        if (exFileBasedEntityExtensions != null) {
-            return exFileBasedEntityExtensions;
+        if (phpBasedEntityExtensions != null) {
+            return phpBasedEntityExtensions;
         }
         return null;
     }
 
-    private ExFileBasedEntityExtensions getExFileEntityExtensions(VirtualFile appDir) {
+    private PhpBasedEntityExtensions getExFileEntityExtensions(VirtualFile appDir) {
         final VirtualFile extensionsDir = appDir.findFileByRelativePath(EntityExtensions.EXTENSIONS_DIR_RELATIVE_PATH);
         if (extensionsDir.getChildren() == null) {
             return null;
         }
         for (VirtualFile file: extensionsDir.getChildren()) {
             if (EXTENSION_FILE_PATTERN.matcher(file.getName()).matches()) {
-                return ExFileBasedEntityExtensions.instance(project); //TODO rewrite from pseudo-singleton
+                return PhpBasedEntityExtensions.instance(project); //TODO rewrite from pseudo-singleton
             }
         }
 

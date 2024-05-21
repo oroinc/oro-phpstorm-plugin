@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-class ExFileBasedEntityExtensions implements EntityExtensions {
+class PhpBasedEntityExtensions implements EntityExtensions {
 
     private static final Key<CachedValue<Map<String, Collection<String>>>> CACHE_KEY =
         new Key<>("com.oroplatform.idea.oroplatform.cache.entity_extensions");
@@ -23,12 +23,12 @@ class ExFileBasedEntityExtensions implements EntityExtensions {
     private final Project project;
     private static final Pattern METHOD_PATTERN = Pattern.compile("public function ([a-z-A-Z0-9][a-z-A-Z0-9_]*)");
 
-    private ExFileBasedEntityExtensions(Project project) {
+    private PhpBasedEntityExtensions(Project project) {
         this.project = project;
     }
 
-    public static ExFileBasedEntityExtensions instance(Project project) {
-        return new ExFileBasedEntityExtensions(project);
+    public static PhpBasedEntityExtensions instance(Project project) {
+        return new PhpBasedEntityExtensions(project);
     }
 
     public Collection<ExtensionMethod> getMethods(Entity entity) {
