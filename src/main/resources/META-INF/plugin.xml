@@ -10,6 +10,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.1.0</h2>
+<ul>
+    <li>Fix problems with fetching RequireJS reference</li>
+    <li>Restore ability to navigate to RequireJS references</li>
+</ul>
 <h2>2024.1</h2>
 <ul>
   <li>Fixed reference provider errors.</li>
