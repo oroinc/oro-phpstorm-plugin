@@ -3,23 +3,23 @@ package com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class RequireJsConfig {
     private final Map<String, String> pathAliases = new THashMap<>();
     private Map<String, String> reversedPathAliases;
     private final Map<String, Map<String, String>> mappings = new THashMap<>();
     private Map<String, Map<String, String>> reversedMappings;
+    private List<String> dynamicImports = new ArrayList<>();
 
-    public RequireJsConfig(Map<String, String> pathAliases, Map<String, Map<String, String>> mappings) {
+    public RequireJsConfig(Map<String, String> pathAliases, Map<String, Map<String, String>> mappings, List<String> dynamicImports) {
         this.pathAliases.putAll(pathAliases);
         this.mappings.putAll(mappings);
+        this.dynamicImports.addAll(dynamicImports);
     }
 
     RequireJsConfig() {
-        this(new THashMap<>(), new THashMap<>());
+        this(new THashMap<>(), new THashMap<>(), new ArrayList<>());
     }
 
     public Optional<String> getPathForAlias(String alias) {
@@ -50,7 +50,10 @@ public class RequireJsConfig {
         final Map<String, Map<String, String>> mergedMappings = new THashMap<>(mappings);
         config.mappings.forEach((key, value) -> mergedMappings.merge(key, value, RequireJsConfig::merge));
 
-        return new RequireJsConfig(mergedPaths, mergedMappings);
+        final List<String> mergedDynamicImports = new ArrayList<>(dynamicImports);
+        mergedDynamicImports.addAll(config.dynamicImports);
+
+        return new RequireJsConfig(mergedPaths, mergedMappings, mergedDynamicImports);
     }
 
     public Optional<String> getPackageAliasFor(String pkg, String pkgForAlias) {
@@ -72,6 +75,12 @@ public class RequireJsConfig {
         }
 
         return getValueFromMapOfMaps(reversedMappings, pkg, pkgAlias);
+    }
+
+    public Optional<String> getDynamicImportByName(String name) {
+        return dynamicImports.stream()
+                .filter(dynamicImport -> dynamicImport.equals(name))
+                .findFirst();
     }
 
     private static <K,V> Map<K, V> merge(Map<K, V> map1, Map<K, V> map2) {

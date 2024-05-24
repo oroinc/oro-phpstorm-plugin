@@ -272,6 +272,11 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
         <postStartupActivity implementation="com.oroplatform.idea.oroplatform.intellij.ProjectConfigurator" />
         <postStartupActivity implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.yml.YamlSupport" />
 
+        <gotoDeclarationHandler
+                implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsGoToDeclarationHandler"
+                order="first"
+        />
+
         <psi.referenceContributor
                 language="JavaScript"
                 implementation="com.oroplatform.idea.oroplatform.intellij.codeAssist.javascript.RequireJsReferenceContributor"
