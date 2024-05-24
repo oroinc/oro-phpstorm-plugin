@@ -75,15 +75,15 @@ public class YamlBasedEntityExtensions implements EntityExtensions {
                 .map(child -> (YAMLMapping) child)
                 .map(child -> child.getKeyValueByKey("fields")).filter(Objects::nonNull)
                 .map(fields -> (YAMLMapping) fields.getValue()).filter(Objects::nonNull)
-                .flatMap(fields -> extractMethods(fields).stream())
+                .flatMap(fields -> extractMethods(fields, prefix).stream())
                 .collect(Collectors.toList());
     }
 
-    private Collection<ExtensionMethod> extractMethods(YAMLMapping fields) {
+    private Collection<ExtensionMethod> extractMethods(YAMLMapping fields, String prefix) {
         return Arrays.stream(fields.getChildren())
                 .map(child -> ((YAMLKeyValue) child).getKeyText())
                 .map(OroPlatformStringUtil::snakeToCamel)
-                .map(field -> new ExtensionMethod("set" + OroPlatformStringUtil.capitalizeFirstCharacter(field)))
+                .map(field -> new ExtensionMethod(prefix + OroPlatformStringUtil.capitalizeFirstCharacter(field)))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
