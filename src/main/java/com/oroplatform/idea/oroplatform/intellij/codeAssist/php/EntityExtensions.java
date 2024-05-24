@@ -6,5 +6,5 @@ import java.util.Collection;
 
 public interface EntityExtensions {
     public static final String EXTENSIONS_DIR_RELATIVE_PATH = "cache/dev/oro_entities/Extend/Entity";
-    public Collection<PhpBasedEntityExtensions.ExtensionMethod> getMethods(Entity entity);
+    public Collection<ExtensionMethod> getMethods(Entity entity);
 }

@@ -11,7 +11,6 @@ public class EntityExtensionsProvider {
     private static EntityExtensionsProvider instance = null;
     private final Project project;
 
-    private static final Pattern EXTENSION_FILE_PATTERN = Pattern.compile("^EX_([a-z-A-Z0-9][a-z-A-Z0-9_]*)\\.php$");
 
     public static EntityExtensionsProvider instance(Project project) {
         if (instance == null) {
@@ -26,30 +25,77 @@ public class EntityExtensionsProvider {
 
     public EntityExtensions getEntityExtensions() {
         VirtualFile appDir = getAppDir(project);
-        PhpBasedEntityExtensions phpBasedEntityExtensions = getExFileEntityExtensions(appDir);
+        PhpBasedEntityExtensions phpBasedEntityExtensions = getPhpBasedEntityExtensions(appDir);
+        YamlBasedEntityExtensions yamlBasedEntityExtensions = getYamlBasedEntityExtensions(appDir);
 
         if (phpBasedEntityExtensions != null) {
             return phpBasedEntityExtensions;
         }
+
+        if (yamlBasedEntityExtensions != null) {
+            return yamlBasedEntityExtensions;
+        }
         return null;
     }
 
-    private PhpBasedEntityExtensions getExFileEntityExtensions(VirtualFile appDir) {
+    private PhpBasedEntityExtensions getPhpBasedEntityExtensions(VirtualFile appDir) {
         final VirtualFile extensionsDir = appDir.findFileByRelativePath(EntityExtensions.EXTENSIONS_DIR_RELATIVE_PATH);
-        if (extensionsDir.getChildren() == null) {
+        if (extensionsDir != null && extensionsDir.getChildren() == null) {
             return null;
         }
-        for (VirtualFile file: extensionsDir.getChildren()) {
-            if (EXTENSION_FILE_PATTERN.matcher(file.getName()).matches()) {
-                return PhpBasedEntityExtensions.instance(project); //TODO rewrite from pseudo-singleton
-            }
+        PhpExtensionFileFinder phpExtensionFileFinder = new PhpExtensionFileFinder();
+        if (extensionsDir != null && phpExtensionFileFinder.hasPhpExtensionFile(extensionsDir)) {
+            return PhpBasedEntityExtensions.instance(project);
         }
 
+        return null;
+    }
+
+    private YamlBasedEntityExtensions getYamlBasedEntityExtensions(VirtualFile appDir) {
+        final VirtualFile extensionsDir = appDir.findFileByRelativePath(EntityExtensions.EXTENSIONS_DIR_RELATIVE_PATH);
+        if (extensionsDir == null || extensionsDir.getChildren() == null) {
+            return null;
+        }
+        if (new YamlExtensionFileFinder().hasYamlExtensionFile(extensionsDir)) {
+            return YamlBasedEntityExtensions.instance(project);
+        }
         return null;
     }
 
     private VirtualFile getAppDir(Project project) {
         final OroPlatformSettings settings = OroPlatformSettings.getInstance(project);
         return settings.getAppVirtualDir();
+    }
+
+    private static class PhpExtensionFileFinder {
+        private static final Pattern PHP_EXTENSION_FILE_PATTERN = Pattern.compile("^EX_([a-z-A-Z0-9][a-z-A-Z0-9_]*)\\.php$");
+
+        public boolean hasPhpExtensionFile(VirtualFile extensionsDir) {
+            if (extensionsDir.getChildren() == null) {
+                return false;
+            }
+            for (VirtualFile file : extensionsDir.getChildren()) {
+                if (PHP_EXTENSION_FILE_PATTERN.matcher(file.getName()).matches()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    private static class YamlExtensionFileFinder {
+        private static final Pattern YAML_EXTENSION_FILE_PATTERN = Pattern.compile("^EX_([a-z-A-Z0-9][a-z-A-Z0-9_]*)\\.orm\\.yml$");
+
+        public boolean hasYamlExtensionFile(VirtualFile extensionsDir) {
+            if (extensionsDir.getChildren() == null) {
+                return false;
+            }
+            for (VirtualFile file : extensionsDir.getChildren()) {
+                if (YAML_EXTENSION_FILE_PATTERN.matcher(file.getName()).matches()) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

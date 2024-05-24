@@ -92,11 +92,4 @@ class PhpBasedEntityExtensions implements EntityExtensions {
         }
     }
 
-    static class ExtensionMethod {
-        final String name;
-
-        ExtensionMethod(String name) {
-            this.name = name;
-        }
-    }
 }

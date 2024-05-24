@@ -41,7 +41,7 @@ public class EntityExtensionCompletion extends CompletionContributor {
                 if (appDir == null) return;
 
                 final String extensionsPath = appDir.getPath() + "/" + EntityExtensions.EXTENSIONS_DIR_RELATIVE_PATH;
-                if(!excluded(project, extensionsPath)) return;
+                // if(!excluded(project, extensionsPath)) return;
 
                 final EntityExtensions extensions = entityExtensionsProvider.getEntityExtensions();//ExFileBasedEntityExtensions.instance(project);
                 final Entities entities = Entities.instance(project);
