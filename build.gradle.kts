@@ -7,6 +7,7 @@ plugins {
 dependencies {
     sourceSets.named("test") {
         testImplementation("org.codehaus.groovy:groovy-all:2.4.14")
+        testImplementation("org.opentest4j:opentest4j:1.3.0")
     }
 }
 
