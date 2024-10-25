@@ -898,7 +898,9 @@ public class SchemasV1 {
                     )),
                     Property.named("actions", actions),
                     Property.named("conditions", conditions),
-                    Property.named("acl_resource", acl)
+                    Property.named("acl_resource", acl),
+                    Property.named("replace", OneOf.from(Sequence.of(Scalars.choices("actions", "conditions", "acl_resource")))
+                    )
                 )
             )),
             Property.named("skipped_config", Container.any)
