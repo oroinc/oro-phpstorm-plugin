@@ -10,6 +10,10 @@ Plugin for the PHPStorm that will help to increase the development speed on the 
     ]]></description>
 
     <change-notes><![CDATA[
+<h2>1.1.2</h2>
+<ul>
+    <li>Fix lack of support for "replace" keyword in action_groups node in actions.yml schema.</li>
+</ul>
 <h2>1.1.1</h2>
 <ul>
     <li>Upgrade compatibility with 2024.2 version of PHPStorm.</li>
