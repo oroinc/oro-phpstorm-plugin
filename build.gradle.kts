@@ -1,15 +1,22 @@
 import java.io.ByteArrayOutputStream
 
 plugins {
-    id("org.jetbrains.intellij") version "1.17.4"
+    id("org.jetbrains.intellij.platform") version "2.2.0"
     id("groovy")
 }
-
 
 dependencies {
     sourceSets.named("test") {
         testImplementation("org.codehaus.groovy:groovy-all:2.4.14")
         testImplementation("org.opentest4j:opentest4j:1.3.0")
+    }
+    intellijPlatform {
+        plugin("com.jetbrains.php:243.21565.193")
+        plugin("com.jetbrains.twig:243.21565.202")
+        bundledPlugin("org.jetbrains.plugins.yaml")
+        bundledPlugin("com.intellij.css")
+        bundledPlugin("JavaScript")
+        create("IU","2024.3")
     }
 }
 
@@ -22,7 +29,7 @@ buildscript {
 group = "com.oroplatform"
 version = "1.1.1"
 
-
+val pathToIde = project.extra["pathToIde"]
 
 val javaVersionOutput = ByteArrayOutputStream()
 exec {
@@ -40,34 +47,20 @@ java {
     }
 }
 
-intellij {
-    pluginName.set("idea-oroplatform-plugin")
-    type.set("IU")
-    version.set("2024.3")
-    plugins.set(listOf(
-        "com.jetbrains.php:243.21565.193",
-        "yaml",
-        "java-i18n",
-        "properties",
-        "css-impl",
-        "JavaScript",
-        "com.jetbrains.twig:243.21565.202"
-    ))
-    sandboxDir.set("${project.rootDir}/.idea-sandbox")
+intellijPlatform {
+    pluginConfiguration {
+        name = "idea-oroplatform-plugin"
+    }
 }
 
 repositories {
     mavenCentral()
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
 tasks {
-    runIde {
-        val pathToIde = project.extra["pathToIde"]
-        ideDir.set(file("$pathToIde"))
-    }
-    buildSearchableOptions {
-        enabled = true
-    }
     test {
         // OPP-80: The tests that target PHP code completion and JS completion
         // or those that use the information no longer present in classes.php in the newer version of the platform
