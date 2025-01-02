@@ -1,5 +1,7 @@
+import java.io.ByteArrayOutputStream
+
 plugins {
-    id("org.jetbrains.intellij") version "1.14.2"
+    id("org.jetbrains.intellij") version "1.17.4"
     id("groovy")
 }
 
@@ -20,26 +22,36 @@ buildscript {
 group = "com.oroplatform"
 version = "1.1.1"
 
-val javaLanguageVersionSetting = project.extra["javaLanguageVersionSetting"].toString()
+
+
+val javaVersionOutput = ByteArrayOutputStream()
+exec {
+    commandLine = listOf("java", "-version")
+    standardOutput = javaVersionOutput
+    errorOutput = javaVersionOutput
+}
+
+val javaVersionString = javaVersionOutput.toString().lines().first()
+val javaVersion = Regex("""\d+""").find(javaVersionString)?.value?.toInt() ?: 11
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(javaLanguageVersionSetting))
+        languageVersion.set(JavaLanguageVersion.of(javaVersion))
     }
 }
 
 intellij {
     pluginName.set("idea-oroplatform-plugin")
     type.set("IU")
-    version.set("2024.2")
+    version.set("2024.3")
     plugins.set(listOf(
-        "com.jetbrains.php:242.20224.387",
+        "com.jetbrains.php:243.21565.193",
         "yaml",
         "java-i18n",
         "properties",
         "css-impl",
         "JavaScript",
-        "com.jetbrains.twig:242.20224.385"
+        "com.jetbrains.twig:243.21565.202"
     ))
     sandboxDir.set("${project.rootDir}/.idea-sandbox")
 }
