@@ -1,3 +1,4 @@
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import java.io.ByteArrayOutputStream
 
 plugins {
@@ -58,6 +59,11 @@ repositories {
     intellijPlatform {
         defaultRepositories()
     }
+}
+
+val runPhpStorm by intellijPlatformTesting.runIde.registering {
+    type = IntelliJPlatformType.PhpStorm
+    version = "2024.3"
 }
 
 tasks {
