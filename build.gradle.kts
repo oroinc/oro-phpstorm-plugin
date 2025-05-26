@@ -17,7 +17,7 @@ dependencies {
         bundledPlugin("org.jetbrains.plugins.yaml")
         bundledPlugin("com.intellij.css")
         bundledPlugin("JavaScript")
-        create("IU","2024.3")
+        create("IU","2025.1")
     }
 }
 
@@ -28,7 +28,7 @@ buildscript {
 }
 
 group = "com.oroplatform"
-version = "1.1.2"
+version = "1.1.3"
 
 val pathToIde = project.extra["pathToIde"]
 
@@ -63,7 +63,7 @@ repositories {
 
 val runPhpStorm by intellijPlatformTesting.runIde.registering {
     type = IntelliJPlatformType.PhpStorm
-    version = "2024.3"
+    version = "2025.1"
 }
 
 tasks {
