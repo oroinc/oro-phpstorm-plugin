@@ -28,13 +28,17 @@ public class PhpFieldReferenceProvider extends PsiReferenceProvider {
     @NotNull
     @Override
     public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+        if (com.intellij.openapi.project.DumbService.isDumb(element.getProject())) {
+            return new PsiReference[0];
+        }
+
         try {
             final boolean allowsKey = context.get("key") != null;
             if(element instanceof YAMLPsiElement) {
                 final PhpIndex phpIndex = PhpIndex.getInstance(element.getProject());
                 final Collection<String> properties = phpClassProvider.getPhpClasses(phpIndex, element, classPropertyPath);
 
-                if(!properties.isEmpty()) {
+                if (!properties.isEmpty()) {
                     return new PsiReference[]{new PhpFieldReference(element, properties, getReferenceText(element, allowsKey))};
                 }
             }
