@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.oroplatform"
-version = "2025.2.0"
+version = "2025.2.5"
 
 repositories {
     mavenCentral()

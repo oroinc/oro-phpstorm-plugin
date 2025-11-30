@@ -53,9 +53,9 @@
     ]]></description>
 
     <change-notes><![CDATA[
-<h2>2025.2.0</h2>
+<h2>2025.2.5</h2>
 <ul>
-    <li>Updated compatibility with PHPStorm 2025.2</li>
+    <li>Fixed OPP-115: "Unable to get Php Field Reference" errors when index is not ready</li>
 </ul>
     ]]></change-notes>
 

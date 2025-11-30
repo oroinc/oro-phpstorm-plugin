@@ -1,6 +1,10 @@
 Changelog
 =========
 
+## 2025.2.5
+
+- Fixed OPP-115: "Unable to get Php Field Reference" errors when index is not ready
+
 ## 2025.2.0
 - Updated compatibility with PHPStorm 2025.2
 - Started reworking gradle build configuration
